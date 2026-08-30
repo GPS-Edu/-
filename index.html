@@ -143,6 +143,10 @@ body.theme-dark .hover\:bg-indigo-700:hover { background-color: #2563EB !importa
 body.theme-dark #themeSelect { background-color: #0F172A !important; color: #F8FAFC !important; border-color: #475569 !important; }
 body.theme-dark ::-webkit-scrollbar-thumb { background-color: #475569 !important; border-radius: 10px !important; }
 body.theme-dark ::-webkit-scrollbar-track { background-color: #0F172A !important; }
+body.theme-dark #tText { fill: #F8FAFC !important; }
+body.theme-dark .text-gray-800, body.theme-dark .text-gray-700, body.theme-dark .text-gray-600 { color: #F8FAFC !important; }
+body.theme-dark .text-gray-500, body.theme-dark .text-gray-400 { color: #94A3B8 !important; }
+body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1E293B !important; border-color: #334155 !important; }
 </style>
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800 bg-slate-50">
@@ -198,9 +202,17 @@ body.theme-dark ::-webkit-scrollbar-track { background-color: #0F172A !important
       </div>
     </div>
     
-    <button onclick="switchTab('freegame')" data-target="freegame" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
-      <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">🕹️</span>미니게임
-    </button>
+    <div>
+      <button onclick="toggleFreegameMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+        <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">🕹️</span>
+        <span class="flex-1 text-left">미니게임</span>
+        <span id="freegameArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
+      </button>
+      <div id="freegameSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <button onclick="switchTab('freegame'); showFreeGame('bungeo')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐟 붕어빵 타이쿤</button>
+        <button onclick="switchTab('freegame'); showFreeGame('mafia')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🕵️ 마피아게임</button>
+      </div>
+    </div>
     
     <div>
       <button onclick="toggleUtilityMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
@@ -420,7 +432,7 @@ body.theme-dark ::-webkit-scrollbar-track { background-color: #0F172A !important
 
     <!-- 교과 미니게임 -->
     <section id="minigame" class="tab-content max-w-5xl mx-auto space-y-6">
-      <div class="card p-6 md:p-8">
+      <div class="card p-3 sm:p-6 md:p-8">
         <div class="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
           <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-3xl shadow-sm">🎮</div>
           <div>
@@ -438,7 +450,7 @@ body.theme-dark ::-webkit-scrollbar-track { background-color: #0F172A !important
     </section>
 
     <section id="freegame" class="tab-content max-w-5xl mx-auto space-y-6">
-      <div class="card p-6 md:p-8">
+      <div class="card p-3 sm:p-6 md:p-8">
         <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
           <div class="flex items-center gap-4">
             <div class="w-14 h-14 rounded-2xl bg-pink-50 border border-pink-100 flex items-center justify-center text-3xl shadow-sm">🕹️</div>
@@ -451,10 +463,10 @@ body.theme-dark ::-webkit-scrollbar-track { background-color: #0F172A !important
         </div>
         <div class="flex gap-2 mb-6 flex-wrap">
           <button class="util-tab util-active" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
-          <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아 온라인</button>
+          <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아게임</button>
         </div>
         <div id="freeGameContent">
-          <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style="height:620px;">
+          <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style="height:70vh;min-height:450px;max-height:850px;">
             <iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe>
           </div>
           <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>
@@ -576,6 +588,13 @@ function toggleUtilityMenu(){
   sub.classList.toggle('hidden',open);
   arrow.textContent=open?'▶':'▼';
   switchTab('utility');
+}
+function toggleFreegameMenu(){
+  const sub=document.getElementById('freegameSubmenu'),arrow=document.getElementById('freegameArrow');
+  const open=!sub.classList.contains('hidden');
+  sub.classList.toggle('hidden',open);
+  arrow.textContent=open?'▶':'▼';
+  switchTab('freegame');
 }
 
 function switchGrade(gid){
@@ -1075,7 +1094,7 @@ function showFreeGame(type){
   const bl=document.getElementById('bungeoLink');
   if(type==='bungeo'){
     if(bl)bl.style.display='';
-    gc.innerHTML=`<div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:620px;"><iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>`;
+    gc.innerHTML=`<div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:70vh;min-height:450px;max-height:850px;"><iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>`;
   }
   if(type==='mafia'){
     if(bl)bl.style.display='none';
@@ -1477,7 +1496,7 @@ function mafHostGameHTML() {
   }
 
   return `<div class="space-y-4">
-    <div class="card p-8 bg-gray-50 border-2 border-gray-200 shadow-sm relative">${helpBtn}${content}</div>
+    <div class="card p-4 sm:p-6 md:p-8 bg-gray-50 border-2 border-gray-200 shadow-sm relative">${helpBtn}${content}</div>
     <div class="card p-4 relative">
       <button onclick="mafToggleRoles()" class="absolute top-3 right-3 btn btn-ghost text-xs bg-gray-100 hover:bg-gray-200">${mafShowRoles ? '🙈 직업 숨기기' : '👀 직업 훔쳐보기 (선생님 전용)'}</button>
       <h3 class="font-black text-sm text-gray-700 mb-3">👥 플레이어 생존 상태</h3>
@@ -1585,7 +1604,7 @@ function mafClientGameHTML() {
   const helpBtn = `<button onclick="document.getElementById('mafHelpModal').classList.remove('hidden')" class="absolute top-4 right-4 btn btn-ghost text-xs bg-gray-200 hover:bg-gray-300 rounded-full z-10 shadow-sm">❓ 도움말</button>`;
   
   if (mafSubPhase === 'waiting') {
-    return `<div class="card p-8 text-center bg-gray-50 relative">${helpBtn}<div class="spin mx-auto mb-4 border-blue-500"></div><h3 class="font-black text-xl text-gray-700">대기실</h3><p class="text-sm text-gray-500 mt-2 font-bold">선생님이 게임을 시작할 때까지 기다려주세요...</p></div>`;
+    return `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-50 relative">${helpBtn}<div class="spin mx-auto mb-4 border-blue-500"></div><h3 class="font-black text-xl text-gray-700">대기실</h3><p class="text-sm text-gray-500 mt-2 font-bold">선생님이 게임을 시작할 때까지 기다려주세요...</p></div>`;
   }
   
   const cTimerHTML = (window.mafTimeLeft > 0) ? `<div id="mafClientTimerDisplay" class="text-2xl font-black font-mono text-red-500 mb-4 text-center animate-pulse drop-shadow-md">⏳ ${Math.floor(window.mafTimeLeft/60)}:${(window.mafTimeLeft%60).toString().padStart(2,'0')} 남음</div>` : '<div id="mafClientTimerDisplay"></div>';
@@ -1602,7 +1621,7 @@ function mafClientGameHTML() {
     else if(mafMyRole === '건달') emoji = '👊';
     else if(mafMyRole === '정치인') emoji = '👔';
     
-    content = `<div class="card p-8 text-center text-white shadow-xl relative" style="background:#1A1A2E;">${helpBtn}
+    content = `<div class="card p-4 sm:p-6 md:p-8 text-center text-white shadow-xl relative" style="background:#1A1A2E;">${helpBtn}
       <h3 class="text-sm text-gray-400 font-bold mb-2">당신의 직업은...</h3>
       <div class="text-6xl mb-4">${emoji}</div>
       <h1 class="text-5xl font-black mb-4" style="color:${isM?'#FCA5A5':(mafMyRole==='시민'||mafMyRole==='정치인')?'#93C5FD':'#86EFAC'};">${mafMyRole}</h1>
@@ -1612,10 +1631,10 @@ function mafClientGameHTML() {
     </div>`;
   }
   else if (mafSubPhase === 'dead') {
-    content = `<div class="card p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}<h1 class="text-6xl mb-4">👻</h1><h3 class="font-black text-2xl text-gray-300">당신은 사망했습니다.</h3><p class="text-sm mt-3 font-bold">친구들에게 정체를 들키지 않게 조용히 관전하세요.</p></div>`;
+    content = `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}<h1 class="text-6xl mb-4">👻</h1><h3 class="font-black text-2xl text-gray-300">당신은 사망했습니다.</h3><p class="text-sm mt-3 font-bold">친구들에게 정체를 들키지 않게 조용히 관전하세요.</p></div>`;
   }
   else if (mafSubPhase === 'night') {
-    if (mafMyRole === '시민' || mafMyRole === '정치인') content = `<div class="card p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">🌙</h1><h3 class="font-black text-2xl text-gray-300">밤이 되었습니다.</h3><p class="text-sm mt-3 font-bold">능력자들이 활동 중입니다. 조용히 기다려주세요.</p></div>`;
+    if (mafMyRole === '시민' || mafMyRole === '정치인') content = `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">🌙</h1><h3 class="font-black text-2xl text-gray-300">밤이 되었습니다.</h3><p class="text-sm mt-3 font-bold">능력자들이 활동 중입니다. 조용히 기다려주세요.</p></div>`;
     else {
       const verb = mafMyRole === '마피아' ? '제거할' : mafMyRole === '의사' ? '살릴' : (mafMyRole==='경찰'||mafMyRole==='스파이') ? '조사할' : mafMyRole === '기자' ? '취재할' : mafMyRole === '건달' ? '협박할' : '';
       const color = mafMyRole === '마피아' ? 'red' : mafMyRole === '의사' ? 'green' : mafMyRole==='스파이' ? 'purple' : mafMyRole==='기자'?'blue':mafMyRole==='건달'?'orange':'yellow';
@@ -1632,7 +1651,7 @@ function mafClientGameHTML() {
   else if (mafSubPhase === 'day_announce' || mafSubPhase === 'day_discuss') {
     let repHTML = window.mafReported ? `<div class="mt-4 p-3 bg-blue-100 border-2 border-blue-400 rounded-lg text-blue-900 font-bold text-left shadow-inner"><span class="text-xl">📸</span> 특종! 취재 결과:<br><span class="text-xl text-blue-700">${window.mafReported.name}</span> 님의 직업은 <span class="text-xl text-red-600">${window.mafReported.role}</span> 입니다!</div>` : '';
     let threatHTML = window.mafThreatened ? `<div class="mt-3 p-2 bg-orange-100 border border-orange-400 rounded text-orange-900 font-bold text-sm shadow-inner">👊 [속보] 건달의 협박으로 <span class="text-orange-700 text-base">${window.mafThreatened}</span> 님은 오늘 투표할 수 없습니다!</div>` : '';
-    content = `<div class="card p-8 text-center shadow-lg relative" style="background:linear-gradient(135deg, #FFF7ED, #FEF3C7); border:2px solid #FCD34D;">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">☀️</h1><h3 class="font-black text-2xl text-yellow-900">아침이 밝았습니다.</h3><p class="text-sm mt-3 font-bold text-yellow-800">친구들과 자유롭게 토론하며 마피아를 찾으세요!</p>${repHTML}${threatHTML}</div>`;
+    content = `<div class="card p-4 sm:p-6 md:p-8 text-center shadow-lg relative" style="background:linear-gradient(135deg, #FFF7ED, #FEF3C7); border:2px solid #FCD34D;">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">☀️</h1><h3 class="font-black text-2xl text-yellow-900">아침이 밝았습니다.</h3><p class="text-sm mt-3 font-bold text-yellow-800">친구들과 자유롭게 토론하며 마피아를 찾으세요!</p>${repHTML}${threatHTML}</div>`;
   }
   else if (mafSubPhase === 'vote') {
     if(mafMyName === window.mafThreatened) {
@@ -1653,7 +1672,7 @@ function mafClientGameHTML() {
   }
   else if (mafSubPhase === 'final_vote') {
     if(window.mafSuspect === mafMyName) {
-      content = `<div class="card p-8 text-center shadow-xl bg-red-900 text-white relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">😱</h1><h3 class="font-black text-2xl">당신이 처형대에 올랐습니다!</h3><p class="text-sm mt-3 font-bold text-red-200">친구들에게 무죄를 주장하세요!</p></div>`;
+      content = `<div class="card p-4 sm:p-6 md:p-8 text-center shadow-xl bg-red-900 text-white relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">😱</h1><h3 class="font-black text-2xl">당신이 처형대에 올랐습니다!</h3><p class="text-sm mt-3 font-bold text-red-200">친구들에게 무죄를 주장하세요!</p></div>`;
     } else if (mafMyName === window.mafThreatened) {
       content = `<div class="card p-6 shadow-xl bg-purple-50 border-2 border-purple-200 relative">${helpBtn}
         ${cTimerHTML}<h3 class="font-black text-2xl text-purple-900 mb-2 text-center">⚖️ 최후의 찬반 투표</h3>
@@ -2594,7 +2613,7 @@ function showUtil(type){
 let swTime=0,swRunning=false,swInterval=null,swLaps=[];
 function stopwatchHTML(){return `
 <div class="flex flex-col items-center gap-5 py-4">
-  <div class="text-7xl font-black text-gray-800" id="swText" style="font-variant-numeric:tabular-nums;letter-spacing:-2px;">00:00.00</div>
+  <div class="text-7xl font-black text-slate-800" id="swText" style="font-variant-numeric:tabular-nums;letter-spacing:-2px;">00:00.00</div>
   <div class="flex gap-3">
     <button id="swBtnStart" onclick="toggleSw()" class="btn btn-blue px-8 py-3 text-base">▶ 시작</button>
     <button onclick="lapSw()" class="btn px-6 py-3 text-base" style="background:#FBD38D;color:#9C4221;font-weight:900;">⏱️ 기록</button>
@@ -2748,15 +2767,15 @@ function closeModal(){document.getElementById('modal').classList.remove('open');
 async function testKey(){const k=document.getElementById('inputKey').value.trim();const out=document.getElementById('testOut'),btn=document.getElementById('btnTest');if(!k){showTO('⚠️ 키를 먼저 입력해주세요.',false);return;}btn.textContent='⏳ 테스트 중...';btn.disabled=true;out.classList.add('hidden');try{const r=await gemini(k,'연결 테스트입니다. "연결 성공"이라고만 답해주세요.');showTO('✅ '+r.slice(0,60),true);}catch(e){showTO('❌ '+e.message,false);}btn.textContent='🧪 API 키 연결 테스트';btn.disabled=false;}
 function showTO(msg,ok){const el=document.getElementById('testOut');el.textContent=msg;el.style.cssText=ok?'background:#F0FFF4;color:#276749;border:2px solid #9AE6B4;':'background:#FFF5F5;color:#C53030;border:2px solid #FEB2B2;';el.classList.remove('hidden');}
 async function gemini(key,prompt){
-  const MODELS=['gemini-3.7-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash', 'gemini-1.5-flash'];let lastErr;
+  const MODELS=['gemini-2.0-flash', 'gemini-1.5-flash'];let lastErr;
   for(const model of MODELS){
     try{
-      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],safetySettings:[{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_ONLY_HIGH'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_ONLY_HIGH'},{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_ONLY_HIGH'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_ONLY_HIGH'}],generationConfig:{temperature:.7,maxOutputTokens:1024}})});
-      if(!res.ok){const e=await res.json().catch(()=>({}));const msg=e?.error?.message||`HTTP ${res.status}`;if(res.status===404||res.status===503||res.status===429||msg.includes('not found')||msg.includes('high demand')||msg.includes('exhausted')||msg.includes('overloaded')){lastErr=new Error(msg);continue;}throw new Error(msg);}
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.7,maxOutputTokens:1024}})});
+      if(!res.ok){const e=await res.json().catch(()=>({}));const msg=e?.error?.message||`HTTP ${res.status}`;if(res.status===400||res.status===404||res.status===503||res.status===429||msg.includes('not found')||msg.includes('high demand')||msg.includes('exhausted')||msg.includes('overloaded')){lastErr=new Error(msg);continue;}throw new Error(msg);}
       const data=await res.json();const text=data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if(!text){const r=data?.candidates?.[0]?.finishReason;throw new Error(r==='SAFETY'?'안전 정책으로 차단됨.':'빈 응답.');}
       return text;
-    }catch(e){if(e.message.includes('not found')||e.message.includes('404')||e.message.includes('high demand')||e.message.includes('503')){lastErr=e;continue;}throw e;}
+    }catch(e){if(e.message.includes('not found')||e.message.includes('400')||e.message.includes('404')||e.message.includes('high demand')||e.message.includes('503')){lastErr=e;continue;}throw e;}
   }
   throw lastErr||new Error('사용 가능한 모델이 없습니다.');
 }
@@ -2781,4 +2800,3 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
 </script>
 </body>
 </html>
-
