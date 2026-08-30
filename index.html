@@ -7,58 +7,56 @@
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{font-family:'Pretendard',sans-serif;background:#FFFDF0;}
+body{font-family:'Pretendard',sans-serif;background:#F8FAFC;}
 .tab-content{display:none;}
-.tab-content.active{display:block;animation:popIn .28s cubic-bezier(.34,1.56,.64,1);}
-@keyframes popIn{from{opacity:0;transform:scale(.96) translateY(6px)}to{opacity:1;transform:none}}
-.nav-btn{transition:all .18s;}
-.nav-btn:hover:not(.nav-active){background:#FFF3CC;transform:translateX(3px);}
-.nav-btn.nav-active{background:linear-gradient(135deg,#FFD93D,#FF8C42);color:#fff!important;font-weight:800!important;box-shadow:0 4px 12px rgba(255,140,66,.35);}
-.grade-btn{transition:all .15s;}
-.grade-btn.grade-active{background:#FFF0D0;font-weight:800;color:#B45309;}
-.grade-btn:hover:not(.grade-active){background:#FFF8E8;}
-.card{background:#fff;border-radius:1.5rem;box-shadow:0 4px 0 rgba(0,0,0,.07),0 2px 12px rgba(0,0,0,.05);border:2.5px solid #F0EDD8;transition:box-shadow .2s,transform .2s;}
-.card:hover{box-shadow:0 6px 0 rgba(0,0,0,.09),0 4px 20px rgba(0,0,0,.07);transform:translateY(-2px);}
-.btn{border-radius:1rem;font-weight:800;transition:all .15s;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;}
-.btn-blue{background:linear-gradient(135deg,#4D96FF,#6B5CE7);color:#fff;box-shadow:0 4px 0 #2B6ADF;padding:.65rem 1.2rem;}
-.btn-blue:hover{transform:translateY(-2px);box-shadow:0 6px 0 #2B6ADF;}
-.btn-blue:active{transform:translateY(1px);box-shadow:0 2px 0 #2B6ADF;}
-.btn-blue:disabled{opacity:.6;cursor:not-allowed;transform:none;}
-.btn-green{background:linear-gradient(135deg,#6BCB77,#38A169);color:#fff;box-shadow:0 4px 0 #2F855A;padding:.65rem 1.2rem;}
-.btn-green:hover{transform:translateY(-2px);}
-.btn-ghost{background:#F3F0E0;color:#5A5238;border:2px solid #E8E4CC;padding:.6rem 1.1rem;border-radius:.875rem;font-weight:700;}
-.btn-ghost:hover{background:#E8E4CC;}
-.inp{width:100%;padding:.6rem .9rem;border:2.5px solid #E0DAC0;border-radius:.875rem;font-size:.875rem;background:#FFFEF5;font-family:'Pretendard',sans-serif;transition:border-color .2s;}
-.inp:focus{outline:none;border-color:#4D96FF;box-shadow:0 0 0 3px rgba(77,150,255,.12);}
-.dashed-zone{border:3px dashed #D0C9A8;border-radius:1.25rem;background:#FAFAF0;padding:3.5rem 2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;color:#A89E7A;text-align:center;}
+.tab-content.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.nav-btn{transition:all .2s;color:#64748B;}
+.nav-btn:hover:not(.nav-active){background:#F1F5F9;color:#334155;}
+.nav-btn.nav-active{background:#EEF2FF;color:#4F46E5!important;font-weight:700!important;}
+.nav-btn.nav-active .icon-bg{background:#4F46E5;color:#fff;}
+.card{background:#fff;border-radius:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,0.05),0 4px 6px rgba(0,0,0,0.02);border:1px solid #E2E8F0;transition:box-shadow .2s,transform .2s;}
+.card:hover{box-shadow:0 4px 6px -1px rgba(0,0,0,0.05),0 10px 15px -3px rgba(0,0,0,0.05);transform:translateY(-2px);}
+.btn{border-radius:0.75rem;font-weight:600;transition:all .15s;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;}
+.btn-blue{background:#4F46E5;color:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.05);padding:.6rem 1.2rem;}
+.btn-blue:hover{background:#4338CA;transform:translateY(-1px);box-shadow:0 4px 6px rgba(79,70,229,0.2);}
+.btn-blue:active{transform:translateY(0);box-shadow:none;}
+.btn-blue:disabled{opacity:.6;cursor:not-allowed;}
+.btn-green{background:#10B981;color:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.05);padding:.6rem 1.2rem;}
+.btn-green:hover{background:#059669;transform:translateY(-1px);box-shadow:0 4px 6px rgba(16,185,129,0.2);}
+.btn-ghost{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;padding:.6rem 1.1rem;border-radius:0.75rem;}
+.btn-ghost:hover{background:#E2E8F0;color:#1E293B;}
+.btn-red{background:#EF4444;color:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.05);padding:.6rem 1.2rem;}
+.btn-red:hover{background:#DC2626;transform:translateY(-1px);box-shadow:0 4px 6px rgba(239,68,68,0.2);}
+.inp{width:100%;padding:.6rem .9rem;border:1px solid #CBD5E1;border-radius:0.75rem;font-size:.875rem;background:#F8FAFC;font-family:'Pretendard',sans-serif;transition:all .2s;}
+.inp:focus{outline:none;border-color:#6366F1;background:#fff;box-shadow:0 0 0 3px rgba(99,102,241,.15);}
+.dashed-zone{border:2px dashed #CBD5E1;border-radius:1.25rem;background:#F8FAFC;padding:3.5rem 2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;color:#64748B;text-align:center;}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
-.dot-green{background:#6BCB77;box-shadow:0 0 6px #6BCB77;}
-.dot-amber{background:#FFD93D;box-shadow:0 0 6px #FFD93D;}
-.spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:_spin .7s linear infinite;}
+.dot-green{background:#10B981;}
+.dot-amber{background:#F59E0B;}
+.spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:_spin .7s linear infinite;}
 @keyframes _spin{to{transform:rotate(360deg)}}
-#toast{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:.65rem 1.6rem;border-radius:999px;font-size:.82rem;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;}
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1E293B;color:#fff;padding:.7rem 1.5rem;border-radius:999px;font-size:.875rem;font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);}
 #toast.show{opacity:1;}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:50;display:none;align-items:center;justify-content:center;padding:1rem;}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);backdrop-filter:blur(4px);z-index:50;display:none;align-items:center;justify-content:center;padding:1rem;}
 .overlay.open{display:flex;}
-.sidebar-hd{background:linear-gradient(155deg,#FFD93D,#FF8C42);padding:1.2rem 1.4rem;position:relative;overflow:hidden;}
-.sidebar-hd::after{content:'';position:absolute;bottom:-16px;left:-10%;right:-10%;height:32px;background:#FFFDF0;border-radius:50%;}
-.badge{display:inline-flex;align-items:center;gap:.2rem;padding:.2rem .65rem;border-radius:999px;font-size:.68rem;font-weight:800;}
-.util-tab{padding:.5rem 1rem;border-radius:.875rem;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .15s;border:2px solid transparent;}
-.util-tab.util-active{background:linear-gradient(135deg,#FFD93D,#FF8C42);color:#fff;box-shadow:0 3px 8px rgba(255,140,66,.3);}
-.util-tab:not(.util-active){background:#F3F0E0;color:#5A5238;border-color:#E8E4CC;}
-.util-tab:not(.util-active):hover{background:#E8E4CC;}
-/* 역사 카드 */
-.h-card{transition:all .2s;border-width:2.5px!important;border-style:solid!important;}
-.h-card:hover:not(.matched){transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.1);}
-.h-card.selected-ev{background:#DBEAFE!important;border-color:#3B82F6!important;box-shadow:0 0 0 3px rgba(59,130,246,.25)!important;transform:scale(1.02);}
-.h-card.selected-desc{background:#DCFCE7!important;border-color:#22C55E!important;box-shadow:0 0 0 3px rgba(34,197,94,.25)!important;transform:scale(1.02);}
-.h-card.wrong{background:#FEE2E2!important;border-color:#FCA5A5!important;animation:shake .4s;}
-.h-card.matched{opacity:.6;cursor:default!important;background:#D1FAE5!important;border-color:#6EE7B7!important;}
+.sidebar-hd{background:#fff;padding:1.5rem 1.4rem;border-bottom:1px solid #E2E8F0;}
+.badge{display:inline-flex;align-items:center;gap:.2rem;padding:.2rem .6rem;border-radius:999px;font-size:.7rem;font-weight:600;}
+.util-tab{padding:.5rem 1rem;border-radius:0.75rem;font-weight:600;font-size:.8rem;cursor:pointer;transition:all .2s;border:1px solid transparent;}
+.util-tab.util-active{background:#EEF2FF;color:#4F46E5;border-color:#C7D2FE;}
+.util-tab:not(.util-active){background:#F8FAFC;color:#64748B;border-color:#E2E8F0;}
+.util-tab:not(.util-active):hover{background:#F1F5F9;}
+/* 역사 카드 (수정불가영역 외관만) */
+.h-card{transition:all .2s;border:2px solid #E2E8F0!important;}
+.h-card:hover:not(.matched){transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.05);}
+.h-card.selected-ev{background:#EFF6FF!important;border-color:#3B82F6!important;box-shadow:0 0 0 2px rgba(59,130,246,.2)!important;}
+.h-card.selected-desc{background:#F0FDF4!important;border-color:#22C55E!important;box-shadow:0 0 0 2px rgba(34,197,94,.2)!important;}
+.h-card.wrong{background:#FEF2F2!important;border-color:#EF4444!important;animation:shake .4s;}
+.h-card.matched{opacity:.6;cursor:default!important;background:#F1F5F9!important;border-color:#CBD5E1!important;}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-/* 자리 배치 */
-.seat-btn{transition:all .15s;cursor:pointer;}
-.seat-btn:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(0,0,0,.08);}
-/* 캡슐 뽑기 머신 */
+.seat-btn{transition:all .2s;cursor:pointer;}
+.seat-btn:hover{transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,.1);}
+/* 캡슐 머신 (기존 유지) */
 .cap-globe{position:relative;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#EAF4FF 40%,#CFE3FF 100%);border:6px solid #B9D4FF;box-shadow:inset 0 -12px 22px rgba(0,0,0,.08),0 6px 0 #9CBCEB;overflow:hidden;margin:0 auto;}
 .cap-ball{position:absolute;border-radius:50%;box-shadow:inset -4px -4px 0 rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.18);}
 @keyframes capFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-7px) rotate(10deg);}}
@@ -66,167 +64,287 @@ body{font-family:'Pretendard',sans-serif;background:#FFFDF0;}
 .cap-ball.floaty{animation:capFloat 2.2s ease-in-out infinite;}
 .cap-ball.shaky{animation:capShake .22s ease-in-out infinite;}
 .cap-chute{width:56px;height:32px;margin:0 auto;background:linear-gradient(180deg,#9CBCEB,#7FA6E0);clip-path:polygon(22% 0,78% 0,100% 100%,0% 100%);}
-.cap-slot{width:100%;max-width:230px;min-height:76px;border-radius:1rem;background:#FFF8E1;border:3px dashed #FFD93D;display:flex;align-items:center;justify-content:center;margin:0 auto;padding:.5rem;}
+.cap-slot{width:100%;max-width:230px;min-height:76px;border-radius:1rem;background:#F8FAFC;border:2px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;margin:0 auto;padding:.5rem;}
 @keyframes capPop{0%{transform:scale(.4) rotate(-10deg);opacity:0;}60%{transform:scale(1.15) rotate(4deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
 .cap-pop{animation:capPop .5s cubic-bezier(.34,1.56,.64,1);}
+
+/* ══ 솜사탕 테마 (Cute/Cotton Candy Theme) ══ */
+body.theme-cute { background-color: #FFFDF7 !important; color: #5D4037 !important; }
+body.theme-cute aside { background-color: #FFF5F7 !important; border-right: 3px solid #FFE4E6 !important; }
+body.theme-cute .sidebar-hd { background: linear-gradient(135deg, #FDA4AF, #F9A8D4) !important; padding: 1.25rem !important; }
+body.theme-cute .sidebar-hd h1 { color: #fff !important; text-shadow: 0 2px 4px rgba(225,29,72, 0.2) !important; }
+body.theme-cute .sidebar-hd p { color: #FFF0F5 !important; }
+body.theme-cute .sidebar-hd div.bg-indigo-50 { background-color: rgba(255,255,255,0.4) !important; border-color: rgba(255,255,255,0.6) !important; color: #E11D48 !important; }
+body.theme-cute header { background-color: #FFFDF7 !important; border-bottom: 3px solid #FFE4E6 !important; box-shadow: 0 4px 0 #FFF0F5 !important; }
+body.theme-cute .card { background-color: #FFFFFF !important; border: 3px solid #FFE4E6 !important; border-radius: 1.5rem !important; box-shadow: 0 4px 0 #FFE4E6 !important; }
+body.theme-cute .btn-blue { background: #E0F2FE !important; border-color: #BAE6FD !important; box-shadow: 0 4px 0 #BAE6FD !important; color: #0284C7 !important; border-radius: 1rem !important; }
+body.theme-cute .btn-blue:active { transform: translateY(4px) !important; box-shadow: none !important; }
+body.theme-cute .btn-green { background: #DCFCE7 !important; border-color: #BBF7D0 !important; box-shadow: 0 4px 0 #BBF7D0 !important; color: #166534 !important; border-radius: 1rem !important; }
+body.theme-cute .btn-green:active { transform: translateY(4px) !important; box-shadow: none !important; }
+body.theme-cute .inp { border: 2px solid #FFE4E6 !important; border-radius: 1rem !important; background-color: #FFF !important; }
+body.theme-cute .inp:focus { border-color: #FDA4AF !important; box-shadow: 0 0 0 3px rgba(253,164,175, 0.2) !important; }
+body.theme-cute .nav-active { background-color: #FFE4E6 !important; color: #E11D48 !important; border: 2px solid #FDA4AF !important; font-weight: 800 !important; }
+body.theme-cute .nav-active .icon-bg { background-color: #FDA4AF !important; color: white !important; }
+body.theme-cute .util-tab { background-color: #FFF !important; border: 3px solid #FFE4E6 !important; border-radius: 1rem !important; color: #E11D48 !important; font-weight: 800 !important; box-shadow: 0 4px 0 #FFE4E6 !important; margin-bottom: 4px; transition: all 0.1s; }
+body.theme-cute .util-tab:active { transform: translateY(4px) !important; box-shadow: none !important; }
+body.theme-cute .util-active { background-color: #FFE4E6 !important; border-color: #FDA4AF !important; box-shadow: 0 4px 0 #FDA4AF !important; color: #BE123C !important; }
+body.theme-cute .dashed-zone { border: 3px dashed #FDA4AF !important; background-color: #FFF5F7 !important; border-radius: 2rem !important; }
+body.theme-cute #modal > div { border: 4px solid #FDA4AF !important; border-radius: 1.5rem !important; }
+body.theme-cute #modal .border-b { background: linear-gradient(135deg, #FDA4AF, #F9A8D4) !important; border-color: #F43F5E !important; }
+body.theme-cute #modal .border-b h3, body.theme-cute #modal .border-b button { color: white !important; }
+body.theme-cute #modal .bg-indigo-100 { background: rgba(255,255,255,0.4) !important; color: white !important; }
+body.theme-cute #dashboard .bg-gradient-to-br { background: linear-gradient(135deg, #FDE68A, #FBCFE8) !important; border: 3px solid #FBCFE8 !important; box-shadow: 0 4px 0 #F9A8D4 !important; border-radius: 1.5rem !important; }
+body.theme-cute #dashboard .bg-gradient-to-br h3, body.theme-cute #dashboard .bg-gradient-to-br p { color: #BE123C !important; }
+body.theme-cute #dashboard .bg-gradient-to-br .bg-white\/20 { background: rgba(255,255,255,0.7) !important; border-color: white !important; color: #BE123C !important; }
+body.theme-cute .bg-slate-50 { background-color: #FFFDF7 !important; border-color: #FFE4E6 !important; }
+body.theme-cute #dashboard .bg-amber-50 { background-color: #FFF5F7 !important; border: 3px solid #FDA4AF !important; border-radius: 1.5rem !important; }
+body.theme-cute .border-indigo-100 { border-color: #FFE4E6 !important; background-color: #FFF5F7 !important; }
+body.theme-cute .text-indigo-600, body.theme-cute .text-indigo-500 { color: #E11D48 !important; }
+body.theme-cute .bg-indigo-600 { background-color: #FDA4AF !important; color: white !important;}
+body.theme-cute .hover\:bg-indigo-700:hover { background-color: #F43F5E !important; }
+body.theme-cute ::-webkit-scrollbar-thumb { background-color: #FBCFE8 !important; border-radius: 10px !important; }
+body.theme-cute ::-webkit-scrollbar-track { background-color: #FFF5F7 !important; }
+
+/* ══ 밤하늘 테마 (Dark/Black Theme) ══ */
+body.theme-dark { background-color: #0F172A !important; color: #F8FAFC !important; }
+body.theme-dark aside { background-color: #1E293B !important; border-right: 1px solid #334155 !important; }
+body.theme-dark .sidebar-hd { background: #0F172A !important; padding: 1.25rem !important; border-bottom: 1px solid #334155 !important; }
+body.theme-dark .sidebar-hd h1 { color: #F8FAFC !important; text-shadow: none !important; }
+body.theme-dark .sidebar-hd p { color: #94A3B8 !important; }
+body.theme-dark .sidebar-hd div.bg-indigo-50 { background-color: #334155 !important; border-color: #475569 !important; color: #94A3B8 !important; }
+body.theme-dark header { background-color: #1E293B !important; border-bottom: 1px solid #334155 !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5) !important; }
+body.theme-dark .card { background-color: #1E293B !important; border: 1px solid #334155 !important; border-radius: 1.5rem !important; box-shadow: none !important; }
+body.theme-dark .btn-blue, body.theme-dark .btn-green { background: #3B82F6 !important; border-color: #2563EB !important; box-shadow: none !important; color: white !important; }
+body.theme-dark .btn-blue:active, body.theme-dark .btn-green:active { transform: translateY(2px) !important; }
+body.theme-dark .inp { border: 1px solid #475569 !important; border-radius: 1rem !important; background-color: #0F172A !important; color: #F8FAFC !important; }
+body.theme-dark .inp:focus { border-color: #3B82F6 !important; box-shadow: 0 0 0 3px rgba(59,130,246, 0.2) !important; }
+body.theme-dark .nav-btn { color: #CBD5E1 !important; }
+body.theme-dark .nav-active { background-color: #334155 !important; color: #60A5FA !important; border: 1px solid #475569 !important; }
+body.theme-dark .nav-active .icon-bg { background-color: #475569 !important; color: white !important; }
+body.theme-dark .icon-bg { background-color: #0F172A !important; }
+body.theme-dark .util-tab { background-color: #1E293B !important; border: 1px solid #475569 !important; color: #CBD5E1 !important; box-shadow: none !important; }
+body.theme-dark .util-active { background-color: #334155 !important; border-color: #60A5FA !important; color: #60A5FA !important; }
+body.theme-dark .dashed-zone { border: 2px dashed #475569 !important; background-color: #1E293B !important; }
+body.theme-dark #modal > div { background-color: #1E293B !important; border: 1px solid #334155 !important; }
+body.theme-dark #modal .border-b { background: #0F172A !important; border-color: #334155 !important; }
+body.theme-dark #modal .border-b h3, body.theme-dark #modal .border-b button { color: #F8FAFC !important; }
+body.theme-dark #modal .bg-indigo-100 { background: #334155 !important; color: #F8FAFC !important; }
+body.theme-dark #dashboard .bg-gradient-to-br { background: #1E293B !important; border: 1px solid #334155 !important; box-shadow: none !important; }
+body.theme-dark #dashboard .bg-gradient-to-br h3, body.theme-dark #dashboard .bg-gradient-to-br p { color: #F8FAFC !important; }
+body.theme-dark #dashboard .bg-gradient-to-br .bg-white\/20 { background-color: #334155 !important; border-color: #475569 !important; color: #CBD5E1 !important; }
+body.theme-dark .bg-slate-50, body.theme-dark .bg-white { background-color: #1E293B !important; border-color: #334155 !important; }
+body.theme-dark .text-slate-800, body.theme-dark .text-slate-700 { color: #F8FAFC !important; }
+body.theme-dark .text-slate-600, body.theme-dark .text-slate-500 { color: #94A3B8 !important; }
+body.theme-dark .border-slate-200, body.theme-dark .border-slate-100 { border-color: #334155 !important; }
+body.theme-dark .bg-indigo-50, body.theme-dark .bg-emerald-50, body.theme-dark .bg-rose-50, body.theme-dark .bg-pink-50, body.theme-dark .bg-orange-50 { background-color: #334155 !important; border-color: #475569 !important; color: #F8FAFC !important;}
+body.theme-dark .text-indigo-600, body.theme-dark .text-indigo-500 { color: #60A5FA !important; }
+body.theme-dark .bg-indigo-600 { background-color: #3B82F6 !important; color: white !important;}
+body.theme-dark .hover\:bg-indigo-700:hover { background-color: #2563EB !important; }
+body.theme-dark #themeSelect { background-color: #0F172A !important; color: #F8FAFC !important; border-color: #475569 !important; }
+body.theme-dark ::-webkit-scrollbar-thumb { background-color: #475569 !important; border-radius: 10px !important; }
+body.theme-dark ::-webkit-scrollbar-track { background-color: #0F172A !important; }
 </style>
 </head>
-<body class="flex h-screen overflow-hidden text-gray-800">
+<body class="flex h-screen overflow-hidden text-gray-800 bg-slate-50">
 
 <!-- ═══ SIDEBAR ═══ -->
-<aside class="w-60 bg-white flex flex-col shrink-0" style="box-shadow:4px 0 20px rgba(0,0,0,.06);">
-  <div class="sidebar-hd">
-    <div class="flex items-center gap-2 relative z-10">
-      <span style="font-size:1.6rem;">🎒</span>
-      <div>
-        <h1 class="text-lg font-black text-white tracking-tight" style="text-shadow:0 2px 4px rgba(0,0,0,.15);">G.P.S Edu</h1>
-        <p class="text-yellow-100 font-semibold" style="font-size:.63rem;">교사 업무 지원 & 수업 아케이드</p>
-      </div>
+<aside class="w-64 bg-white flex flex-col shrink-0 border-r border-slate-200 shadow-sm z-20 relative">
+  <div class="sidebar-hd flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-xl shadow-sm border border-indigo-100">🎒</div>
+    <div>
+      <h1 class="text-[17px] font-black text-slate-800 tracking-tight leading-tight">G.P.S Edu</h1>
+      <p class="text-[10px] font-bold text-slate-500">Teacher Suite & Arcade</p>
     </div>
   </div>
-  <nav class="flex-1 overflow-y-auto px-3 pt-6 pb-3 space-y-1">
-    <button onclick="switchTab('dashboard')" data-target="dashboard" class="nav-btn nav-active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
-      <span class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center flex-shrink-0">🏠</span>대시보드
+  <nav class="flex-1 overflow-y-auto px-4 pt-6 pb-3 space-y-1 custom-scrollbar">
+    <button onclick="switchTab('dashboard')" data-target="dashboard" class="nav-btn nav-active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+      <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">🏠</span>대시보드
     </button>
-    <p class="text-xs font-black text-gray-400 uppercase tracking-wider pt-4 pb-1 px-1">✏️ Teacher Suite</p>
-    <button onclick="switchTab('evaluation')" data-target="evaluation" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
-      <span class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">📝</span>평가 AI 자동화
+    
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider pt-5 pb-1.5 px-1">✏️ Teacher Suite</p>
+    <button onclick="switchTab('evaluation')" data-target="evaluation" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+      <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">📝</span>평가 AI 자동화
     </button>
+    
     <div>
-      <button onclick="toggleMgmtMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
-        <span class="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">📋</span>
+      <button onclick="toggleMgmtMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+        <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">📋</span>
         <span class="flex-1 text-left">학급 경영 도구</span>
-        <span id="mgmtArrow" class="text-gray-400 text-xs">▶</span>
+        <span id="mgmtArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
       </button>
-      <div id="mgmtSubmenu" class="hidden pl-3 mt-1 space-y-0.5">
-        <button onclick="switchTab('management'); showMgmt('seat')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">🪑 자리 배치</button>
-        <button onclick="switchTab('management'); showMgmt('role')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">🎡 1인 1역</button>
-        <button onclick="switchTab('management'); showMgmt('group')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">👥 모둠 구성</button>
+      <div id="mgmtSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <button onclick="switchTab('management'); showMgmt('seat')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🪑 자리 배치</button>
+        <button onclick="switchTab('management'); showMgmt('role')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🎡 1인 1역</button>
+        <button onclick="switchTab('management'); showMgmt('group')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">👥 모둠 구성</button>
       </div>
     </div>
-    <p class="text-xs font-black text-gray-400 uppercase tracking-wider pt-4 pb-1 px-1">🕹️ Edu Arcade</p>
-    <button onclick="switchTab('economy')" data-target="economy" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
-      <span class="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">💰</span>학급 경제 놀이
+    
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider pt-5 pb-1.5 px-1">🕹️ Edu Arcade</p>
+    <button onclick="switchTab('economy')" data-target="economy" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+      <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">💰</span>학급 경제 놀이
     </button>
+    
     <div>
-      <button onclick="toggleGradeMenu()" data-target="minigame" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
-        <span class="w-7 h-7 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">🎮</span>
+      <button onclick="toggleGradeMenu()" data-target="minigame" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+        <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">🎮</span>
         <span class="flex-1 text-left">교과 미니게임</span>
-        <span id="gradeArrow" class="text-gray-400 text-xs">▶</span>
+        <span id="gradeArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
       </button>
-      <div id="gradeSubmenu" class="hidden pl-3 mt-1 space-y-0.5">
-        <button onclick="switchGrade('grade3')" data-grade="grade3" class="grade-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600">🟥 3학년</button>
-        <button onclick="switchGrade('grade4')" data-grade="grade4" class="grade-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600">🟧 4학년</button>
-        <button onclick="switchGrade('grade5')" data-grade="grade5" class="grade-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600">🟨 5학년</button>
-        <button onclick="switchGrade('grade6')" data-grade="grade6" class="grade-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600">🟩 6학년 ✅</button>
+      <div id="gradeSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <button onclick="switchGrade('grade3')" data-grade="grade3" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟥 3학년</button>
+        <button onclick="switchGrade('grade4')" data-grade="grade4" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟧 4학년</button>
+        <button onclick="switchGrade('grade5')" data-grade="grade5" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟨 5학년</button>
+        <button onclick="switchGrade('grade6')" data-grade="grade6" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟩 6학년 ✅</button>
       </div>
     </div>
-    <button onclick="switchTab('freegame')" data-target="freegame" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
-      <span class="w-7 h-7 rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0">🕹️</span>미니게임
+    
+    <button onclick="switchTab('freegame')" data-target="freegame" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+      <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">🕹️</span>미니게임
     </button>
+    
     <div>
-      <button onclick="toggleUtilityMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
-        <span class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">⏱️</span>
+      <button onclick="toggleUtilityMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+        <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">⏱️</span>
         <span class="flex-1 text-left">수업 유틸리티</span>
-        <span id="utilityArrow" class="text-gray-400 text-xs">▶</span>
+        <span id="utilityArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
       </button>
-      <div id="utilitySubmenu" class="hidden pl-3 mt-1 space-y-0.5">
-        <button onclick="switchTab('utility'); showUtil('timer')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">⏳ 타이머</button>
-        <button onclick="switchTab('utility'); showUtil('stopwatch')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">⏱️ 스톱워치</button>
-        <button onclick="switchTab('utility'); showUtil('noise')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">🔊 소음 신호등</button>
-        <button onclick="switchTab('utility'); showUtil('picker')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">🎯 랜덤 발표자</button>
+      <div id="utilitySubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <button onclick="switchTab('utility'); showUtil('timer')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⏳ 타이머</button>
+        <button onclick="switchTab('utility'); showUtil('stopwatch')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⏱️ 스톱워치</button>
+        <button onclick="switchTab('utility'); showUtil('noise')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🔊 소음 신호등</button>
+        <button onclick="switchTab('utility'); showUtil('picker')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🎯 랜덤 발표자</button>
       </div>
     </div>
-    <p class="text-xs font-black text-gray-400 uppercase tracking-wider pt-4 pb-1 px-1">🌐 External Links</p>
+    
+    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider pt-5 pb-1.5 px-1">🌐 External Links</p>
     <div class="space-y-1">
-      <a href="https://www.i-scream.co.kr" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-amber-50 hover:text-amber-800 transition">
-        <span>🍦</span><span>아이스크림 (i-Scream)</span>
+      <a href="https://www.i-scream.co.kr" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+        <span class="opacity-80">🍦</span><span>아이스크림 (i-Scream)</span>
       </a>
-      <a href="https://www.indischool.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-800 transition">
-        <span>🏫</span><span>인디스쿨 (Indischool)</span>
+      <a href="https://www.indischool.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+        <span class="opacity-80">🏫</span><span>인디스쿨 (Indischool)</span>
       </a>
-      <a href="https://www.youtube.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-rose-50 hover:text-rose-800 transition">
-        <span>▶️</span><span>유튜브 (YouTube)</span>
+      <a href="https://www.youtube.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+        <span class="opacity-80">▶️</span><span>유튜브 (YouTube)</span>
       </a>
-      <a href="https://www.naver.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-green-50 hover:text-green-800 transition">
-        <span>🟢</span><span>네이버 (Naver)</span>
+      <a href="https://www.naver.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+        <span class="opacity-80">🟢</span><span>네이버 (Naver)</span>
       </a>
     </div>
   </nav>
-  <div class="p-3 border-t-2 border-dashed border-yellow-200 bg-yellow-50/50">
-    <div class="flex items-center justify-between mb-2">
-      <span class="text-xs text-gray-500 font-bold">AI 연결</span>
-      <div class="flex items-center gap-1.5"><span id="apiDot" class="dot dot-amber"></span><span id="apiTxt" class="text-xs font-bold text-amber-600">미연결</span></div>
+  
+  <div class="p-4 border-t border-slate-200 bg-slate-50">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-[11px] text-slate-500 font-bold">AI 연결 상태</span>
+      <div class="flex items-center gap-1.5"><span id="apiDot" class="dot dot-amber"></span><span id="apiTxt" class="text-[11px] font-bold text-amber-600">미연결</span></div>
     </div>
-    <button onclick="openModal()" class="btn w-full py-2 text-xs font-black text-orange-700" style="background:linear-gradient(135deg,#FFF3CC,#FFE0A0);border:2px solid #FFD93D;box-shadow:0 3px 0 #F0C020;border-radius:.75rem;">⚙️ API Key · 데이터 관리</button>
+    <button onclick="openModal()" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold text-slate-700 bg-white border border-slate-300 shadow-sm hover:bg-slate-50 hover:shadow transition-all flex items-center justify-center gap-2">
+      <span>⚙️</span> API Key · 관리
+    </button>
   </div>
 </aside>
 
 <!-- ═══ MAIN ═══ -->
-<main class="flex-1 flex flex-col overflow-hidden">
-  <header class="h-14 bg-white flex items-center justify-between px-6 shrink-0" style="box-shadow:0 2px 0 #F0EDD8;">
-    <div class="flex items-center gap-2"><span id="pageIcon" class="text-xl">🏠</span><h2 id="pageTitle" class="text-lg font-black text-gray-800">대시보드</h2></div>
-    <button onclick="openModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-yellow-50 border-2 border-transparent hover:border-yellow-200 transition-all">😊 선생님</button>
+<main class="flex-1 flex flex-col overflow-hidden relative z-10">
+  <header class="h-14 bg-white flex items-center justify-between px-6 shrink-0 border-b border-slate-200 shadow-sm transition-colors">
+    <div class="flex items-center gap-2"><span id="pageIcon" class="text-xl drop-shadow-sm">🏠</span><h2 id="pageTitle" class="text-[17px] font-black text-slate-800">대시보드</h2></div>
+    <div class="flex items-center gap-3">
+      <select id="themeSelect" onchange="changeTheme(this.value)" class="text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-indigo-300 cursor-pointer transition-colors shadow-sm">
+        <option value="modern">🌱 기본 테마</option>
+        <option value="cute">🍭 솜사탕 테마</option>
+        <option value="dark">🌙 밤하늘 테마</option>
+      </select>
+      <button onclick="openModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200">😊 선생님</button>
+    </div>
   </header>
 
-  <div class="flex-1 overflow-y-auto p-6" style="background:#FFFDF0;">
+  <div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
 
     <!-- 대시보드 -->
-    <section id="dashboard" class="tab-content active space-y-5">
-      <div class="rounded-3xl p-5 text-white relative overflow-hidden" style="background:linear-gradient(135deg,#4D96FF 0%,#7B5CE7 55%,#C77DFF 100%);box-shadow:0 6px 0 #2B6ADF;">
-        <div class="relative z-10 flex items-start gap-3">
-          <span class="text-4xl flex-shrink-0">🌟</span>
-          <div>
-            <h3 class="text-lg font-black">G.P.S 에듀에 오신 것을 환영해요!</h3>
-            <p class="text-blue-100 text-xs mt-0.5 mb-3">모든 데이터는 선생님 컴퓨터에만 안전하게 보관돼요. 서버비용 0원!</p>
+    <section id="dashboard" class="tab-content active max-w-5xl mx-auto space-y-6">
+      <!-- 웰컴 배너 -->
+      <div class="rounded-2xl p-6 text-white relative overflow-hidden shadow-sm bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 border border-indigo-200">
+        <div class="relative z-10 flex items-start gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl shadow-sm border border-white/30">🌟</div>
+          <div class="flex-1">
+            <h3 class="text-xl font-black mb-1">G.P.S 에듀에 오신 것을 환영해요!</h3>
+            <p class="text-indigo-100 text-sm mb-4 font-medium">선생님의 교실 업무를 혁신적으로 줄여드립니다. 모든 데이터는 컴퓨터에만 안전하게 보관돼요.</p>
             <div class="flex flex-wrap gap-2">
-              <span class="badge" style="background:rgba(255,255,255,.22);color:#fff;">🔒 개인정보 보호</span>
-              <span class="badge" style="background:rgba(255,255,255,.22);color:#fff;">💡 서버비용 0원</span>
-              <span class="badge" style="background:rgba(255,255,255,.22);color:#fff;">⚡ 즉시 업데이트</span>
+              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">🔒 개인정보 완벽 보호</span>
+              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">💡 서버비용 0원</span>
+              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">⚡ 오프라인 동작</span>
             </div>
           </div>
         </div>
-        <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:rgba(255,255,255,.07);border-radius:50%;"></div>
+        <!-- Decoration -->
+        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+        <div class="absolute bottom-0 right-20 -mb-10 w-32 h-32 bg-purple-300 opacity-20 rounded-full blur-xl"></div>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="card p-5 flex flex-col justify-between" style="min-height:155px;">
-          <div class="flex items-center justify-between"><span class="text-sm font-black text-gray-700">📁 저장된 기록</span><span class="badge" style="background:#F0FFF4;color:#276749;">안전 보관중</span></div>
-          <p class="text-4xl font-black text-gray-800 text-center py-2" id="recCount">0</p>
-          <button onclick="exportData()" class="text-xs text-blue-600 font-black hover:underline text-left">💾 백업 파일 다운로드</button>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- 기록 카드 -->
+        <div class="card p-5 flex flex-col justify-between h-40">
+          <div class="flex items-center justify-between"><span class="text-sm font-bold text-slate-700">📁 평가 기록</span><span class="px-2.5 py-1 text-[10px] font-bold rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100">안전 보관중</span></div>
+          <p class="text-4xl font-black text-slate-800 text-center py-2" id="recCount">0</p>
+          <button onclick="exportData()" class="text-xs text-indigo-600 font-bold hover:text-indigo-700 hover:underline flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> 백업 파일 다운로드</button>
         </div>
-        <div class="card p-5 flex flex-col justify-between" style="min-height:155px;">
-          <span class="text-sm font-black text-gray-700">⚡ 빠른 실행</span>
-          <div class="grid grid-cols-2 gap-2 py-2">
-            <button onclick="switchTab('evaluation')" class="btn py-3 flex-col gap-1 text-xs" style="background:linear-gradient(135deg,#E8F4FD,#CCE5FF);color:#2563EB;border:2px solid #BFDBFE;box-shadow:0 3px 0 #BFDBFE;border-radius:1rem;"><span class="text-lg">📝</span>AI 평가</button>
-            <button onclick="switchTab('utility')" class="btn py-3 flex-col gap-1 text-xs" style="background:linear-gradient(135deg,#FFF5E6,#FFE4B5);color:#C05621;border:2px solid #FBD38D;box-shadow:0 3px 0 #FBD38D;border-radius:1rem;"><span class="text-lg">⏱️</span>타이머</button>
+        
+        <!-- 퀵 실행 카드 -->
+        <div class="card p-5 flex flex-col justify-between h-40">
+          <span class="text-sm font-bold text-slate-700">⚡ 빠른 실행</span>
+          <div class="grid grid-cols-2 gap-2 mt-auto">
+            <button onclick="switchTab('evaluation')" class="flex flex-col items-center justify-center gap-1 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-colors text-xs font-bold text-slate-600"><span class="text-lg mb-1">📝</span>AI 평가</button>
+            <button onclick="switchTab('utility')" class="flex flex-col items-center justify-center gap-1 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 transition-colors text-xs font-bold text-slate-600"><span class="text-lg mb-1">⏱️</span>타이머</button>
           </div>
-          <p class="text-xs text-gray-400 font-semibold">자주 쓰는 도구 바로가기</p>
         </div>
-        <div class="card p-5 flex flex-col justify-between" style="min-height:155px;">
-          <span class="text-sm font-black text-gray-700">🎫 무료 AI 토큰</span>
-          <div class="py-2 space-y-1.5 text-xs text-gray-600 font-semibold"><p>✅ 분당 15회 무료 호출</p><p>✅ 만료 기한 없음</p><p>✅ 학생 정보 외부 전송 없음</p></div>
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-black text-purple-600 hover:underline">🔑 무료 API Key 발급받기 ↗</a>
+        
+        <!-- API 토큰 안내 카드 -->
+        <div class="card p-5 flex flex-col justify-between h-40 bg-gradient-to-b from-white to-slate-50">
+          <span class="text-sm font-bold text-slate-700 flex items-center gap-1"><svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 무료 AI 토큰 안내</span>
+          <div class="space-y-1.5 text-[11px] text-slate-600 font-medium my-auto pl-1">
+            <p class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> 분당 15회 무료 호출</p>
+            <p class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> 만료 기한 없음</p>
+            <p class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> 정보 외부 유출 안심</p>
+          </div>
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline inline-block mt-1">🔑 무료 API 발급받기 →</a>
         </div>
       </div>
-      <div id="noKeyWarn" class="rounded-2xl p-4 flex items-start gap-3 hidden" style="background:#FFF8E1;border:2.5px solid #FFD93D;">
-        <span class="text-2xl flex-shrink-0">💡</span>
-        <div><p class="font-black text-sm text-amber-800">Gemini API 키가 아직 등록되지 않았어요!</p><p class="text-xs text-amber-700 mt-0.5">평가 자동화 기능을 쓰려면 API 키를 먼저 등록해주세요.</p><button onclick="openModal()" class="mt-2 text-xs font-black text-amber-700 underline">⚙️ 지금 설정하기 →</button></div>
+      
+      <div id="noKeyWarn" class="rounded-xl p-4 flex items-start gap-4 hidden bg-amber-50 border border-amber-200 shadow-sm">
+        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-xl shrink-0">💡</div>
+        <div>
+          <p class="font-bold text-sm text-amber-900 mb-1">Gemini API 키가 아직 등록되지 않았어요!</p>
+          <p class="text-xs text-amber-700 font-medium">평가 자동화 기능을 쓰려면 API 키를 먼저 등록해주세요. 선생님의 개인정보는 완벽히 보호됩니다.</p>
+          <button onclick="openModal()" class="mt-2 text-xs font-bold text-amber-800 bg-amber-200/50 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors">⚙️ 지금 설정하기</button>
+        </div>
       </div>
     </section>
 
     <!-- 평가 자동화 (초등 전 교과) -->
-    <section id="evaluation" class="tab-content space-y-4">
-      <div class="card p-6 space-y-5">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#E8F4FD,#CCE5FF);">📝</div>
-          <div><h3 class="text-lg font-black text-gray-800">AI 평가 문장 자동 생성기</h3><p class="text-xs text-gray-500 font-semibold mt-0.5">초등 전 영역(국어, 수학, 사회, 과학, 영어, 도덕, 음악, 미술, 체육, 실과, 창체, 행특) 맞춤형 문장을 생성해요.</p></div>
+    <!-- 평가 자동화 (초등 전 교과) -->
+    <section id="evaluation" class="tab-content max-w-5xl mx-auto space-y-6">
+      <div class="card p-6 md:p-8 space-y-6">
+        <div class="flex items-center gap-4 border-b border-slate-100 pb-4">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl shadow-sm">📝</div>
+          <div>
+            <h3 class="text-xl font-black text-slate-800">AI 평가 문장 자동 생성기</h3>
+            <p class="text-[13px] text-slate-500 font-medium mt-1">초등 전 영역(교과 수행평가, 행동특성 및 종합의견 등) 맞춤형 문장을 전문적으로 생성합니다.</p>
+          </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="space-y-3 p-4 rounded-2xl" style="background:#F9F7EC;border:2.5px solid #E8E4CC;">
-            <p class="text-sm font-black text-gray-700">✏️ 평가 정보 입력</p>
-            <div><label class="text-xs font-black text-gray-600 block mb-1">출석번호 <span class="font-semibold text-gray-400">(선택 · 비워도 됨)</span></label><input id="studentName" class="inp" placeholder="예) 1번, 2번… (나중에 구분할 때 편해요)"></div>
-            <div><label class="text-xs font-black text-gray-600 block mb-1">평가 영역 (초등 전 교과)</label>
-              <select id="evalSubject" class="inp">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-4 p-5 rounded-2xl bg-slate-50 border border-slate-200">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-indigo-500 font-black">✏️</span>
+              <p class="text-sm font-bold text-slate-700">평가 정보 입력</p>
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 block mb-1.5">출석번호 <span class="font-medium text-slate-400">(선택 사항)</span></label>
+              <input id="studentName" class="inp" placeholder="예) 1번, 2번… (나중에 구분할 때 편리해요)">
+            </div>
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 block mb-1.5">평가 영역 (초등 전 교과)</label>
+              <select id="evalSubject" class="inp cursor-pointer">
                 <option>행동특성 및 종합의견</option>
                 <option>국어과 수행평가</option>
                 <option>수학과 수행평가</option>
@@ -241,27 +359,41 @@ body{font-family:'Pretendard',sans-serif;background:#FFFDF0;}
                 <option>창의적 체험활동</option>
               </select>
             </div>
-            <div><label class="text-xs font-black text-gray-600 block mb-1">관찰 내용 / 키워드</label><textarea id="evalKeywords" class="inp" rows="5" placeholder="예) 모둠 활동에서 친구들과 역할을 잘 나눔. 수업 시간 집중력 높고 질문 많음."></textarea></div>
-            <button id="btnGenerate" onclick="generateEval()" class="btn btn-blue w-full text-sm">✨ AI 평가 문장 생성</button>
+            <div>
+              <label class="text-[11px] font-bold text-slate-600 block mb-1.5">관찰 내용 및 키워드</label>
+              <textarea id="evalKeywords" class="inp resize-none" rows="5" placeholder="예) 모둠 활동에서 친구들과 역할을 잘 나눔. 수업 시간 집중력 높고 질문 많음."></textarea>
+            </div>
+            <button id="btnGenerate" onclick="generateEval()" class="btn btn-blue w-full text-sm py-3 mt-2 shadow-md">✨ AI 평가 문장 생성</button>
           </div>
-          <div class="space-y-3 p-4 rounded-2xl flex flex-col" style="background:#F0FFF4;border:2.5px solid #9AE6B4;">
-            <div class="flex items-center justify-between"><p class="text-sm font-black text-gray-700">📄 생성된 평가 문장</p><button onclick="copyResult()" class="text-xs font-black text-green-700 hover:underline">📋 복사</button></div>
-            <textarea id="evalResult" class="inp flex-1" rows="9" placeholder="생성 버튼을 누르면 AI가 전문적인 평가 문장을 작성해드려요 ✨"></textarea>
-            <div id="evalErr" class="hidden rounded-xl p-3 text-xs font-semibold" style="background:#FFF5F5;border:2px solid #FEB2B2;color:#C53030;"></div>
-            <button onclick="saveRecord()" class="btn btn-green text-sm">💾 내 컴퓨터에 저장</button>
+          
+          <div class="space-y-4 p-5 rounded-2xl bg-emerald-50/50 border border-emerald-100 flex flex-col relative">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-emerald-500 font-black">📄</span>
+                <p class="text-sm font-bold text-slate-700">생성된 평가 문장</p>
+              </div>
+              <button onclick="copyResult()" class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 px-2.5 py-1 rounded-md transition-colors border border-emerald-200 bg-white shadow-sm">📋 복사</button>
+            </div>
+            <textarea id="evalResult" class="inp flex-1 resize-none bg-white border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500/20 shadow-inner text-[13px] leading-relaxed" rows="9" placeholder="생성 버튼을 누르면 AI가 전문적인 평가 문장을 작성해드려요 ✨"></textarea>
+            
+            <div id="evalErr" class="hidden rounded-xl p-3 text-[11px] font-bold bg-red-50 border border-red-200 text-red-600"></div>
+            <button onclick="saveRecord()" class="btn btn-green w-full text-sm py-3 mt-2 shadow-md">💾 내 컴퓨터에 저장</button>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 학급 경영 도구 -->
-    <section id="management" class="tab-content">
-      <div class="card p-6">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#F3E8FF,#DDD6FE);">📋</div>
-          <div><h3 class="text-lg font-black">학급 경영 도구</h3><p class="text-xs text-gray-500 font-semibold">자리 배치 · 1인 1역 룰렛 · 모둠 구성</p></div>
+    <section id="management" class="tab-content max-w-5xl mx-auto space-y-6">
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
+          <div class="w-14 h-14 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-3xl shadow-sm">📋</div>
+          <div>
+            <h3 class="text-xl font-black text-slate-800">학급 경영 도구</h3>
+            <p class="text-[13px] text-slate-500 font-medium mt-1">교실 운영에 필요한 필수 도구 모음입니다.</p>
+          </div>
         </div>
-        <div class="flex gap-2 mb-5 flex-wrap">
+        <div class="flex gap-2 mb-6 flex-wrap">
           <button class="util-tab util-active" data-mgmt="seat" onclick="showMgmt('seat')">🪑 자리 배치</button>
           <button class="util-tab" data-mgmt="role" onclick="showMgmt('role')">🎡 1인 1역</button>
           <button class="util-tab" data-mgmt="group" onclick="showMgmt('group')">👥 모둠 구성</button>
@@ -270,43 +402,77 @@ body{font-family:'Pretendard',sans-serif;background:#FFFDF0;}
       </div>
     </section>
 
-    <section id="economy" class="tab-content"><div class="card p-6"><div class="flex items-center gap-3 mb-4"><div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#F0FFF4,#C6F6D5);">💰</div><div><h3 class="text-lg font-black">학급 경제 놀이</h3><p class="text-xs text-gray-500 font-semibold">학급 화폐 · 은행 · 경매 · 부동산</p></div></div><div class="dashed-zone"><span class="text-5xl">🏦</span><p class="font-black text-lg">학급 은행 & 통장 관리 준비 중</p></div></div></section>
-
-    <!-- 교과 미니게임 -->
-    <section id="minigame" class="tab-content">
-      <div class="card p-6">
-        <div class="flex items-center gap-3 mb-4"><div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#FFF5F5,#FED7D7);">🎮</div><div><h3 class="text-lg font-black">교과 미니게임</h3><p id="gradeLabel" class="text-xs text-gray-500 font-semibold">왼쪽에서 학년을 선택해주세요</p></div></div>
-        <div id="gradeContent"><div class="dashed-zone"><span class="text-5xl">👈</span><p class="font-black text-lg">학년을 선택해주세요</p></div></div>
+    <section id="economy" class="tab-content max-w-5xl mx-auto space-y-6">
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-3xl shadow-sm">💰</div>
+          <div>
+            <h3 class="text-xl font-black text-slate-800">학급 경제 놀이</h3>
+            <p class="text-[13px] text-slate-500 font-medium mt-1">학급 화폐 · 은행 · 경매 · 부동산</p>
+          </div>
+        </div>
+        <div class="dashed-zone py-20">
+          <span class="text-5xl opacity-80 mb-2">🏦</span>
+          <p class="font-black text-lg text-slate-600">학급 은행 & 통장 관리 준비 중</p>
+        </div>
       </div>
     </section>
 
-    <section id="freegame" class="tab-content">
-      <div class="card p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#FDF2F8,#FBCFE8);">🕹️</div>
-            <div><h3 class="text-lg font-black">미니게임</h3><p class="text-xs text-gray-500 font-semibold">교과 무관 · 자유 플레이</p></div>
+    <!-- 교과 미니게임 -->
+    <section id="minigame" class="tab-content max-w-5xl mx-auto space-y-6">
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
+          <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center text-3xl shadow-sm">🎮</div>
+          <div>
+            <h3 class="text-xl font-black text-slate-800">교과 미니게임</h3>
+            <p id="gradeLabel" class="text-[13px] text-slate-500 font-medium mt-1">왼쪽에서 학년을 선택해주세요</p>
+          </div>
+        </div>
+        <div id="gradeContent">
+          <div class="dashed-zone py-20">
+            <span class="text-5xl opacity-80 mb-2">👈</span>
+            <p class="font-black text-lg text-slate-600">학년을 선택해주세요</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="freegame" class="tab-content max-w-5xl mx-auto space-y-6">
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-4">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-pink-50 border border-pink-100 flex items-center justify-center text-3xl shadow-sm">🕹️</div>
+            <div>
+              <h3 class="text-xl font-black text-slate-800">미니게임</h3>
+              <p class="text-[13px] text-slate-500 font-medium mt-1">교과 무관 · 자유 플레이</p>
+            </div>
           </div>
           <a id="bungeoLink" href="https://jammintamer.github.io/Bungeo-ppang/" target="_blank" class="btn btn-ghost text-xs">⛶ 새 탭에서 열기</a>
         </div>
-        <div class="flex gap-2 mb-4 flex-wrap">
+        <div class="flex gap-2 mb-6 flex-wrap">
           <button class="util-tab util-active" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
           <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아 온라인</button>
         </div>
         <div id="freeGameContent">
-          <div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:620px;">
+          <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style="height:620px;">
             <iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe>
           </div>
-          <p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>
+          <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>
         </div>
       </div>
     </section>
 
     <!-- 수업 유틸리티 -->
-    <section id="utility" class="tab-content">
-      <div class="card p-6">
-        <div class="flex items-center gap-3 mb-4"><div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#FFFAF0,#FEEBC8);">⏱️</div><div><h3 class="text-lg font-black">수업 진행 유틸리티</h3><p class="text-xs text-gray-500 font-semibold">타이머 · 스톱워치 · 소음 신호등 · 랜덤 발표자</p></div></div>
-        <div class="flex gap-2 mb-5 flex-wrap">
+    <section id="utility" class="tab-content max-w-5xl mx-auto space-y-6">
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
+          <div class="w-14 h-14 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center text-3xl shadow-sm">⏱️</div>
+          <div>
+            <h3 class="text-xl font-black text-slate-800">수업 진행 유틸리티</h3>
+            <p class="text-[13px] text-slate-500 font-medium mt-1">타이머 · 스톱워치 · 소음 신호등 · 랜덤 발표자</p>
+          </div>
+        </div>
+        <div class="flex gap-2 mb-6 flex-wrap">
           <button class="util-tab util-active" data-util="timer" onclick="showUtil('timer')">⏳ 타이머</button>
           <button class="util-tab" data-util="stopwatch" onclick="showUtil('stopwatch')">⏱️ 스톱워치</button>
           <button class="util-tab" data-util="noise" onclick="showUtil('noise')">🔊 소음 신호등</button>
@@ -320,31 +486,37 @@ body{font-family:'Pretendard',sans-serif;background:#FFFDF0;}
 
 <!-- 모달 -->
 <div id="modal" class="overlay">
-  <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden" style="border:3px solid #FFD93D;">
-    <div class="flex items-center justify-between p-5" style="background:linear-gradient(135deg,#FFD93D,#FF8C42);">
-      <div class="flex items-center gap-2"><span class="text-2xl">⚙️</span><h3 class="text-base font-black text-white">선생님 설정 & 데이터 관리</h3></div>
-      <button onclick="closeModal()" class="w-8 h-8 bg-white/30 hover:bg-white/50 rounded-full flex items-center justify-center text-white font-black text-xl">×</button>
+  <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200">
+    <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+      <div class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-lg">⚙️</span>
+        <h3 class="text-base font-black text-slate-800">선생님 설정 및 데이터 관리</h3>
+      </div>
+      <button onclick="closeModal()" class="w-8 h-8 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full flex items-center justify-center font-black text-xl transition-colors">×</button>
     </div>
     <div class="p-5 space-y-4">
-      <div class="p-4 rounded-2xl space-y-3" style="background:#F0F9FF;border:2px solid #BEE3F8;">
-        <p class="text-sm font-black text-blue-800">🔑 Gemini API Key (개인 토큰)</p>
+      <div class="p-4 rounded-2xl space-y-3 bg-slate-50 border border-slate-200">
+        <p class="text-sm font-bold text-slate-700 flex items-center gap-1.5"><span class="text-indigo-500">🔑</span> Gemini API Key (개인 토큰)</p>
         <input type="password" id="inputKey" class="inp font-mono text-xs" placeholder="AIzaSy... 형식의 API 키를 붙여넣으세요">
-        <p class="text-xs text-blue-700 font-semibold">• 키는 선생님 브라우저에만 저장돼요.<br>• <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-black">Google AI Studio</a>에서 무료 발급 가능 ↗</p>
-        <button onclick="testKey()" id="btnTest" class="btn btn-ghost w-full text-xs">🧪 API 키 연결 테스트</button>
-        <div id="testOut" class="hidden text-xs font-bold p-2 rounded-xl text-center"></div>
+        <p class="text-[11px] text-slate-500 font-medium leading-relaxed">• 키는 선생님 브라우저에만 안전하게 보관됩니다.<br>• <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-indigo-600 font-bold hover:underline">Google AI Studio</a>에서 무료 발급이 가능합니다 ↗</p>
+        <button onclick="testKey()" id="btnTest" class="w-full py-2.5 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-colors shadow-sm">🧪 API 연결 테스트</button>
+        <div id="testOut" class="hidden text-[11px] font-bold p-2.5 rounded-xl text-center border"></div>
       </div>
-      <div class="p-4 rounded-2xl space-y-3" style="background:#F0FFF4;border:2px solid #9AE6B4;">
-        <p class="text-sm font-black text-green-800">💾 학급 데이터 백업 & 복원</p>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="exportData()" class="btn btn-ghost text-xs">📥 백업 다운로드</button>
-          <label class="btn btn-ghost text-xs cursor-pointer">📤 백업 불러오기<input type="file" accept=".json" onchange="importData(event)" class="hidden"></label>
+      <div class="p-4 rounded-2xl space-y-3 bg-emerald-50/30 border border-emerald-100">
+        <p class="text-sm font-bold text-emerald-800 flex items-center gap-1.5"><span>💾</span> 학급 데이터 백업 & 복원</p>
+        <div class="grid grid-cols-2 gap-3">
+          <button onclick="exportData()" class="py-2 rounded-xl text-xs font-bold bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors shadow-sm">📥 백업 다운로드</button>
+          <label class="py-2 rounded-xl text-xs font-bold bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors shadow-sm text-center cursor-pointer flex items-center justify-center">📤 복원하기<input type="file" accept=".json" onchange="importData(event)" class="hidden"></label>
         </div>
       </div>
-      <div class="flex gap-2"><button onclick="closeModal()" class="btn btn-ghost flex-1 text-sm">닫기</button><button onclick="saveKey()" class="btn btn-blue flex-1 text-sm">💾 저장</button></div>
+      <div class="flex gap-3 pt-2">
+        <button onclick="closeModal()" class="w-1/3 py-2.5 rounded-xl text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">취소</button>
+        <button onclick="saveKey()" class="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-md">💾 저장 및 적용</button>
+      </div>
     </div>
   </div>
 </div>
-<div id="toast"></div>
+<div id="toast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg z-50"></div>
 
 <script>
 /* ══ 상수 ══ */
@@ -353,7 +525,22 @@ const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평�
 
 
 
-window.addEventListener('DOMContentLoaded',()=>{refreshStatus();refreshRecCount();showUtil('timer');initManagementSeat();showMgmt('seat');});
+window.addEventListener('DOMContentLoaded',()=>{refreshStatus();refreshRecCount();showUtil('timer');initManagementSeat();showMgmt('seat');loadTheme();});
+
+/* ══ 테마 관리 ══ */
+function changeTheme(theme) {
+  document.body.classList.remove('theme-cute', 'theme-dark');
+  if (theme !== 'modern') {
+    document.body.classList.add(`theme-${theme}`);
+  }
+  localStorage.setItem('gps_theme', theme);
+}
+function loadTheme() {
+  const saved = localStorage.getItem('gps_theme') || 'modern';
+  const sel = document.getElementById('themeSelect');
+  if(sel) sel.value = saved;
+  changeTheme(saved);
+}
 
 function switchTab(id){
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
@@ -879,7 +1066,7 @@ function showMgmt(type){
   const gc=document.getElementById('mgmtContent');if(!gc)return;
   if(type==='seat'){ renderSeatPanel(); }
   if(type==='role'){ rRender(); }
-  if(type==='group'){ gc.innerHTML=`<div class="dashed-zone"><span class="text-5xl">👥</span><p class="font-black text-lg">모둠 구성 준비 중</p></div>`; }
+  if(type==='group'){ gRender(); }
 }
 
 function showFreeGame(type){
@@ -898,200 +1085,623 @@ function showFreeGame(type){
 }
 
 /* ══════════════════════════════════════
-   🕵️ 마피아 온라인
+   🕵️ 다중 기기 마피아 (멀티플레이)
 ══════════════════════════════════════ */
-let mP=[], mPhase='setup', mRound=0, mRevIdx=0;
-let mRoles={mafia:2,doctor:1,police:1};
-let mNightKill=null, mNightSave=null, mNightInvest=null, mInvestResult=null;
-let mVotes={}, mEndReason=null;
-const ROLE_INFO={
-  '마피아':{bg:'#FEE2E2',bd:'#FCA5A5',tc:'#991B1B',icon:'🔪',desc:'팀원끼리 협력해 밤마다 시민 1명을 제거하세요. 마피아 수 ≥ 시민 수가 되면 승리!'},
-  '시민':{bg:'#EFF6FF',bd:'#BFDBFE',tc:'#1E40AF',icon:'😊',desc:'마피아를 모두 찾아내면 시민팀이 승리해요! 대화로 마피아를 추리해보세요.'},
-  '의사':{bg:'#F0FFF4',bd:'#86EFAC',tc:'#166534',icon:'🏥',desc:'밤마다 한 명을 지목해 살릴 수 있어요! 마피아의 표적을 예측해보세요.'},
-  '경찰':{bg:'#FFF7ED',bd:'#FCD34D',tc:'#92400E',icon:'🔍',desc:'밤마다 한 명이 마피아인지 조사할 수 있어요! 결과는 낮에 활용하세요.'},
-};
+let mafPeer = null;
+let mafConn = null; // Client connection to host
+let mafConns = [];  // Host connections to clients
+let mafIsHost = false;
+let mafRoomId = '';
+let mafMyName = '';
+let mafMyRole = '';
+let mafMyState = 'alive'; 
+let mafPlayers = []; // Host tracking: { id: peerId, name: string, role: string, alive: bool, conn: any }
+let mafPhase = 'menu'; // menu, hostLobby, clientLobby, hostGame, clientGame
+let mafSubPhase = ''; // night, day_announce, day_discuss, vote, final_vote, game_over
+let mafSettings = { mafia: 1, police: 1, doctor: 1, spy: 0, reporter: 0, hoodlum: 0, politician: 0 };
+let mafNightActions = {}; 
+let mafVotes = {}; 
+let mafFinalVotes = {}; 
+let mafSuspect = ''; 
+let mafKilled = '';
+let mafSaved = '';
+let mafThreatened = '';
+let mafReported = null;
+let mafTimerInt = null;
+let mafTimeLeft = 0;
 
-function renderMafia(){
-  const gc=document.getElementById('freeGameContent');if(!gc)return;
-  if(mPhase==='setup') gc.innerHTML=mSetupHTML();
-  else if(mPhase==='roleReveal') gc.innerHTML=mRevealHTML();
-  else if(mPhase==='night') gc.innerHTML=mNightHTML();
-  else if(mPhase==='day') gc.innerHTML=mDayHTML();
-  else if(mPhase==='vote') gc.innerHTML=mVoteHTML()||'';
-  else if(mPhase==='gameOver') gc.innerHTML=mGameOverHTML();
+function mafPreset(n) {
+  document.getElementById('sMafia').value = n >= 24 ? 4 : n >= 9 ? 2 : 1;
+  document.getElementById('sSpy').value = n >= 24 ? 1 : n >= 9 ? 1 : 0;
+  document.getElementById('sPolice').value = n >= 24 ? 2 : n >= 9 ? 1 : 1;
+  document.getElementById('sDoctor').value = n >= 24 ? 2 : n >= 9 ? 1 : 1;
+  document.getElementById('sReporter').value = n >= 24 ? 1 : n >= 9 ? 1 : 0;
+  document.getElementById('sHoodlum').value = n >= 24 ? 1 : 0;
+  document.getElementById('sPolitician').value = n >= 24 ? 1 : 0;
 }
 
-function mSetupHTML(){
-  return `<div class="space-y-4">
-    <div class="p-4 rounded-2xl" style="background:#1A1A2E;color:#fff;"><div class="flex items-center gap-3 mb-1"><span class="text-3xl">🕵️</span><div><h4 class="font-black text-lg">마피아 온라인</h4><p class="text-xs" style="color:#94A3B8;">한 기기로 즐기는 교실 마피아 게임</p></div></div></div>
-    <div class="card p-4 space-y-3">
-      <p class="text-sm font-black text-gray-700">👥 플레이어 이름 입력 (한 줄에 한 명)</p>
-      <textarea id="mNameList" class="inp" rows="8" placeholder="김민준&#10;이서연&#10;박지호&#10;최유나&#10;정하준&#10;..."></textarea>
-    </div>
-    <div class="card p-4 space-y-3">
-      <p class="text-sm font-black text-gray-700">🎭 역할 설정</p>
-      <div class="grid grid-cols-2 gap-3">
-        <div><label class="text-xs font-black text-red-700 block mb-1">🔪 마피아</label><select id="mMafia" class="inp">${[1,2,3,4].map(n=>`<option ${n===mRoles.mafia?'selected':''}>${n}</option>`).join('')}</select></div>
-        <div><label class="text-xs font-black text-green-700 block mb-1">🏥 의사 (0~1)</label><select id="mDoctor" class="inp">${[0,1].map(n=>`<option ${n===mRoles.doctor?'selected':''}>${n}</option>`).join('')}</select></div>
-        <div><label class="text-xs font-black text-yellow-700 block mb-1">🔍 경찰 (0~1)</label><select id="mPolice" class="inp">${[0,1].map(n=>`<option ${n===mRoles.police?'selected':''}>${n}</option>`).join('')}</select></div>
-        <div><label class="text-xs font-black text-blue-700 block mb-1">😊 시민 (자동)</label><div class="inp font-bold text-gray-600" style="background:#F9F7EC;">입력 후 계산</div></div>
+function renderMafia() {
+  const gc = document.getElementById('freeGameContent'); if(!gc) return;
+  let html = '';
+  if(mafPhase === 'menu') html = mafMenuHTML();
+  else if(mafPhase === 'hostLobby') html = mafHostLobbyHTML();
+  else if(mafPhase === 'clientLobby') html = mafClientLobbyHTML();
+  else if(mafPhase === 'hostGame') html = mafHostGameHTML();
+  else if(mafPhase === 'clientGame') html = mafClientGameHTML();
+
+  const helpModal = `
+  <div id="mafHelpModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden p-4" onclick="if(event.target===this)this.classList.add('hidden')">
+    <div class="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="p-4 bg-gray-100 border-b flex justify-between items-center">
+        <h3 class="font-black text-lg text-gray-800">📜 마피아 게임 룰 & 직업 안내</h3>
+        <button onclick="document.getElementById('mafHelpModal').classList.add('hidden')" class="text-xl font-bold text-gray-500 hover:text-red-500">×</button>
+      </div>
+      <div class="p-4 overflow-y-auto space-y-4 text-sm text-gray-700 text-left">
+        <h4 class="font-black text-blue-600 text-base">▶ 기본 룰</h4>
+        <p class="leading-relaxed font-semibold">낮에는 모두가 토론을 통해 마피아를 찾아 투표로 처형합니다. 밤에는 특수 직업들이 능력을 사용합니다. 마피아 팀의 수와 시민 팀의 수가 같아지면 마피아 승리, 마피아 팀을 모두 처형하면 시민 승리입니다!</p>
+        <hr>
+        <h4 class="font-black text-blue-600 text-base mt-2">▶ 직업 설명</h4>
+        <ul class="space-y-3">
+          <li><strong class="text-red-600 text-base">🔪 마피아:</strong> <span class="font-bold">마피아 팀.</span> 매일 밤 1명을 지목해 제거합니다. (마피아끼리는 정체를 압니다)</li>
+          <li><strong class="text-purple-600 text-base">🕵️ 스파이:</strong> <span class="font-bold">마피아 팀.</span> 매일 밤 1명의 정확한 직업을 알아냅니다. (마피아와 정체를 공유합니다)</li>
+          <li><strong class="text-green-600 text-base">🏥 의사:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 지목해 마피아의 공격으로부터 보호(치료)합니다.</li>
+          <li><strong class="text-yellow-600 text-base">🔍 경찰:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 조사하여 마피아인지 아닌지 알아냅니다. (스파이는 경찰에게 '마피아 아님'으로 나옵니다)</li>
+          <li><strong class="text-blue-600 text-base">📸 기자:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 취재하며, 다음날 아침 그 사람의 직업이 모두에게 공개됩니다! (게임 중 1회 취재 성공 시 능력 소멸)</li>
+          <li><strong class="text-orange-600 text-base">👊 건달:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 협박합니다. 협박당한 사람은 다음 날 낮 처형 투표에서 투표권이 박탈됩니다.</li>
+          <li><strong class="text-teal-600 text-base">👔 정치인:</strong> <span class="font-bold">시민 팀.</span> 투표로 처형되지 않습니다! 찬성표가 많아 처형될 위기에 처하면 직업이 공개되며 살아남습니다.</li>
+          <li><strong class="text-gray-600 text-base">😊 시민:</strong> <span class="font-bold">시민 팀.</span> 특별한 능력은 없지만, 직감과 추리력으로 마피아를 찾아내세요!</li>
+        </ul>
       </div>
     </div>
-    <button onclick="mStartGame()" class="btn btn-blue w-full text-base py-4">🚀 게임 시작!</button>
+  </div>`;
+  
+  gc.innerHTML = html + helpModal;
+}
+
+function loadPeer(callback) {
+  if (window.Peer) { callback(); return; }
+  const script = document.createElement('script');
+  script.src = 'https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js';
+  script.onload = callback;
+  document.head.appendChild(script);
+}
+
+// ---------------- UI GENERATORS ----------------
+function mafMenuHTML() {
+  return `<div class="space-y-4">
+    <div class="p-6 rounded-2xl text-center text-white shadow-lg" style="background:linear-gradient(135deg, #1A1A2E, #16213E);">
+      <span class="text-5xl drop-shadow-md">🕵️</span>
+      <h4 class="font-black text-2xl mt-3 text-white">마피아 멀티플레이</h4>
+      <p class="text-sm mt-1" style="color:#94A3B8;">여러 기기로 접속해 다 함께 즐겨요!</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <button onclick="mafStartHost()" class="btn py-10 text-xl shadow-md transition-transform hover:-translate-y-1" style="background:#FEE2E2;color:#991B1B;border:3px solid #FCA5A5;border-radius:1.5rem;">👑 방 만들기<br><span class="text-xs font-semibold">(선생님 전용 / 자동 사회자)</span></button>
+      <button onclick="mafPhase='clientLobby';renderMafia()" class="btn py-10 text-xl shadow-md transition-transform hover:-translate-y-1" style="background:#EFF6FF;color:#1E40AF;border:3px solid #BFDBFE;border-radius:1.5rem;">📱 방 접속하기<br><span class="text-xs font-semibold">(학생용)</span></button>
+    </div>
   </div>`;
 }
 
-function mStartGame(){
-  const names=(document.getElementById('mNameList')?.value||'').split('\\n').map(s=>s.trim()).filter(Boolean);
-  if(names.length<4){toast('⚠️ 최소 4명 이상 필요해요!');return;}
-  mRoles.mafia=parseInt(document.getElementById('mMafia')?.value||'2');
-  mRoles.doctor=parseInt(document.getElementById('mDoctor')?.value||'1');
-  mRoles.police=parseInt(document.getElementById('mPolice')?.value||'1');
-  const citizens=names.length-mRoles.mafia-mRoles.doctor-mRoles.police;
-  if(citizens<1){toast('⚠️ 시민이 1명 이상 필요해요!');return;}
-  const rolePool=[...Array(mRoles.mafia).fill('마피아'),...Array(mRoles.doctor).fill('의사'),...Array(mRoles.police).fill('경찰'),...Array(citizens).fill('시민')].sort(()=>Math.random()-.5);
-  mP=names.map((name,i)=>({name,role:rolePool[i],alive:true}));
-  mPhase='roleReveal';mRevIdx=0;mRound=0;
-  mNightKill=null;mNightSave=null;mNightInvest=null;mInvestResult=null;mVotes={};
+// ---------------- HOST LOGIC ----------------
+function mafStartHost() {
+  const btn = document.querySelector('.btn'); if(btn) btn.innerHTML = '<div class="spin mx-auto"></div>';
+  loadPeer(() => {
+    mafRoomId = Math.floor(1000 + Math.random() * 9000).toString();
+    mafPeer = new Peer('gps-maf-' + mafRoomId);
+    
+    mafPeer.on('open', (id) => {
+      mafIsHost = true; mafPhase = 'hostLobby'; mafPlayers = []; mafConns = []; renderMafia();
+    });
+    
+    mafPeer.on('connection', (conn) => {
+      conn.on('data', (data) => mafHandleClientData(conn, data));
+      conn.on('close', () => {
+        mafPlayers = mafPlayers.filter(p => p.id !== conn.peer);
+        mafConns = mafConns.filter(c => c.peer !== conn.peer);
+        if(mafPhase === 'hostLobby') mafBroadcastLobby();
+        else if(mafPhase === 'hostGame') renderMafia();
+      });
+      mafConns.push(conn);
+    });
+    mafPeer.on('error', (err) => { toast('통신 에러: ' + err.type); renderMafia(); });
+  });
+}
+
+function mafBroadcastLobby() {
+  if(mafPhase !== 'hostLobby') return;
+  const list = mafPlayers.map(p => p.name);
+  mafConns.forEach(c => c.send({ type: 'lobbyUpdate', players: list }));
   renderMafia();
 }
 
-function mRevealHTML(){
-  const p=mP[mRevIdx];
-  return `<div class="space-y-4">
-    <div class="p-4 rounded-2xl text-center" style="background:#1A1A2E;color:#fff;"><p class="text-sm" style="color:#94A3B8;">역할 확인 순서 ${mRevIdx+1}/${mP.length}</p><p class="text-2xl font-black mt-1" style="color:#FFD93D;">${p.name}</p></div>
-    <div id="mRoleCard" class="card p-8 text-center" style="min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;">
-      <p class="font-black text-gray-600">📱 ${p.name}님, 혼자 화면을 보세요</p>
-      <button onclick="mRevealRole()" class="btn btn-blue text-base px-8 py-4">👆 탭하여 역할 확인</button>
-    </div>
-    <p class="text-xs text-gray-400 text-center font-semibold">다른 사람들은 화면을 보지 않도록 해주세요 🙈</p>
-  </div>`;
-}
+function mafBroadcast(type, payload) { mafConns.forEach(c => c.send({ type, ...payload })); }
 
-function mRevealRole(){
-  const p=mP[mRevIdx],ri=ROLE_INFO[p.role];
-  const card=document.getElementById('mRoleCard');if(!card)return;
-  card.innerHTML=`
-    <div style="background:${ri.bg};border:3px solid ${ri.bd};border-radius:1.5rem;padding:2rem;width:100%;text-align:center;">
-      <div style="font-size:4rem;">${ri.icon}</div>
-      <p style="font-size:1.5rem;font-weight:900;color:${ri.tc};">${p.role}</p>
-      <p style="font-size:.8rem;color:${ri.tc};margin-top:.5rem;font-weight:600;">${ri.desc}</p>
-      ${p.role==='마피아'?`<div style="margin-top:1rem;padding:.75rem;background:rgba(0,0,0,.08);border-radius:.75rem;"><p style="font-size:.75rem;font-weight:800;color:${ri.tc};">🔪 마피아 동료:</p><p style="font-weight:900;font-size:1rem;color:${ri.tc};">${mP.filter(x=>x.role==='마피아'&&x.name!==p.name).map(x=>x.name).join(', ')||'없음(혼자!)'}</p></div>`:``}
-    </div>
-    <button onclick="mNextReveal()" class="btn btn-green text-base px-8 py-3">✅ 확인했어요</button>`;
-}
-
-function mNextReveal(){mRevIdx++;if(mRevIdx>=mP.length){mPhase='night';mRound=1;mNightKill=null;mNightSave=null;mNightInvest=null;mInvestResult=null;}renderMafia();}
-
-function mNightHTML(){
-  const alive=mP.filter(p=>p.alive);
-  const hasMafia=alive.some(p=>p.role==='마피아');
-  const hasDoc=alive.some(p=>p.role==='의사');
-  const hasPol=alive.some(p=>p.role==='경찰');
-  return `<div class="space-y-4">
-    <div class="p-5 rounded-2xl text-center" style="background:#0F172A;color:#fff;"><div style="font-size:2.5rem;">🌙</div><h4 class="text-xl font-black mt-1">밤이 되었습니다</h4><p style="color:#64748B;font-size:.85rem;">라운드 ${mRound} · 생존자 ${alive.length}명</p></div>
-    <div class="card p-4 space-y-3">
-      ${hasMafia?`<div class="p-3 rounded-xl" style="background:#FEE2E2;border:2px solid #FCA5A5;">
-        <p class="text-sm font-black text-red-800 mb-2">🔪 마피아 행동 (마피아끼리 조용히 논의 후 선택)</p>
-        <select id="mKillTgt" class="inp"><option value="">-- 제거할 대상 --</option>${alive.filter(p=>p.role!=='마피아').map(p=>`<option>${p.name}</option>`).join('')}</select>
-        <button onclick="mConfirmKill()" class="btn btn-ghost text-xs mt-2 w-full">🔪 확정${mNightKill?' ✅ '+mNightKill:''}</button></div>`:``}
-      ${hasDoc?`<div class="p-3 rounded-xl" style="background:#F0FFF4;border:2px solid #86EFAC;">
-        <p class="text-sm font-black text-green-800 mb-2">🏥 의사 행동</p>
-        <select id="mSaveTgt" class="inp"><option value="">-- 살릴 대상 --</option>${alive.map(p=>`<option>${p.name}</option>`).join('')}</select>
-        <button onclick="mConfirmSave()" class="btn btn-ghost text-xs mt-2 w-full">🏥 확정${mNightSave?' ✅ '+mNightSave:''}</button></div>`:``}
-      ${hasPol?`<div class="p-3 rounded-xl" style="background:#FFF7ED;border:2px solid #FCD34D;">
-        <p class="text-sm font-black text-yellow-800 mb-2">🔍 경찰 행동</p>
-        <select id="mInvTgt" class="inp"><option value="">-- 조사할 대상 --</option>${alive.filter(p=>p.role!=='경찰').map(p=>`<option>${p.name}</option>`).join('')}</select>
-        <button onclick="mConfirmInvest()" class="btn btn-ghost text-xs mt-2 w-full">🔍 확정${mNightInvest?' ✅ '+mNightInvest:''}</button></div>`:``}
-    </div>
-    <button onclick="mProcessNight()" class="btn btn-blue w-full text-base py-4">☀️ 아침이 됩니다</button>
-  </div>`;
-}
-
-function mConfirmKill(){const v=document.getElementById('mKillTgt')?.value;if(!v){toast('⚠️ 대상을 선택하세요!');return;}mNightKill=v;toast('🔪 마피아 표적: '+v);}
-function mConfirmSave(){const v=document.getElementById('mSaveTgt')?.value;if(!v){toast('⚠️ 대상을 선택하세요!');return;}mNightSave=v;toast('🏥 의사 보호: '+v);}
-function mConfirmInvest(){const v=document.getElementById('mInvTgt')?.value;if(!v){toast('⚠️ 대상을 선택하세요!');return;}mNightInvest=v;const t=mP.find(p=>p.name===v);mInvestResult=t?t.role:'???';toast('🔍 조사 완료!');}
-
-function mProcessNight(){
-  let nightResult='none';
-  if(mNightKill){const t=mP.find(p=>p.name===mNightKill);if(t){if(mNightSave===mNightKill){nightResult='saved';}else{t.alive=false;nightResult='killed';}}}
-  mPhase='day';renderMafia();
-  mEndReason=nightResult;
-}
-
-function mDayHTML(){
-  const alive=mP.filter(p=>p.alive);
-  const killed=mEndReason==='killed'?mP.find(p=>p.name===mNightKill&&!p.alive):null;
-  const polStr=mInvestResult?`🔍 경찰 조사: <strong>${mNightInvest}</strong> → ${mInvestResult}`:'';
-  return `<div class="space-y-4">
-    <div class="p-4 rounded-2xl text-center" style="background:linear-gradient(135deg,#FFF7ED,#FEEBC8);border:2px solid #FCD34D;"><div style="font-size:2rem;">☀️</div><h4 class="font-black text-xl text-amber-900">라운드 ${mRound} 아침</h4></div>
-    <div class="card p-4 space-y-3">
-      ${killed?`<div class="p-4 rounded-xl text-center" style="background:#FEE2E2;border:2px solid #FCA5A5;"><p class="font-black text-red-800 text-lg">😢 ${killed.name}님이 제거되었습니다!</p><p class="text-xs text-red-600 mt-1">역할: ${killed.role}</p></div>`:
-        mEndReason==='saved'?`<div class="p-4 rounded-xl text-center" style="background:#F0FFF4;border:2px solid #86EFAC;"><p class="font-black text-green-800 text-lg">🏥 의사가 ${mNightSave}님을 구했어요!</p></div>`:
-        `<div class="p-4 rounded-xl text-center" style="background:#EFF6FF;border:2px solid #BFDBFE;"><p class="font-black text-blue-800 text-lg">😌 밤에 아무 일도 없었어요</p></div>`}
-      ${polStr?`<div class="p-3 rounded-xl" style="background:#FFF7ED;border:2px solid #FCD34D;"><p class="text-sm text-yellow-800 font-semibold">${polStr}</p></div>`:``}
-      <div><p class="text-sm font-black text-gray-700 mb-2">👥 생존자 (${alive.length}명)</p>
-        <div class="flex flex-wrap gap-2">${alive.map(p=>`<span class="badge" style="background:#EFF6FF;color:#1E40AF;font-size:.8rem;padding:.3rem .8rem;">${p.name}</span>`).join('')}</div></div>
-    </div>
-    <button onclick="mGoVote()" class="btn btn-blue w-full text-base py-4">🗳️ 투표하러 가기</button>
-  </div>`;
-}
-
-function mGoVote(){
-  const alive=mP.filter(p=>p.alive);
-  const am=alive.filter(p=>p.role==='마피아').length;
-  const ac=alive.filter(p=>p.role!=='마피아').length;
-  if(am===0){mPhase='gameOver';mEndReason='citizenWin';renderMafia();return;}
-  if(am>=ac){mPhase='gameOver';mEndReason='mafiaWin';renderMafia();return;}
-  mVotes={};mPhase='vote';renderMafia();
-}
-
-function mVoteHTML(){
-  const alive=mP.filter(p=>p.alive);
-  const pending=alive.filter(p=>!mVotes.hasOwnProperty(p.name));
-  if(!pending.length){
-    const cnt={};
-    Object.values(mVotes).filter(v=>v!=='skip').forEach(v=>{cnt[v]=(cnt[v]||0)+1;});
-    const maxV=cnt&&Object.keys(cnt).length?Math.max(...Object.values(cnt)):0;
-    const top=Object.keys(cnt).filter(k=>cnt[k]===maxV);
-    const elim=top.length===1?top[0]:null;
-    if(elim){const ep=mP.find(p=>p.name===elim);if(ep)ep.alive=false;}
-    const resultMsg=elim?`📢 ${elim}님이 투표로 제거됐습니다! (역할: ${mP.find(p=>p.name===elim)?.role})`:'📢 동수! 아무도 제거되지 않았습니다.';
-    toast(resultMsg);
-    mRound++;mNightKill=null;mNightSave=null;mNightInvest=null;mInvestResult=null;
-    const newAlive=mP.filter(p=>p.alive);
-    const nm=newAlive.filter(p=>p.role==='마피아').length;
-    const nc=newAlive.filter(p=>p.role!=='마피아').length;
-    if(nm===0){mPhase='gameOver';mEndReason='citizenWin';renderMafia();return '';
-    }else if(nm>=nc){mPhase='gameOver';mEndReason='mafiaWin';renderMafia();return '';}
-    mPhase='night';renderMafia();return '';
+function mafHandleClientData(conn, data) {
+  if (data.type === 'join') {
+    if (mafPlayers.some(p => p.name === data.name)) {
+      conn.send({ type: 'error', msg: '이미 존재하는 이름입니다.' }); return;
+    }
+    mafPlayers.push({ id: conn.peer, name: data.name, role: '', alive: true, conn: conn });
+    conn.send({ type: 'joinSuccess' });
+    mafBroadcastLobby();
   }
-  const nv=pending[0];
+  if (data.type === 'nightAction') { 
+    mafNightActions[conn.peer] = data.target; 
+    const specCnt = mafPlayers.filter(p => p.alive && p.role !== '시민' && p.role !== '정치인').length;
+    if (Object.keys(mafNightActions).length >= specCnt) mafTimeLeft = 0;
+    renderMafia(); 
+  }
+  if (data.type === 'voteAction') { 
+    mafVotes[conn.peer] = data.target; 
+    const aliveCnt = mafPlayers.filter(p => p.alive && p.name !== mafThreatened).length;
+    if (Object.keys(mafVotes).length >= aliveCnt) mafTimeLeft = 0;
+    renderMafia(); 
+  }
+  if (data.type === 'finalVoteAction') { 
+    mafFinalVotes[conn.peer] = data.vote; 
+    const aliveCnt = mafPlayers.filter(p => p.alive && p.name !== mafSuspect && p.name !== mafThreatened).length;
+    if (Object.keys(mafFinalVotes).length >= aliveCnt) mafTimeLeft = 0;
+    renderMafia(); 
+  }
+}
+
+function mafHostLobbyHTML() {
   return `<div class="space-y-4">
-    <div class="p-4 rounded-2xl text-center" style="background:#1A1A2E;color:#fff;"><h4 class="text-xl font-black">🗳️ 투표 시간!</h4><p style="color:#94A3B8;font-size:.85rem;">마피아라고 의심되는 사람에게 투표하세요</p></div>
+    <div class="p-6 rounded-2xl text-center text-white shadow-lg relative" style="background:#1A1A2E;">
+      <button onclick="document.getElementById('mafHelpModal').classList.remove('hidden')" class="absolute top-4 right-4 btn btn-ghost text-xs bg-gray-200/20 hover:bg-gray-200/40 rounded-full">❓ 도움말</button>
+      <p class="text-sm font-bold text-blue-300">학생들에게 아래 접속 코드를 알려주세요</p>
+      <h4 class="font-black text-6xl mt-2 tracking-widest text-yellow-400 drop-shadow-md">${mafRoomId}</h4>
+    </div>
+    <div class="card p-4 bg-gray-50 border border-gray-200">
+      <h3 class="font-black text-gray-700 mb-2">접속한 학생 (${mafPlayers.length}명)</h3>
+      <div class="flex flex-wrap gap-2 min-h-[50px]">
+        ${mafPlayers.map(p => `<span class="badge bg-blue-100 text-blue-800 px-3 py-1 text-sm font-bold shadow-sm">${p.name}</span>`).join('')}
+        ${mafPlayers.length === 0 ? '<span class="text-gray-400 text-sm font-semibold m-auto">학생들이 접속하기를 기다리는 중입니다...</span>' : ''}
+      </div>
+    </div>
     <div class="card p-4 space-y-3">
-      <p class="font-black text-sm text-gray-700">현재 투표자: <span style="color:#4D96FF;">${nv.name}</span>님 (${alive.length-pending.length+1}/${alive.length})</p>
-      <p class="text-xs text-gray-400 font-semibold">완료: ${Object.keys(mVotes).join(', ')||'없음'}</p>
-      <div class="grid grid-cols-2 gap-2 mt-2">
-        ${alive.filter(p=>p.name!==nv.name).map(p=>`<button onclick="mCastVote('${nv.name}','${p.name}')" class="btn py-3 text-sm font-black" style="background:#F3F0E0;border:2.5px solid #E8E4CC;border-radius:1rem;">${p.name}</button>`).join('')}
-        <button onclick="mCastVote('${nv.name}','skip')" class="btn py-3 text-sm font-black" style="background:#EFF6FF;border:2.5px solid #BFDBFE;border-radius:1rem;">⏭️ 기권</button>
+      <div class="flex justify-between items-center mb-1">
+        <p class="text-sm font-black text-gray-700">🎭 직업 수 설정</p>
+        <div class="flex gap-1">
+          <button onclick="mafPreset(5)" class="btn btn-ghost px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300">5~6인</button>
+          <button onclick="mafPreset(9)" class="btn btn-ghost px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300">9~10인</button>
+          <button onclick="mafPreset(24)" class="btn btn-ghost px-2 py-1 text-xs bg-gray-200 hover:bg-gray-300">24인</button>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div><label class="text-xs font-black text-red-700 block mb-1">🔪 마피아</label><input type="number" id="sMafia" value="${mafSettings.mafia}" min="1" class="inp w-full text-center font-bold px-1"></div>
+        <div><label class="text-xs font-black text-purple-700 block mb-1">🕵️ 스파이</label><input type="number" id="sSpy" value="${mafSettings.spy}" min="0" class="inp w-full text-center font-bold px-1"></div>
+        <div><label class="text-xs font-black text-yellow-700 block mb-1">🔍 경찰</label><input type="number" id="sPolice" value="${mafSettings.police}" min="0" class="inp w-full text-center font-bold px-1"></div>
+        <div><label class="text-xs font-black text-green-700 block mb-1">🏥 의사</label><input type="number" id="sDoctor" value="${mafSettings.doctor}" min="0" class="inp w-full text-center font-bold px-1"></div>
+        <div><label class="text-xs font-black text-blue-700 block mb-1">📸 기자</label><input type="number" id="sReporter" value="${mafSettings.reporter}" min="0" class="inp w-full text-center font-bold px-1"></div>
+        <div><label class="text-xs font-black text-orange-700 block mb-1">👊 건달</label><input type="number" id="sHoodlum" value="${mafSettings.hoodlum}" min="0" class="inp w-full text-center font-bold px-1"></div>
+        <div><label class="text-xs font-black text-teal-700 block mb-1">👔 정치인</label><input type="number" id="sPolitician" value="${mafSettings.politician}" min="0" class="inp w-full text-center font-bold px-1"></div>
+      </div>
+      <p class="text-xs text-gray-400 font-bold mt-1 text-right">* 나머지 인원은 자동으로 '시민'이 됩니다.</p>
+    </div>
+    <button onclick="mafHostStartGame()" class="btn btn-blue w-full py-4 text-lg shadow-md">🚀 게임 시작</button>
+  </div>`;
+}
+
+function mafHostStartGame() {
+  if(mafPlayers.length < 4) { toast('최소 4명이 필요합니다.'); return; }
+  mafSettings.mafia = parseInt(document.getElementById('sMafia').value) || 1;
+  mafSettings.spy = parseInt(document.getElementById('sSpy').value) || 0;
+  mafSettings.police = parseInt(document.getElementById('sPolice').value) || 0;
+  mafSettings.doctor = parseInt(document.getElementById('sDoctor').value) || 0;
+  mafSettings.reporter = parseInt(document.getElementById('sReporter').value) || 0;
+  mafSettings.hoodlum = parseInt(document.getElementById('sHoodlum').value) || 0;
+  mafSettings.politician = parseInt(document.getElementById('sPolitician').value) || 0;
+  const cits = mafPlayers.length - (mafSettings.mafia + mafSettings.spy + mafSettings.police + mafSettings.doctor + mafSettings.reporter + mafSettings.hoodlum + mafSettings.politician);
+  if (cits < 0) { toast('설정된 직업 수가 전체 인원보다 많습니다!'); return; }
+  
+  let pool = [];
+  for(let i=0; i<mafSettings.mafia; i++) pool.push('마피아');
+  for(let i=0; i<mafSettings.spy; i++) pool.push('스파이');
+  for(let i=0; i<mafSettings.police; i++) pool.push('경찰');
+  for(let i=0; i<mafSettings.doctor; i++) pool.push('의사');
+  for(let i=0; i<mafSettings.reporter; i++) pool.push('기자');
+  for(let i=0; i<mafSettings.hoodlum; i++) pool.push('건달');
+  for(let i=0; i<mafSettings.politician; i++) pool.push('정치인');
+  for(let i=0; i<cits; i++) pool.push('시민');
+  pool.sort(() => Math.random() - 0.5);
+  
+  const isMafiaTeam = r => r === '마피아' || r === '스파이';
+  mafPlayers.forEach((p, i) => {
+    p.role = pool[i]; p.alive = true; p.usedReporter = false;
+    const mComrades = isMafiaTeam(p.role) ? mafPlayers.filter((m, mi) => isMafiaTeam(pool[mi]) && m.id !== p.id).map(m => m.name) : [];
+    p.conn.send({ type: 'gameStart', role: p.role, comrades: mComrades });
+  });
+  
+  mafPhase = 'hostGame';
+  mafHostNextPhase('night');
+}
+
+let mafShowRoles = false;
+function mafHostNextPhase(phase) {
+  mafSubPhase = phase;
+  if (mafTimerInt) clearInterval(mafTimerInt);
+  
+  let duration = 0;
+  if(phase === 'night') duration = 20;
+  else if(phase === 'day_announce') duration = 180; // 3 minutes
+  else if(phase === 'vote') duration = 30;
+  else if(phase === 'final_vote') duration = 30; // Changed to 30s
+  
+  if (duration > 0) {
+    mafTimeLeft = duration;
+    mafTimerInt = setInterval(() => {
+      mafTimeLeft--;
+      mafBroadcast('timer', { time: mafTimeLeft });
+      if (mafTimeLeft <= 0) {
+        clearInterval(mafTimerInt);
+        if (mafSubPhase === 'night') mafHostNextPhase('day_announce');
+        else if (mafSubPhase === 'day_announce') mafHostNextPhase('vote');
+        else if (mafSubPhase === 'vote') mafHostNextPhase('vote_result');
+        else if (mafSubPhase === 'final_vote') mafHostNextPhase('final_result');
+        renderMafia();
+      } else {
+        const el = document.getElementById('mafHostTimerDisplay');
+        if (el) {
+          el.className = "text-5xl font-black font-mono text-red-500 mb-6 drop-shadow-md animate-pulse";
+          el.innerHTML = `⏳ ${Math.floor(mafTimeLeft/60)}:${(mafTimeLeft%60).toString().padStart(2,'0')}`;
+        }
+      }
+    }, 1000);
+  } else {
+    mafTimeLeft = 0;
+    mafBroadcast('timer', { time: 0 });
+  }
+
+  const aliveList = mafPlayers.filter(p=>p.alive).map(p=>p.name);
+  if(phase === 'night') {
+    mafThreatened = '';
+    mafNightActions = {};
+    mafBroadcast('phase', { phase: 'night', aliveList });
+  } else if(phase === 'day_announce') {
+    mafKilled = ''; mafSaved = '';
+    let mVotes = {};
+    mafPlayers.filter(p => p.alive && p.role === '마피아').forEach(p => { let t = mafNightActions[p.id]; if(t) mVotes[t] = (mVotes[t] || 0) + 1; });
+    let maxM = 0; let mTarget = ''; for(let k in mVotes) { if(mVotes[k] > maxM) { maxM = mVotes[k]; mTarget = k; } }
+    
+    let dVotes = {};
+    mafPlayers.filter(p => p.alive && p.role === '의사').forEach(p => { let t = mafNightActions[p.id]; if(t) dVotes[t] = (dVotes[t] || 0) + 1; });
+    let maxD = 0; let dTarget = ''; for(let k in dVotes) { if(dVotes[k] > maxD) { maxD = dVotes[k]; dTarget = k; } }
+    
+    mafPlayers.filter(p => p.alive && p.role === '경찰').forEach(p => {
+      let t = mafNightActions[p.id];
+      if(t) { let tgt = mafPlayers.find(x => x.name === t); p.conn.send({ type: 'investResult', name: t, isMafia: tgt && tgt.role === '마피아' }); }
+    });
+
+    mafPlayers.filter(p => p.alive && p.role === '스파이').forEach(p => {
+      let t = mafNightActions[p.id];
+      if(t) { let tgt = mafPlayers.find(x => x.name === t); p.conn.send({ type: 'investResult', name: t, role: tgt ? tgt.role : '알 수 없음' }); }
+    });
+
+    let reportedObj = null;
+    mafPlayers.filter(p => p.alive && p.role === '기자' && !p.usedReporter).forEach(p => {
+      let t = mafNightActions[p.id];
+      if(t) { 
+        let tgt = mafPlayers.find(x => x.name === t); 
+        if(tgt) { reportedObj = { name: tgt.name, role: tgt.role }; p.usedReporter = true; }
+      }
+    });
+    mafReported = reportedObj;
+
+    let hTarget = '';
+    mafPlayers.filter(p => p.alive && p.role === '건달').forEach(p => { let t = mafNightActions[p.id]; if(t) hTarget = t; });
+    mafThreatened = hTarget;
+    
+    if(mTarget && mTarget !== dTarget) { mafKilled = mTarget; let tgt = mafPlayers.find(x => x.name === mTarget); if(tgt) tgt.alive = false; }
+    else if (mTarget && mTarget === dTarget) { mafSaved = mTarget; }
+    
+    const newAliveList = mafPlayers.filter(p=>p.alive).map(p=>p.name);
+    mafBroadcast('phase', { phase: 'day_announce', killed: mafKilled, saved: mafSaved, aliveList: newAliveList, reported: mafReported, threatened: mafThreatened });
+    if(mafCheckWin()) return;
+  } else if (phase === 'vote') {
+    mafVotes = {}; mafBroadcast('phase', { phase: 'vote', aliveList, threatened: mafThreatened });
+  } else if (phase === 'vote_result') {
+    let counts = {};
+    mafPlayers.filter(p => p.alive && p.name !== mafThreatened).forEach(p => { let t = mafVotes[p.id]; if(t && t !== 'skip') counts[t] = (counts[t] || 0) + 1; });
+    let maxV = 0; let topTgt = [];
+    for(let k in counts) { if(counts[k] > maxV) { maxV = counts[k]; topTgt = [k]; } else if(counts[k] === maxV) { topTgt.push(k); } }
+    if(topTgt.length === 1) {
+      mafSuspect = topTgt[0]; mafFinalVotes = {}; mafHostNextPhase('final_vote'); return;
+    } else {
+      mafBroadcast('phase', { phase: 'day_discuss', aliveList }); toast('동률이거나 기권이 많아 아무도 처형대에 오르지 않았습니다.'); mafHostNextPhase('night'); return;
+    }
+  } else if (phase === 'final_vote') {
+    mafBroadcast('phase', { phase: 'final_vote', suspect: mafSuspect, aliveList, threatened: mafThreatened });
+  } else if (phase === 'final_result') {
+    let kills = 0, saves = 0;
+    mafPlayers.filter(p => p.alive && p.name !== mafSuspect && p.name !== mafThreatened).forEach(p => { if(mafFinalVotes[p.id] === 'kill') kills++; if(mafFinalVotes[p.id] === 'save') saves++; });
+    if(kills > saves) {
+      let tgt = mafPlayers.find(x => x.name === mafSuspect);
+      if (tgt && tgt.role === '정치인') {
+        mafBroadcast('alert', { msg: `📢 ${mafSuspect}님은 '정치인'이므로 처형되지 않습니다!` });
+      } else if (tgt) {
+        tgt.alive = false;
+        mafBroadcast('alert', { msg: `📢 ${mafSuspect}님이 처형되었습니다. (직업: ${tgt.role})` });
+        if(mafCheckWin()) return;
+      }
+    } else { mafBroadcast('alert', { msg: `📢 ${mafSuspect}님이 무죄로 풀려났습니다.` }); }
+    mafHostNextPhase('night');
+  }
+  renderMafia();
+}
+
+function mafCheckWin() {
+  const alive = mafPlayers.filter(p => p.alive);
+  const mCount = alive.filter(p => p.role === '마피아' || p.role === '스파이').length;
+  if (mCount === 0) { mafSubPhase = 'game_over'; mafBroadcast('phase', { phase: 'game_over', win: 'citizen' }); renderMafia(); return true; }
+  if (mCount >= alive.length - mCount) { mafSubPhase = 'game_over'; mafBroadcast('phase', { phase: 'game_over', win: 'mafia' }); renderMafia(); return true; }
+  return false;
+}
+
+function mafToggleRoles() {
+  mafShowRoles = !mafShowRoles;
+  renderMafia();
+}
+
+function mafHostGameHTML() {
+  let content = '';
+  const timerHTML = mafTimeLeft > 0 ? `<div id="mafHostTimerDisplay" class="text-5xl font-black font-mono text-red-500 mb-6 drop-shadow-md animate-pulse">⏳ ${Math.floor(mafTimeLeft/60)}:${(mafTimeLeft%60).toString().padStart(2,'0')}</div>` : '<div id="mafHostTimerDisplay"></div>';
+  const helpBtn = `<button onclick="document.getElementById('mafHelpModal').classList.remove('hidden')" class="absolute top-4 right-4 btn btn-ghost text-xs bg-gray-200 hover:bg-gray-300 rounded-full shadow-sm">❓ 도움말</button>`;
+  
+  if (mafSubPhase === 'night') {
+    const actCnt = Object.keys(mafNightActions).length;
+    const specialCnt = mafPlayers.filter(p => p.alive && p.role !== '시민').length;
+    content = `${timerHTML}<div class="text-center"><div class="text-6xl mb-2">🌙</div><h2 class="text-3xl font-black text-blue-900 mb-2">밤이 되었습니다.</h2><p class="text-sm font-bold text-gray-500">능력자들이 행동을 선택하는 중... (${actCnt}/${specialCnt})</p></div>
+    <button onclick="mafTimeLeft=0" class="btn btn-blue w-full mt-6 py-4 shadow-md">⏭️ 아침으로 바로 넘기기</button>`;
+  } else if (mafSubPhase === 'day_announce') {
+    content = `${timerHTML}<div class="text-center"><div class="text-6xl mb-2">☀️</div><h2 class="text-3xl font-black text-yellow-600 mb-2">아침이 밝았습니다.</h2>
+      ${mafKilled ? `<p class="text-lg text-red-600 font-bold">지난 밤, <strong>${mafKilled}</strong>님이 마피아에게 희생되었습니다.</p>` : `<p class="text-lg text-green-600 font-bold">지난 밤, 의사의 활약으로 아무도 죽지 않았습니다!</p>`}
+      <p class="text-sm mt-3 font-semibold text-gray-500">학생들은 지금부터 자유롭게 토론을 진행하세요.</p>
+    </div>
+    <button onclick="mafTimeLeft=0" class="btn btn-blue w-full mt-6 py-4 shadow-md">⏭️ 토론 종료 및 투표 시작</button>`;
+  } else if (mafSubPhase === 'vote') {
+    const aliveCnt = mafPlayers.filter(p => p.alive).length;
+    const voteCnt = Object.keys(mafVotes).length;
+    content = `${timerHTML}<div class="text-center"><div class="text-6xl mb-2">🗳️</div><h2 class="text-3xl font-black text-red-600 mb-2">처형 투표</h2><p class="text-sm font-bold text-gray-500">마피아를 색출하기 위해 투표 중입니다... (${voteCnt}/${aliveCnt})</p></div>
+    <button onclick="mafTimeLeft=0" class="btn btn-red w-full mt-6 py-4 shadow-md">⏭️ 투표 강제 마감</button>`;
+  } else if (mafSubPhase === 'final_vote') {
+    const aliveCnt = mafPlayers.filter(p => p.alive && p.name !== mafSuspect).length;
+    const voteCnt = Object.keys(mafFinalVotes).length;
+    content = `${timerHTML}<div class="text-center"><div class="text-6xl mb-2">⚖️</div><h2 class="text-3xl font-black text-purple-600 mb-2">최후의 변론 및 찬반 투표</h2>
+      <p class="text-xl font-bold mb-2"><span class="text-red-500">${mafSuspect}</span>님이 처형대에 올랐습니다!</p>
+      <p class="text-sm font-bold text-gray-500">찬성/반대 투표를 진행 중입니다... (${voteCnt}/${aliveCnt})</p></div>
+    <button onclick="mafTimeLeft=0" class="btn btn-purple w-full mt-6 py-4 shadow-md">⏭️ 찬반 투표 강제 마감</button>`;
+  } else if (mafSubPhase === 'game_over') {
+    const mWin = mafPlayers.filter(p=>p.alive&&p.role==='마피아').length > 0;
+    content = `<div class="text-center"><div class="text-6xl mb-2">${mWin?'😈':'🎉'}</div><h2 class="text-4xl font-black mb-4 ${mWin?'text-red-700':'text-blue-700'}">${mWin?'마피아 승리!':'시민 승리!'}</h2></div>
+    <button onclick="if(mafTimerInt)clearInterval(mafTimerInt);mafPhase='menu'; renderMafia();" class="btn btn-ghost w-full mt-6 py-4 border-2 border-gray-200">🔄 처음으로 돌아가기</button>`;
+  }
+
+  return `<div class="space-y-4">
+    <div class="card p-8 bg-gray-50 border-2 border-gray-200 shadow-sm relative">${helpBtn}${content}</div>
+    <div class="card p-4 relative">
+      <button onclick="mafToggleRoles()" class="absolute top-3 right-3 btn btn-ghost text-xs bg-gray-100 hover:bg-gray-200">${mafShowRoles ? '🙈 직업 숨기기' : '👀 직업 훔쳐보기 (선생님 전용)'}</button>
+      <h3 class="font-black text-sm text-gray-700 mb-3">👥 플레이어 생존 상태</h3>
+      <div class="grid grid-cols-3 md:grid-cols-4 gap-2">
+        ${mafPlayers.map(p => {
+          const isGameOver = mafSubPhase === 'game_over';
+          const canSeeRole = mafShowRoles || !p.alive || isGameOver;
+          return `<div class="p-2 border rounded-lg text-center ${p.alive ? 'bg-white border-gray-200' : 'bg-gray-200 border-gray-300 opacity-50'}">
+            <p class="font-bold text-sm ${!p.alive ? 'line-through text-gray-400' : 'text-gray-800'}">${p.name}</p>
+            <p class="text-[10px] ${canSeeRole ? 'text-blue-600 font-bold' : 'text-gray-400 font-semibold blur-[2px]'}">${canSeeRole ? p.role : '직업비밀'}</p>
+          </div>`;
+        }).join('')}
       </div>
     </div>
   </div>`;
 }
 
-function mCastVote(voter,target){mVotes[voter]=target;const gc=document.getElementById('freeGameContent');if(gc){const h=mVoteHTML();if(h)gc.innerHTML=h;}}
-
-function mGameOverHTML(){
-  const mWin=mEndReason==='mafiaWin';
-  return `<div class="space-y-4">
-    <div class="p-6 rounded-2xl text-center" style="background:${mWin?'#1A0A00':'#001A0A'};color:#fff;"><div style="font-size:3rem;">${mWin?'🔪':'⚖️'}</div><h4 class="text-2xl font-black mt-1">${mWin?'마피아 승리!':'시민 승리!'}</h4><p style="color:#94A3B8;font-size:.9rem;">${mWin?'마피아가 마을을 장악했습니다 😈':'마피아를 모두 찾아냈습니다 🎉'}</p></div>
-    <div class="card p-4">
-      <p class="font-black text-sm text-gray-700 mb-3">👥 전체 역할 공개</p>
-      <div class="space-y-2">${mP.map(p=>{const ri=ROLE_INFO[p.role];return `<div class="flex items-center justify-between p-2 rounded-xl" style="background:${ri.bg};border:2px solid ${ri.bd};"><span class="font-black" style="color:${ri.tc};">${ri.icon} ${p.name}${p.alive?'':' ☠️'}</span><span class="font-black text-sm" style="color:${ri.tc};">${p.role}</span></div>`;}).join('')}</div>
+// ---------------- CLIENT LOGIC ----------------
+function mafClientLobbyHTML() {
+  return `<div class="space-y-4 relative">
+    <button onclick="document.getElementById('mafHelpModal').classList.remove('hidden')" class="absolute top-2 right-2 btn btn-ghost text-xs bg-gray-200 hover:bg-gray-300 rounded-full z-10 shadow-sm">❓ 도움말</button>
+    <div class="card p-6 space-y-4 bg-gray-50 border border-gray-200">
+      <div class="text-center mb-4"><span class="text-4xl">📱</span><h3 class="font-black text-xl text-gray-800 mt-2">방 접속하기</h3></div>
+      <div><label class="text-xs font-black text-gray-500 block mb-1">방 코드 (선생님이 알려준 숫자)</label><input type="text" id="cCode" class="inp text-2xl font-black tracking-widest text-center" maxlength="4" placeholder="0000"></div>
+      <div><label class="text-xs font-black text-gray-500 block mb-1">내 이름</label><input type="text" id="cName" class="inp text-center font-bold" placeholder="홍길동"></div>
     </div>
-    <button onclick="mPhase='setup';renderMafia();" class="btn btn-blue w-full text-base py-4">🔄 새 게임</button>
+    <button onclick="mafClientJoin()" class="btn btn-blue w-full py-4 text-lg shadow-md">🚀 입장하기</button>
   </div>`;
+}
+
+function mafClientJoin() {
+  const code = document.getElementById('cCode').value.trim();
+  mafMyName = document.getElementById('cName').value.trim();
+  if(!code || !mafMyName) { toast('코드와 이름을 모두 입력하세요!'); return; }
+  toast('방에 접속 중입니다...'); const btn = document.querySelector('.btn-blue'); if(btn) btn.innerHTML = '<div class="spin mx-auto"></div>';
+  loadPeer(() => {
+    mafPeer = new Peer();
+    mafPeer.on('open', (id) => {
+      mafConn = mafPeer.connect('gps-maf-' + code);
+      mafConn.on('open', () => { mafConn.send({ type: 'join', name: mafMyName }); });
+      mafConn.on('data', (data) => mafHandleHostData(data));
+      mafConn.on('close', () => { toast('서버와 연결이 끊어졌습니다.'); mafPhase = 'menu'; renderMafia(); });
+    });
+  });
+}
+
+function mafHandleHostData(data) {
+  if(data.type === 'error') { toast(data.msg); mafPhase='clientLobby'; renderMafia(); }
+  else if(data.type === 'joinSuccess') { mafPhase = 'clientGame'; mafSubPhase = 'waiting'; renderMafia(); }
+  else if(data.type === 'gameStart') { 
+    mafMyRole = data.role; mafMyState = 'alive'; mafSubPhase = 'role_reveal'; window.mafComrades = data.comrades || []; window.mafShowMyRole = false; renderMafia(); 
+  }
+  else if(data.type === 'phase') {
+    if(data.aliveList) window.mafAliveList = data.aliveList;
+    if(mafMyState === 'dead' && data.phase !== 'game_over') { mafSubPhase = 'dead'; renderMafia(); return; }
+    mafSubPhase = data.phase;
+    if(data.phase === 'day_announce' && data.killed === mafMyName) { mafMyState = 'dead'; mafSubPhase = 'dead'; toast('당신은 마피아에게 살해당했습니다.'); }
+    if(data.phase === 'final_vote') { window.mafSuspect = data.suspect; }
+    if(data.phase === 'game_over') { window.mafWin = data.win; }
+    window.mafShowMyRole = false;
+    renderMafia();
+  }
+  else if(data.type === 'investResult') { toast(`🔍 [경찰조사] ${data.name}님은 ${data.isMafia ? '마피아입니다!' : '마피아가 아닙니다.'}`); }
+  else if(data.type === 'alert') { toast(data.msg); }
+  else if(data.type === 'timer') { 
+    window.mafTimeLeft = data.time; 
+    const el = document.getElementById('mafClientTimerDisplay');
+    if (el && data.time > 0) {
+      el.className = "text-2xl font-black font-mono text-red-500 mb-4 text-center animate-pulse drop-shadow-md";
+      el.innerHTML = `⏳ ${Math.floor(data.time/60)}:${(data.time%60).toString().padStart(2,'0')} 남음`;
+    } else if (el) {
+      el.innerHTML = '';
+      el.className = "";
+    }
+  }
+}
+
+function mafClientRoleBtn() {
+  if (mafMyState === 'dead' || !mafMyRole || mafSubPhase === 'waiting' || mafSubPhase === 'role_reveal') return '';
+  return `
+    <div class="mt-6 pt-4 border-t border-gray-200/30 text-center relative">
+      <button onclick="window.mafShowMyRole = !window.mafShowMyRole; renderMafia()" class="btn btn-ghost text-xs bg-gray-200/20 text-gray-400 hover:text-gray-100 px-3 py-1 rounded-full border border-gray-500">
+        ${window.mafShowMyRole ? '🙈 숨기기' : '👀 내 직업/능력 보기'}
+      </button>
+      ${window.mafShowMyRole ? `
+        <div class="mt-3 p-4 rounded-lg bg-gray-800 text-white text-sm text-left shadow-lg border border-gray-600 animate-fade-in">
+          <p class="font-black text-xl mb-1 text-yellow-400">${mafMyRole}</p>
+          <p class="opacity-90 font-bold leading-relaxed">
+            ${mafMyRole === '마피아' ? '밤마다 1명 제거. (동료: ' + (window.mafComrades.join(', ')||'없음') + ')' : ''}
+            ${mafMyRole === '스파이' ? '밤마다 1명의 직업을 알아냄. (동료: ' + (window.mafComrades.join(', ')||'없음') + ')' : ''}
+            ${mafMyRole === '의사' ? '밤마다 1명을 마피아의 공격으로부터 보호.' : ''}
+            ${mafMyRole === '경찰' ? '밤마다 1명을 지목해 마피아인지 확인.' : ''}
+            ${mafMyRole === '기자' ? '밤에 1명을 취재하여 다음날 아침 전체 공개 (성공시 게임 중 1회만 발동).' : ''}
+            ${mafMyRole === '건달' ? '밤에 1명을 협박하여 다음날 투표를 못하게 만듦.' : ''}
+            ${mafMyRole === '정치인' ? '투표로 처형되지 않음.' : ''}
+            ${mafMyRole === '시민' ? '낮 토론을 통해 마피아를 찾고 투표로 처형.' : ''}
+          </p>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function mafClientGameHTML() {
+  const helpBtn = `<button onclick="document.getElementById('mafHelpModal').classList.remove('hidden')" class="absolute top-4 right-4 btn btn-ghost text-xs bg-gray-200 hover:bg-gray-300 rounded-full z-10 shadow-sm">❓ 도움말</button>`;
+  
+  if (mafSubPhase === 'waiting') {
+    return `<div class="card p-8 text-center bg-gray-50 relative">${helpBtn}<div class="spin mx-auto mb-4 border-blue-500"></div><h3 class="font-black text-xl text-gray-700">대기실</h3><p class="text-sm text-gray-500 mt-2 font-bold">선생님이 게임을 시작할 때까지 기다려주세요...</p></div>`;
+  }
+  
+  const cTimerHTML = (window.mafTimeLeft > 0) ? `<div id="mafClientTimerDisplay" class="text-2xl font-black font-mono text-red-500 mb-4 text-center animate-pulse drop-shadow-md">⏳ ${Math.floor(window.mafTimeLeft/60)}:${(window.mafTimeLeft%60).toString().padStart(2,'0')} 남음</div>` : '<div id="mafClientTimerDisplay"></div>';
+  let content = '';
+
+  if (mafSubPhase === 'role_reveal') {
+    const isM = mafMyRole === '마피아' || mafMyRole === '스파이';
+    let emoji = '😊';
+    if(mafMyRole === '마피아') emoji = '🔪';
+    else if(mafMyRole === '경찰') emoji = '🔍';
+    else if(mafMyRole === '의사') emoji = '🏥';
+    else if(mafMyRole === '스파이') emoji = '🕵️';
+    else if(mafMyRole === '기자') emoji = '📸';
+    else if(mafMyRole === '건달') emoji = '👊';
+    else if(mafMyRole === '정치인') emoji = '👔';
+    
+    content = `<div class="card p-8 text-center text-white shadow-xl relative" style="background:#1A1A2E;">${helpBtn}
+      <h3 class="text-sm text-gray-400 font-bold mb-2">당신의 직업은...</h3>
+      <div class="text-6xl mb-4">${emoji}</div>
+      <h1 class="text-5xl font-black mb-4" style="color:${isM?'#FCA5A5':(mafMyRole==='시민'||mafMyRole==='정치인')?'#93C5FD':'#86EFAC'};">${mafMyRole}</h1>
+      ${isM ? `<p class="text-sm font-bold text-red-300 bg-red-900/30 p-2 rounded">마피아 팀: ${window.mafComrades.join(', ') || '없음'}</p>` : ''}
+      <p class="text-xs text-yellow-400 mt-6 font-bold">절대 화면을 다른 사람에게 보여주지 마세요!</p>
+      <button onclick="mafClientAckRole()" class="btn w-full mt-6 py-4 shadow-md text-lg" style="background:${isM?'#F56565':'#4299E1'}; color:#fff;">확인했습니다</button>
+    </div>`;
+  }
+  else if (mafSubPhase === 'dead') {
+    content = `<div class="card p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}<h1 class="text-6xl mb-4">👻</h1><h3 class="font-black text-2xl text-gray-300">당신은 사망했습니다.</h3><p class="text-sm mt-3 font-bold">친구들에게 정체를 들키지 않게 조용히 관전하세요.</p></div>`;
+  }
+  else if (mafSubPhase === 'night') {
+    if (mafMyRole === '시민' || mafMyRole === '정치인') content = `<div class="card p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">🌙</h1><h3 class="font-black text-2xl text-gray-300">밤이 되었습니다.</h3><p class="text-sm mt-3 font-bold">능력자들이 활동 중입니다. 조용히 기다려주세요.</p></div>`;
+    else {
+      const verb = mafMyRole === '마피아' ? '제거할' : mafMyRole === '의사' ? '살릴' : (mafMyRole==='경찰'||mafMyRole==='스파이') ? '조사할' : mafMyRole === '기자' ? '취재할' : mafMyRole === '건달' ? '협박할' : '';
+      const color = mafMyRole === '마피아' ? 'red' : mafMyRole === '의사' ? 'green' : mafMyRole==='스파이' ? 'purple' : mafMyRole==='기자'?'blue':mafMyRole==='건달'?'orange':'yellow';
+      const opts = (window.mafAliveList||[]).filter(p=>p!==mafMyName).map(p=>`<option>${p}</option>`).join('');
+      content = `<div class="card p-6 shadow-xl relative" style="background:#1A1A2E;">
+        ${helpBtn}${cTimerHTML}
+        <h3 class="font-black text-2xl text-white mb-2 text-center">🌙 밤 능력 사용</h3>
+        <p class="text-sm text-${color}-300 mb-6 font-bold text-center">${verb} 사람의 이름을 선택하세요.</p>
+        <select id="cNightTarget" class="inp mb-4 w-full font-bold text-center text-lg"><option value="">-- 선택 안함 --</option>${opts}</select>
+        <button onclick="mafSendNight()" class="btn py-4 w-full font-black text-lg shadow-md" style="background:var(--${color}-500, #3B82F6);color:#fff;">확인</button>
+      </div>`;
+    }
+  }
+  else if (mafSubPhase === 'day_announce' || mafSubPhase === 'day_discuss') {
+    let repHTML = window.mafReported ? `<div class="mt-4 p-3 bg-blue-100 border-2 border-blue-400 rounded-lg text-blue-900 font-bold text-left shadow-inner"><span class="text-xl">📸</span> 특종! 취재 결과:<br><span class="text-xl text-blue-700">${window.mafReported.name}</span> 님의 직업은 <span class="text-xl text-red-600">${window.mafReported.role}</span> 입니다!</div>` : '';
+    let threatHTML = window.mafThreatened ? `<div class="mt-3 p-2 bg-orange-100 border border-orange-400 rounded text-orange-900 font-bold text-sm shadow-inner">👊 [속보] 건달의 협박으로 <span class="text-orange-700 text-base">${window.mafThreatened}</span> 님은 오늘 투표할 수 없습니다!</div>` : '';
+    content = `<div class="card p-8 text-center shadow-lg relative" style="background:linear-gradient(135deg, #FFF7ED, #FEF3C7); border:2px solid #FCD34D;">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">☀️</h1><h3 class="font-black text-2xl text-yellow-900">아침이 밝았습니다.</h3><p class="text-sm mt-3 font-bold text-yellow-800">친구들과 자유롭게 토론하며 마피아를 찾으세요!</p>${repHTML}${threatHTML}</div>`;
+  }
+  else if (mafSubPhase === 'vote') {
+    if(mafMyName === window.mafThreatened) {
+      content = `<div class="card p-6 shadow-xl bg-orange-50 border-2 border-orange-200 relative">${helpBtn}
+        ${cTimerHTML}<h3 class="font-black text-2xl text-orange-900 mb-2 text-center">🗳️ 처형 투표</h3>
+        <div class="p-4 bg-orange-100 text-orange-800 font-black rounded-lg text-center mt-4">👊 건달에게 협박당해 투표권이 없습니다.</div>
+      </div>`;
+    } else {
+      const opts = (window.mafAliveList||[]).filter(p=>p!==mafMyName).map(p=>`<option>${p}</option>`).join('');
+      content = `<div class="card p-6 shadow-xl bg-red-50 border-2 border-red-200 relative">${helpBtn}
+        ${cTimerHTML}
+        <h3 class="font-black text-2xl text-red-900 mb-2 text-center">🗳️ 처형 투표</h3>
+        <p class="text-sm text-red-700 mb-6 font-bold text-center">가장 의심되는 마피아를 선택하세요.</p>
+        <select id="cVoteTarget" class="inp mb-4 w-full font-bold text-center text-lg"><option value="skip">기권 (투표 안함)</option>${opts}</select>
+        <button onclick="mafSendVote()" class="btn btn-red w-full py-4 font-black text-lg shadow-md">투표하기</button>
+      </div>`;
+    }
+  }
+  else if (mafSubPhase === 'final_vote') {
+    if(window.mafSuspect === mafMyName) {
+      content = `<div class="card p-8 text-center shadow-xl bg-red-900 text-white relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">😱</h1><h3 class="font-black text-2xl">당신이 처형대에 올랐습니다!</h3><p class="text-sm mt-3 font-bold text-red-200">친구들에게 무죄를 주장하세요!</p></div>`;
+    } else if (mafMyName === window.mafThreatened) {
+      content = `<div class="card p-6 shadow-xl bg-purple-50 border-2 border-purple-200 relative">${helpBtn}
+        ${cTimerHTML}<h3 class="font-black text-2xl text-purple-900 mb-2 text-center">⚖️ 최후의 찬반 투표</h3>
+        <div class="p-4 bg-orange-100 text-orange-800 font-black rounded-lg text-center mt-4">👊 건달에게 협박당해 투표권이 없습니다.</div>
+      </div>`;
+    } else {
+      content = `<div class="card p-6 shadow-xl bg-purple-50 border-2 border-purple-200 relative">${helpBtn}
+        ${cTimerHTML}
+        <h3 class="font-black text-2xl text-purple-900 mb-2 text-center">⚖️ 최후의 찬반 투표</h3>
+        <p class="text-sm text-purple-700 mb-6 font-bold text-center"><span class="text-red-600 text-lg">${window.mafSuspect}</span>님을 처형하시겠습니까?</p>
+        <div class="flex gap-3">
+          <button onclick="mafSendFinalVote('kill')" class="btn btn-red flex-1 py-5 font-black text-lg shadow-md">👍 처형 찬성</button>
+          <button onclick="mafSendFinalVote('save')" class="btn btn-blue flex-1 py-5 font-black text-lg shadow-md">👎 처형 반대</button>
+        </div>
+      </div>`;
+    }
+  }
+  else if (mafSubPhase === 'game_over') {
+    const isM = window.mafWin === 'mafia';
+    content = `<div class="card p-8 text-center shadow-xl ${isM?'bg-red-900 text-white':'bg-blue-900 text-white'}">
+      <h1 class="text-6xl mb-4">${isM?'😈':'🎉'}</h1>
+      <h3 class="font-black text-3xl mb-6">${isM?'마피아 승리!':'시민 승리!'}</h3>
+      <button onclick="mafPhase='menu';renderMafia()" class="btn w-full mt-4 bg-white text-gray-900 py-3 font-black">대기실로 나가기</button>
+    </div>`;
+  }
+
+  if (mafSubPhase !== 'role_reveal' && mafSubPhase !== 'dead' && mafSubPhase !== 'game_over') {
+    content = content.replace(/<\/div>$/, mafClientRoleBtn() + '</div>');
+  }
+  return content;
+}
+
+function mafSendNight() {
+  const t = document.getElementById('cNightTarget').value;
+  if(!t && !confirm('정말 아무도 선택하지 않으시겠습니까?')) return;
+  mafConn.send({ type: 'nightAction', target: t }); toast('선택이 완료되었습니다.');
+  document.getElementById('freeGameContent').innerHTML = `<div class="card p-8 text-center bg-gray-900 text-gray-400 shadow-inner"><div class="spin mx-auto mb-4 border-gray-600 border-t-gray-400"></div><p class="font-bold">다른 사람들을 기다리는 중...</p></div>`;
+}
+
+function mafSendVote() {
+  const t = document.getElementById('cVoteTarget').value;
+  mafConn.send({ type: 'voteAction', target: t }); toast('투표가 완료되었습니다.');
+  document.getElementById('freeGameContent').innerHTML = `<div class="card p-8 text-center bg-red-50 text-red-400 shadow-inner"><div class="spin mx-auto mb-4" style="border-color:#FCA5A5;border-top-color:transparent;"></div><p class="font-bold">투표 집계 중...</p></div>`;
+}
+
+function mafSendFinalVote(v) {
+  mafConn.send({ type: 'finalVoteAction', vote: v }); toast('투표가 완료되었습니다.');
+  document.getElementById('freeGameContent').innerHTML = `<div class="card p-8 text-center bg-purple-50 text-purple-400 shadow-inner"><div class="spin mx-auto mb-4" style="border-color:#D8B4FE;border-top-color:transparent;"></div><p class="font-bold">투표 집계 중...</p></div>`;
 }
 
 /* ══════════════════════════════════════
@@ -1123,34 +1733,32 @@ function studentViewBtnStyle(){
 }
 
 function seatHTML(){
-  const pinModeBtn = seatStudentView ? '' : `<button id="btnPinMode" onclick="togglePinMode()" class="btn text-xs" style="${pinModeBtnStyle()}">${seatPinMode?'🔓 미리 지정 모드 끄기':'🔒 미리 지정 모드 켜기'}</button>`;
-  const clearPinsBtn = seatStudentView ? '' : `<button onclick="clearSeatPins()" class="btn btn-ghost text-xs">📌 고정 초기화</button>`;
+  const pinModeBtn = seatStudentView ? '' : `<button id="btnPinMode" onclick="togglePinMode()" class="btn py-1.5 px-3 text-xs" style="${pinModeBtnStyle()}">${seatPinMode?'🔓 고정 끄기':'🔒 고정 켜기'}</button>`;
+  const clearPinsBtn = seatStudentView ? '' : `<button onclick="clearSeatPins()" class="btn btn-ghost py-1.5 px-3 text-xs">📌 고정 초기화</button>`;
   return `
-  <div class="space-y-4">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 rounded-2xl" style="background:#F9F7EC;border:2.5px solid #E8E4CC;">
-      <div><label class="text-xs font-black text-gray-600 block mb-1">학생 수 (출석번호 1~N)</label><input id="seatCountInp" type="number" min="1" max="60" class="inp" value="${seatN}" onchange="applySeatSetup()"></div>
-      <div><label class="text-xs font-black text-gray-600 block mb-1">한 줄 자리 수</label><input id="seatColsInp" type="number" min="1" max="12" class="inp" value="${seatCols}" onchange="applySeatSetup()"></div>
-      <div class="flex items-end pb-1"><p class="text-xs text-gray-500 font-semibold">총 좌석: <span id="seatTotalTxt" class="font-black text-gray-700">${seatRows*seatCols}</span>개 (${seatRows}행 × ${seatCols}열)</p></div>
+  <div class="flex flex-col h-full space-y-2">
+    <div class="grid grid-cols-3 gap-2 p-2 rounded-xl bg-gray-50 border border-gray-200">
+      <div class="flex items-center gap-2"><label class="text-[11px] font-black text-gray-600 whitespace-nowrap">학생수</label><input id="seatCountInp" type="number" min="1" max="60" class="inp py-1 px-2 text-sm text-center" value="${seatN}" onchange="applySeatSetup()"></div>
+      <div class="flex items-center gap-2"><label class="text-[11px] font-black text-gray-600 whitespace-nowrap">한 줄</label><input id="seatColsInp" type="number" min="1" max="12" class="inp py-1 px-2 text-sm text-center" value="${seatCols}" onchange="applySeatSetup()"></div>
+      <div class="flex items-center justify-end"><p class="text-xs text-gray-500 font-semibold">총 <span id="seatTotalTxt" class="font-black text-gray-700">${seatRows*seatCols}</span>석</p></div>
     </div>
 
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap items-center gap-1.5 justify-center mt-1">
       ${pinModeBtn}
-      <button onclick="randomizeSeats()" class="btn btn-blue text-xs">🎲 랜덤 배치</button>
-      <button onclick="clearSeatAssign()" class="btn btn-ghost text-xs">🗑️ 배치 초기화</button>
+      <button onclick="randomizeSeats()" class="btn btn-blue py-1.5 px-3 text-xs">🎲 랜덤 배치</button>
+      <button onclick="clearSeatAssign()" class="btn btn-ghost py-1.5 px-3 text-xs">🗑️ 배치 초기화</button>
       ${clearPinsBtn}
-      <button id="btnStudentView" onclick="toggleStudentView()" class="btn text-xs" style="${studentViewBtnStyle()}">${seatStudentView?'👁️ 교사용 보기로 전환':'🙈 학생용 화면 보기'}</button>
+      <button id="btnStudentView" onclick="toggleStudentView()" class="btn py-1.5 px-3 text-xs" style="${studentViewBtnStyle()}">${seatStudentView?'👁️ 교사 화면':'🙈 학생 화면'}</button>
     </div>
 
-    <div id="pinHint" class="${seatPinMode?'':'hidden'} rounded-xl p-3 text-xs font-bold" style="background:#FFF8E1;border:2px solid #FFD93D;color:#B45309;">🔒 미리 지정 모드예요! 원하는 좌석을 클릭하면 그 자리에 앉힐 출석번호를 몰래 정할 수 있어요. 다른 자리는 랜덤으로 채워지고, 고정된 자리는 계속 유지돼요.</div>
+    <div id="pinHint" class="${seatPinMode?'':'hidden'} rounded-lg p-1.5 text-[11px] font-bold text-center bg-orange-50 text-orange-800 border border-orange-200">🔒 원하는 좌석을 클릭해 출석번호를 몰래 고정하세요.</div>
 
-    <p class="text-xs text-gray-400 font-semibold">${seatPinMode?'💡 좌석 클릭 → 그 자리에 고정할 출석번호 입력 (비우면 고정 해제)':'💡 좌석을 클릭하면 직접 번호를 입력해 수동으로 바꿀 수도 있어요.'}</p>
+    <div id="seatGridWrap" class="mt-2 w-full mx-auto" style="max-width:850px;"></div>
 
-    <div id="seatGridWrap"></div>
-
-    <div class="p-3 rounded-2xl flex flex-wrap gap-4 text-xs font-bold text-gray-500" style="background:#F9F7EC;border:2px solid #E8E4CC;">
-      <span class="flex items-center gap-1"><span style="width:.75rem;height:.75rem;border-radius:.25rem;background:#DBEAFE;border:2px solid #93C5FD;display:inline-block;"></span>배정됨</span>
-      <span class="flex items-center gap-1"><span style="width:.75rem;height:.75rem;border-radius:.25rem;background:#FEF3C7;border:2px solid #FBBF24;display:inline-block;"></span>🔒 고정(교사 화면에서만 표시)</span>
-      <span class="flex items-center gap-1"><span style="width:.75rem;height:.75rem;border-radius:.25rem;background:#F3F0E0;border:2px solid #E8E4CC;display:inline-block;"></span>빈 자리</span>
+    <div class="flex justify-center gap-4 text-[10px] font-bold text-gray-500 pt-1">
+      <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#E3C69A] border-2 border-[#C6A06B]"></span>배정됨</span>
+      <span id="legendPin" class="flex items-center gap-1 ${seatPinMode?'':'hidden'}"><span class="w-3 h-3 rounded-sm bg-[#FDE68A] border-2 border-[#D97706]"></span>고정석</span>
+      <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-[#F4ECE1] border-2 border-[#E0D4C3]"></span>빈 자리</span>
     </div>
   </div>`;
 }
@@ -1178,8 +1786,10 @@ function applySeatSetup(){
 function togglePinMode(){
   seatPinMode=!seatPinMode;
   const btn=document.getElementById('btnPinMode');
-  if(btn){btn.textContent=seatPinMode?'🔓 미리 지정 모드 끄기':'🔒 미리 지정 모드 켜기';btn.setAttribute('style',pinModeBtnStyle());}
+  if(btn){btn.textContent=seatPinMode?'🔓 고정 끄기':'🔒 고정 켜기';btn.setAttribute('style',pinModeBtnStyle());}
   document.getElementById('pinHint')?.classList.toggle('hidden',!seatPinMode);
+  document.getElementById('legendPin')?.classList.toggle('hidden',!seatPinMode);
+  renderSeatGrid();
 }
 
 function toggleStudentView(){
@@ -1196,20 +1806,26 @@ function renderSeatPanel(){
 
 function renderSeatGrid(){
   const wrap=document.getElementById('seatGridWrap'); if(!wrap) return;
-  let html=`<div class="grid gap-2" style="grid-template-columns:repeat(${seatCols},minmax(0,1fr));">`;
+  let html=`
+    <div class="bg-gray-100 rounded-3xl p-3 md:p-5 border-4 border-gray-300 shadow-inner relative flex flex-col items-center">
+      <div class="w-2/3 md:w-1/2 bg-[#2B5329] border-4 border-[#8B5A2B] rounded shadow-md text-center py-2 mb-6">
+        <span class="text-white/80 font-black text-sm tracking-[0.5em] drop-shadow-md">칠판</span>
+      </div>
+      <div class="grid gap-2 sm:gap-3 w-full" style="grid-template-columns:repeat(${seatCols},minmax(0,1fr));">`;
   for(let i=0;i<seatRows*seatCols;i++){
     const val=seatAssign[i];
-    const showPin=seatPins.has(i) && !seatStudentView;
+    const showPin=seatPins.has(i) && seatPinMode;
     let style;
-    if(val===null) style='background:#F3F0E0;border:2.5px solid #E8E4CC;';
-    else if(showPin) style='background:#FEF3C7;border:2.5px solid #FBBF24;';
-    else style='background:#DBEAFE;border:2.5px solid #93C5FD;';
-    html+=`<button onclick="clickSeat(${i})" class="seat-btn rounded-xl flex flex-col items-center justify-center gap-0.5 font-black" style="${style}aspect-ratio:1;min-height:56px;">
-      <span style="font-size:.6rem;" class="text-gray-400 font-bold">${i+1}${showPin?' 🔒':''}</span>
-      <span class="text-lg text-gray-700">${val!==null?val:''}</span>
+    if(val===null) style='background:linear-gradient(135deg,#F4ECE1,#EBE0CE);border-bottom:4px solid #D1C5B0;border-top:1px solid #FFF;border-left:1px solid #E0D4C3;border-right:1px solid #E0D4C3;color:#A39581;';
+    else if(showPin) style='background:linear-gradient(135deg,#FDE68A,#FCD34D);border-bottom:4px solid #D97706;border-top:1px solid #FEF3C7;border-left:1px solid #F59E0B;border-right:1px solid #F59E0B;color:#78350F;';
+    else style='background:linear-gradient(135deg,#E3C69A,#D3B17D);border-bottom:4px solid #A88656;border-top:1px solid #F5E5C9;border-left:1px solid #C6A06B;border-right:1px solid #C6A06B;color:#4A3419;';
+    
+    html+=`<button draggable="true" ondragstart="dragSeat(event, ${i})" ondragover="allowDropSeat(event)" ondrop="dropSeat(event, ${i})" onclick="clickSeat(${i})" class="seat-btn rounded-xl flex flex-col items-center justify-center gap-0 w-full shadow-sm hover:-translate-y-1 transition-transform" style="${style} min-height:48px; position:relative; cursor:grab;" onmousedown="this.style.cursor='grabbing'" onmouseup="this.style.cursor='grab'">
+      <span style="font-size:.65rem; opacity:0.75; position:absolute; top:2px; left:4px; font-weight:900; pointer-events:none;">${i+1}${showPin?'🔒':''}</span>
+      <span class="text-xl md:text-2xl font-black drop-shadow-sm mt-2 pointer-events:none;">${val!==null?val:''}</span>
     </button>`;
   }
-  html+='</div>';
+  html+=`</div></div>`;
   wrap.innerHTML=html;
 }
 
@@ -1239,6 +1855,28 @@ function clickSeat(idx){
     seatAssign[idx]=num;
     renderSeatGrid();
   }
+}
+
+function dragSeat(e, idx) {
+  e.dataTransfer.setData('text/plain', idx);
+  e.dataTransfer.effectAllowed = 'move';
+}
+function allowDropSeat(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+function dropSeat(e, targetIdx) {
+  e.preventDefault();
+  const sourceIdx = parseInt(e.dataTransfer.getData('text/plain'));
+  if (isNaN(sourceIdx) || sourceIdx === targetIdx) return;
+  const tempVal = seatAssign[sourceIdx];
+  seatAssign[sourceIdx] = seatAssign[targetIdx];
+  seatAssign[targetIdx] = tempVal;
+  const sPin = seatPins.has(sourceIdx);
+  const tPin = seatPins.has(targetIdx);
+  if(sPin) seatPins.add(targetIdx); else seatPins.delete(targetIdx);
+  if(tPin) seatPins.add(sourceIdx); else seatPins.delete(sourceIdx);
+  renderSeatGrid();
 }
 
 function randomizeSeats(){
@@ -1653,6 +2291,187 @@ function rOpenManualSelect(i) {
 }
 
 /* ══════════════════════════════════════
+   👥 모둠 구성
+══════════════════════════════════════ */
+let gStudents = 25;
+let gGroupCount = 6;
+let gGroups = []; // 각 모둠별 학생 배열
+let gUnassigned = []; // 미배정 학생 배열
+let gSelected = null; // 클릭한 학생 정보 저장용 { type, index, gIndex }
+
+function gInit() {
+  if (gUnassigned.length === 0 && gGroups.length === 0) {
+    gUnassigned = Array.from({length: gStudents}, (_, i) => i + 1);
+    gGroups = Array.from({length: gGroupCount}, () => []);
+  }
+}
+
+function gRender() {
+  gInit();
+  const gc = document.getElementById('mgmtContent'); if(!gc) return;
+  
+  let html = `
+  <div class="space-y-4">
+    <!-- 설정 및 컨트롤 -->
+    <div class="flex flex-wrap gap-4 items-end bg-white p-4 rounded-xl border border-blue-200 shadow-sm">
+       <div>
+         <label class="block text-xs font-bold text-gray-500 mb-1">총 인원수</label>
+         <input type="number" id="gTotalInp" value="${gStudents}" onchange="gChangeTotal(this.value)" class="inp w-20 text-center font-black">
+       </div>
+       <div>
+         <label class="block text-xs font-bold text-gray-500 mb-1">모둠 수</label>
+         <input type="number" id="gCountInp" value="${gGroupCount}" onchange="gChangeCount(this.value)" class="inp w-20 text-center font-black">
+       </div>
+       <div class="flex-1 flex justify-end gap-2">
+         <button onclick="gRandomize()" class="btn btn-blue text-sm">🎲 전원 자동 편성</button>
+         <button onclick="gClear()" class="btn btn-ghost text-sm">🗑️ 초기화</button>
+       </div>
+    </div>
+    
+    <!-- 미배정 학생 -->
+    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="font-black text-gray-700">대기 중인 학생 (${gUnassigned.length}명)</h3>
+        <span class="text-xs text-blue-500 font-bold">💡 학생을 클릭한 뒤 다른 학생이나 빈 공간을 클릭하여 이동/교체 하세요.</span>
+      </div>
+      <div class="flex flex-wrap gap-2 min-h-[50px] p-2 bg-white rounded-lg border border-gray-200 cursor-pointer" onclick="gClickTarget('unassigned', null)">
+        ${gUnassigned.length === 0 ? '<span class="text-xs text-gray-400 font-semibold m-auto pointer-events-none">모두 배정되었습니다.</span>' : ''}
+        ${gUnassigned.map((num, i) => `
+          <div onclick="event.stopPropagation(); gClickStudent('unassigned', ${i}, null)" 
+               class="w-10 h-10 flex items-center justify-center rounded-full text-sm font-black shadow-sm cursor-pointer transition-transform hover:scale-110 
+               ${gSelected && gSelected.type === 'unassigned' && gSelected.index === i ? 'bg-blue-500 text-white ring-4 ring-blue-200 scale-110' : 'bg-gray-100 text-gray-700 border border-gray-300'}">
+            ${num}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    
+    <!-- 모둠 카드 -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      ${gGroups.map((group, gIdx) => `
+        <div class="card p-3 flex flex-col min-h-[140px] cursor-pointer hover:border-blue-300 transition-colors bg-white ${gSelected && gSelected.type === 'groupTarget' && gSelected.gIndex === gIdx ? 'ring-4 ring-blue-300' : ''}" 
+             onclick="gClickTarget('group', ${gIdx})">
+          <div class="text-center font-black text-blue-700 bg-blue-50 rounded-lg py-1 mb-3">${gIdx + 1}모둠 (${group.length}명)</div>
+          <div class="flex flex-wrap gap-2 justify-center flex-1 content-start">
+            ${group.map((num, sIdx) => `
+              <div onclick="event.stopPropagation(); gClickStudent('group', ${sIdx}, ${gIdx})" 
+                   class="w-10 h-10 flex items-center justify-center rounded-full text-sm font-black shadow-sm cursor-pointer transition-transform hover:scale-110
+                   ${gSelected && gSelected.type === 'group' && gSelected.gIndex === gIdx && gSelected.index === sIdx ? 'bg-blue-500 text-white ring-4 ring-blue-200 scale-110' : 'bg-blue-100 text-blue-800 border border-blue-200'}">
+                ${num}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+  gc.innerHTML = html;
+}
+
+function gChangeTotal(val) {
+  let num = parseInt(val) || 25;
+  gStudents = num;
+  gUnassigned = Array.from({length: gStudents}, (_, i) => i + 1);
+  gGroups = Array.from({length: gGroupCount}, () => []);
+  gSelected = null;
+  gRender();
+  toast('인원수가 변경되어 모둠이 초기화되었습니다.');
+}
+
+function gChangeCount(val) {
+  let num = parseInt(val) || 6;
+  if(num < 1) num = 1;
+  gGroupCount = num;
+  gUnassigned = Array.from({length: gStudents}, (_, i) => i + 1);
+  gGroups = Array.from({length: gGroupCount}, () => []);
+  gSelected = null;
+  gRender();
+  toast('모둠 수가 변경되어 초기화되었습니다.');
+}
+
+function gClear() {
+  if(!confirm('모든 편성을 초기화할까요?')) return;
+  gUnassigned = Array.from({length: gStudents}, (_, i) => i + 1);
+  gGroups = Array.from({length: gGroupCount}, () => []);
+  gSelected = null;
+  gRender();
+  toast('모둠 편성이 초기화되었습니다.');
+}
+
+function gRandomize() {
+  let all = [...gUnassigned];
+  gGroups.forEach(g => all.push(...g));
+  
+  all.sort(() => Math.random() - 0.5);
+  
+  gGroups = Array.from({length: gGroupCount}, () => []);
+  gUnassigned = [];
+  
+  let idx = 0;
+  while(all.length > 0) {
+    gGroups[idx % gGroupCount].push(all.pop());
+    idx++;
+  }
+  
+  gGroups.forEach(g => g.sort((a,b)=>a-b));
+  gSelected = null;
+  gRender();
+  toast('✨ 전원 랜덤 편성 완료!');
+}
+
+function gClickStudent(type, index, gIndex) {
+  if (!gSelected) {
+    gSelected = { type, index, gIndex };
+    gRender();
+  } else {
+    if (gSelected.type === type && gSelected.index === index && gSelected.gIndex === gIndex) {
+      gSelected = null;
+      gRender();
+      return;
+    }
+    
+    let val1 = gSelected.type === 'unassigned' ? gUnassigned[gSelected.index] : gGroups[gSelected.gIndex][gSelected.index];
+    let val2 = type === 'unassigned' ? gUnassigned[index] : gGroups[gIndex][index];
+    
+    if (gSelected.type === 'unassigned') gUnassigned[gSelected.index] = val2;
+    else gGroups[gSelected.gIndex][gSelected.index] = val2;
+    
+    if (type === 'unassigned') gUnassigned[index] = val1;
+    else gGroups[gIndex][index] = val1;
+    
+    gGroups.forEach(g => g.sort((a,b)=>a-b));
+    gUnassigned.sort((a,b)=>a-b);
+    
+    gSelected = null;
+    gRender();
+    beep();
+  }
+}
+
+function gClickTarget(type, gIndex) {
+  if (!gSelected) return; 
+  
+  let val;
+  if (gSelected.type === 'unassigned') {
+    val = gUnassigned.splice(gSelected.index, 1)[0];
+  } else {
+    val = gGroups[gSelected.gIndex].splice(gSelected.index, 1)[0];
+  }
+  
+  if (type === 'unassigned') {
+    gUnassigned.push(val);
+    gUnassigned.sort((a,b)=>a-b);
+  } else {
+    gGroups[gIndex].push(val);
+    gGroups[gIndex].sort((a,b)=>a-b);
+  }
+  
+  gSelected = null;
+  gRender();
+  beep();
+}
+
+/* ══════════════════════════════════════
    🎰 랜덤 발표 - 캡슐 뽑기 머신
 ══════════════════════════════════════ */
 const CAP_COLORS=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#C77DFF','#FF8C42','#38BDF8','#F472B6'];
@@ -1962,3 +2781,4 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
 </script>
 </body>
 </html>
+
