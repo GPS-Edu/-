@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G.P.S 에듀 플랫폼 🎒</title>
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:'Pretendard',sans-serif;background:#FFFDF0;}
+.tab-content{display:none;}
+.tab-content.active{display:block;animation:popIn .28s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{opacity:0;transform:scale(.96) translateY(6px)}to{opacity:1;transform:none}}
+.nav-btn{transition:all .18s;}
+.nav-btn:hover:not(.nav-active){background:#FFF3CC;transform:translateX(3px);}
+.nav-btn.nav-active{background:linear-gradient(135deg,#FFD93D,#FF8C42);color:#fff!important;font-weight:800!important;box-shadow:0 4px 12px rgba(255,140,66,.35);}
+.grade-btn{transition:all .15s;}
+.grade-btn.grade-active{background:#FFF0D0;font-weight:800;color:#B45309;}
+.grade-btn:hover:not(.grade-active){background:#FFF8E8;}
+.card{background:#fff;border-radius:1.5rem;box-shadow:0 4px 0 rgba(0,0,0,.07),0 2px 12px rgba(0,0,0,.05);border:2.5px solid #F0EDD8;transition:box-shadow .2s,transform .2s;}
+.card:hover{box-shadow:0 6px 0 rgba(0,0,0,.09),0 4px 20px rgba(0,0,0,.07);transform:translateY(-2px);}
+.btn{border-radius:1rem;font-weight:800;transition:all .15s;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;}
+.btn-blue{background:linear-gradient(135deg,#4D96FF,#6B5CE7);color:#fff;box-shadow:0 4px 0 #2B6ADF;padding:.65rem 1.2rem;}
+.btn-blue:hover{transform:translateY(-2px);box-shadow:0 6px 0 #2B6ADF;}
+.btn-blue:active{transform:translateY(1px);box-shadow:0 2px 0 #2B6ADF;}
+.btn-blue:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.btn-green{background:linear-gradient(135deg,#6BCB77,#38A169);color:#fff;box-shadow:0 4px 0 #2F855A;padding:.65rem 1.2rem;}
+.btn-green:hover{transform:translateY(-2px);}
+.btn-ghost{background:#F3F0E0;color:#5A5238;border:2px solid #E8E4CC;padding:.6rem 1.1rem;border-radius:.875rem;font-weight:700;}
+.btn-ghost:hover{background:#E8E4CC;}
+.inp{width:100%;padding:.6rem .9rem;border:2.5px solid #E0DAC0;border-radius:.875rem;font-size:.875rem;background:#FFFEF5;font-family:'Pretendard',sans-serif;transition:border-color .2s;}
+.inp:focus{outline:none;border-color:#4D96FF;box-shadow:0 0 0 3px rgba(77,150,255,.12);}
+.dashed-zone{border:3px dashed #D0C9A8;border-radius:1.25rem;background:#FAFAF0;padding:3.5rem 2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;color:#A89E7A;text-align:center;}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.dot-green{background:#6BCB77;box-shadow:0 0 6px #6BCB77;}
+.dot-amber{background:#FFD93D;box-shadow:0 0 6px #FFD93D;}
+.spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:_spin .7s linear infinite;}
+@keyframes _spin{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%);background:#1A1A2E;color:#fff;padding:.65rem 1.6rem;border-radius:999px;font-size:.82rem;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;}
+#toast.show{opacity:1;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:50;display:none;align-items:center;justify-content:center;padding:1rem;}
+.overlay.open{display:flex;}
+.sidebar-hd{background:linear-gradient(155deg,#FFD93D,#FF8C42);padding:1.2rem 1.4rem;position:relative;overflow:hidden;}
+.sidebar-hd::after{content:'';position:absolute;bottom:-16px;left:-10%;right:-10%;height:32px;background:#FFFDF0;border-radius:50%;}
+.badge{display:inline-flex;align-items:center;gap:.2rem;padding:.2rem .65rem;border-radius:999px;font-size:.68rem;font-weight:800;}
+.util-tab{padding:.5rem 1rem;border-radius:.875rem;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .15s;border:2px solid transparent;}
+.util-tab.util-active{background:linear-gradient(135deg,#FFD93D,#FF8C42);color:#fff;box-shadow:0 3px 8px rgba(255,140,66,.3);}
+.util-tab:not(.util-active){background:#F3F0E0;color:#5A5238;border-color:#E8E4CC;}
+.util-tab:not(.util-active):hover{background:#E8E4CC;}
+/* 역사 카드 */
+.h-card{transition:all .2s;border-width:2.5px!important;border-style:solid!important;}
+.h-card:hover:not(.matched){transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.1);}
+.h-card.selected-ev{background:#DBEAFE!important;border-color:#3B82F6!important;box-shadow:0 0 0 3px rgba(59,130,246,.25)!important;transform:scale(1.02);}
+.h-card.selected-desc{background:#DCFCE7!important;border-color:#22C55E!important;box-shadow:0 0 0 3px rgba(34,197,94,.25)!important;transform:scale(1.02);}
+.h-card.wrong{background:#FEE2E2!important;border-color:#FCA5A5!important;animation:shake .4s;}
+.h-card.matched{opacity:.6;cursor:default!important;background:#D1FAE5!important;border-color:#6EE7B7!important;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+/* 자리 배치 */
+.seat-btn{transition:all .15s;cursor:pointer;}
+.seat-btn:hover{transform:translateY(-2px);box-shadow:0 3px 8px rgba(0,0,0,.08);}
+/* 캡슐 뽑기 머신 */
+.cap-globe{position:relative;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#EAF4FF 40%,#CFE3FF 100%);border:6px solid #B9D4FF;box-shadow:inset 0 -12px 22px rgba(0,0,0,.08),0 6px 0 #9CBCEB;overflow:hidden;margin:0 auto;}
+.cap-ball{position:absolute;border-radius:50%;box-shadow:inset -4px -4px 0 rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.18);}
+@keyframes capFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-7px) rotate(10deg);}}
+@keyframes capShake{0%{transform:translate(0,0) rotate(0deg);}20%{transform:translate(-5px,4px) rotate(-8deg);}40%{transform:translate(6px,-5px) rotate(10deg);}60%{transform:translate(-4px,-4px) rotate(-10deg);}80%{transform:translate(5px,5px) rotate(8deg);}100%{transform:translate(0,0) rotate(0deg);}}
+.cap-ball.floaty{animation:capFloat 2.2s ease-in-out infinite;}
+.cap-ball.shaky{animation:capShake .22s ease-in-out infinite;}
+.cap-chute{width:56px;height:32px;margin:0 auto;background:linear-gradient(180deg,#9CBCEB,#7FA6E0);clip-path:polygon(22% 0,78% 0,100% 100%,0% 100%);}
+.cap-slot{width:100%;max-width:230px;min-height:76px;border-radius:1rem;background:#FFF8E1;border:3px dashed #FFD93D;display:flex;align-items:center;justify-content:center;margin:0 auto;padding:.5rem;}
+@keyframes capPop{0%{transform:scale(.4) rotate(-10deg);opacity:0;}60%{transform:scale(1.15) rotate(4deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+.cap-pop{animation:capPop .5s cubic-bezier(.34,1.56,.64,1);}
+</style>
+</head>
+<body class="flex h-screen overflow-hidden text-gray-800">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="w-60 bg-white flex flex-col shrink-0" style="box-shadow:4px 0 20px rgba(0,0,0,.06);">
+  <div class="sidebar-hd">
+    <div class="flex items-center gap-2 relative z-10">
+      <span style="font-size:1.6rem;">🎒</span>
+      <div>
+        <h1 class="text-lg font-black text-white tracking-tight" style="text-shadow:0 2px 4px rgba(0,0,0,.15);">G.P.S Edu</h1>
+        <p class="text-yellow-100 font-semibold" style="font-size:.63rem;">교사 업무 지원 & 수업 아케이드</p>
+      </div>
+    </div>
+  </div>
+  <nav class="flex-1 overflow-y-auto px-3 pt-6 pb-3 space-y-1">
+    <button onclick="switchTab('dashboard')" data-target="dashboard" class="nav-btn nav-active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
+      <span class="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center flex-shrink-0">🏠</span>대시보드
+    </button>
+    <p class="text-xs font-black text-gray-400 uppercase tracking-wider pt-4 pb-1 px-1">✏️ Teacher Suite</p>
+    <button onclick="switchTab('evaluation')" data-target="evaluation" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
+      <span class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">📝</span>평가 AI 자동화
+    </button>
+    <div>
+      <button onclick="toggleMgmtMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
+        <span class="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">📋</span>
+        <span class="flex-1 text-left">학급 경영 도구</span>
+        <span id="mgmtArrow" class="text-gray-400 text-xs">▶</span>
+      </button>
+      <div id="mgmtSubmenu" class="hidden pl-3 mt-1 space-y-0.5">
+        <button onclick="switchTab('management'); showMgmt('seat')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">🪑 자리 배치</button>
+        <button onclick="switchTab('management'); showMgmt('role')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">🎡 1인 1역</button>
+        <button onclick="switchTab('management'); showMgmt('group')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">👥 모둠 구성</button>
+      </div>
+    </div>
+    <p class="text-xs font-black text-gray-400 uppercase tracking-wider pt-4 pb-1 px-1">🕹️ Edu Arcade</p>
+    <button onclick="switchTab('economy')" data-target="economy" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
+      <span class="w-7 h-7 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">💰</span>학급 경제 놀이
+    </button>
+    <div>
+      <button onclick="toggleGradeMenu()" data-target="minigame" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
+        <span class="w-7 h-7 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">🎮</span>
+        <span class="flex-1 text-left">교과 미니게임</span>
+        <span id="gradeArrow" class="text-gray-400 text-xs">▶</span>
+      </button>
+      <div id="gradeSubmenu" class="hidden pl-3 mt-1 space-y-0.5">
+        <button onclick="switchGrade('grade3')" data-grade="grade3" class="grade-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600">🟥 3학년</button>
+        <button onclick="switchGrade('grade4')" data-grade="grade4" class="grade-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600">🟧 4학년</button>
+        <button onclick="switchGrade('grade5')" data-grade="grade5" class="grade-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600">🟨 5학년</button>
+        <button onclick="switchGrade('grade6')" data-grade="grade6" class="grade-btn w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600">🟩 6학년 ✅</button>
+      </div>
+    </div>
+    <button onclick="switchTab('freegame')" data-target="freegame" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
+      <span class="w-7 h-7 rounded-lg bg-pink-100 flex items-center justify-center flex-shrink-0">🕹️</span>미니게임
+    </button>
+    <div>
+      <button onclick="toggleUtilityMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-gray-700">
+        <span class="w-7 h-7 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">⏱️</span>
+        <span class="flex-1 text-left">수업 유틸리티</span>
+        <span id="utilityArrow" class="text-gray-400 text-xs">▶</span>
+      </button>
+      <div id="utilitySubmenu" class="hidden pl-3 mt-1 space-y-0.5">
+        <button onclick="switchTab('utility'); showUtil('timer')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">⏳ 타이머</button>
+        <button onclick="switchTab('utility'); showUtil('stopwatch')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">⏱️ 스톱워치</button>
+        <button onclick="switchTab('utility'); showUtil('noise')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">🔊 소음 신호등</button>
+        <button onclick="switchTab('utility'); showUtil('picker')" class="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50">🎯 랜덤 발표자</button>
+      </div>
+    </div>
+    <p class="text-xs font-black text-gray-400 uppercase tracking-wider pt-4 pb-1 px-1">🌐 External Links</p>
+    <div class="space-y-1">
+      <a href="https://www.i-scream.co.kr" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-amber-50 hover:text-amber-800 transition">
+        <span>🍦</span><span>아이스크림 (i-Scream)</span>
+      </a>
+      <a href="https://www.indischool.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-800 transition">
+        <span>🏫</span><span>인디스쿨 (Indischool)</span>
+      </a>
+      <a href="https://www.youtube.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-rose-50 hover:text-rose-800 transition">
+        <span>▶️</span><span>유튜브 (YouTube)</span>
+      </a>
+      <a href="https://www.naver.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-gray-600 hover:bg-green-50 hover:text-green-800 transition">
+        <span>🟢</span><span>네이버 (Naver)</span>
+      </a>
+    </div>
+  </nav>
+  <div class="p-3 border-t-2 border-dashed border-yellow-200 bg-yellow-50/50">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs text-gray-500 font-bold">AI 연결</span>
+      <div class="flex items-center gap-1.5"><span id="apiDot" class="dot dot-amber"></span><span id="apiTxt" class="text-xs font-bold text-amber-600">미연결</span></div>
+    </div>
+    <button onclick="openModal()" class="btn w-full py-2 text-xs font-black text-orange-700" style="background:linear-gradient(135deg,#FFF3CC,#FFE0A0);border:2px solid #FFD93D;box-shadow:0 3px 0 #F0C020;border-radius:.75rem;">⚙️ API Key · 데이터 관리</button>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="flex-1 flex flex-col overflow-hidden">
+  <header class="h-14 bg-white flex items-center justify-between px-6 shrink-0" style="box-shadow:0 2px 0 #F0EDD8;">
+    <div class="flex items-center gap-2"><span id="pageIcon" class="text-xl">🏠</span><h2 id="pageTitle" class="text-lg font-black text-gray-800">대시보드</h2></div>
+    <button onclick="openModal()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold text-gray-600 hover:bg-yellow-50 border-2 border-transparent hover:border-yellow-200 transition-all">😊 선생님</button>
+  </header>
+
+  <div class="flex-1 overflow-y-auto p-6" style="background:#FFFDF0;">
+
+    <!-- 대시보드 -->
+    <section id="dashboard" class="tab-content active space-y-5">
+      <div class="rounded-3xl p-5 text-white relative overflow-hidden" style="background:linear-gradient(135deg,#4D96FF 0%,#7B5CE7 55%,#C77DFF 100%);box-shadow:0 6px 0 #2B6ADF;">
+        <div class="relative z-10 flex items-start gap-3">
+          <span class="text-4xl flex-shrink-0">🌟</span>
+          <div>
+            <h3 class="text-lg font-black">G.P.S 에듀에 오신 것을 환영해요!</h3>
+            <p class="text-blue-100 text-xs mt-0.5 mb-3">모든 데이터는 선생님 컴퓨터에만 안전하게 보관돼요. 서버비용 0원!</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="badge" style="background:rgba(255,255,255,.22);color:#fff;">🔒 개인정보 보호</span>
+              <span class="badge" style="background:rgba(255,255,255,.22);color:#fff;">💡 서버비용 0원</span>
+              <span class="badge" style="background:rgba(255,255,255,.22);color:#fff;">⚡ 즉시 업데이트</span>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:rgba(255,255,255,.07);border-radius:50%;"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card p-5 flex flex-col justify-between" style="min-height:155px;">
+          <div class="flex items-center justify-between"><span class="text-sm font-black text-gray-700">📁 저장된 기록</span><span class="badge" style="background:#F0FFF4;color:#276749;">안전 보관중</span></div>
+          <p class="text-4xl font-black text-gray-800 text-center py-2" id="recCount">0</p>
+          <button onclick="exportData()" class="text-xs text-blue-600 font-black hover:underline text-left">💾 백업 파일 다운로드</button>
+        </div>
+        <div class="card p-5 flex flex-col justify-between" style="min-height:155px;">
+          <span class="text-sm font-black text-gray-700">⚡ 빠른 실행</span>
+          <div class="grid grid-cols-2 gap-2 py-2">
+            <button onclick="switchTab('evaluation')" class="btn py-3 flex-col gap-1 text-xs" style="background:linear-gradient(135deg,#E8F4FD,#CCE5FF);color:#2563EB;border:2px solid #BFDBFE;box-shadow:0 3px 0 #BFDBFE;border-radius:1rem;"><span class="text-lg">📝</span>AI 평가</button>
+            <button onclick="switchTab('utility')" class="btn py-3 flex-col gap-1 text-xs" style="background:linear-gradient(135deg,#FFF5E6,#FFE4B5);color:#C05621;border:2px solid #FBD38D;box-shadow:0 3px 0 #FBD38D;border-radius:1rem;"><span class="text-lg">⏱️</span>타이머</button>
+          </div>
+          <p class="text-xs text-gray-400 font-semibold">자주 쓰는 도구 바로가기</p>
+        </div>
+        <div class="card p-5 flex flex-col justify-between" style="min-height:155px;">
+          <span class="text-sm font-black text-gray-700">🎫 무료 AI 토큰</span>
+          <div class="py-2 space-y-1.5 text-xs text-gray-600 font-semibold"><p>✅ 분당 15회 무료 호출</p><p>✅ 만료 기한 없음</p><p>✅ 학생 정보 외부 전송 없음</p></div>
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-black text-purple-600 hover:underline">🔑 무료 API Key 발급받기 ↗</a>
+        </div>
+      </div>
+      <div id="noKeyWarn" class="rounded-2xl p-4 flex items-start gap-3 hidden" style="background:#FFF8E1;border:2.5px solid #FFD93D;">
+        <span class="text-2xl flex-shrink-0">💡</span>
+        <div><p class="font-black text-sm text-amber-800">Gemini API 키가 아직 등록되지 않았어요!</p><p class="text-xs text-amber-700 mt-0.5">평가 자동화 기능을 쓰려면 API 키를 먼저 등록해주세요.</p><button onclick="openModal()" class="mt-2 text-xs font-black text-amber-700 underline">⚙️ 지금 설정하기 →</button></div>
+      </div>
+    </section>
+
+    <!-- 평가 자동화 (초등 전 교과) -->
+    <section id="evaluation" class="tab-content space-y-4">
+      <div class="card p-6 space-y-5">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#E8F4FD,#CCE5FF);">📝</div>
+          <div><h3 class="text-lg font-black text-gray-800">AI 평가 문장 자동 생성기</h3><p class="text-xs text-gray-500 font-semibold mt-0.5">초등 전 영역(국어, 수학, 사회, 과학, 영어, 도덕, 음악, 미술, 체육, 실과, 창체, 행특) 맞춤형 문장을 생성해요.</p></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="space-y-3 p-4 rounded-2xl" style="background:#F9F7EC;border:2.5px solid #E8E4CC;">
+            <p class="text-sm font-black text-gray-700">✏️ 평가 정보 입력</p>
+            <div><label class="text-xs font-black text-gray-600 block mb-1">출석번호 <span class="font-semibold text-gray-400">(선택 · 비워도 됨)</span></label><input id="studentName" class="inp" placeholder="예) 1번, 2번… (나중에 구분할 때 편해요)"></div>
+            <div><label class="text-xs font-black text-gray-600 block mb-1">평가 영역 (초등 전 교과)</label>
+              <select id="evalSubject" class="inp">
+                <option>행동특성 및 종합의견</option>
+                <option>국어과 수행평가</option>
+                <option>수학과 수행평가</option>
+                <option>사회과 수행평가</option>
+                <option>과학과 탐구활동</option>
+                <option>도덕과 수행평가</option>
+                <option>영어과 수행평가</option>
+                <option>음악과 실기평가</option>
+                <option>미술과 표현활동</option>
+                <option>체육과 신체활동</option>
+                <option>실과 노작활동</option>
+                <option>창의적 체험활동</option>
+              </select>
+            </div>
+            <div><label class="text-xs font-black text-gray-600 block mb-1">관찰 내용 / 키워드</label><textarea id="evalKeywords" class="inp" rows="5" placeholder="예) 모둠 활동에서 친구들과 역할을 잘 나눔. 수업 시간 집중력 높고 질문 많음."></textarea></div>
+            <button id="btnGenerate" onclick="generateEval()" class="btn btn-blue w-full text-sm">✨ AI 평가 문장 생성</button>
+          </div>
+          <div class="space-y-3 p-4 rounded-2xl flex flex-col" style="background:#F0FFF4;border:2.5px solid #9AE6B4;">
+            <div class="flex items-center justify-between"><p class="text-sm font-black text-gray-700">📄 생성된 평가 문장</p><button onclick="copyResult()" class="text-xs font-black text-green-700 hover:underline">📋 복사</button></div>
+            <textarea id="evalResult" class="inp flex-1" rows="9" placeholder="생성 버튼을 누르면 AI가 전문적인 평가 문장을 작성해드려요 ✨"></textarea>
+            <div id="evalErr" class="hidden rounded-xl p-3 text-xs font-semibold" style="background:#FFF5F5;border:2px solid #FEB2B2;color:#C53030;"></div>
+            <button onclick="saveRecord()" class="btn btn-green text-sm">💾 내 컴퓨터에 저장</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 학급 경영 도구 -->
+    <section id="management" class="tab-content">
+      <div class="card p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#F3E8FF,#DDD6FE);">📋</div>
+          <div><h3 class="text-lg font-black">학급 경영 도구</h3><p class="text-xs text-gray-500 font-semibold">자리 배치 · 1인 1역 룰렛 · 모둠 구성</p></div>
+        </div>
+        <div class="flex gap-2 mb-5 flex-wrap">
+          <button class="util-tab util-active" data-mgmt="seat" onclick="showMgmt('seat')">🪑 자리 배치</button>
+          <button class="util-tab" data-mgmt="role" onclick="showMgmt('role')">🎡 1인 1역</button>
+          <button class="util-tab" data-mgmt="group" onclick="showMgmt('group')">👥 모둠 구성</button>
+        </div>
+        <div id="mgmtContent"></div>
+      </div>
+    </section>
+
+    <section id="economy" class="tab-content"><div class="card p-6"><div class="flex items-center gap-3 mb-4"><div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#F0FFF4,#C6F6D5);">💰</div><div><h3 class="text-lg font-black">학급 경제 놀이</h3><p class="text-xs text-gray-500 font-semibold">학급 화폐 · 은행 · 경매 · 부동산</p></div></div><div class="dashed-zone"><span class="text-5xl">🏦</span><p class="font-black text-lg">학급 은행 & 통장 관리 준비 중</p></div></div></section>
+
+    <!-- 교과 미니게임 -->
+    <section id="minigame" class="tab-content">
+      <div class="card p-6">
+        <div class="flex items-center gap-3 mb-4"><div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#FFF5F5,#FED7D7);">🎮</div><div><h3 class="text-lg font-black">교과 미니게임</h3><p id="gradeLabel" class="text-xs text-gray-500 font-semibold">왼쪽에서 학년을 선택해주세요</p></div></div>
+        <div id="gradeContent"><div class="dashed-zone"><span class="text-5xl">👈</span><p class="font-black text-lg">학년을 선택해주세요</p></div></div>
+      </div>
+    </section>
+
+    <section id="freegame" class="tab-content">
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#FDF2F8,#FBCFE8);">🕹️</div>
+            <div><h3 class="text-lg font-black">미니게임</h3><p class="text-xs text-gray-500 font-semibold">교과 무관 · 자유 플레이</p></div>
+          </div>
+          <a id="bungeoLink" href="https://jammintamer.github.io/Bungeo-ppang/" target="_blank" class="btn btn-ghost text-xs">⛶ 새 탭에서 열기</a>
+        </div>
+        <div class="flex gap-2 mb-4 flex-wrap">
+          <button class="util-tab util-active" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
+          <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아 온라인</button>
+        </div>
+        <div id="freeGameContent">
+          <div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:620px;">
+            <iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe>
+          </div>
+          <p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 수업 유틸리티 -->
+    <section id="utility" class="tab-content">
+      <div class="card p-6">
+        <div class="flex items-center gap-3 mb-4"><div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style="background:linear-gradient(135deg,#FFFAF0,#FEEBC8);">⏱️</div><div><h3 class="text-lg font-black">수업 진행 유틸리티</h3><p class="text-xs text-gray-500 font-semibold">타이머 · 스톱워치 · 소음 신호등 · 랜덤 발표자</p></div></div>
+        <div class="flex gap-2 mb-5 flex-wrap">
+          <button class="util-tab util-active" data-util="timer" onclick="showUtil('timer')">⏳ 타이머</button>
+          <button class="util-tab" data-util="stopwatch" onclick="showUtil('stopwatch')">⏱️ 스톱워치</button>
+          <button class="util-tab" data-util="noise" onclick="showUtil('noise')">🔊 소음 신호등</button>
+          <button class="util-tab" data-util="picker" onclick="showUtil('picker')">🎯 랜덤 발표자</button>
+        </div>
+        <div id="utilContent"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- 모달 -->
+<div id="modal" class="overlay">
+  <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden" style="border:3px solid #FFD93D;">
+    <div class="flex items-center justify-between p-5" style="background:linear-gradient(135deg,#FFD93D,#FF8C42);">
+      <div class="flex items-center gap-2"><span class="text-2xl">⚙️</span><h3 class="text-base font-black text-white">선생님 설정 & 데이터 관리</h3></div>
+      <button onclick="closeModal()" class="w-8 h-8 bg-white/30 hover:bg-white/50 rounded-full flex items-center justify-center text-white font-black text-xl">×</button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="p-4 rounded-2xl space-y-3" style="background:#F0F9FF;border:2px solid #BEE3F8;">
+        <p class="text-sm font-black text-blue-800">🔑 Gemini API Key (개인 토큰)</p>
+        <input type="password" id="inputKey" class="inp font-mono text-xs" placeholder="AIzaSy... 형식의 API 키를 붙여넣으세요">
+        <p class="text-xs text-blue-700 font-semibold">• 키는 선생님 브라우저에만 저장돼요.<br>• <a href="https://aistudio.google.com/app/apikey" target="_blank" class="underline font-black">Google AI Studio</a>에서 무료 발급 가능 ↗</p>
+        <button onclick="testKey()" id="btnTest" class="btn btn-ghost w-full text-xs">🧪 API 키 연결 테스트</button>
+        <div id="testOut" class="hidden text-xs font-bold p-2 rounded-xl text-center"></div>
+      </div>
+      <div class="p-4 rounded-2xl space-y-3" style="background:#F0FFF4;border:2px solid #9AE6B4;">
+        <p class="text-sm font-black text-green-800">💾 학급 데이터 백업 & 복원</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="exportData()" class="btn btn-ghost text-xs">📥 백업 다운로드</button>
+          <label class="btn btn-ghost text-xs cursor-pointer">📤 백업 불러오기<input type="file" accept=".json" onchange="importData(event)" class="hidden"></label>
+        </div>
+      </div>
+      <div class="flex gap-2"><button onclick="closeModal()" class="btn btn-ghost flex-1 text-sm">닫기</button><button onclick="saveKey()" class="btn btn-blue flex-1 text-sm">💾 저장</button></div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ══ 상수 ══ */
+const K_API='gps_api_v1', K_REC='gps_rec_v1';
+const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},economy:{title:'학급 경제 놀이',icon:'💰'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'}};
+
+
+
+window.addEventListener('DOMContentLoaded',()=>{refreshStatus();refreshRecCount();showUtil('timer');initManagementSeat();showMgmt('seat');});
+
+function switchTab(id){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.toggle('nav-active',btn.dataset.target===id));
+  const m=PAGE[id]||{title:id,icon:'📌'};
+  document.getElementById('pageTitle').textContent=m.title;
+  document.getElementById('pageIcon').textContent=m.icon;
+  if(id!=='utility') stopNoise();
+  if(id!=='freegame') {
+    const fgc = document.getElementById('freeGameContent');
+    if(fgc && fgc.innerHTML.includes('<iframe')) { fgc.innerHTML = ''; }
+  }
+}
+
+function toggleGradeMenu(){
+  const sub=document.getElementById('gradeSubmenu'),arrow=document.getElementById('gradeArrow');
+  const open=!sub.classList.contains('hidden');
+  sub.classList.toggle('hidden',open);
+  arrow.textContent=open?'▶':'▼';
+  switchTab('minigame');
+}
+function toggleMgmtMenu(){
+  const sub=document.getElementById('mgmtSubmenu'),arrow=document.getElementById('mgmtArrow');
+  const open=!sub.classList.contains('hidden');
+  sub.classList.toggle('hidden',open);
+  arrow.textContent=open?'▶':'▼';
+  switchTab('management');
+}
+function toggleUtilityMenu(){
+  const sub=document.getElementById('utilitySubmenu'),arrow=document.getElementById('utilityArrow');
+  const open=!sub.classList.contains('hidden');
+  sub.classList.toggle('hidden',open);
+  arrow.textContent=open?'▶':'▼';
+  switchTab('utility');
+}
+
+function switchGrade(gid){
+  document.querySelectorAll('.grade-btn').forEach(b=>b.classList.toggle('grade-active',b.dataset.grade===gid));
+  switchTab('minigame');
+  if(gid==='grade6'){showGrade6Launcher();return;}
+  const info={
+    grade3:{emoji:'🟥',label:'3학년 교과 연계 게임',games:'분수 피자 만들기, 도형 맞추기, 곱셈 배틀'},
+    grade4:{emoji:'🟧',label:'4학년 교과 연계 게임',games:'지도 퍼즐, 소수 점프, 혼합계산 레이스'},
+    grade5:{emoji:'🟨',label:'5학년 교과 연계 게임',games:'약분/통분 퀴즈, 비율 시뮬레이터, 사회 O/X'},
+  }[gid];
+  document.getElementById('gradeLabel').textContent=info.emoji+' '+info.label;
+  document.getElementById('gradeContent').innerHTML=`<div class="dashed-zone"><span class="text-5xl">${info.emoji}</span><p class="font-black text-lg">${info.label}</p><p class="text-sm">준비 중인 게임: ${info.games}</p></div>`;
+}
+
+/* ══════════ 6학년 런처 ══════════ */
+function showGrade6Launcher(){
+  document.getElementById('gradeLabel').textContent='🟩 6학년 - 게임을 골라요!';
+  document.getElementById('gradeContent').innerHTML=`
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    ${[{id:'stacking',icon:'🏗️',name:'쌓기나무 3D',desc:'드래그로 블록을 쌓아봐요!',bg:'#E8F5FF',bd:'#BEE3F8'},
+       {id:'proportion',icon:'📐',name:'비례식 퀴즈',desc:'a:b=c:? 비율을 맞혀봐요!',bg:'#F0FFF4',bd:'#9AE6B4'},
+       {id:'history',icon:'🃏',name:'역사 카드 배틀',desc:'사건과 설명을 짝지어요!',bg:'#FFF5F0',bd:'#FEB2B2'}]
+    .map(g=>`<button onclick="startGame('${g.id}')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:${g.bg};border:2.5px solid ${g.bd};"><div class="text-5xl">${g.icon}</div><p class="font-black text-gray-800">${g.name}</p><p class="text-xs text-gray-500">${g.desc}</p></button>`).join('')}
+  </div>`;
+}
+
+function startGame(id){
+  if(id==='stacking')   initStacking();
+  if(id==='proportion') initProportion();
+  if(id==='history')    initHistory();
+}
+
+/* ══════════════════════════════════════
+   🏗️ 쌓기나무 3D (5×5 + 컨트롤패드 + 고품질 3D)
+══════════════════════════════════════ */
+const BW=34,BH=17,BD=21;
+let sGrid=Array.from({length:5},()=>Array(5).fill(0));
+let sPuzzleTarget=null, sPuzzleIdx=0;
+let dragCell=null, dragStartClientY=0, dragStartH=0;
+
+function initStacking(){
+  sGrid=Array.from({length:5},()=>Array(5).fill(0));
+  document.getElementById('gradeLabel').textContent='🏗️ 쌓기나무 3D';
+  document.getElementById('gradeContent').innerHTML=`
+  <div class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <button onclick="showGrade6Launcher()" class="btn btn-ghost text-xs">← 게임 목록</button>
+      <button onclick="sGrid=Array.from({length:5},()=>Array(5).fill(0));drawAll();renderControlPad();" class="btn btn-ghost text-xs">🗑️ 초기화</button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-black text-gray-600">🖱️ 드래그로 회전 · 시점 선택</p>
+          <div class="flex gap-1">
+            <button onclick="setCamView(0, 0)" class="px-2 py-1 bg-blue-100 text-blue-700 font-bold text-xs rounded hover:bg-blue-200">앞에서</button>
+            <button onclick="setCamView(Math.PI/2, 0)" class="px-2 py-1 bg-purple-100 text-purple-700 font-bold text-xs rounded hover:bg-purple-200">옆에서</button>
+            <button onclick="setCamView(0, Math.PI/2)" class="px-2 py-1 bg-green-100 text-green-700 font-bold text-xs rounded hover:bg-green-200">위에서</button>
+            <button onclick="setCamView(Math.PI/4, Math.PI/6)" class="px-2 py-1 bg-gray-200 text-gray-700 font-bold text-xs rounded hover:bg-gray-300">기본(3D)</button>
+          </div>
+        </div>
+        <canvas id="isoCanvas" width="360" height="310"
+          class="rounded-2xl border-2 border-blue-200 w-full"
+          style="background:linear-gradient(160deg,#EFF6FF,#DBEAFE);cursor:move;touch-action:none;display:block;">
+        </canvas>
+      </div>
+
+      <div class="space-y-3">
+        <p class="text-xs font-black text-gray-700 mb-1">📐 방향별 · 층별 모양</p>
+        <div class="grid grid-cols-3 gap-2 text-center">
+          <div><p class="text-xs font-bold text-blue-600 mb-1">앞에서</p>
+            <canvas id="frontCanvas" width="100" height="90" class="rounded-xl border-2 border-blue-100 w-full" style="background:#F0F9FF;"></canvas></div>
+          <div><p class="text-xs font-bold text-purple-600 mb-1">옆에서</p>
+            <canvas id="sideCanvas" width="100" height="90" class="rounded-xl border-2 border-purple-100 w-full" style="background:#FAF5FF;"></canvas></div>
+          <div><p class="text-xs font-bold text-green-600 mb-1">위에서</p>
+            <canvas id="topCanvas" width="100" height="100" class="rounded-xl border-2 border-green-100 w-full" style="background:#F0FFF4;"></canvas></div>
+        </div>
+        <div>
+          <p class="text-xs font-black text-gray-700 mb-2">📦 층별 모양</p>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div><p class="text-xs font-bold text-yellow-600 mb-1">1층</p>
+              <canvas id="f1Canvas" width="100" height="100" class="rounded-xl border-2 border-yellow-100 w-full" style="background:#FFFBEB;"></canvas></div>
+            <div><p class="text-xs font-bold text-orange-600 mb-1">2층</p>
+              <canvas id="f2Canvas" width="100" height="100" class="rounded-xl border-2 border-orange-100 w-full" style="background:#FFF7ED;"></canvas></div>
+            <div><p class="text-xs font-bold text-red-500 mb-1">3층</p>
+              <canvas id="f3Canvas" width="100" height="100" class="rounded-xl border-2 border-red-100 w-full" style="background:#FFF5F5;"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-4 rounded-2xl" style="background:#F0F9FF;border:2.5px solid #BEE3F8;">
+      <p class="text-xs font-black text-gray-700 mb-3">🎛️ 높이 조절 패드 <span class="font-semibold text-gray-400">(▲=+1층 · 숫자탭=+1 · ▼=–1층 · 최대5층)</span></p>
+      <div id="controlPad" class="flex flex-col gap-1 items-start overflow-x-auto pb-1"></div>
+    </div>
+
+  </div>`;
+
+  setTimeout(()=>{ attachIsoEvents(); drawAll(); renderControlPad(); }, 0);
+}
+
+let camYaw = Math.PI / 4;
+let camPitch = Math.PI / 6;
+let isDragging3D = false;
+let lastMouseX = 0, lastMouseY = 0;
+
+function attachIsoEvents(){
+  const c=document.getElementById('isoCanvas'); if(!c) return;
+  c.onmousedown = e => { isDragging3D = true; lastMouseX = e.clientX; lastMouseY = e.clientY; };
+  c.onmousemove = e => {
+    if(!isDragging3D) return;
+    const dx = e.clientX - lastMouseX;
+    const dy = e.clientY - lastMouseY;
+    lastMouseX = e.clientX; lastMouseY = e.clientY;
+    camYaw -= dx * 0.015;
+    camPitch -= dy * 0.015;
+    camPitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, camPitch));
+    drawIso3D();
+  };
+  c.onmouseup = c.onmouseleave = () => { isDragging3D = false; };
+
+  c.ontouchstart = e => { e.preventDefault(); isDragging3D = true; lastMouseX = e.touches[0].clientX; lastMouseY = e.touches[0].clientY; };
+  c.ontouchmove = e => {
+    e.preventDefault();
+    if(!isDragging3D) return;
+    const dx = e.touches[0].clientX - lastMouseX;
+    const dy = e.touches[0].clientY - lastMouseY;
+    lastMouseX = e.touches[0].clientX; lastMouseY = e.touches[0].clientY;
+    camYaw -= dx * 0.015;
+    camPitch -= dy * 0.015;
+    camPitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, camPitch));
+    drawIso3D();
+  };
+  c.ontouchend = () => { isDragging3D = false; };
+}
+
+function drawAll(){
+  drawIso3D(); drawFrontView(); drawSideView(); drawTopViewCanvas();
+  drawFloorCanvas('f1Canvas',1,'#FCD34D','#FFFDE7');
+  drawFloorCanvas('f2Canvas',2,'#FB923C','#FFF3E0');
+  drawFloorCanvas('f3Canvas',3,'#F87171','#FFF5F5');
+}
+
+function drawIso3D(){
+  const c=document.getElementById('isoCanvas'); if(!c) return;
+  const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);
+  const cx = c.width/2, cy = c.height/2 + 20, scale = 26;
+
+  // View direction vector (from origin TOWARDS camera)
+  let Vx = Math.sin(camYaw) * Math.cos(camPitch);
+  let Vy = Math.cos(camYaw) * Math.cos(camPitch);
+  let Vz = Math.sin(camPitch);
+
+  function project(x,y,z) {
+    let px = x * Math.cos(camYaw) - y * Math.sin(camYaw);
+    let py = (x * Math.sin(camYaw) + y * Math.cos(camYaw)) * Math.sin(camPitch) - z * Math.cos(camPitch);
+    let depth = x * Vx + y * Vy + z * Vz; // Distance towards camera
+    return { px: cx + px * scale, py: cy + py * scale, depth: depth };
+  }
+
+  let blocks = [];
+  for(let gy=0; gy<5; gy++) {
+    for(let gx=0; gx<5; gx++) {
+      let h = sGrid[gy][gx];
+      if (h === 0) blocks.push({x:gx-2, y:gy-2, z:0, empty:true});
+      else for(let gz=0; gz<h; gz++) blocks.push({x:gx-2, y:gy-2, z:gz, empty:false, top:gz===h-1, h});
+    }
+  }
+
+  blocks.forEach(b => b.depth = project(b.x + 0.5, b.y + 0.5, b.z + 0.5).depth);
+  blocks.sort((a, b) => a.depth - b.depth); // 깊이가 작을수록(멀수록) 먼저 그림 (Painter's algorithm)
+
+  const faces = [
+    { v:[4,5,6,7], n:[0,0,1],  top:true, c: '#FDE68A' }, // Top
+    { v:[0,3,2,1], n:[0,0,-1], top:false, c: '#78350F' }, // Bottom
+    { v:[1,2,6,5], n:[1,0,0],  top:false, c: '#D97706' }, // Front-Right
+    { v:[2,3,7,6], n:[0,1,0],  top:false, c: '#F59E0B' }, // Front-Left
+    { v:[3,0,4,7], n:[-1,0,0], top:false, c: '#92400E' }, // Back-Left
+    { v:[0,1,5,4], n:[0,-1,0], top:false, c: '#B45309' }  // Back-Right
+  ];
+
+  ctx.lineJoin = 'round';
+  
+  for(let b of blocks) {
+    let V = [
+      project(b.x, b.y, b.z), project(b.x+1, b.y, b.z), project(b.x+1, b.y+1, b.z), project(b.x, b.y+1, b.z),
+      project(b.x, b.y, b.z+1), project(b.x+1, b.y, b.z+1), project(b.x+1, b.y+1, b.z+1), project(b.x, b.y+1, b.z+1)
+    ];
+
+    if (b.empty) {
+      ctx.beginPath(); ctx.moveTo(V[0].px, V[0].py); ctx.lineTo(V[1].px, V[1].py); ctx.lineTo(V[2].px, V[2].py); ctx.lineTo(V[3].px, V[3].py); ctx.closePath();
+      ctx.fillStyle='rgba(253,230,138,0.15)'; ctx.fill();
+      ctx.strokeStyle='rgba(217,119,6,0.3)'; ctx.lineWidth=1; ctx.stroke();
+      continue;
+    }
+
+    for(let f of faces) {
+      // 수학적 내적(Dot Product)을 이용한 완벽한 은면 제거 (Backface Culling)
+      if (f.n[0]*Vx + f.n[1]*Vy + f.n[2]*Vz > 0) {
+        ctx.beginPath(); ctx.moveTo(V[f.v[0]].px, V[f.v[0]].py); for(let i=1;i<4;i++) ctx.lineTo(V[f.v[i]].px, V[f.v[i]].py); ctx.closePath();
+        ctx.fillStyle = f.c; ctx.fill();
+        ctx.strokeStyle = '#451A03'; ctx.lineWidth = 2; ctx.stroke();
+
+        if(f.top && b.top){
+          ctx.fillStyle='#451A03'; ctx.font='900 14px Pretendard, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+          let cx=(V[4].px+V[5].px+V[6].px+V[7].px)/4, cy=(V[4].py+V[5].py+V[6].py+V[7].py)/4;
+          ctx.fillText(b.h, cx, cy);
+        }
+      }
+    }
+  }
+}
+
+function drawFrontView(){
+  const c=document.getElementById('frontCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height,cols=5,maxH=5;
+  const cw=W/cols,ch=H/maxH;ctx.clearRect(0,0,W,H);
+  for(let gx=0;gx<cols;gx++){
+    const h=Math.max(...sGrid.map(r=>r[gx]));
+    for(let z=0;z<maxH;z++){
+      const filled=(maxH-1-z)<h;
+      ctx.fillStyle=filled?'#93C5FD':'#EFF6FF';ctx.fillRect(gx*cw+1,(maxH-1-z)*ch+1,cw-2,ch-2);
+      ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=1;ctx.strokeRect(gx*cw,(maxH-1-z)*ch,cw,ch);
+    }
+  }
+}
+
+function drawSideView(){
+  const c=document.getElementById('sideCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height,cols=5,maxH=5;
+  const cw=W/cols,ch=H/maxH;ctx.clearRect(0,0,W,H);
+  for(let gy=0;gy<cols;gy++){
+    const h=Math.max(...sGrid[gy]);
+    for(let z=0;z<maxH;z++){
+      const filled=(maxH-1-z)<h;
+      ctx.fillStyle=filled?'#C4B5FD':'#FAF5FF';ctx.fillRect(gy*cw+1,(maxH-1-z)*ch+1,cw-2,ch-2);
+      ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=1;ctx.strokeRect(gy*cw,(maxH-1-z)*ch,cw,ch);
+    }
+  }
+}
+
+function drawTopViewCanvas(){
+  const c=document.getElementById('topCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height,n=5;
+  const cw=W/n,ch=H/n;ctx.clearRect(0,0,W,H);
+  for(let gy=0;gy<n;gy++) for(let gx=0;gx<n;gx++){
+    const h=sGrid[gy][gx];
+    ctx.fillStyle=h?'#86EFAC':'#F0FFF4';ctx.fillRect(gx*cw+1,gy*ch+1,cw-2,ch-2);
+    ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=1;ctx.strokeRect(gx*cw,gy*ch,cw,ch);
+    if(h>0){ctx.fillStyle='#065F46';ctx.font=`bold ${Math.floor(Math.min(cw,ch)*.48)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(h,gx*cw+cw/2,gy*ch+ch/2);}
+  }
+}
+
+function drawFloorCanvas(id,level,fill,empty){
+  const c=document.getElementById(id);if(!c)return;
+  const ctx=c.getContext('2d'),W=c.width,H=c.height,n=5;
+  const cw=W/n,ch=H/n;ctx.clearRect(0,0,W,H);
+  for(let gy=0;gy<n;gy++) for(let gx=0;gx<n;gx++){
+    const filled=sGrid[gy][gx]>=level;
+    ctx.fillStyle=filled?fill:empty;ctx.fillRect(gx*cw+1,gy*ch+1,cw-2,ch-2);
+    ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=1;ctx.strokeRect(gx*cw,gy*ch,cw,ch);
+  }
+}
+
+/* 컨트롤 패드 */
+function renderControlPad(){
+  const pad=document.getElementById('controlPad');if(!pad)return;
+  const HEIGHTS=['#E5E7EB','#93C5FD','#60A5FA','#3B82F6','#2563EB','#1E3A8A'];
+  const TEXTS=['·','1','2','3','4','5'];
+  pad.innerHTML=sGrid.map((row,gy)=>
+    `<div class="flex gap-1.5">${row.map((h,gx)=>`
+      <div class="flex flex-col items-center" style="gap:2px">
+        <button onclick="changeHeight(${gy},${gx},1)" style="width:34px;height:18px;background:#DBEAFE;border-radius:5px;font-size:10px;font-weight:900;color:#1D4ED8;border:none;cursor:pointer;" onmouseover="this.style.background='#BFDBFE'" onmouseout="this.style.background='#DBEAFE'">▲</button>
+        <div onclick="cycleHeight(${gy},${gx})" style="width:34px;height:34px;border-radius:7px;background:${HEIGHTS[h]};color:${h>0?'#fff':'#9CA3AF'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;cursor:pointer;border:2px solid ${h>0?'rgba(30,64,175,0.3)':'#D1D5DB'};transition:transform .1s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${TEXTS[h]}</div>
+        <button onclick="changeHeight(${gy},${gx},-1)" style="width:34px;height:18px;background:#FEE2E2;border-radius:5px;font-size:10px;font-weight:900;color:#B91C1C;border:none;cursor:pointer;" onmouseover="this.style.background='#FECACA'" onmouseout="this.style.background='#FEE2E2'">▼</button>
+      </div>`).join('')}</div>`
+  ).join('');
+}
+
+function changeHeight(gy,gx,delta){
+  sGrid[gy][gx]=Math.max(0,Math.min(5,sGrid[gy][gx]+delta));
+  drawAll();renderControlPad();
+}
+
+function cycleHeight(gy,gx){
+  sGrid[gy][gx]=(sGrid[gy][gx]+1)%6;
+  drawAll();renderControlPad();
+}
+
+let camAnim = null;
+function setCamView(tYaw, tPitch) {
+  if (camAnim) cancelAnimationFrame(camAnim);
+  let startYaw = camYaw, startPitch = camPitch;
+  let startTime = performance.now();
+  let dYaw = tYaw - startYaw;
+  while (dYaw > Math.PI) dYaw -= Math.PI * 2;
+  while (dYaw < -Math.PI) dYaw += Math.PI * 2;
+
+  function step(now) {
+    let p = (now - startTime) / 500;
+    if (p >= 1) {
+      camYaw = startYaw + dYaw;
+      camPitch = tPitch;
+      drawIso3D();
+      return;
+    }
+    let ease = 1 - Math.pow(1 - p, 3);
+    camYaw = startYaw + dYaw * ease;
+    camPitch = startPitch + (tPitch - startPitch) * ease;
+    drawIso3D();
+    camAnim = requestAnimationFrame(step);
+  }
+  camAnim = requestAnimationFrame(step);
+}
+
+
+/* ══════════════════════════════════════
+   📐 비례식 퀴즈
+══════════════════════════════════════ */
+let pScore=0,pCurrent=0,pQuestions=[];
+function rnd(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+
+function initProportion(){
+  pScore=0;pCurrent=0;pQuestions=[];
+  document.getElementById('gradeLabel').textContent='📐 비례식 퀴즈';
+  while(pQuestions.length<10){
+    const a=rnd(2,9),b=rnd(2,9),c=rnd(2,9),ans=b*c/a;
+    if(!Number.isInteger(ans)||ans<1||ans>40)continue;
+    const s=new Set([ans]);
+    while(s.size<4){const w=ans+rnd(-5,5);if(w>0&&w!==ans)s.add(w);}
+    pQuestions.push({a,b,c,ans,choices:[...s].sort(()=>Math.random()-.5)});
+  }
+  renderProportion();
+}
+
+function renderProportion(){
+  const gc=document.getElementById('gradeContent');
+  if(pCurrent>=10){
+    gc.innerHTML=`<div class="flex flex-col items-center gap-4 py-8 text-center">
+      <span class="text-6xl">${pScore>=8?'🏆':pScore>=5?'🌟':'💪'}</span>
+      <h4 class="text-2xl font-black">${pScore}/10 점!</h4>
+      <p class="text-gray-500 text-sm">${pScore>=8?'완벽! 비례식 마스터예요!':pScore>=5?'잘했어요! 조금 더 연습해봐요!':'다시 도전해봐요!'}</p>
+      <div class="flex gap-3"><button onclick="showGrade6Launcher()" class="btn btn-ghost text-sm">← 목록</button><button onclick="initProportion()" class="btn btn-blue text-sm">🔄 다시 하기</button></div>
+    </div>`;return;
+  }
+  const q=pQuestions[pCurrent];
+  gc.innerHTML=`<div class="space-y-5">
+    <div class="flex items-center justify-between"><button onclick="showGrade6Launcher()" class="btn btn-ghost text-xs">← 뒤로</button><span class="text-xs font-black text-gray-500">${pCurrent+1}/10 · 점수: ${pScore}</span></div>
+    <div class="h-2 rounded-full bg-gray-200"><div class="h-2 rounded-full" style="width:${pCurrent*10}%;background:linear-gradient(90deg,#4D96FF,#6BCB77);transition:width .4s;"></div></div>
+    <div class="card p-8 text-center">
+      <p class="text-gray-500 text-sm font-semibold mb-3">? 에 들어갈 알맞은 수를 고르세요</p>
+      <p class="text-4xl font-black text-gray-800 mb-2">${q.a} : ${q.b} = ${q.c} : <span class="text-blue-500">?</span></p>
+      <p class="text-xs text-gray-400">(${q.a} × ? = ${q.b} × ${q.c})</p>
+    </div>
+    <div class="grid grid-cols-2 gap-3" id="choiceGrid">
+      ${q.choices.map(ch=>`<button onclick="ansP(${ch},${q.ans})" data-val="${ch}" class="btn py-5 text-xl font-black text-gray-700 hover:-translate-y-1" style="background:#F3F0E0;border:2.5px solid #E8E4CC;border-radius:1.25rem;">${ch}</button>`).join('')}
+    </div>
+  </div>`;
+}
+
+function ansP(choice,ans){
+  document.querySelectorAll('#choiceGrid button').forEach(b=>{
+    const v=parseInt(b.dataset.val);b.disabled=true;
+    if(v===ans) b.style.cssText='background:#6BCB77;color:#fff;border:2.5px solid #38A169;border-radius:1.25rem;padding:1.25rem;font-size:1.25rem;font-weight:800;';
+    else if(v===choice) b.style.cssText='background:#FF6B6B;color:#fff;border:2.5px solid #E53E3E;border-radius:1.25rem;padding:1.25rem;font-size:1.25rem;font-weight:800;';
+  });
+  if(choice===ans)pScore++;
+  setTimeout(()=>{pCurrent++;renderProportion();},850);
+}
+
+/* ══════════════════════════════════════
+   🃏 역사 카드 배틀
+══════════════════════════════════════ */
+const HISTORY_DB=[
+  {event:'고조선 건국',      desc:'단군왕검이 아사달을 도읍으로 세운 우리 최초의 국가'},
+  {event:'삼국 통일',        desc:'신라가 당나라와 연합해 백제·고구려를 멸망시키고 통일함'},
+  {event:'고려 건국',        desc:'왕건이 후삼국을 통일하고 개성을 수도로 세운 나라'},
+  {event:'훈민정음 창제',    desc:'세종대왕이 백성을 위해 만든 우리 고유의 28자 문자'},
+  {event:'고려 팔만대장경',  desc:'몽골 침략을 불교의 힘으로 막고자 만든 8만여 판의 경판'},
+  {event:'임진왜란',         desc:'일본이 조선을 침략, 이순신 장군이 수군을 이끌어 활약함'},
+  {event:'한산도 대첩',      desc:'이순신이 학익진 전법으로 일본 수군을 크게 격파한 해전'},
+  {event:'병자호란',         desc:'청나라가 조선을 침략해 인조가 삼전도에서 항복한 사건'},
+  {event:'동학 농민 운동',   desc:'전봉준이 이끈 농민 봉기로 탐관오리 척결을 요구함'},
+  {event:'강화도 조약',      desc:'조선이 일본과 맺은 최초의 불평등 근대 조약'},
+  {event:'국권 피탈',        desc:'일본이 강제로 대한제국의 주권을 빼앗아 식민지로 만듦'},
+  {event:'3·1 운동',        desc:'일제 강점기 전국에서 독립 만세를 외친 민족 독립운동'},
+  {event:'광복',             desc:'일본 패전으로 우리나라가 식민지에서 해방된 날 (8.15)'},
+  {event:'한국전쟁',         desc:'북한의 기습 남침으로 시작된 3년간의 전쟁, 유엔군 참전'},
+  {event:'4·19 혁명',       desc:'이승만 독재에 맞서 학생들이 일으킨 민주주의 혁명'},
+  {event:'5·18 민주화 운동', desc:'전두환 군사 정권에 저항한 광주 시민들의 민주화 투쟁'},
+  {event:'서울 올림픽',      desc:'1988년 서울에서 열린 제24회 하계 올림픽 대회'},
+  {event:'안중근 의거',      desc:'독립운동가 안중근이 이토 히로부미를 하얼빈에서 저격함'},
+  {event:'윤봉길 의거',      desc:'윤봉길이 상해 홍구공원에서 일본 장교들에게 폭탄을 던짐'},
+  {event:'거북선',           desc:'이순신 장군이 임진왜란에서 사용한 철갑 전투함'},
+  {event:'조선 건국',        desc:'이성계가 고려를 무너뜨리고 한양을 수도로 세운 나라'},
+  {event:'불국사',           desc:'신라 경덕왕 때 김대성이 세운 절, 석가탑·다보탑이 있음'},
+  {event:'광개토대왕',       desc:'고구려의 영토를 크게 넓혀 만주와 한반도 북부를 지배한 왕'},
+  {event:'세종대왕',         desc:'집현전 설치, 측우기·앙부일구 발명을 주도한 조선 4대 왕'},
+];
+
+let hEvents=[], hDescs=[], hSelEv=null, hSelDesc=null, hMatchCnt=0, hBusy=false;
+
+function initHistory(){
+  hMatchCnt=0;hSelEv=null;hSelDesc=null;hBusy=false;
+  const pool=[...HISTORY_DB].sort(()=>Math.random()-.5).slice(0,8);
+  hEvents=pool.map(p=>({...p,matched:false}));
+  hDescs=[...pool].sort(()=>Math.random()-.5).map(p=>({...p,matched:false}));
+  document.getElementById('gradeLabel').textContent='🃏 역사 카드 배틀';
+  renderHistory();
+}
+
+function renderHistory(){
+  const gc=document.getElementById('gradeContent');
+  gc.innerHTML=`
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <button onclick="showGrade6Launcher()" class="btn btn-ghost text-xs">← 목록</button>
+      <span class="text-xs font-black text-gray-500">맞춘 쌍: <span id="hM">${hMatchCnt}</span>/8</span>
+      <button onclick="initHistory()" class="btn btn-ghost text-xs">🔄 새 게임</button>
+    </div>
+    <p class="text-xs text-gray-500 font-semibold text-center">📜 왼쪽 사건 클릭 → 📖 오른쪽 설명 클릭으로 짝을 맞춰요! (모두 보이는 상태예요)</p>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="space-y-2">
+        <p class="text-xs font-black text-blue-700 text-center mb-2">📜 역사 사건</p>
+        ${hEvents.map((e,i)=>`<div onclick="selEv(${i})" id="ev_${i}" class="h-card p-2.5 rounded-xl cursor-pointer text-sm font-bold text-center text-blue-800${e.matched?' matched':''}" style="background:#EFF6FF;border-color:#BFDBFE;">${e.matched?'✅ ':''}${e.event}</div>`).join('')}
+      </div>
+      <div class="space-y-2">
+        <p class="text-xs font-black text-green-700 text-center mb-2">📖 설명</p>
+        ${hDescs.map((d,i)=>`<div onclick="selDesc(${i})" id="desc_${i}" class="h-card p-2.5 rounded-xl cursor-pointer text-xs font-semibold text-green-900${d.matched?' matched':''}" style="background:#F0FFF4;border-color:#A7F3D0;">${d.matched?'✅ ':''}${d.desc}</div>`).join('')}
+      </div>
+    </div>
+    <div id="hWin" class="hidden text-center py-6"><p class="text-4xl mb-2">🏆</p><p class="font-black text-xl">모두 맞췄어요!</p><p class="text-sm text-gray-500 mt-1">훌륭해요! 다른 문제로 다시 도전해봐요!</p><button onclick="initHistory()" class="btn btn-blue mt-4 text-sm">🔄 새 게임 (다른 문제)</button></div>
+  </div>`;
+}
+
+function selEv(idx){
+  if(hBusy||hEvents[idx].matched)return;
+  hSelEv=idx;
+  hEvents.forEach((_,i)=>{
+    const el=document.getElementById(`ev_${i}`);if(!el||hEvents[i].matched)return;
+    el.classList.toggle('selected-ev',i===idx);
+  });
+  if(hSelDesc!==null)tryMatchH();
+}
+
+function selDesc(idx){
+  if(hBusy||hDescs[idx].matched)return;
+  hSelDesc=idx;
+  hDescs.forEach((_,i)=>{
+    const el=document.getElementById(`desc_${i}`);if(!el||hDescs[i].matched)return;
+    el.classList.toggle('selected-desc',i===idx);
+  });
+  if(hSelEv!==null)tryMatchH();
+}
+
+function tryMatchH(){
+  const ei=hSelEv,di=hSelDesc;
+  hSelEv=null;hSelDesc=null;
+  const ev=hEvents[ei],desc=hDescs[di];
+  const ok=ev.event===desc.event;
+  const evEl=document.getElementById(`ev_${ei}`),descEl=document.getElementById(`desc_${di}`);
+
+  if(ok){
+    ev.matched=desc.matched=true;
+    hMatchCnt++;
+    const hm=document.getElementById('hM');if(hm)hm.textContent=hMatchCnt;
+    if(evEl){evEl.classList.remove('selected-ev');evEl.classList.add('matched');evEl.textContent='✅ '+ev.event;evEl.onclick=null;}
+    if(descEl){descEl.classList.remove('selected-desc');descEl.classList.add('matched');descEl.textContent='✅ '+desc.desc;descEl.onclick=null;}
+    if(hMatchCnt===8) setTimeout(()=>document.getElementById('hWin')?.classList.remove('hidden'),300);
+  } else {
+    hBusy=true;
+    if(evEl){evEl.classList.remove('selected-ev');evEl.classList.add('wrong');}
+    if(descEl){descEl.classList.remove('selected-desc');descEl.classList.add('wrong');}
+    setTimeout(()=>{
+      if(evEl){evEl.classList.remove('wrong');}
+      if(descEl){descEl.classList.remove('wrong');}
+      hBusy=false;
+    },600);
+  }
+}
+
+/* ══════════════════════════════════════
+   📋 학급 경영 도구 - 탭 전환
+══════════════════════════════════════ */
+function showMgmt(type){
+  document.querySelectorAll('[data-mgmt]').forEach(b=>b.classList.toggle('util-active',b.dataset.mgmt===type));
+  const gc=document.getElementById('mgmtContent');if(!gc)return;
+  if(type==='seat'){ renderSeatPanel(); }
+  if(type==='role'){ rRender(); }
+  if(type==='group'){ gc.innerHTML=`<div class="dashed-zone"><span class="text-5xl">👥</span><p class="font-black text-lg">모둠 구성 준비 중</p></div>`; }
+}
+
+function showFreeGame(type){
+  document.querySelectorAll('[data-free]').forEach(b=>b.classList.toggle('util-active',b.dataset.free===type));
+  const gc=document.getElementById('freeGameContent');if(!gc)return;
+  const bl=document.getElementById('bungeoLink');
+  if(type==='bungeo'){
+    if(bl)bl.style.display='';
+    gc.innerHTML=`<div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:620px;"><iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>`;
+  }
+  if(type==='mafia'){
+    if(bl)bl.style.display='none';
+    mPhase='setup'; mP=[]; mVotes={};
+    renderMafia();
+  }
+}
+
+/* ══════════════════════════════════════
+   🕵️ 마피아 온라인
+══════════════════════════════════════ */
+let mP=[], mPhase='setup', mRound=0, mRevIdx=0;
+let mRoles={mafia:2,doctor:1,police:1};
+let mNightKill=null, mNightSave=null, mNightInvest=null, mInvestResult=null;
+let mVotes={}, mEndReason=null;
+const ROLE_INFO={
+  '마피아':{bg:'#FEE2E2',bd:'#FCA5A5',tc:'#991B1B',icon:'🔪',desc:'팀원끼리 협력해 밤마다 시민 1명을 제거하세요. 마피아 수 ≥ 시민 수가 되면 승리!'},
+  '시민':{bg:'#EFF6FF',bd:'#BFDBFE',tc:'#1E40AF',icon:'😊',desc:'마피아를 모두 찾아내면 시민팀이 승리해요! 대화로 마피아를 추리해보세요.'},
+  '의사':{bg:'#F0FFF4',bd:'#86EFAC',tc:'#166534',icon:'🏥',desc:'밤마다 한 명을 지목해 살릴 수 있어요! 마피아의 표적을 예측해보세요.'},
+  '경찰':{bg:'#FFF7ED',bd:'#FCD34D',tc:'#92400E',icon:'🔍',desc:'밤마다 한 명이 마피아인지 조사할 수 있어요! 결과는 낮에 활용하세요.'},
+};
+
+function renderMafia(){
+  const gc=document.getElementById('freeGameContent');if(!gc)return;
+  if(mPhase==='setup') gc.innerHTML=mSetupHTML();
+  else if(mPhase==='roleReveal') gc.innerHTML=mRevealHTML();
+  else if(mPhase==='night') gc.innerHTML=mNightHTML();
+  else if(mPhase==='day') gc.innerHTML=mDayHTML();
+  else if(mPhase==='vote') gc.innerHTML=mVoteHTML()||'';
+  else if(mPhase==='gameOver') gc.innerHTML=mGameOverHTML();
+}
+
+function mSetupHTML(){
+  return `<div class="space-y-4">
+    <div class="p-4 rounded-2xl" style="background:#1A1A2E;color:#fff;"><div class="flex items-center gap-3 mb-1"><span class="text-3xl">🕵️</span><div><h4 class="font-black text-lg">마피아 온라인</h4><p class="text-xs" style="color:#94A3B8;">한 기기로 즐기는 교실 마피아 게임</p></div></div></div>
+    <div class="card p-4 space-y-3">
+      <p class="text-sm font-black text-gray-700">👥 플레이어 이름 입력 (한 줄에 한 명)</p>
+      <textarea id="mNameList" class="inp" rows="8" placeholder="김민준&#10;이서연&#10;박지호&#10;최유나&#10;정하준&#10;..."></textarea>
+    </div>
+    <div class="card p-4 space-y-3">
+      <p class="text-sm font-black text-gray-700">🎭 역할 설정</p>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-xs font-black text-red-700 block mb-1">🔪 마피아</label><select id="mMafia" class="inp">${[1,2,3,4].map(n=>`<option ${n===mRoles.mafia?'selected':''}>${n}</option>`).join('')}</select></div>
+        <div><label class="text-xs font-black text-green-700 block mb-1">🏥 의사 (0~1)</label><select id="mDoctor" class="inp">${[0,1].map(n=>`<option ${n===mRoles.doctor?'selected':''}>${n}</option>`).join('')}</select></div>
+        <div><label class="text-xs font-black text-yellow-700 block mb-1">🔍 경찰 (0~1)</label><select id="mPolice" class="inp">${[0,1].map(n=>`<option ${n===mRoles.police?'selected':''}>${n}</option>`).join('')}</select></div>
+        <div><label class="text-xs font-black text-blue-700 block mb-1">😊 시민 (자동)</label><div class="inp font-bold text-gray-600" style="background:#F9F7EC;">입력 후 계산</div></div>
+      </div>
+    </div>
+    <button onclick="mStartGame()" class="btn btn-blue w-full text-base py-4">🚀 게임 시작!</button>
+  </div>`;
+}
+
+function mStartGame(){
+  const names=(document.getElementById('mNameList')?.value||'').split('\\n').map(s=>s.trim()).filter(Boolean);
+  if(names.length<4){toast('⚠️ 최소 4명 이상 필요해요!');return;}
+  mRoles.mafia=parseInt(document.getElementById('mMafia')?.value||'2');
+  mRoles.doctor=parseInt(document.getElementById('mDoctor')?.value||'1');
+  mRoles.police=parseInt(document.getElementById('mPolice')?.value||'1');
+  const citizens=names.length-mRoles.mafia-mRoles.doctor-mRoles.police;
+  if(citizens<1){toast('⚠️ 시민이 1명 이상 필요해요!');return;}
+  const rolePool=[...Array(mRoles.mafia).fill('마피아'),...Array(mRoles.doctor).fill('의사'),...Array(mRoles.police).fill('경찰'),...Array(citizens).fill('시민')].sort(()=>Math.random()-.5);
+  mP=names.map((name,i)=>({name,role:rolePool[i],alive:true}));
+  mPhase='roleReveal';mRevIdx=0;mRound=0;
+  mNightKill=null;mNightSave=null;mNightInvest=null;mInvestResult=null;mVotes={};
+  renderMafia();
+}
+
+function mRevealHTML(){
+  const p=mP[mRevIdx];
+  return `<div class="space-y-4">
+    <div class="p-4 rounded-2xl text-center" style="background:#1A1A2E;color:#fff;"><p class="text-sm" style="color:#94A3B8;">역할 확인 순서 ${mRevIdx+1}/${mP.length}</p><p class="text-2xl font-black mt-1" style="color:#FFD93D;">${p.name}</p></div>
+    <div id="mRoleCard" class="card p-8 text-center" style="min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;">
+      <p class="font-black text-gray-600">📱 ${p.name}님, 혼자 화면을 보세요</p>
+      <button onclick="mRevealRole()" class="btn btn-blue text-base px-8 py-4">👆 탭하여 역할 확인</button>
+    </div>
+    <p class="text-xs text-gray-400 text-center font-semibold">다른 사람들은 화면을 보지 않도록 해주세요 🙈</p>
+  </div>`;
+}
+
+function mRevealRole(){
+  const p=mP[mRevIdx],ri=ROLE_INFO[p.role];
+  const card=document.getElementById('mRoleCard');if(!card)return;
+  card.innerHTML=`
+    <div style="background:${ri.bg};border:3px solid ${ri.bd};border-radius:1.5rem;padding:2rem;width:100%;text-align:center;">
+      <div style="font-size:4rem;">${ri.icon}</div>
+      <p style="font-size:1.5rem;font-weight:900;color:${ri.tc};">${p.role}</p>
+      <p style="font-size:.8rem;color:${ri.tc};margin-top:.5rem;font-weight:600;">${ri.desc}</p>
+      ${p.role==='마피아'?`<div style="margin-top:1rem;padding:.75rem;background:rgba(0,0,0,.08);border-radius:.75rem;"><p style="font-size:.75rem;font-weight:800;color:${ri.tc};">🔪 마피아 동료:</p><p style="font-weight:900;font-size:1rem;color:${ri.tc};">${mP.filter(x=>x.role==='마피아'&&x.name!==p.name).map(x=>x.name).join(', ')||'없음(혼자!)'}</p></div>`:``}
+    </div>
+    <button onclick="mNextReveal()" class="btn btn-green text-base px-8 py-3">✅ 확인했어요</button>`;
+}
+
+function mNextReveal(){mRevIdx++;if(mRevIdx>=mP.length){mPhase='night';mRound=1;mNightKill=null;mNightSave=null;mNightInvest=null;mInvestResult=null;}renderMafia();}
+
+function mNightHTML(){
+  const alive=mP.filter(p=>p.alive);
+  const hasMafia=alive.some(p=>p.role==='마피아');
+  const hasDoc=alive.some(p=>p.role==='의사');
+  const hasPol=alive.some(p=>p.role==='경찰');
+  return `<div class="space-y-4">
+    <div class="p-5 rounded-2xl text-center" style="background:#0F172A;color:#fff;"><div style="font-size:2.5rem;">🌙</div><h4 class="text-xl font-black mt-1">밤이 되었습니다</h4><p style="color:#64748B;font-size:.85rem;">라운드 ${mRound} · 생존자 ${alive.length}명</p></div>
+    <div class="card p-4 space-y-3">
+      ${hasMafia?`<div class="p-3 rounded-xl" style="background:#FEE2E2;border:2px solid #FCA5A5;">
+        <p class="text-sm font-black text-red-800 mb-2">🔪 마피아 행동 (마피아끼리 조용히 논의 후 선택)</p>
+        <select id="mKillTgt" class="inp"><option value="">-- 제거할 대상 --</option>${alive.filter(p=>p.role!=='마피아').map(p=>`<option>${p.name}</option>`).join('')}</select>
+        <button onclick="mConfirmKill()" class="btn btn-ghost text-xs mt-2 w-full">🔪 확정${mNightKill?' ✅ '+mNightKill:''}</button></div>`:``}
+      ${hasDoc?`<div class="p-3 rounded-xl" style="background:#F0FFF4;border:2px solid #86EFAC;">
+        <p class="text-sm font-black text-green-800 mb-2">🏥 의사 행동</p>
+        <select id="mSaveTgt" class="inp"><option value="">-- 살릴 대상 --</option>${alive.map(p=>`<option>${p.name}</option>`).join('')}</select>
+        <button onclick="mConfirmSave()" class="btn btn-ghost text-xs mt-2 w-full">🏥 확정${mNightSave?' ✅ '+mNightSave:''}</button></div>`:``}
+      ${hasPol?`<div class="p-3 rounded-xl" style="background:#FFF7ED;border:2px solid #FCD34D;">
+        <p class="text-sm font-black text-yellow-800 mb-2">🔍 경찰 행동</p>
+        <select id="mInvTgt" class="inp"><option value="">-- 조사할 대상 --</option>${alive.filter(p=>p.role!=='경찰').map(p=>`<option>${p.name}</option>`).join('')}</select>
+        <button onclick="mConfirmInvest()" class="btn btn-ghost text-xs mt-2 w-full">🔍 확정${mNightInvest?' ✅ '+mNightInvest:''}</button></div>`:``}
+    </div>
+    <button onclick="mProcessNight()" class="btn btn-blue w-full text-base py-4">☀️ 아침이 됩니다</button>
+  </div>`;
+}
+
+function mConfirmKill(){const v=document.getElementById('mKillTgt')?.value;if(!v){toast('⚠️ 대상을 선택하세요!');return;}mNightKill=v;toast('🔪 마피아 표적: '+v);}
+function mConfirmSave(){const v=document.getElementById('mSaveTgt')?.value;if(!v){toast('⚠️ 대상을 선택하세요!');return;}mNightSave=v;toast('🏥 의사 보호: '+v);}
+function mConfirmInvest(){const v=document.getElementById('mInvTgt')?.value;if(!v){toast('⚠️ 대상을 선택하세요!');return;}mNightInvest=v;const t=mP.find(p=>p.name===v);mInvestResult=t?t.role:'???';toast('🔍 조사 완료!');}
+
+function mProcessNight(){
+  let nightResult='none';
+  if(mNightKill){const t=mP.find(p=>p.name===mNightKill);if(t){if(mNightSave===mNightKill){nightResult='saved';}else{t.alive=false;nightResult='killed';}}}
+  mPhase='day';renderMafia();
+  mEndReason=nightResult;
+}
+
+function mDayHTML(){
+  const alive=mP.filter(p=>p.alive);
+  const killed=mEndReason==='killed'?mP.find(p=>p.name===mNightKill&&!p.alive):null;
+  const polStr=mInvestResult?`🔍 경찰 조사: <strong>${mNightInvest}</strong> → ${mInvestResult}`:'';
+  return `<div class="space-y-4">
+    <div class="p-4 rounded-2xl text-center" style="background:linear-gradient(135deg,#FFF7ED,#FEEBC8);border:2px solid #FCD34D;"><div style="font-size:2rem;">☀️</div><h4 class="font-black text-xl text-amber-900">라운드 ${mRound} 아침</h4></div>
+    <div class="card p-4 space-y-3">
+      ${killed?`<div class="p-4 rounded-xl text-center" style="background:#FEE2E2;border:2px solid #FCA5A5;"><p class="font-black text-red-800 text-lg">😢 ${killed.name}님이 제거되었습니다!</p><p class="text-xs text-red-600 mt-1">역할: ${killed.role}</p></div>`:
+        mEndReason==='saved'?`<div class="p-4 rounded-xl text-center" style="background:#F0FFF4;border:2px solid #86EFAC;"><p class="font-black text-green-800 text-lg">🏥 의사가 ${mNightSave}님을 구했어요!</p></div>`:
+        `<div class="p-4 rounded-xl text-center" style="background:#EFF6FF;border:2px solid #BFDBFE;"><p class="font-black text-blue-800 text-lg">😌 밤에 아무 일도 없었어요</p></div>`}
+      ${polStr?`<div class="p-3 rounded-xl" style="background:#FFF7ED;border:2px solid #FCD34D;"><p class="text-sm text-yellow-800 font-semibold">${polStr}</p></div>`:``}
+      <div><p class="text-sm font-black text-gray-700 mb-2">👥 생존자 (${alive.length}명)</p>
+        <div class="flex flex-wrap gap-2">${alive.map(p=>`<span class="badge" style="background:#EFF6FF;color:#1E40AF;font-size:.8rem;padding:.3rem .8rem;">${p.name}</span>`).join('')}</div></div>
+    </div>
+    <button onclick="mGoVote()" class="btn btn-blue w-full text-base py-4">🗳️ 투표하러 가기</button>
+  </div>`;
+}
+
+function mGoVote(){
+  const alive=mP.filter(p=>p.alive);
+  const am=alive.filter(p=>p.role==='마피아').length;
+  const ac=alive.filter(p=>p.role!=='마피아').length;
+  if(am===0){mPhase='gameOver';mEndReason='citizenWin';renderMafia();return;}
+  if(am>=ac){mPhase='gameOver';mEndReason='mafiaWin';renderMafia();return;}
+  mVotes={};mPhase='vote';renderMafia();
+}
+
+function mVoteHTML(){
+  const alive=mP.filter(p=>p.alive);
+  const pending=alive.filter(p=>!mVotes.hasOwnProperty(p.name));
+  if(!pending.length){
+    const cnt={};
+    Object.values(mVotes).filter(v=>v!=='skip').forEach(v=>{cnt[v]=(cnt[v]||0)+1;});
+    const maxV=cnt&&Object.keys(cnt).length?Math.max(...Object.values(cnt)):0;
+    const top=Object.keys(cnt).filter(k=>cnt[k]===maxV);
+    const elim=top.length===1?top[0]:null;
+    if(elim){const ep=mP.find(p=>p.name===elim);if(ep)ep.alive=false;}
+    const resultMsg=elim?`📢 ${elim}님이 투표로 제거됐습니다! (역할: ${mP.find(p=>p.name===elim)?.role})`:'📢 동수! 아무도 제거되지 않았습니다.';
+    toast(resultMsg);
+    mRound++;mNightKill=null;mNightSave=null;mNightInvest=null;mInvestResult=null;
+    const newAlive=mP.filter(p=>p.alive);
+    const nm=newAlive.filter(p=>p.role==='마피아').length;
+    const nc=newAlive.filter(p=>p.role!=='마피아').length;
+    if(nm===0){mPhase='gameOver';mEndReason='citizenWin';renderMafia();return '';
+    }else if(nm>=nc){mPhase='gameOver';mEndReason='mafiaWin';renderMafia();return '';}
+    mPhase='night';renderMafia();return '';
+  }
+  const nv=pending[0];
+  return `<div class="space-y-4">
+    <div class="p-4 rounded-2xl text-center" style="background:#1A1A2E;color:#fff;"><h4 class="text-xl font-black">🗳️ 투표 시간!</h4><p style="color:#94A3B8;font-size:.85rem;">마피아라고 의심되는 사람에게 투표하세요</p></div>
+    <div class="card p-4 space-y-3">
+      <p class="font-black text-sm text-gray-700">현재 투표자: <span style="color:#4D96FF;">${nv.name}</span>님 (${alive.length-pending.length+1}/${alive.length})</p>
+      <p class="text-xs text-gray-400 font-semibold">완료: ${Object.keys(mVotes).join(', ')||'없음'}</p>
+      <div class="grid grid-cols-2 gap-2 mt-2">
+        ${alive.filter(p=>p.name!==nv.name).map(p=>`<button onclick="mCastVote('${nv.name}','${p.name}')" class="btn py-3 text-sm font-black" style="background:#F3F0E0;border:2.5px solid #E8E4CC;border-radius:1rem;">${p.name}</button>`).join('')}
+        <button onclick="mCastVote('${nv.name}','skip')" class="btn py-3 text-sm font-black" style="background:#EFF6FF;border:2.5px solid #BFDBFE;border-radius:1rem;">⏭️ 기권</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function mCastVote(voter,target){mVotes[voter]=target;const gc=document.getElementById('freeGameContent');if(gc){const h=mVoteHTML();if(h)gc.innerHTML=h;}}
+
+function mGameOverHTML(){
+  const mWin=mEndReason==='mafiaWin';
+  return `<div class="space-y-4">
+    <div class="p-6 rounded-2xl text-center" style="background:${mWin?'#1A0A00':'#001A0A'};color:#fff;"><div style="font-size:3rem;">${mWin?'🔪':'⚖️'}</div><h4 class="text-2xl font-black mt-1">${mWin?'마피아 승리!':'시민 승리!'}</h4><p style="color:#94A3B8;font-size:.9rem;">${mWin?'마피아가 마을을 장악했습니다 😈':'마피아를 모두 찾아냈습니다 🎉'}</p></div>
+    <div class="card p-4">
+      <p class="font-black text-sm text-gray-700 mb-3">👥 전체 역할 공개</p>
+      <div class="space-y-2">${mP.map(p=>{const ri=ROLE_INFO[p.role];return `<div class="flex items-center justify-between p-2 rounded-xl" style="background:${ri.bg};border:2px solid ${ri.bd};"><span class="font-black" style="color:${ri.tc};">${ri.icon} ${p.name}${p.alive?'':' ☠️'}</span><span class="font-black text-sm" style="color:${ri.tc};">${p.role}</span></div>`;}).join('')}</div>
+    </div>
+    <button onclick="mPhase='setup';renderMafia();" class="btn btn-blue w-full text-base py-4">🔄 새 게임</button>
+  </div>`;
+}
+
+/* ══════════════════════════════════════
+   🪑 자리 배치 시스템
+══════════════════════════════════════ */
+let seatN=24, seatCols=6, seatRows=4;
+let seatAssign=[];
+let seatPins=new Set();
+let seatPinMode=false;
+let seatStudentView=false;
+
+function initManagementSeat(){
+  seatN=24; seatCols=6; seatRows=Math.ceil(seatN/seatCols);
+  seatAssign=Array(seatRows*seatCols).fill(null);
+  seatPins=new Set();
+  seatPinMode=false;
+  seatStudentView=false;
+}
+
+function pinModeBtnStyle(){
+  return seatPinMode
+    ? 'background:linear-gradient(135deg,#FFD93D,#FF8C42);color:#fff;box-shadow:0 3px 8px rgba(255,140,66,.3);border-radius:.875rem;padding:.6rem 1.1rem;border:2px solid transparent;font-weight:800;'
+    : 'background:#F3F0E0;color:#5A5238;border:2px solid #E8E4CC;border-radius:.875rem;padding:.6rem 1.1rem;font-weight:800;';
+}
+function studentViewBtnStyle(){
+  return seatStudentView
+    ? 'background:linear-gradient(135deg,#6BCB77,#38A169);color:#fff;box-shadow:0 3px 8px rgba(56,161,105,.3);border-radius:.875rem;padding:.6rem 1.1rem;border:2px solid transparent;font-weight:800;'
+    : 'background:#F3F0E0;color:#5A5238;border:2px solid #E8E4CC;border-radius:.875rem;padding:.6rem 1.1rem;font-weight:800;';
+}
+
+function seatHTML(){
+  const pinModeBtn = seatStudentView ? '' : `<button id="btnPinMode" onclick="togglePinMode()" class="btn text-xs" style="${pinModeBtnStyle()}">${seatPinMode?'🔓 미리 지정 모드 끄기':'🔒 미리 지정 모드 켜기'}</button>`;
+  const clearPinsBtn = seatStudentView ? '' : `<button onclick="clearSeatPins()" class="btn btn-ghost text-xs">📌 고정 초기화</button>`;
+  return `
+  <div class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 rounded-2xl" style="background:#F9F7EC;border:2.5px solid #E8E4CC;">
+      <div><label class="text-xs font-black text-gray-600 block mb-1">학생 수 (출석번호 1~N)</label><input id="seatCountInp" type="number" min="1" max="60" class="inp" value="${seatN}" onchange="applySeatSetup()"></div>
+      <div><label class="text-xs font-black text-gray-600 block mb-1">한 줄 자리 수</label><input id="seatColsInp" type="number" min="1" max="12" class="inp" value="${seatCols}" onchange="applySeatSetup()"></div>
+      <div class="flex items-end pb-1"><p class="text-xs text-gray-500 font-semibold">총 좌석: <span id="seatTotalTxt" class="font-black text-gray-700">${seatRows*seatCols}</span>개 (${seatRows}행 × ${seatCols}열)</p></div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-2">
+      ${pinModeBtn}
+      <button onclick="randomizeSeats()" class="btn btn-blue text-xs">🎲 랜덤 배치</button>
+      <button onclick="clearSeatAssign()" class="btn btn-ghost text-xs">🗑️ 배치 초기화</button>
+      ${clearPinsBtn}
+      <button id="btnStudentView" onclick="toggleStudentView()" class="btn text-xs" style="${studentViewBtnStyle()}">${seatStudentView?'👁️ 교사용 보기로 전환':'🙈 학생용 화면 보기'}</button>
+    </div>
+
+    <div id="pinHint" class="${seatPinMode?'':'hidden'} rounded-xl p-3 text-xs font-bold" style="background:#FFF8E1;border:2px solid #FFD93D;color:#B45309;">🔒 미리 지정 모드예요! 원하는 좌석을 클릭하면 그 자리에 앉힐 출석번호를 몰래 정할 수 있어요. 다른 자리는 랜덤으로 채워지고, 고정된 자리는 계속 유지돼요.</div>
+
+    <p class="text-xs text-gray-400 font-semibold">${seatPinMode?'💡 좌석 클릭 → 그 자리에 고정할 출석번호 입력 (비우면 고정 해제)':'💡 좌석을 클릭하면 직접 번호를 입력해 수동으로 바꿀 수도 있어요.'}</p>
+
+    <div id="seatGridWrap"></div>
+
+    <div class="p-3 rounded-2xl flex flex-wrap gap-4 text-xs font-bold text-gray-500" style="background:#F9F7EC;border:2px solid #E8E4CC;">
+      <span class="flex items-center gap-1"><span style="width:.75rem;height:.75rem;border-radius:.25rem;background:#DBEAFE;border:2px solid #93C5FD;display:inline-block;"></span>배정됨</span>
+      <span class="flex items-center gap-1"><span style="width:.75rem;height:.75rem;border-radius:.25rem;background:#FEF3C7;border:2px solid #FBBF24;display:inline-block;"></span>🔒 고정(교사 화면에서만 표시)</span>
+      <span class="flex items-center gap-1"><span style="width:.75rem;height:.75rem;border-radius:.25rem;background:#F3F0E0;border:2px solid #E8E4CC;display:inline-block;"></span>빈 자리</span>
+    </div>
+  </div>`;
+}
+
+function applySeatSetup(){
+  const nInp=document.getElementById('seatCountInp'), cInp=document.getElementById('seatColsInp');
+  const n=Math.max(1,Math.min(60,parseInt(nInp?.value)||seatN));
+  const c=Math.max(1,Math.min(12,parseInt(cInp?.value)||seatCols));
+  const oldAssign=seatAssign, oldPins=seatPins;
+  seatN=n; seatCols=c; seatRows=Math.ceil(n/c);
+  const newSize=seatRows*seatCols;
+  seatAssign=Array(newSize).fill(null);
+  seatPins=new Set();
+  for(let i=0;i<Math.min(newSize,oldAssign.length);i++){
+    if(oldAssign[i]!==null && oldAssign[i]<=n){
+      seatAssign[i]=oldAssign[i];
+      if(oldPins.has(i)) seatPins.add(i);
+    }
+  }
+  const totalTxt=document.getElementById('seatTotalTxt');
+  if(totalTxt) totalTxt.textContent=newSize;
+  renderSeatGrid();
+}
+
+function togglePinMode(){
+  seatPinMode=!seatPinMode;
+  const btn=document.getElementById('btnPinMode');
+  if(btn){btn.textContent=seatPinMode?'🔓 미리 지정 모드 끄기':'🔒 미리 지정 모드 켜기';btn.setAttribute('style',pinModeBtnStyle());}
+  document.getElementById('pinHint')?.classList.toggle('hidden',!seatPinMode);
+}
+
+function toggleStudentView(){
+  seatStudentView=!seatStudentView;
+  if(seatStudentView && seatPinMode) seatPinMode=false;
+  renderSeatPanel();
+}
+
+function renderSeatPanel(){
+  const gc=document.getElementById('mgmtContent'); if(!gc) return;
+  gc.innerHTML=seatHTML();
+  renderSeatGrid();
+}
+
+function renderSeatGrid(){
+  const wrap=document.getElementById('seatGridWrap'); if(!wrap) return;
+  let html=`<div class="grid gap-2" style="grid-template-columns:repeat(${seatCols},minmax(0,1fr));">`;
+  for(let i=0;i<seatRows*seatCols;i++){
+    const val=seatAssign[i];
+    const showPin=seatPins.has(i) && !seatStudentView;
+    let style;
+    if(val===null) style='background:#F3F0E0;border:2.5px solid #E8E4CC;';
+    else if(showPin) style='background:#FEF3C7;border:2.5px solid #FBBF24;';
+    else style='background:#DBEAFE;border:2.5px solid #93C5FD;';
+    html+=`<button onclick="clickSeat(${i})" class="seat-btn rounded-xl flex flex-col items-center justify-center gap-0.5 font-black" style="${style}aspect-ratio:1;min-height:56px;">
+      <span style="font-size:.6rem;" class="text-gray-400 font-bold">${i+1}${showPin?' 🔒':''}</span>
+      <span class="text-lg text-gray-700">${val!==null?val:''}</span>
+    </button>`;
+  }
+  html+='</div>';
+  wrap.innerHTML=html;
+}
+
+function clickSeat(idx){
+  const cur=seatAssign[idx];
+  if(seatPinMode){
+    const input=prompt(`이 자리(${idx+1}번)에 몰래 고정할 출석번호를 입력하세요 (1~${seatN}).\n비워두고 확인을 누르면 고정이 해제돼요.`, cur!==null?String(cur):'');
+    if(input===null) return;
+    const trimmed=input.trim();
+    if(trimmed===''){
+      seatPins.delete(idx); seatAssign[idx]=null;
+      renderSeatGrid(); toast('🔓 고정이 해제됐어요.'); return;
+    }
+    const num=parseInt(trimmed);
+    if(!Number.isInteger(num)||num<1||num>seatN){toast(`⚠️ 1~${seatN} 사이 번호를 입력해주세요.`);return;}
+    for(let i=0;i<seatAssign.length;i++){ if(seatAssign[i]===num && i!==idx){ seatAssign[i]=null; seatPins.delete(i); } }
+    seatAssign[idx]=num; seatPins.add(idx);
+    renderSeatGrid(); toast(`🔒 ${idx+1}번 자리에 ${num}번을 몰래 고정했어요.`);
+  } else {
+    const input=prompt(`이 자리(${idx+1}번)에 앉힐 출석번호를 입력하세요.\n비워두고 확인을 누르면 빈 자리가 돼요.`, cur!==null?String(cur):'');
+    if(input===null) return;
+    const trimmed=input.trim();
+    if(trimmed===''){ seatAssign[idx]=null; seatPins.delete(idx); renderSeatGrid(); return; }
+    const num=parseInt(trimmed);
+    if(!Number.isInteger(num)||num<1||num>seatN){toast(`⚠️ 1~${seatN} 사이 번호를 입력해주세요.`);return;}
+    for(let i=0;i<seatAssign.length;i++){ if(seatAssign[i]===num && i!==idx){ seatAssign[i]=null; seatPins.delete(i); } }
+    seatAssign[idx]=num;
+    renderSeatGrid();
+  }
+}
+
+function randomizeSeats(){
+  const pinnedNums=new Set([...seatPins].map(i=>seatAssign[i]));
+  const remaining=[];
+  for(let n=1;n<=seatN;n++) if(!pinnedNums.has(n)) remaining.push(n);
+  for(let i=remaining.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [remaining[i],remaining[j]]=[remaining[j],remaining[i]]; }
+  const emptyIdx=[];
+  for(let i=0;i<seatAssign.length;i++) if(!seatPins.has(i)) emptyIdx.push(i);
+  emptyIdx.forEach(i=>seatAssign[i]=null);
+  let k=0;
+  for(const idx of emptyIdx){ if(k>=remaining.length) break; seatAssign[idx]=remaining[k++]; }
+  renderSeatGrid();
+  if(remaining.length>emptyIdx.length) toast('⚠️ 좌석 수가 부족해요! 좌석을 더 늘려주세요.');
+  else toast('🎲 랜덤 배치 완료! (고정된 좌석은 그대로 유지돼요)');
+}
+
+function clearSeatAssign(){
+  for(let i=0;i<seatAssign.length;i++){ if(!seatPins.has(i)) seatAssign[i]=null; }
+  renderSeatGrid();
+  toast('🗑️ 배치가 초기화됐어요. (고정 좌석 제외)');
+}
+
+function clearSeatPins(){
+  if(seatPins.size===0){ toast('📌 고정된 좌석이 없어요.'); return; }
+  if(!confirm('모든 고정(미리 지정) 좌석을 해제할까요? 배정된 학생 번호는 그대로 남아요.')) return;
+  seatPins=new Set();
+  renderSeatGrid();
+  toast('📌 고정이 모두 해제됐어요.');
+}
+
+/* ══════════════════════════════════════
+   🎡 1인 1역 랜덤 뽑기 (Classroom Roles)
+══════════════════════════════════════ */
+/* ══════════════════════════════════════
+   🎡 1인 1역 룰렛 (Classroom Roles)
+══════════════════════════════════════ */
+let rStudents = 25;
+let rRoles = [
+  {id:1, name:'칠판 관리', icon:'🧽', cnt:2},
+  {id:2, name:'분리수거', icon:'🗑️', cnt:2},
+  {id:3, name:'우유 배식', icon:'🥛', cnt:2},
+  {id:4, name:'급식 도우미', icon:'🍱', cnt:4},
+  {id:5, name:'바닥 쓸기', icon:'🧹', cnt:2},
+  {id:6, name:'바닥 닦기', icon:'💦', cnt:2},
+  {id:7, name:'복도 청소', icon:'✨', cnt:2},
+  {id:8, name:'창문/환기', icon:'🪟', cnt:2},
+  {id:9, name:'불끄기', icon:'💡', cnt:1},
+  {id:10, name:'화분 관리', icon:'🪴', cnt:1},
+  {id:11, name:'도서 관리', icon:'📚', cnt:2},
+  {id:12, name:'체육 교구', icon:'⚽', cnt:2},
+  {id:13, name:'수업 준비', icon:'📖', cnt:1},
+];
+let rAssign = Array(60).fill(null); 
+let rPins = Array(60).fill(null);
+let rTab = 'roulette';
+let rTargetIdx = null;
+let rWheelAngle = 0;
+let rSpinning = false;
+let rSpinAnim = null;
+const R_COLORS=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#C77DFF','#FF8C42','#38BDF8','#F472B6'];
+
+function rGetActiveRoles() {
+  let active = [];
+  rRoles.forEach(r => {
+    let assigned = rAssign.filter(a => a === r.id).length;
+    if(assigned < r.cnt) active.push(r);
+  });
+  return active;
+}
+
+function rRender() {
+  const gc = document.getElementById('mgmtContent'); if(!gc) return;
+  
+  if(rTargetIdx !== null && (rAssign[rTargetIdx] !== null || rPins[rTargetIdx] !== null)) {
+     rTargetIdx = rAssign.findIndex((a, i) => a === null && !rPins[i]);
+     if(rTargetIdx === -1) rTargetIdx = null;
+  }
+  if(rTargetIdx === null) {
+     let idx = rAssign.findIndex((a, i) => a === null && !rPins[i]);
+     if(idx !== -1) rTargetIdx = idx;
+  }
+  
+  const assignedCnt = rAssign.filter(a => a !== null).length;
+  const pct = Math.round((assignedCnt / rStudents) * 100);
+  
+  let html = `
+  <style>@keyframes rBounce { 0%{transform:scale(0.8);opacity:0;} 50%{transform:scale(1.05);} 100%{transform:scale(1);opacity:1;} }</style>
+  <div class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between p-2 bg-white rounded-xl shadow-sm border border-yellow-200">
+      <div class="flex gap-2">
+        <button onclick="rSwitchTab('roulette')" class="px-4 py-2 text-sm font-bold rounded-lg ${rTab==='roulette'?'bg-blue-500 text-white shadow':'text-gray-500 hover:bg-gray-100'}">🎡 룰렛 추첨</button>
+        <button onclick="rSwitchTab('grid')" class="px-4 py-2 text-sm font-bold rounded-lg ${rTab==='grid'?'bg-blue-500 text-white shadow':'text-gray-500 hover:bg-gray-100'}">📋 전체 배치표</button>
+        <button onclick="rSwitchTab('settings')" class="px-4 py-2 text-sm font-bold rounded-lg ${rTab==='settings'?'bg-blue-500 text-white shadow':'text-gray-500 hover:bg-gray-100'}">⚙️ 설정</button>
+      </div>
+      <div class="flex gap-2 mt-2 sm:mt-0">
+        <button onclick="rAssignAllFast()" class="btn btn-green text-xs">✨ 전원 자동 매칭</button>
+        <button onclick="rClearAssign()" class="btn btn-ghost text-xs">🗑️ 배정 초기화</button>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+      <div class="text-xs font-black text-gray-600 shrink-0">배정 진행도: <span class="text-blue-600">${assignedCnt} / ${rStudents}명 (${pct}%)</span></div>
+      <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-blue-400 to-green-400 transition-all duration-300" style="width:${pct}%"></div>
+      </div>
+    </div>
+    <div id="rMainContent"></div>
+  </div>`;
+  
+  gc.innerHTML = html;
+  
+  const mc = document.getElementById('rMainContent');
+  if(rTab === 'roulette') mc.innerHTML = rViewRoulette();
+  else if(rTab === 'grid') mc.innerHTML = rViewGrid();
+  else if(rTab === 'settings') mc.innerHTML = rViewSettings();
+  
+  if(rTab === 'roulette') {
+     rDrawWheel(rWheelAngle);
+     const list = document.getElementById('rRecentList');
+     if(list) list.scrollTop = list.scrollHeight;
+  }
+}
+
+function rSwitchTab(tab) {
+  if(rSpinning) return;
+  rTab = tab;
+  rRender();
+}
+
+function rViewRoulette() {
+  const remains = rStudents - rAssign.filter(a => a !== null).length;
+  let targetOpts = '';
+  for(let i=0; i<rStudents; i++) {
+    if(!rPins[i] && rAssign[i]===null) {
+      targetOpts += `<option value="${i}" ${i===rTargetIdx?'selected':''}>${i+1}번</option>`;
+    }
+  }
+  
+  let recentHTML = '';
+  for(let i=0; i<rStudents; i++) {
+    const rid = rAssign[i];
+    const role = rid ? rRoles.find(r=>r.id===rid) : null;
+    recentHTML += `
+      <div class="flex items-center justify-between p-2 rounded-lg ${rid?'bg-white':'bg-gray-50'} border border-gray-100 cursor-pointer hover:border-blue-200 transition-colors" onclick="rOpenManualSelect(${i})">
+        <span class="text-sm font-black text-gray-600 w-10">${i+1}번</span>
+        <div class="flex-1 flex items-center justify-end gap-2">
+          ${role ? `<span class="text-sm font-bold text-gray-800">${role.icon} ${role.name}</span>` : `<span class="text-xs font-bold text-gray-400">미배정</span>`}
+          <span class="px-2 py-1 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">✏️ 수정</span>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+  <div class="flex flex-col lg:flex-row gap-4">
+    <div class="card flex-1 flex flex-col items-center justify-center p-6 min-h-[400px]">
+      <div class="relative">
+        <canvas id="rWheel" width="360" height="360" class="pointer-events-none"></canvas>
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 -mt-2 text-red-500 text-3xl" style="filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3)); z-index:10;">▼</div>
+      </div>
+    </div>
+    
+    <div class="w-full lg:w-[340px] flex flex-col gap-4">
+      <div class="card p-5 bg-gray-900 text-white border-0 shadow-lg">
+        <div class="flex justify-between items-center mb-3">
+          <span class="px-3 py-1 bg-yellow-400 text-yellow-900 font-black text-xs rounded-full">🎯 이번 추첨 대상</span>
+          <span class="text-xs text-gray-400 font-bold">남은 인원: ${remains}명</span>
+        </div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-4xl font-black text-white">${rTargetIdx!==null ? (rTargetIdx+1)+'번' : '완료!'}</div>
+          ${rTargetIdx!==null ? `<select onchange="rTargetIdx=parseInt(this.value); rRender();" class="bg-gray-800 text-white border-gray-700 text-sm font-bold rounded-lg px-2 py-1 outline-none">${targetOpts}</select>` : ''}
+        </div>
+        <button onclick="rSpinWheel()" id="rSpinBtn" ${rTargetIdx===null?'disabled':''} class="w-full py-4 ${rTargetIdx!==null?'bg-blue-500 hover:bg-blue-400':'bg-gray-700 text-gray-500'} text-white text-lg font-black rounded-xl shadow-lg transition-transform active:scale-95">🎡 룰렛 힘차게 돌리기!</button>
+      </div>
+      
+      <div class="card flex-1 flex flex-col p-0 overflow-hidden bg-white shadow-sm border border-gray-200">
+        <div class="p-3 bg-gray-50 border-b flex justify-between items-center">
+          <span class="text-xs font-black text-gray-700">📋 최근 배정 현황</span>
+          <span class="text-[10px] text-gray-400">클릭하여 즉시 변경 가능</span>
+        </div>
+        <div class="overflow-y-auto p-2 space-y-1" style="max-height:280px;" id="rRecentList">
+          ${recentHTML}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function rDrawWheel(angle = 0) {
+  const c = document.getElementById('rWheel'); if(!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height, cx = W/2, cy = H/2, r = Math.min(cx, cy) - 10;
+  ctx.clearRect(0,0,W,H);
+  
+  const active = rGetActiveRoles();
+  if(active.length === 0) {
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.fillStyle='#F3F4F6'; ctx.fill();
+    ctx.fillStyle='#9CA3AF'; ctx.font='bold 24px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('배정 완료!', cx, cy+8);
+    return;
+  }
+  
+  const arc = Math.PI * 2 / active.length;
+  active.forEach((role, i) => {
+    let start = angle + i * arc;
+    let end = start + arc;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, start, end);
+    ctx.fillStyle = R_COLORS[i % R_COLORS.length]; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+    
+    ctx.save();
+    ctx.translate(cx, cy); ctx.rotate(start + arc/2);
+    ctx.textAlign = "right"; ctx.fillStyle = "#fff"; ctx.font = "bold 16px Pretendard, sans-serif";
+    ctx.shadowColor = "rgba(0,0,0,0.5)"; ctx.shadowBlur = 4;
+    ctx.fillText(role.icon + ' ' + role.name, r - 20, 6);
+    ctx.restore();
+  });
+  
+  ctx.beginPath(); ctx.arc(cx, cy, 35, 0, Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+  ctx.shadowColor="transparent";
+  ctx.fillStyle='#333'; ctx.font='900 14px sans-serif'; ctx.textAlign='center'; ctx.fillText('돌리기', cx, cy+5);
+}
+
+function rSpinWheel() {
+  if(rSpinning) return;
+  const active = rGetActiveRoles();
+  if(active.length === 0) { toast('남은 역할이 없어요!'); return; }
+  if(rTargetIdx === null) { toast('추첨할 대상이 없어요!'); return; }
+
+  let tot = rRoles.reduce((s, r)=>s+r.cnt, 0);
+  if(tot < rStudents) { toast('역할 수(자리수)가 학생 수보다 부족합니다! 설정에서 추가해주세요.'); return; }
+
+  rSpinning = true;
+  const btn = document.getElementById('rSpinBtn');
+  btn.disabled = true; btn.innerHTML = '🎡 돌아가는 중...';
+  
+  const winnerIndex = Math.floor(Math.random() * active.length);
+  const winnerRole = active[winnerIndex];
+  
+  const arc = Math.PI * 2 / active.length;
+  const targetSliceCenter = winnerIndex * arc + arc/2;
+  const targetAngle = -Math.PI/2 - targetSliceCenter;
+  const spins = Math.PI * 2 * 5; 
+  const finalAngle = targetAngle + spins;
+  
+  let startAngle = rWheelAngle % (Math.PI * 2);
+  let diff = finalAngle - startAngle;
+  while(diff < spins - Math.PI*2) diff += Math.PI*2;
+  
+  let startTime = performance.now();
+  let duration = 3000;
+  
+  function step(now) {
+    let p = (now - startTime) / duration;
+    if(p >= 1) {
+      rWheelAngle = startAngle + diff;
+      rDrawWheel(rWheelAngle);
+      rAssign[rTargetIdx] = winnerRole.id;
+      beep();
+      toast(`🎉 ${rTargetIdx+1}번 학생: ${winnerRole.icon} ${winnerRole.name} 당첨!`);
+      
+      rSpinning = false;
+      rTargetIdx = null; 
+      rRender();
+      return;
+    }
+    let ease = 1 - Math.pow(1 - p, 3);
+    rWheelAngle = startAngle + diff * ease;
+    rDrawWheel(rWheelAngle);
+    rSpinAnim = requestAnimationFrame(step);
+  }
+  rSpinAnim = requestAnimationFrame(step);
+}
+
+function rViewGrid() {
+  let html = `
+    <p class="text-xs text-gray-400 font-semibold mb-2">💡 카드를 클릭하면 역할을 즉시 수정할 수 있어요.</p>
+    <div class="grid grid-cols-5 md:grid-cols-6 gap-2 sm:gap-3">`;
+  for(let i=0; i<rStudents; i++) {
+    const rid = rAssign[i];
+    const role = rid ? rRoles.find(r=>r.id===rid) : null;
+    const isPinned = !!rPins[i];
+    
+    html += `
+      <div onclick="rOpenManualSelect(${i})" class="cursor-pointer group bg-white rounded-xl flex flex-col items-center justify-center p-2 shadow-sm hover:shadow-md border-2 ${role?'border-blue-200':'border-gray-200'} transition-all" style="height:86px;">
+        <div class="w-full flex justify-between px-1">
+          <span class="text-[10px] font-black text-gray-400">#${i+1}</span>
+          ${isPinned ? '<span class="text-[10px]">🔒</span>' : '<span></span>'}
+        </div>
+        <span class="text-3xl mt-0.5">${role?role.icon:'❓'}</span>
+        <span class="text-[11px] font-black ${role?'text-gray-700':'text-gray-300'} mt-1 px-1 text-center leading-tight whitespace-nowrap overflow-hidden text-ellipsis w-full">${role?role.name:'미배정'}</span>
+      </div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function rViewSettings() {
+  let tot = rRoles.reduce((s, r)=>s+r.cnt, 0);
+  let html = `
+    <div class="card p-5 space-y-5 bg-gray-50 border-2 border-gray-200">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+        <h4 class="font-black text-base text-gray-700">👥 반 전체 인원 설정</h4>
+        <input type="number" min="1" max="60" value="${rStudents}" onchange="rChangeCount(this.value)" class="inp w-24 text-center font-bold text-lg">
+      </div>
+      
+      <div class="flex items-center justify-between">
+        <h4 class="font-black text-base text-gray-700">🛠️ 직업 및 역할 관리</h4>
+        <span class="text-sm font-bold ${tot===rStudents?'text-green-600':'text-red-500'}">총 ${tot} 자리 (학생: ${rStudents}명)</span>
+      </div>
+      
+      <div class="flex flex-wrap gap-3">`;
+      
+  rRoles.forEach((r, idx) => {
+    html += `
+      <div class="flex items-center gap-2 p-2 rounded-xl bg-white border border-gray-200 w-full md:w-[48%] shadow-sm">
+        <input type="text" class="inp text-xl text-center p-1 w-12" value="${r.icon}" onchange="rRoles[${idx}].icon=this.value; rRender()">
+        <input type="text" class="inp flex-1 text-sm font-bold p-2" value="${r.name}" onchange="rRoles[${idx}].name=this.value; rRender()">
+        <div class="flex items-center gap-1 bg-gray-50 rounded-lg p-1 border border-gray-100">
+          <button onclick="rRoles[${idx}].cnt=Math.max(1, rRoles[${idx}].cnt-1); rRender()" class="px-2 py-1 text-sm font-bold text-gray-500 hover:bg-gray-200 rounded">-</button>
+          <span class="font-black text-blue-600 w-5 text-center text-sm">${r.cnt}</span>
+          <button onclick="rRoles[${idx}].cnt++; rRender()" class="px-2 py-1 text-sm font-bold text-gray-500 hover:bg-gray-200 rounded">+</button>
+        </div>
+        <button onclick="if(confirm('역할을 삭제할까요?')) { rRoles.splice(${idx}, 1); rRender(); }" class="px-3 py-2 text-xs font-black bg-red-50 text-red-500 hover:bg-red-100 rounded-lg">삭제</button>
+      </div>`;
+  });
+  
+  html += `
+      </div>
+      <button onclick="rAddRole()" class="btn btn-ghost text-sm w-full bg-white shadow-sm border border-gray-200 py-3 mt-2">+ 새로운 역할 추가</button>
+    </div>`;
+  return html;
+}
+
+function rChangeCount(val) {
+  rStudents = parseInt(val) || 25;
+  rAssign = Array(rStudents).fill(null);
+  rPins = Array(rStudents).fill(null);
+  rTargetIdx = null;
+  rRender();
+  toast('인원수가 변경되어 배정이 초기화되었습니다.');
+}
+
+function rAssignAllFast() {
+  let tot = rRoles.reduce((s, r)=>s+r.cnt, 0);
+  if(tot !== rStudents) { toast(`⚠️ 역할 자리수(${tot})와 학생 수(${rStudents})가 달라요! 설정 탭에서 맞춰주세요.`); return; }
+  for(let i=0; i<rStudents; i++) if(!rPins[i]) rAssign[i] = null;
+  
+  let pool = [];
+  rRoles.forEach(r => {
+    let pinnedCount = rPins.filter(p => p === r.id).length;
+    let available = r.cnt - pinnedCount;
+    for(let i=0; i<available; i++) pool.push(r.id);
+  });
+  
+  pool.sort(()=>Math.random()-0.5);
+  let unpinned = [];
+  for(let i=0; i<rStudents; i++) if(!rPins[i]) unpinned.push(i);
+  unpinned.sort(()=>Math.random()-0.5);
+  
+  for(let i=0; i<unpinned.length; i++) rAssign[unpinned[i]] = pool[i];
+  
+  rTargetIdx = null;
+  rRender();
+  toast('✨ 전원 자동 배정 완료!');
+}
+
+function rClearAssign() {
+  if(!confirm('고정석을 제외한 모든 배정을 초기화할까요?')) return;
+  for(let i=0; i<rStudents; i++) if(!rPins[i]) rAssign[i]=null;
+  rTargetIdx = null;
+  rRender();
+  toast('🗑️ 초기화 완료');
+}
+
+function rAddRole() {
+  const maxId = rRoles.length ? Math.max(...rRoles.map(r=>r.id)) : 0;
+  rRoles.push({id: maxId+1, name: '새 역할', icon: '✨', cnt: 1});
+  rRender();
+}
+
+function rOpenManualSelect(i) {
+  let modal = document.createElement('div');
+  modal.className = 'fixed inset-0 z-50 flex items-center justify-center p-4';
+  modal.style.background = 'rgba(0,0,0,0.5)';
+  modal.style.backdropFilter = 'blur(3px)';
+  
+  let html = `<div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden p-6 text-center" style="animation:rBounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+    <h3 class="text-xl font-black mb-4">#${i+1} 학생 역할 수정</h3>
+    <div class="flex flex-wrap gap-2 justify-center max-h-64 overflow-y-auto p-2">`;
+  
+  const pin = rPins[i];
+  html += `<button id="btnRole-null" class="px-3 py-2 rounded-xl text-sm font-bold ${!pin?'bg-blue-500 text-white shadow-md':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">❓ 미정 / 랜덤 허용</button>`;
+  rRoles.forEach(r => {
+    html += `<button id="btnRole-${r.id}" class="px-3 py-2 rounded-xl text-sm font-bold ${pin===r.id?'bg-blue-500 text-white shadow-md':'bg-gray-100 text-gray-600 hover:bg-gray-200'}">${r.icon} ${r.name}</button>`;
+  });
+  
+  html += `</div>
+    <p class="text-xs text-gray-400 mt-5 leading-relaxed">역할을 수동 지정하면 🔒 <b>고정</b>되어<br>전원 랜덤 배정 시 바뀌지 않습니다.</p>
+    <button id="btnCloseModal" class="btn btn-ghost mt-4 w-full bg-gray-100 text-gray-600">닫기</button>
+  </div>`;
+  
+  modal.innerHTML = html;
+  document.body.appendChild(modal);
+  
+  modal.querySelector('#btnCloseModal').onclick = () => modal.remove();
+  modal.querySelector('#btnRole-null').onclick = () => { rPins[i] = null; rAssign[i] = null; modal.remove(); rRender(); };
+  rRoles.forEach(r => {
+    modal.querySelector('#btnRole-'+r.id).onclick = () => { rPins[i] = r.id; rAssign[i] = r.id; modal.remove(); rRender(); };
+  });
+}
+
+/* ══════════════════════════════════════
+   🎰 랜덤 발표 - 캡슐 뽑기 머신
+══════════════════════════════════════ */
+const CAP_COLORS=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#C77DFF','#FF8C42','#38BDF8','#F472B6'];
+let capPicked=[], capExcludePicked=true, capBusy=false;
+
+function capsuleHTML(){
+  return `
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div class="space-y-2">
+      <label class="text-xs font-black text-gray-700">학생 이름 목록 (한 줄에 한 명)</label>
+      <textarea id="capNameList" class="inp" rows="10" placeholder="김민수&#10;이지은&#10;박서준&#10;최유나&#10;정하준&#10;..."></textarea>
+      <label class="flex items-center gap-2 text-xs font-bold text-gray-600 pt-1 cursor-pointer">
+        <input type="checkbox" id="capExclude" ${capExcludePicked?'checked':''} onchange="capExcludePicked=this.checked">
+        이미 뽑힌 사람은 제외하고 뽑기
+      </label>
+      <button onclick="resetCapsulePicks()" class="btn btn-ghost text-xs">🔄 뽑힌 기록 초기화</button>
+      <div id="capPickedList" class="text-xs text-gray-500 font-semibold pt-1 leading-6"></div>
+    </div>
+    <div class="flex flex-col items-center gap-4">
+      <div id="capGlobe" class="cap-globe"></div>
+      <div class="cap-chute"></div>
+      <div id="capSlot" class="cap-slot"><span class="text-gray-300 font-black text-2xl">?</span></div>
+      <button id="btnCapsule" onclick="startCapsulePick()" class="btn btn-blue w-full text-base py-4">🎰 뽑기 시작!</button>
+    </div>
+  </div>`;
+}
+
+function renderCapGlobe(){
+  const globe=document.getElementById('capGlobe'); if(!globe) return;
+  globe.innerHTML='';
+  for(let i=0;i<14;i++){
+    const b=document.createElement('div');
+    b.className='cap-ball floaty';
+    const size=24+Math.random()*16;
+    b.style.width=size+'px';b.style.height=size+'px';
+    b.style.left=(8+Math.random()*72)+'%';
+    b.style.top=(6+Math.random()*74)+'%';
+    b.style.background=CAP_COLORS[Math.floor(Math.random()*CAP_COLORS.length)];
+    b.style.animationDelay=(Math.random()*2)+'s';
+    globe.appendChild(b);
+  }
+}
+
+function getCapNames(){return(document.getElementById('capNameList')?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);}
+
+function renderCapPickedList(){
+  const el=document.getElementById('capPickedList'); if(!el) return;
+  el.textContent = capPicked.length ? ('✅ 뽑힌 사람: '+capPicked.join(', ')) : '';
+}
+
+function resetCapsulePicks(){
+  capPicked=[];
+  renderCapPickedList();
+  toast('🔄 뽑힌 기록이 초기화됐어요.');
+}
+
+function startCapsulePick(){
+  if(capBusy) return;
+  const names=getCapNames();
+  if(!names.length){toast('✏️ 이름을 먼저 입력해주세요!');return;}
+  let pool=names;
+  if(capExcludePicked){
+    pool=names.filter(n=>!capPicked.includes(n));
+    if(!pool.length){toast('🎉 모두 한 번씩 뽑혔어요! 기록을 초기화해주세요.');return;}
+  }
+  capBusy=true;
+  const btn=document.getElementById('btnCapsule'); btn.disabled=true; btn.innerHTML='<div class="spin"></div><span>돌아가는 중...</span>';
+  const globe=document.getElementById('capGlobe');
+  const slot=document.getElementById('capSlot');
+  slot.innerHTML='<span class="text-gray-300 font-black text-2xl">?</span>';
+  globe.querySelectorAll('.cap-ball').forEach(b=>{b.classList.remove('floaty');b.classList.add('shaky');});
+
+  let flickerCount=0;
+  const totalFlickers=18+Math.floor(Math.random()*6);
+  let delay=65;
+  function flicker(){
+    const randPick=pool[Math.floor(Math.random()*pool.length)];
+    slot.innerHTML=`<span class="text-gray-400 font-black text-xl">${randPick}</span>`;
+    flickerCount++;
+    if(flickerCount<totalFlickers){
+      if(flickerCount>totalFlickers-6) delay=Math.round(delay*1.4);
+      setTimeout(flicker,delay);
+    } else {
+      finalizeCapsulePick(pool);
+    }
+  }
+  setTimeout(flicker,delay);
+}
+
+function finalizeCapsulePick(pool){
+  const globe=document.getElementById('capGlobe');
+  globe.querySelectorAll('.cap-ball').forEach(b=>{b.classList.remove('shaky');b.classList.add('floaty');});
+  const winner=pool[Math.floor(Math.random()*pool.length)];
+  const slot=document.getElementById('capSlot');
+  slot.innerHTML='';
+  const card=document.createElement('div');
+  card.className='cap-pop flex flex-col items-center gap-1';
+  card.innerHTML=`<span class="text-3xl">🎉</span><span class="font-black text-2xl text-gray-800">${winner}</span>`;
+  slot.appendChild(card);
+  capPicked.push(winner);
+  renderCapPickedList();
+  beep();
+  const btn=document.getElementById('btnCapsule'); if(btn){btn.disabled=false;btn.innerHTML='🎰 다시 뽑기!';}
+  capBusy=false;
+}
+
+/* ══════════════════════════════════════
+   수업 유틸리티
+══════════════════════════════════════ */
+function showUtil(type){
+  document.querySelectorAll('.util-tab[data-util]').forEach(b=>b.classList.toggle('util-active',b.dataset.util===type));
+  const gc=document.getElementById('utilContent');if(!gc)return;
+  if(type==='timer'){gc.innerHTML=timerHTML();updateTimerUI();}
+  if(type==='stopwatch'){gc.innerHTML=stopwatchHTML();updateSwUI();}
+  if(type==='noise'){stopNoise();gc.innerHTML=noiseHTML();}
+  if(type==='picker'){gc.innerHTML=capsuleHTML(); setTimeout(()=>{renderCapGlobe(); renderCapPickedList();},10);}
+}
+
+/* 스톱워치 */
+let swTime=0,swRunning=false,swInterval=null,swLaps=[];
+function stopwatchHTML(){return `
+<div class="flex flex-col items-center gap-5 py-4">
+  <div class="text-7xl font-black text-gray-800" id="swText" style="font-variant-numeric:tabular-nums;letter-spacing:-2px;">00:00.00</div>
+  <div class="flex gap-3">
+    <button id="swBtnStart" onclick="toggleSw()" class="btn btn-blue px-8 py-3 text-base">▶ 시작</button>
+    <button onclick="lapSw()" class="btn px-6 py-3 text-base" style="background:#FBD38D;color:#9C4221;font-weight:900;">⏱️ 기록</button>
+    <button onclick="resetSw()" class="btn btn-ghost px-6 py-3 text-base">🔄 초기화</button>
+  </div>
+  <div id="swLaps" class="w-full max-w-sm mt-2 space-y-1 overflow-y-auto max-h-48 px-2"></div>
+</div>`;}
+function toggleSw(){
+  if(swRunning){clearInterval(swInterval);swRunning=false;document.getElementById('swBtnStart').textContent='▶ 계속';}
+  else{swRunning=true;document.getElementById('swBtnStart').textContent='⏸ 일시정지';
+  swInterval=setInterval(()=>{swTime+=10;updateSwUI();},10);}
+}
+function lapSw(){
+  if(swTime===0)return;
+  const m=Math.floor(swTime/60000),s=Math.floor((swTime%60000)/1000),ms=Math.floor((swTime%1000)/10);
+  const tStr=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(2,'0')}`;
+  swLaps.push(tStr);
+  const box=document.getElementById('swLaps');if(!box)return;
+  box.innerHTML=swLaps.map((l,i)=>`<div class="flex justify-between items-center px-4 py-2 rounded-xl bg-gray-50 border-2 border-gray-100 text-sm font-black text-gray-600"><span class="text-gray-400">#${i+1}</span><span>${l}</span></div>`).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function resetSw(){
+  clearInterval(swInterval);swRunning=false;swTime=0;swLaps=[];
+  updateSwUI();document.getElementById('swBtnStart').textContent='▶ 시작';
+  const box=document.getElementById('swLaps');if(box)box.innerHTML='';
+}
+function updateSwUI(){
+  const el=document.getElementById('swText');if(!el)return;
+  const m=Math.floor(swTime/60000),s=Math.floor((swTime%60000)/1000),ms=Math.floor((swTime%1000)/10);
+  el.textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(2,'0')}`;
+}
+
+/* 타이머 */
+let tTotal=180,tLeft=180,tRunning=false,tInterval=null;
+const TCIRC=565.48;
+
+function timerHTML(){return`
+<div class="flex flex-col items-center gap-5 py-4">
+  <div style="position:relative;width:220px;height:220px;">
+    <svg width="220" height="220" viewBox="0 0 220 220">
+      <circle cx="110" cy="110" r="90" stroke="#E5E7EB" stroke-width="14" fill="none"/>
+      <circle id="tCircle" cx="110" cy="110" r="90" stroke="#4D96FF" stroke-width="14" fill="none"
+        stroke-linecap="round" stroke-dasharray="${TCIRC}" stroke-dashoffset="0"
+        transform="rotate(-90 110 110)" style="transition:stroke-dashoffset .9s linear;"/>
+      <text id="tText" x="110" y="118" text-anchor="middle" font-family="Pretendard,sans-serif" font-size="42" font-weight="900" fill="#1F2937">3:00</text>
+    </svg>
+  </div>
+  <div class="flex gap-2 flex-wrap justify-center">
+    ${[[10,'10초'],[30,'30초'],[60,'1분'],[180,'3분'],[300,'5분'],[600,'10분']].map(([s,l])=>`<button onclick="setTimer(${s})" class="btn btn-ghost text-sm px-4 py-2">${l}</button>`).join('')}
+    <button onclick="toggleCustomTimerUI()" class="btn btn-ghost text-sm px-4 py-2">⌨️ 직접입력</button>
+  </div>
+  <div id="tCustomUI" class="hidden flex items-center gap-2 p-2 bg-gray-50 rounded-xl border-2 border-gray-100">
+    <input type="number" id="tInpMin" class="w-14 p-2 text-center rounded-lg border border-gray-300 font-bold" placeholder="분" min="0">
+    <span class="font-black text-gray-400">:</span>
+    <input type="number" id="tInpSec" class="w-14 p-2 text-center rounded-lg border border-gray-300 font-bold" placeholder="초" min="0" max="59">
+    <button onclick="applyCustomTimer()" class="btn btn-blue text-xs px-3 py-2">적용</button>
+  </div>
+  <div class="flex gap-3">
+    <button id="tBtnStart" onclick="toggleTimer()" class="btn btn-blue px-8 py-3 text-base">▶ 시작</button>
+    <button onclick="resetTimer()" class="btn btn-ghost px-6 py-3 text-base">🔄</button>
+  </div>
+  <div id="tMsg" class="hidden text-lg font-black text-red-500 animate-bounce">⏰ 시간이 다 됐어요!</div>
+</div>`;}
+
+function setTimer(sec){resetTimer();tTotal=tLeft=sec;updateTimerUI();document.getElementById('tCustomUI')?.classList.add('hidden');}
+function toggleCustomTimerUI(){
+  const ui=document.getElementById('tCustomUI');
+  if(ui) ui.classList.toggle('hidden');
+}
+function applyCustomTimer(){
+  const m=parseInt(document.getElementById('tInpMin').value)||0;
+  const s=parseInt(document.getElementById('tInpSec').value)||0;
+  const sec = m*60 + s;
+  if(sec>0) setTimer(sec);
+}
+function toggleTimer(){
+  if(tRunning){clearInterval(tInterval);tRunning=false;const b=document.getElementById('tBtnStart');if(b)b.textContent='▶ 계속';}
+  else{
+    if(tLeft<=0)resetTimer();
+    tRunning=true;const b=document.getElementById('tBtnStart');if(b)b.textContent='⏸ 일시정지';
+    tInterval=setInterval(()=>{tLeft--;updateTimerUI();if(tLeft<=0){clearInterval(tInterval);tRunning=false;const b=document.getElementById('tBtnStart');if(b)b.textContent='▶ 시작';document.getElementById('tMsg')?.classList.remove('hidden');beep();}},1000);
+  }
+}
+function resetTimer(){clearInterval(tInterval);tRunning=false;tLeft=tTotal;updateTimerUI();document.getElementById('tMsg')?.classList.add('hidden');const b=document.getElementById('tBtnStart');if(b)b.textContent='▶ 시작';}
+function updateTimerUI(){
+  const el=document.getElementById('tText'),circ=document.getElementById('tCircle');if(!el)return;
+  const m=Math.floor(tLeft/60),s=tLeft%60;el.textContent=`${m}:${String(s).padStart(2,'0')}`;
+  if(circ){circ.style.strokeDashoffset=String(TCIRC*(1-tTotal?tLeft/tTotal:1));circ.setAttribute('stroke',tLeft<=10?'#FF6B6B':tLeft<=30?'#FFD93D':'#4D96FF');}
+}
+function beep(){try{const c=new(window.AudioContext||window.webkitAudioContext)();[0,300,600].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.5,c.currentTime+t/1000);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t/1000+.4);o.start(c.currentTime+t/1000);o.stop(c.currentTime+t/1000+.4);});}catch(e){}}
+
+/* 소음신호등 */
+let noiseStream=null,noiseCtx=null,noiseAnalyser=null,noiseRaf=null;
+function noiseHTML(){return`
+<div class="flex flex-col items-center gap-5 py-4">
+  <div id="nLamp" class="text-9xl select-none" style="filter:drop-shadow(0 0 20px #6BCB77);transition:filter .3s;">🟢</div>
+  <div class="w-64 space-y-1">
+    <div class="flex justify-between text-xs font-bold text-gray-500"><span>조용</span><span>보통</span><span>시끄러움</span></div>
+    <div class="h-5 rounded-full overflow-hidden bg-gray-200"><div id="nBar" class="h-full rounded-full" style="width:5%;background:#6BCB77;transition:width .15s,background .15s;"></div></div>
+  </div>
+  <div class="w-64 flex flex-col items-center mt-2 bg-gray-50 p-2 rounded-xl border-2 border-gray-100">
+    <label class="text-xs font-black text-gray-500 mb-1 flex w-full justify-between"><span>둔감</span><span>민감도</span><span>민감</span></label>
+    <input type="range" id="nSens" min="0.5" max="7.0" step="0.1" value="2.8" class="w-full">
+  </div>
+  <p id="nLabel" class="text-xl font-black text-gray-600">🔇 조용해요</p>
+  <div class="flex gap-3">
+    <button id="btnMic" onclick="startNoise()" class="btn btn-blue">🎤 마이크 연결</button>
+    <button onclick="stopNoise()" class="btn btn-ghost">⏹ 중지</button>
+  </div>
+  <p class="text-xs text-gray-400 font-semibold text-center">마이크 권한을 허용해야 작동해요.</p>
+</div>`;}
+async function startNoise(){
+  try{
+    if(noiseStream)stopNoise();
+    noiseStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+    noiseCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const src=noiseCtx.createMediaStreamSource(noiseStream);
+    noiseAnalyser=noiseCtx.createAnalyser();noiseAnalyser.fftSize=256;src.connect(noiseAnalyser);
+    const btn=document.getElementById('btnMic');if(btn){btn.textContent='🎤 연결됨';btn.style.background='linear-gradient(135deg,#6BCB77,#38A169)';}
+    const data=new Uint8Array(noiseAnalyser.frequencyBinCount);
+    function frame(){
+      if(!noiseAnalyser)return;
+      noiseAnalyser.getByteFrequencyData(data);
+      const vol=data.reduce((s,v)=>s+v,0)/data.length;
+      const sens=parseFloat(document.getElementById('nSens')?.value)||2.8;
+      const pct=Math.min(100,Math.round(vol*sens));
+      const lamp=document.getElementById('nLamp'),bar=document.getElementById('nBar'),lbl=document.getElementById('nLabel');
+      if(!lamp)return;
+      let emoji,color,label;
+      if(pct<28){emoji='🟢';color='#6BCB77';label='🔇 조용해요';}
+      else if(pct<58){emoji='🟡';color='#FFD93D';label='🔉 보통이에요';}
+      else{emoji='🔴';color='#FF6B6B';label='🔊 시끄러워요!';}
+      lamp.textContent=emoji;lamp.style.filter=`drop-shadow(0 0 20px ${color})`;
+      if(bar){bar.style.width=pct+'%';bar.style.background=color;}
+      if(lbl)lbl.textContent=label;
+      noiseRaf=requestAnimationFrame(frame);
+    }
+    frame();
+  }catch(e){toast('❌ 마이크 권한이 필요해요.');}
+}
+function stopNoise(){if(noiseRaf){cancelAnimationFrame(noiseRaf);noiseRaf=null;}if(noiseStream){noiseStream.getTracks().forEach(t=>t.stop());noiseStream=null;}if(noiseCtx){noiseCtx.close().catch(()=>{});noiseCtx=null;}noiseAnalyser=null;}
+
+/* ══════════════════════════════════════
+   API / 저장소
+══════════════════════════════════════ */
+function getKey(){return(localStorage.getItem(K_API)||'').trim();}
+function saveKey(){const k=document.getElementById('inputKey').value.trim();k?localStorage.setItem(K_API,k):localStorage.removeItem(K_API);refreshStatus();closeModal();toast(k?'✅ API 키 저장됐어요!':'🗑️ API 키 삭제됐어요.');}
+function refreshStatus(){const has=!!getKey();document.getElementById('apiDot').className='dot '+(has?'dot-green':'dot-amber');document.getElementById('apiTxt').textContent=has?'연결됨':'미연결';document.getElementById('apiTxt').className='text-xs font-bold '+(has?'text-green-600':'text-amber-600');document.getElementById('noKeyWarn')?.classList.toggle('hidden',has);}
+function openModal(){document.getElementById('inputKey').value=getKey();document.getElementById('testOut').classList.add('hidden');document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+async function testKey(){const k=document.getElementById('inputKey').value.trim();const out=document.getElementById('testOut'),btn=document.getElementById('btnTest');if(!k){showTO('⚠️ 키를 먼저 입력해주세요.',false);return;}btn.textContent='⏳ 테스트 중...';btn.disabled=true;out.classList.add('hidden');try{const r=await gemini(k,'연결 테스트입니다. "연결 성공"이라고만 답해주세요.');showTO('✅ '+r.slice(0,60),true);}catch(e){showTO('❌ '+e.message,false);}btn.textContent='🧪 API 키 연결 테스트';btn.disabled=false;}
+function showTO(msg,ok){const el=document.getElementById('testOut');el.textContent=msg;el.style.cssText=ok?'background:#F0FFF4;color:#276749;border:2px solid #9AE6B4;':'background:#FFF5F5;color:#C53030;border:2px solid #FEB2B2;';el.classList.remove('hidden');}
+async function gemini(key,prompt){
+  const MODELS=['gemini-3.7-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash', 'gemini-1.5-flash'];let lastErr;
+  for(const model of MODELS){
+    try{
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],safetySettings:[{category:'HARM_CATEGORY_HARASSMENT',threshold:'BLOCK_ONLY_HIGH'},{category:'HARM_CATEGORY_HATE_SPEECH',threshold:'BLOCK_ONLY_HIGH'},{category:'HARM_CATEGORY_SEXUALLY_EXPLICIT',threshold:'BLOCK_ONLY_HIGH'},{category:'HARM_CATEGORY_DANGEROUS_CONTENT',threshold:'BLOCK_ONLY_HIGH'}],generationConfig:{temperature:.7,maxOutputTokens:1024}})});
+      if(!res.ok){const e=await res.json().catch(()=>({}));const msg=e?.error?.message||`HTTP ${res.status}`;if(res.status===404||res.status===503||res.status===429||msg.includes('not found')||msg.includes('high demand')||msg.includes('exhausted')||msg.includes('overloaded')){lastErr=new Error(msg);continue;}throw new Error(msg);}
+      const data=await res.json();const text=data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if(!text){const r=data?.candidates?.[0]?.finishReason;throw new Error(r==='SAFETY'?'안전 정책으로 차단됨.':'빈 응답.');}
+      return text;
+    }catch(e){if(e.message.includes('not found')||e.message.includes('404')||e.message.includes('high demand')||e.message.includes('503')){lastErr=e;continue;}throw e;}
+  }
+  throw lastErr||new Error('사용 가능한 모델이 없습니다.');
+}
+async function generateEval(){
+  const key=getKey();if(!key){openModal();toast('⚠️ API 키를 먼저 등록해주세요!');return;}
+  const name=document.getElementById('studentName').value.trim()||'해당 학생';
+  const subject=document.getElementById('evalSubject').value;
+  const kw=document.getElementById('evalKeywords').value.trim();if(!kw){toast('✏️ 관찰 내용을 입력해주세요!');return;}
+  const btn=document.getElementById('btnGenerate'),out=document.getElementById('evalResult'),err=document.getElementById('evalErr');
+  err.classList.add('hidden');btn.disabled=true;btn.innerHTML='<div class="spin"></div><span>생성 중...</span>';out.value='';
+  try{out.value=await gemini(key,`당신은 대한민국 초·중·고 담임교사입니다.\n다음 관찰 기록을 바탕으로 학교생활기록부 '${subject}' 란에 기재할 전문적이고 따뜻한 문장을 3~5문장으로 작성해주세요.\n- 학생: ${name} / 영역: ${subject}\n- 관찰: ${kw}\n[규칙] 과거형 어미 일관 사용, 구체적 행동 사례 포함, 긍정·성장 중심, 주어 없이 서술어로 시작`);toast('✅ AI 평가 문장이 생성됐어요!');}
+  catch(e){err.textContent='❌ '+e.message;err.classList.remove('hidden');toast('❌ 오류가 발생했어요.');}
+  finally{btn.disabled=false;btn.innerHTML='✨ AI 평가 문장 생성';}
+}
+function saveRecord(){const c=document.getElementById('evalResult').value.trim();if(!c){toast('⚠️ 저장할 내용이 없어요.');return;}const raw=document.getElementById('studentName').value.trim();const label=raw?(raw.match(/^\d+$/)?raw+'번':raw):'';const r=JSON.parse(localStorage.getItem(K_REC)||'[]');r.push({id:Date.now(),date:new Date().toLocaleDateString('ko-KR'),name:label||'(번호 없음)',subject:document.getElementById('evalSubject').value,content:c});localStorage.setItem(K_REC,JSON.stringify(r));refreshRecCount();toast('💾 '+(label?'['+label+'] ':'')+'로컬에 저장됐어요!');}
+function copyResult(){const t=document.getElementById('evalResult').value;if(!t){toast('📋 복사할 내용이 없어요.');return;}navigator.clipboard.writeText(t).then(()=>toast('📋 복사됐어요!'));}
+function refreshRecCount(){const n=JSON.parse(localStorage.getItem(K_REC)||'[]').length;const el=document.getElementById('recCount');if(el)el.textContent=n;}
+function exportData(){const blob=new Blob([JSON.stringify({version:'1.0',date:new Date().toISOString(),records:JSON.parse(localStorage.getItem(K_REC)||'[]')},null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`GPS_Edu_백업_${new Date().toISOString().slice(0,10)}.json`});a.click();URL.revokeObjectURL(a.href);toast('📥 백업 파일 다운로드됐어요!');}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.records))throw 0;localStorage.setItem(K_REC,JSON.stringify(d.records));refreshRecCount();closeModal();toast(`✅ ${d.records.length}건 복원됐어요!`);}catch{toast('❌ 올바른 백업 파일이 아니에요.');}};r.readAsText(f);}
+let _tt;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2600);}
+</script>
+</body>
+</html>
