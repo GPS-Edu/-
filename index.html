@@ -196,6 +196,7 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
       </button>
       <div id="gradeSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
         <button onclick="switchGrade('common')" data-grade="common" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🌈 공통학년</button>
+        <button onclick="switchGrade('grade12')" data-grade="grade12" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🐥 1~2학년 (저학년군)</button>
         <button onclick="switchGrade('grade3')" data-grade="grade3" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟥 3학년</button>
         <button onclick="switchGrade('grade4')" data-grade="grade4" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟧 4학년</button>
         <button onclick="switchGrade('grade5')" data-grade="grade5" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟨 5학년</button>
@@ -210,6 +211,7 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
         <span id="freegameArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
       </button>
       <div id="freegameSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <button onclick="switchTab('freegame'); showFreeGame('blockblast')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🧩 블록 블라스트</button>
         <button onclick="switchTab('freegame'); showFreeGame('typing')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⌨️ 타자 게임</button>
         <button onclick="switchTab('freegame'); showFreeGame('stairs')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐹 무한의 계단</button>
         <button onclick="switchTab('freegame'); showFreeGame('bungeo')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐟 붕어빵 타이쿤</button>
@@ -280,14 +282,14 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
       <!-- 웰컴 배너 -->
       <div class="rounded-2xl p-6 text-white relative overflow-hidden shadow-sm bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 border border-indigo-200">
         <div class="relative z-10 flex items-start gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl shadow-sm border border-white/30">🌟</div>
+          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl shadow-sm border border-white/30">🏫</div>
           <div class="flex-1">
-            <h3 class="text-xl font-black mb-1">G.P.S 에듀에 오신 것을 환영해요!</h3>
-            <p class="text-indigo-100 text-sm mb-4 font-medium">선생님의 교실 업무를 혁신적으로 줄여드립니다. 모든 데이터는 컴퓨터에만 안전하게 보관돼요.</p>
+            <h3 class="text-xl font-black mb-1">G.P.S 스마트 에듀 플랫폼</h3>
+            <p class="text-indigo-100 text-sm mb-4 font-medium">학생 주도적 참여를 이끌어내는 차세대 교실 플랫폼입니다. 모든 활동 데이터는 로컬 환경에 안전하게 보관됩니다.</p>
             <div class="flex flex-wrap gap-2">
-              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">🔒 개인정보 완벽 보호</span>
-              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">💡 서버비용 0원</span>
-              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">⚡ 오프라인 동작</span>
+              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">🔒 최고 수준의 데이터 보안</span>
+              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">📊 맞춤형 학습 분석</span>
+              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">⚡ 융합형 에듀테크</span>
             </div>
           </div>
         </div>
@@ -301,12 +303,12 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
         <div class="card p-5 flex flex-col justify-between h-40">
           <div class="flex items-center justify-between"><span class="text-sm font-bold text-slate-700">📁 평가 기록</span><span class="px-2.5 py-1 text-[10px] font-bold rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100">안전 보관중</span></div>
           <p class="text-4xl font-black text-slate-800 text-center py-2" id="recCount">0</p>
-          <button onclick="exportData()" class="text-xs text-indigo-600 font-bold hover:text-indigo-700 hover:underline flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> 백업 파일 다운로드</button>
+          <button onclick="exportData()" class="text-xs text-indigo-600 font-bold hover:text-indigo-700 hover:underline flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> 전체 데이터 백업</button>
         </div>
         
         <!-- 퀵 실행 카드 -->
         <div class="card p-5 flex flex-col justify-between h-40">
-          <span class="text-sm font-bold text-slate-700">⚡ 빠른 실행</span>
+          <span class="text-sm font-bold text-slate-700">⚡ 주요 기능</span>
           <div class="grid grid-cols-2 gap-2 mt-auto">
             <button onclick="switchTab('evaluation')" class="flex flex-col items-center justify-center gap-1 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-colors text-xs font-bold text-slate-600"><span class="text-lg mb-1">📝</span>AI 평가</button>
             <button onclick="switchTab('utility')" class="flex flex-col items-center justify-center gap-1 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 transition-colors text-xs font-bold text-slate-600"><span class="text-lg mb-1">⏱️</span>타이머</button>
@@ -315,13 +317,13 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
         
         <!-- API 토큰 안내 카드 -->
         <div class="card p-5 flex flex-col justify-between h-40 bg-gradient-to-b from-white to-slate-50">
-          <span class="text-sm font-bold text-slate-700 flex items-center gap-1"><svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> 무료 AI 토큰 안내</span>
+          <span class="text-sm font-bold text-slate-700 flex items-center gap-1"><svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> AI 시스템 연동</span>
           <div class="space-y-1.5 text-[11px] text-slate-600 font-medium my-auto pl-1">
-            <p class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> 분당 15회 무료 호출</p>
-            <p class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> 만료 기한 없음</p>
-            <p class="flex items-center gap-1.5"><span class="text-emerald-500">✓</span> 정보 외부 유출 안심</p>
+            <p class="flex items-center gap-1.5"><span class="text-indigo-500">✓</span> Gemini AI 공식 지원</p>
+            <p class="flex items-center gap-1.5"><span class="text-indigo-500">✓</span> 교내 네트워크 환경 최적화</p>
+            <p class="flex items-center gap-1.5"><span class="text-indigo-500">✓</span> 종단 간(End-to-End) 안전 연동</p>
           </div>
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline inline-block mt-1">🔑 무료 API 발급받기 →</a>
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline inline-block mt-1">🔑 연동 키(API) 발급 안내 →</a>
         </div>
       </div>
       
@@ -605,14 +607,15 @@ function switchGrade(gid){
   document.querySelectorAll('.grade-btn').forEach(b=>b.classList.toggle('grade-active',b.dataset.grade===gid));
   switchTab('minigame');
   if(gid==='grade6'){showGrade6Launcher();return;}
+  if(gid==='grade5'){showGrade5Launcher();return;}
   if(gid==='common'){showCommonLauncher();return;}
   const info={
+    grade12:{emoji:'🐥',label:'1~2학년(저학년군) 교과 연계 게임',games:'구구단 레이스, 시계 보기, 덧셈 뺄셈 팡팡, 글자 찾기'},
     grade3:{emoji:'🟥',label:'3학년 교과 연계 게임',games:'분수 피자 만들기, 도형 맞추기, 곱셈 배틀'},
     grade4:{emoji:'🟧',label:'4학년 교과 연계 게임',games:'지도 퍼즐, 소수 점프, 혼합계산 레이스'},
-    grade5:{emoji:'🟨',label:'5학년 교과 연계 게임',games:'약분/통분 퀴즈, 비율 시뮬레이터, 사회 O/X'},
   }[gid];
   document.getElementById('gradeLabel').textContent=info.emoji+' '+info.label;
-  document.getElementById('gradeContent').innerHTML=`<div class="dashed-zone"><span class="text-5xl">${info.emoji}</span><p class="font-black text-lg">${info.label}</p><p class="text-sm">준비 중인 게임: ${info.games}</p></div>`;
+  document.getElementById('gradeContent').innerHTML=`<div class="dashed-zone"><span class="text-5xl">${info.emoji}</span><p class="font-black text-lg">${info.label}</p><p class="text-sm text-gray-500 mt-2">준비 중인 게임: ${info.games}</p></div>`;
 }
 
 /* ══════════ 공통학년 런처 ══════════ */
@@ -629,6 +632,24 @@ function showCommonLauncher(){
       <div class="text-5xl">📜</div>
       <p class="font-black text-gray-800">긴 글 타자연습</p>
       <p class="text-xs text-gray-500">이야기를 한 줄씩 따라 쳐보세요!</p>
+    </button>
+  </div>`;
+}
+
+/* ══════════ 5학년 런처 ══════════ */
+function showGrade5Launcher(){
+  document.getElementById('gradeLabel').textContent='🟨 5학년 - 게임을 골라요!';
+  document.getElementById('gradeContent').innerHTML = `
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <button onclick="startGame('history_train')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF8E7;border:2.5px solid #FDE68A;">
+      <div class="text-5xl">🚂</div>
+      <p class="font-black text-gray-800">역사 연표 기차</p>
+      <p class="text-xs text-gray-500">과거부터 순서대로 기차를 연결해요!</p>
+    </button>
+    <button onclick="startGame('math_multiple')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EFF6FF;border:2.5px solid #BFDBFE;">
+      <div class="text-5xl">🎈</div>
+      <p class="font-black text-gray-800">배수 팡팡!</p>
+      <p class="text-xs text-gray-500">목표 숫자의 배수를 빠르게 터뜨려요!</p>
     </button>
   </div>`;
 }
@@ -651,6 +672,323 @@ function startGame(id){
   if(id==='history')    initHistory();
   if(id==='typing_short') initShortTyping();
   if(id==='typing_long')  initLongTypingMenu();
+  if(id==='history_train') initHistoryTrain();
+  if(id==='math_multiple') initMathMultiple();
+}
+
+/* ══════════════════════════════════════
+   🚂 역사 연표 기차 (5학년) - Replaces History Match
+══════════════════════════════════════ */
+const HT_EVENTS = [
+  { era: 1, text: "고조선 건국" },
+  { era: 2, text: "삼국 시대 (고구려, 백제, 신라)" },
+  { era: 3, text: "통일 신라와 발해" },
+  { era: 4, text: "고려 건국 (왕건)" },
+  { era: 5, text: "팔만대장경 제작" },
+  { era: 6, text: "조선 건국 (이성계)" },
+  { era: 7, text: "훈민정음 창제 (세종대왕)" },
+  { era: 8, text: "임진왜란 (이순신)" },
+  { era: 9, text: "대한제국 선포" },
+  { era: 10, text: "일제 강점기 시작" },
+  { era: 11, text: "3.1 운동과 임시정부" },
+  { era: 12, text: "8.15 광복" },
+  { era: 13, text: "6.25 전쟁" },
+  { era: 14, text: "민주화 운동 (4.19, 5.18, 6월)" }
+];
+
+let htRound = 1;
+let htTargetEvents = [];
+let htSelectedIndexes = [];
+let htLives = 3;
+
+function initHistoryTrain(round = 1) {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  if(round === 1) htLives = 3;
+  if(round > 5) {
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-4 py-8 text-center">
+        <span class="text-6xl">🚂</span>
+        <h4 class="text-2xl font-black">역사 연표 마스터!</h4>
+        <p class="text-gray-500 text-sm">모든 역사의 흐름을 완벽하게 이해했어요!</p>
+        <button onclick="initHistoryTrain(1)" class="btn btn-blue mt-4">🔄 다시 하기</button>
+      </div>
+    `;
+    return;
+  }
+  
+  htRound = round;
+  htSelectedIndexes = [];
+  
+  let shuffled = [...HT_EVENTS].sort(() => Math.random() - 0.5);
+  htTargetEvents = shuffled.slice(0, 4).sort((a,b) => Math.random() - 0.5);
+  
+  renderHistoryTrain();
+}
+
+function renderHistoryTrain() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  const hLivesSafe = Math.max(0, htLives);
+  const livesHtml = '❤️'.repeat(hLivesSafe) + '🖤'.repeat(Math.max(0, 3 - hLivesSafe));
+  
+  let trainHtml = `<div class="flex items-center gap-2 mb-6 overflow-x-auto py-2">
+    <div class="text-4xl">🚂</div>`;
+    
+  for(let i=0; i<4; i++) {
+    if(i < htSelectedIndexes.length) {
+      const ev = htTargetEvents[htSelectedIndexes[i]];
+      trainHtml += `<div class="bg-blue-500 text-white font-bold text-xs p-2 rounded-lg whitespace-nowrap shadow-sm border-2 border-blue-600 animate-bounce">
+        ${ev.text}
+      </div>`;
+    } else {
+      trainHtml += `<div class="bg-gray-200 border-2 border-dashed border-gray-400 text-gray-400 font-bold text-xs p-2 rounded-lg w-24 text-center">
+        빈 칸
+      </div>`;
+    }
+    if(i < 3) trainHtml += `<div class="text-gray-400">➖</div>`;
+  }
+  trainHtml += `</div>`;
+  
+  const cardsHtml = htTargetEvents.map((ev, i) => {
+    const isSelected = htSelectedIndexes.includes(i);
+    if(isSelected) {
+      return `<div class="p-4 rounded-xl border-2 border-gray-200 bg-gray-100 text-gray-400 text-center font-bold text-sm cursor-default opacity-50">선택됨</div>`;
+    }
+    return `<div onclick="htPickCard(${i})" class="p-4 rounded-xl border-2 border-orange-300 bg-orange-50 text-orange-900 text-center font-bold text-[13px] cursor-pointer hover:bg-orange-100 hover:-translate-y-1 transition-transform shadow-sm flex items-center justify-center">
+      ${ev.text}
+    </div>`;
+  }).join('');
+  
+  gc.innerHTML = `
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <button onclick="showGrade5Launcher()" class="btn btn-ghost text-xs">← 5학년 목록</button>
+        <span class="text-sm font-black text-gray-600">🚂 역사 연표 기차 (라운드 ${htRound}/5)</span>
+        <span class="text-sm font-bold text-red-500">${livesHtml}</span>
+      </div>
+      <div class="text-center mb-2">
+        <h3 class="text-lg font-black text-slate-800">과거부터 순서대로 기차를 연결하세요!</h3>
+      </div>
+      ${trainHtml}
+      <div class="grid grid-cols-2 gap-3 min-h-[150px]">
+        ${cardsHtml}
+      </div>
+    </div>
+  `;
+}
+
+function htPickCard(idx) {
+  if(htSelectedIndexes.includes(idx)) return;
+  const pickedEvent = htTargetEvents[idx];
+  
+  let unselectedEras = [];
+  for(let i=0; i<4; i++) {
+    if(!htSelectedIndexes.includes(i)) unselectedEras.push(htTargetEvents[i].era);
+  }
+  const minEra = Math.min(...unselectedEras);
+  
+  if(pickedEvent.era === minEra) {
+    htSelectedIndexes.push(idx);
+    if(htSelectedIndexes.length === 4) {
+      renderHistoryTrain();
+      setTimeout(() => initHistoryTrain(htRound + 1), 1000);
+    } else {
+      renderHistoryTrain();
+    }
+  } else {
+    htLives--;
+    if(htLives <= 0) {
+      renderHistoryTrain();
+      setTimeout(() => {
+        const gc = document.getElementById('gradeContent');
+        gc.innerHTML = `
+          <div class="flex flex-col items-center gap-4 py-8 text-center">
+            <span class="text-6xl">💥</span>
+            <h4 class="text-2xl font-black text-red-600">기차가 탈선했습니다!</h4>
+            <p class="text-gray-500 text-sm">시대 순서가 틀렸어요.</p>
+            <button onclick="initHistoryTrain(1)" class="btn btn-blue mt-4">🔄 다시 도전하기</button>
+          </div>
+        `;
+      }, 500);
+    } else {
+      alert("틀렸습니다! 어떤 사건이 먼저인지 다시 생각해보세요.");
+      htSelectedIndexes = [];
+      renderHistoryTrain();
+    }
+  }
+}
+
+/* ══════════════════════════════════════
+   🎈 배수 팡팡! (5학년)
+══════════════════════════════════════ */
+let mmTarget = 0;
+let mmNumbers = [];
+let mmRound = 1;
+let mmCorrectCount = 0;
+let mmTotalTarget = 0;
+let mmLives = 3;
+let mmStartTime = 0;
+let mmTimerInterval = null;
+let mmTimeElapsed = 0;
+let mmTotalTimeElapsed = 0;
+
+function initMathMultiple(round = 1) {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  if(mmTimerInterval) clearInterval(mmTimerInterval);
+  
+  if(round === 1) {
+    mmTotalTimeElapsed = 0;
+    mmLives = 3;
+  }
+  
+  if(round > 3) {
+    const finalSec = (mmTotalTimeElapsed / 1000).toFixed(1);
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-4 py-8 text-center">
+        <span class="text-6xl">🏆</span>
+        <h4 class="text-2xl font-black">배수 마스터 등극!</h4>
+        <p class="text-gray-500 text-sm">3라운드를 모두 완벽하게 통과했어요!</p>
+        <p class="text-xl font-bold text-indigo-600 mt-2">⏱️ 최종 기록: ${finalSec}초</p>
+        <div class="flex gap-3 mt-4">
+          <button onclick="showGrade5Launcher()" class="btn btn-ghost">← 목록</button>
+          <button onclick="initMathMultiple(1)" class="btn btn-blue">🔄 다시 도전</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  
+  mmRound = round;
+  mmTarget = [3, 4, 6, 7, 8, 9][Math.floor(Math.random()*6)];
+  
+  mmNumbers = [];
+  mmCorrectCount = 0;
+  mmTotalTarget = 0;
+  mmTimeElapsed = 0;
+  
+  for(let i=0; i<20; i++) {
+    const isMultiple = Math.random() < 0.35;
+    let num = 0;
+    if(isMultiple) {
+      num = mmTarget * (Math.floor(Math.random() * 9) + 2);
+      mmTotalTarget++;
+    } else {
+      num = (Math.floor(Math.random() * 80) + 10);
+      if(num % mmTarget === 0) num++;
+    }
+    mmNumbers.push({val: num, state: 'idle'});
+  }
+  
+  if(mmTotalTarget === 0) {
+    mmNumbers[0].val = mmTarget * 2;
+    mmTotalTarget = 1;
+  }
+  
+  mmNumbers.sort(() => Math.random() - 0.5);
+  mmStartTime = performance.now();
+  
+  mmTimerInterval = setInterval(() => {
+    mmTimeElapsed = performance.now() - mmStartTime;
+    const tEl = document.getElementById('mmTimerDisplay');
+    if(tEl) tEl.innerText = (mmTimeElapsed / 1000).toFixed(1);
+  }, 100);
+  
+  renderMathMultiple();
+}
+
+function renderMathMultiple() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  const mLivesSafe = Math.max(0, mmLives);
+  const livesHtml = '❤️'.repeat(mLivesSafe) + '🖤'.repeat(Math.max(0, 3 - mLivesSafe));
+  
+  const gridHtml = mmNumbers.map((n, i) => {
+    let bg = 'bg-white border-blue-200 text-blue-800 hover:bg-blue-50 cursor-pointer hover:-translate-y-1 shadow-sm';
+    let content = n.val;
+    
+    if(n.state === 'correct') {
+      bg = 'bg-transparent border-transparent scale-0 opacity-0 pointer-events-none';
+      content = '💥';
+    } else if(n.state === 'wrong') {
+      bg = 'bg-red-500 border-red-600 text-white cursor-default opacity-80';
+      content = '❌';
+    }
+    
+    return `
+      <div id="mmBlock_${i}" onclick="mmClick(${i})" class="h-16 flex items-center justify-center rounded-2xl border-b-4 text-xl font-black transition-all duration-300 ${bg}" style="${n.state==='correct'?'transform: scale(0); opacity: 0; pointer-events: none;':''}">
+        ${content}
+      </div>
+    `;
+  }).join('');
+  
+  gc.innerHTML = `
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <button onclick="showGrade5Launcher()" class="btn btn-ghost text-xs">← 5학년 목록</button>
+        <span class="text-sm font-black text-gray-600">🎈 배수 팡팡! (라운드 ${mmRound}/3)</span>
+        <div class="flex items-center gap-3">
+          <span id="mmLivesUI" class="text-sm font-bold text-red-500">${livesHtml}</span>
+          <span class="text-sm font-bold text-slate-700 bg-slate-200 px-2 py-1 rounded-md">⏱️ <span id="mmTimerDisplay">0.0</span>초</span>
+        </div>
+      </div>
+      
+      <div class="text-center p-4 bg-indigo-50 border-2 border-indigo-100 rounded-2xl">
+        <span class="text-xl sm:text-2xl font-black text-indigo-800">🎯 <span class="text-indigo-600 text-3xl mx-1">${mmTarget}</span> 의 배수를 모두 찾아라!</span>
+      </div>
+      
+      <div class="grid grid-cols-4 sm:grid-cols-5 gap-3 p-4 bg-gray-50 rounded-2xl border border-gray-100 min-h-[300px]">
+        ${gridHtml}
+      </div>
+    </div>
+  `;
+}
+
+function mmClick(idx) {
+  const n = mmNumbers[idx];
+  if(n.state !== 'idle') return;
+  
+  const el = document.getElementById('mmBlock_' + idx);
+  
+  if(n.val % mmTarget === 0) {
+    n.state = 'correct';
+    mmCorrectCount++;
+    if(el) {
+      el.innerHTML = '💥';
+      el.className = 'h-16 flex items-center justify-center rounded-2xl text-4xl transition-all duration-300 transform scale-150 opacity-0 pointer-events-none';
+    }
+    
+    if(mmCorrectCount >= mmTotalTarget) {
+      clearInterval(mmTimerInterval);
+      mmTotalTimeElapsed += (performance.now() - mmStartTime);
+      setTimeout(() => initMathMultiple(mmRound + 1), 800);
+    }
+  } else {
+    n.state = 'wrong';
+    mmLives--;
+    if(el) {
+      el.innerHTML = '❌';
+      el.className = 'h-16 flex items-center justify-center rounded-2xl border-b-4 text-xl font-black transition-all duration-300 bg-red-500 border-red-600 text-white cursor-default opacity-80';
+    }
+    
+    const livesSpan = document.getElementById('mmLivesUI');
+    if(livesSpan) {
+      const mLivesSafe = Math.max(0, mmLives);
+      livesSpan.innerText = '❤️'.repeat(mLivesSafe) + '🖤'.repeat(Math.max(0, 3 - mLivesSafe));
+    }
+    
+    if(mmLives <= 0) {
+      clearInterval(mmTimerInterval);
+      setTimeout(() => {
+        const gc = document.getElementById('gradeContent');
+        gc.innerHTML = `
+          <div class="flex flex-col items-center gap-4 py-8 text-center">
+            <span class="text-6xl">💀</span>
+            <h4 class="text-2xl font-black text-red-600">게임 오버!</h4>
+            <p class="text-gray-500 text-sm">기회를 모두 소진했습니다.</p>
+            <button onclick="initMathMultiple(1)" class="btn btn-blue mt-4">🔄 처음부터 다시 도전</button>
+          </div>
+        `;
+      }, 800);
+    }
+  }
 }
 
 /* ══════════════════════════════════════
@@ -757,6 +1095,9 @@ function tsKeyDown(e) {
    📜 긴 글 타자연습
 ══════════════════════════════════════ */
 const TP_LONG_TEXTS = [
+  {title: "애국가 (1~4절)", text: "동해 물과 백두산이 마르고 닳도록\n하느님이 보우하사 우리나라 만세.\n무궁화 삼천리 화려 강산\n대한 사람 대한으로 길이 보전하세.\n\n남산 위에 저 소나무 철갑을 두른 듯\n바람 서리 불변함은 우리 기상일세.\n무궁화 삼천리 화려 강산\n대한 사람 대한으로 길이 보전하세.\n\n가을 하늘 공활한데 높고 구름 없이\n밝은 달은 우리 가슴 일편단심일세.\n무궁화 삼천리 화려 강산\n대한 사람 대한으로 길이 보전하세.\n\n이 기상과 이 맘으로 충성을 다하여\n괴로우나 즐거우나 나라 사랑하세.\n무궁화 삼천리 화려 강산\n대한 사람 대한으로 길이 보전하세."},
+  {title: "어린 왕자 (생텍쥐페리)", text: "세상에서 가장 어려운 일은\n사람의 마음을 얻는 일이란다.\n각각의 얼굴만큼 다양한 각양각색의 마음을\n순간에도 수만 가지의 생각이 떠오르는데\n그 바람 같은 마음이 머물게 한다는 건\n정말 어려운 거란다.\n\n네가 오후 네 시에 온다면\n나는 세 시부터 행복해질 거야.\n시간이 흐를수록 나는 점점 더 행복해지겠지.\n네 시가 되면 나는 흥분해서 안절부절못할 거야.\n그래서 행복이 얼마나 값진 것인가를 알게 되겠지!"},
+  {title: "소나기 (황순원)", text: "소년은 개울가에서 소녀를 보자\n곧 윤 초시네 증손녀딸이라는 걸 알 수 있었다.\n소녀는 개울에다 손을 잠그고 물장난을 하고 있는 것이다.\n서울서는 이런 개울물을 보지 못하기나 한 듯이.\n벌써 며칠째 소녀는 학교에서 돌아오는 길에\n물장난을 하고 있었다.\n그런데 어제까지는 개울 기슭에서 하더니\n오늘은 징검다리 한가운데 앉아서 하고 있다."},
   {title: "흥부와 놀부", text: "옛날 옛적 어느 마을에\n마음씨 착한 흥부와\n욕심쟁이 놀부가 살았습니다.\n놀부는 부모님의 재산을 모두 차지하고\n흥부네 가족을 내쫓았습니다.\n어느 날 흥부는 다리가 부러진\n제비를 치료해 주었습니다.\n이듬해 제비는 은혜를 갚기 위해\n박씨 하나를 물어다 주었습니다."},
   {title: "토끼와 거북이", text: "숲 속에 토끼와 거북이가 살았습니다.\n토끼는 언제나 자신의 빠른 발을 자랑했습니다.\n거북이는 그런 토끼에게 경주를 제안했습니다.\n경주가 시작되자 토끼는 멀리 앞서 나갔고\n중간에 나무 그늘에서 낮잠을 잤습니다.\n하지만 거북이는 포기하지 않고\n끝까지 엉금엉금 기어갔습니다.\n결국 거북이가 먼저 결승선을 통과했습니다."},
   {title: "별 헤는 밤 (윤동주)", text: "계절이 지나가는 하늘에는\n가을로 가득 차 있습니다.\n나는 아무 걱정도 없이\n가을 속의 별들을 다 헤일 듯합니다.\n가슴 속에 하나 둘 새겨지는 별을\n이제 다 못 헤는 것은\n쉬이 아침이 오는 까닭이요\n내일 밤이 남은 까닭이요\n아직 나의 청춘이 다하지 않은 까닭입니다."}
@@ -1544,6 +1885,10 @@ function showFreeGame(type){
   document.querySelectorAll('[data-free]').forEach(b=>b.classList.toggle('util-active',b.dataset.free===type));
   const gc=document.getElementById('freeGameContent');if(!gc)return;
   const bl=document.getElementById('bungeoLink');
+  if(type==='blockblast'){
+    if(bl)bl.style.display='none';
+    initBlockBlast();
+  }
   if(type==='typing'){
     if(bl)bl.style.display='none';
     initTyping();
@@ -1561,6 +1906,364 @@ function showFreeGame(type){
     if(bl)bl.style.display='none';
     initStairs();
   }
+}
+
+/* ══════════════════════════════════════
+   🧩 블록 블라스트
+══════════════════════════════════════ */
+let bbState = {
+  grid: [], score: 0, best: 0, pieces: [], dragging: null,
+  W: 0, H: 0, cellSize: 0, gX: 0, gY: 0, isGameOver: false, combo: 0
+};
+const bbColors = ['#F87171', '#FBBF24', '#34D399', '#60A5FA', '#A78BFA', '#F472B6'];
+const BB_SHAPES = [
+  [[1]], [[1,1]], [[1],[1]], [[1,1,1]], [[1],[1],[1]], [[1,1,1,1]], [[1],[1],[1],[1]],
+  [[1,1],[1,1]], [[1,1,1],[1,1,1],[1,1,1]],
+  [[1,0],[1,1]], [[0,1],[1,1]], [[1,1],[1,0]], [[1,1],[0,1]],
+  [[1,0,0],[1,0,0],[1,1,1]], [[0,0,1],[0,0,1],[1,1,1]],
+  [[1,1,1],[1,0,0],[1,0,0]], [[1,1,1],[0,0,1],[0,0,1]],
+  [[1,1,1],[0,1,0]], [[0,1,0],[1,1,1]], [[1,0],[1,1],[1,0]], [[0,1],[1,1],[0,1]],
+  [[1,1,0],[0,1,1]], [[0,1,1],[1,1,0]]
+];
+let bbAnimFrame = null;
+
+function initBlockBlast() {
+  const gc = document.getElementById('freeGameContent'); if(!gc) return;
+  gc.innerHTML = `
+  <div style="position:relative; width:100%; height:75vh; min-height:550px; max-height:850px; background:#1E293B; border-radius:1rem; border:4px solid #334155; overflow:hidden; touch-action:none; user-select:none;">
+    <canvas id="bbCanvas" style="display:block; width:100%; height:100%; touch-action:none;"></canvas>
+    <div style="position:absolute; top:15px; left:20px; color:#F8FAFC; font-size:24px; font-weight:900; text-shadow:0 2px 4px rgba(0,0,0,0.5);">점수: <span id="bbScoreUI">0</span></div>
+    <div style="position:absolute; top:15px; right:20px; color:#94A3B8; font-size:16px; font-weight:900;">최고: <span id="bbBestUI">`+bbState.best+`</span></div>
+    <div id="bbComboUI" style="position:absolute; top:55px; left:20px; color:#FBBF24; font-size:20px; font-weight:900; text-shadow:0 2px 4px rgba(0,0,0,0.5); opacity:0; transition:opacity 0.2s, transform 0.2s; transform:translateY(10px);"></div>
+    <div id="bbGameOver" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.8); flex-direction:column; align-items:center; justify-content:center; z-index:10; backdrop-filter:blur(4px);">
+      <h2 style="color:#FFF; font-size:40px; font-weight:900; margin-bottom:10px;">게임 오버!</h2>
+      <p style="color:#CBD5E1; font-size:20px; margin-bottom:30px;">최종 점수: <span id="bbFinalScore">0</span></p>
+      <button onclick="bbStartGame()" style="background:#3B82F6; color:white; font-size:20px; font-weight:900; padding:15px 40px; border:none; border-radius:15px; cursor:pointer; box-shadow:0 6px 0 #2563EB;">다시 하기</button>
+    </div>
+  </div>`;
+  
+  setTimeout(() => {
+    const cvs = document.getElementById('bbCanvas');
+    if(!cvs) return;
+    cvs.addEventListener('pointerdown', bbPointerDown);
+    cvs.addEventListener('pointermove', bbPointerMove);
+    cvs.addEventListener('pointerup', bbPointerUp);
+    cvs.addEventListener('pointercancel', bbPointerUp);
+    window.addEventListener('resize', bbResize);
+    bbResize();
+    bbStartGame();
+  }, 0);
+}
+
+function bbStartGame() {
+  document.getElementById('bbGameOver').style.display = 'none';
+  bbState.grid = Array(8).fill(0).map(() => Array(8).fill(0));
+  bbState.score = 0;
+  bbState.combo = 0;
+  bbHideCombo();
+  bbState.isGameOver = false;
+  bbUpdateScoreUI();
+  bbSpawnPieces();
+  if(bbAnimFrame) cancelAnimationFrame(bbAnimFrame);
+  bbLoop();
+}
+
+function bbResize() {
+  const cvs = document.getElementById('bbCanvas');
+  if(!cvs || !cvs.parentElement) return;
+  bbState.W = cvs.parentElement.clientWidth;
+  bbState.H = cvs.parentElement.clientHeight;
+  cvs.width = bbState.W;
+  cvs.height = bbState.H;
+  bbLayout();
+}
+
+function bbLayout() {
+  const {W, H} = bbState;
+  const maxGridW = W * 0.9;
+  const maxGridH = H * 0.55;
+  const gSize = Math.min(maxGridW, maxGridH);
+  bbState.cellSize = gSize / 8;
+  bbState.gX = (W - gSize) / 2;
+  bbState.gY = (H * 0.55 - gSize) / 2 + (H * 0.05);
+  
+  const pieceAreaY = H * 0.75;
+  const slotW = W / 3;
+  bbState.pieces.forEach((p, i) => {
+    p.baseX = slotW * i + slotW/2;
+    p.baseY = pieceAreaY + (H - pieceAreaY)/2;
+    if(!bbState.dragging || bbState.dragging.idx !== i) {
+      p.x = p.baseX;
+      p.y = p.baseY;
+    }
+  });
+}
+
+function bbSpawnPieces() {
+  bbState.pieces = [];
+  for(let i=0; i<3; i++) {
+    bbState.pieces.push({
+      shape: BB_SHAPES[Math.floor(Math.random() * BB_SHAPES.length)],
+      color: bbColors[Math.floor(Math.random() * bbColors.length)],
+      used: false, x: 0, y: 0, baseX: 0, baseY: 0, scale: 0.5
+    });
+  }
+  bbLayout();
+  bbCheckGameOver();
+}
+
+function bbPointerDown(e) {
+  if(bbState.isGameOver) return;
+  const cvs = document.getElementById('bbCanvas');
+  const rect = cvs.getBoundingClientRect();
+  const px = e.clientX - rect.left;
+  const py = e.clientY - rect.top;
+  
+  for(let i = 2; i >= 0; i--) {
+    const p = bbState.pieces[i];
+    if(p.used) continue;
+    
+    const rows = p.shape.length;
+    const cols = p.shape[0].length;
+    const cw = bbState.cellSize * p.scale;
+    const w = cols * cw;
+    const h = rows * cw;
+    const px0 = p.x - w/2;
+    const py0 = p.y - h/2;
+    
+    const hitPadding = 25;
+    if(px >= px0 - hitPadding && px <= px0 + w + hitPadding && py >= py0 - hitPadding && py <= py0 + h + hitPadding) {
+      bbState.dragging = { idx: i, offX: p.x - px, offY: p.y - py };
+      p.scale = 1.0;
+      p.x = px + bbState.dragging.offX;
+      p.y = py + bbState.dragging.offY - (h/2 + 50); // move up slightly
+      cvs.setPointerCapture(e.pointerId);
+      return;
+    }
+  }
+}
+
+function bbPointerMove(e) {
+  if(!bbState.dragging) return;
+  const cvs = document.getElementById('bbCanvas');
+  const rect = cvs.getBoundingClientRect();
+  const px = e.clientX - rect.left;
+  const py = e.clientY - rect.top;
+  const p = bbState.pieces[bbState.dragging.idx];
+  const h = p.shape.length * bbState.cellSize;
+  p.x = px + bbState.dragging.offX;
+  p.y = py + bbState.dragging.offY - (h/2 + 50);
+}
+
+function bbPointerUp(e) {
+  if(!bbState.dragging) return;
+  const cvs = document.getElementById('bbCanvas');
+  cvs.releasePointerCapture(e.pointerId);
+  const p = bbState.pieces[bbState.dragging.idx];
+  bbState.dragging = null;
+  
+  const cw = bbState.cellSize;
+  const w = p.shape[0].length * cw;
+  const h = p.shape.length * cw;
+  const sx = p.x - w/2;
+  const sy = p.y - h/2;
+  const gridX = Math.round((sx - bbState.gX) / cw);
+  const gridY = Math.round((sy - bbState.gY) / cw);
+  
+  if(bbCanPlace(p.shape, gridX, gridY)) {
+    bbPlace(p.shape, gridX, gridY, p.color);
+    p.used = true;
+    if(bbState.pieces.every(pi => pi.used)) setTimeout(bbSpawnPieces, 200);
+    else bbCheckGameOver();
+  } else {
+    p.scale = 0.5;
+    p.x = p.baseX;
+    p.y = p.baseY;
+  }
+}
+
+function bbCanPlace(shape, gx, gy) {
+  for(let r=0; r<shape.length; r++) {
+    for(let c=0; c<shape[0].length; c++) {
+      if(shape[r][c] === 1) {
+        if(gy+r < 0 || gy+r >= 8 || gx+c < 0 || gx+c >= 8) return false;
+        if(bbState.grid[gy+r][gx+c] !== 0) return false;
+      }
+    }
+  }
+  return true;
+}
+
+function bbPlace(shape, gx, gy, color) {
+  let placed = 0;
+  for(let r=0; r<shape.length; r++) {
+    for(let c=0; c<shape[0].length; c++) {
+      if(shape[r][c] === 1) {
+        bbState.grid[gy+r][gx+c] = color;
+        placed++;
+      }
+    }
+  }
+  
+  let linesToClearR = [];
+  let linesToClearC = [];
+  for(let i=0; i<8; i++) {
+    let rowFull = true, colFull = true;
+    for(let j=0; j<8; j++) {
+      if(bbState.grid[i][j] === 0) rowFull = false;
+      if(bbState.grid[j][i] === 0) colFull = false;
+    }
+    if(rowFull) linesToClearR.push(i);
+    if(colFull) linesToClearC.push(i);
+  }
+  
+  const totalLines = linesToClearR.length + linesToClearC.length;
+  if(totalLines > 0) {
+    bbState.combo++;
+    // Base piece points
+    bbState.score += placed;
+    // Line clear points
+    bbState.score += totalLines * 10;
+    // Combo bonus
+    const comboBonus = bbState.combo > 1 ? (bbState.combo - 1) * 10 : 0;
+    bbState.score += comboBonus;
+    
+    linesToClearR.forEach(r => { for(let c=0; c<8; c++) bbState.grid[r][c] = 0; });
+    linesToClearC.forEach(c => { for(let r=0; r<8; r++) bbState.grid[r][c] = 0; });
+    
+    bbShowCombo(bbState.combo, totalLines, comboBonus);
+  } else {
+    // Reset combo if no lines cleared
+    bbState.combo = 0;
+    bbState.score += placed;
+    bbHideCombo();
+  }
+  bbUpdateScoreUI();
+}
+
+function bbShowCombo(combo, lines, bonus) {
+  const ui = document.getElementById('bbComboUI');
+  if(!ui) return;
+  
+  let msg = '';
+  if(combo > 1) msg += `${combo} 콤보! `;
+  if(lines > 1) msg += `(+${lines}줄) `;
+  else if(combo > 1) msg += `🔥 `;
+  if(bonus > 0) msg += `+${bonus}`;
+  
+  if(msg === '') return;
+  
+  ui.innerText = msg;
+  ui.style.opacity = '1';
+  ui.style.transform = 'translateY(0) scale(1.1)';
+  
+  setTimeout(() => {
+    if(ui.innerText === msg) {
+      ui.style.transform = 'translateY(0) scale(1.0)';
+    }
+  }, 200);
+}
+
+function bbHideCombo() {
+  const ui = document.getElementById('bbComboUI');
+  if(!ui) return;
+  ui.style.opacity = '0';
+  ui.style.transform = 'translateY(10px) scale(1.0)';
+}
+
+function bbCheckGameOver() {
+  let canPlaceAny = false;
+  for(const p of bbState.pieces) {
+    if(p.used) continue;
+    let canPlaceThis = false;
+    for(let r=0; r<8; r++) {
+      for(let c=0; c<8; c++) {
+        if(bbCanPlace(p.shape, c, r)) { canPlaceThis = true; break; }
+      }
+      if(canPlaceThis) break;
+    }
+    if(canPlaceThis) { canPlaceAny = true; break; }
+  }
+  
+  if(!canPlaceAny) {
+    bbState.isGameOver = true;
+    document.getElementById('bbGameOver').style.display = 'flex';
+    document.getElementById('bbFinalScore').innerText = bbState.score;
+  }
+}
+
+function bbUpdateScoreUI() {
+  const su = document.getElementById('bbScoreUI');
+  if(su) su.innerText = bbState.score;
+  if(bbState.score > bbState.best) bbState.best = bbState.score;
+  const bu = document.getElementById('bbBestUI');
+  if(bu) bu.innerText = bbState.best;
+}
+
+function bbLoop() {
+  if(!bbState.W) return;
+  const cvs = document.getElementById('bbCanvas');
+  if(!cvs) return;
+  const ctx = cvs.getContext('2d');
+  
+  ctx.fillStyle = '#0F172A';
+  ctx.fillRect(0, 0, bbState.W, bbState.H);
+  
+  ctx.fillStyle = '#1E293B';
+  ctx.fillRect(bbState.gX, bbState.gY, bbState.cellSize*8, bbState.cellSize*8);
+  
+  for(let r=0; r<8; r++) {
+    for(let c=0; c<8; c++) {
+      const cx = bbState.gX + c*bbState.cellSize;
+      const cy = bbState.gY + r*bbState.cellSize;
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(cx, cy, bbState.cellSize, bbState.cellSize);
+      
+      const color = bbState.grid[r][c];
+      if(color !== 0) bbDrawBlock(ctx, cx, cy, bbState.cellSize, color);
+    }
+  }
+  
+  for(let i=0; i<3; i++) {
+    const p = bbState.pieces[i];
+    if(p.used || (bbState.dragging && bbState.dragging.idx === i)) continue;
+    bbDrawPiece(ctx, p);
+  }
+  if(bbState.dragging) bbDrawPiece(ctx, bbState.pieces[bbState.dragging.idx]);
+  
+  bbAnimFrame = requestAnimationFrame(bbLoop);
+}
+
+function bbDrawPiece(ctx, p) {
+  const cw = bbState.cellSize * p.scale;
+  const w = p.shape[0].length * cw;
+  const h = p.shape.length * cw;
+  const sx = p.x - w/2;
+  const sy = p.y - h/2;
+  
+  for(let r=0; r<p.shape.length; r++) {
+    for(let c=0; c<p.shape[0].length; c++) {
+      if(p.shape[r][c] === 1) bbDrawBlock(ctx, sx + c*cw, sy + r*cw, cw, p.color);
+    }
+  }
+}
+
+function bbDrawBlock(ctx, x, y, size, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.roundRect(x+1, y+1, size-2, size-2, size*0.15);
+  ctx.fill();
+  
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.beginPath();
+  ctx.roundRect(x+2, y+2, size-4, size*0.25, size*0.1);
+  ctx.fill();
+  
+  ctx.fillStyle = 'rgba(0,0,0,0.15)';
+  ctx.beginPath();
+  ctx.roundRect(x+2, y+size-size*0.25-2, size-4, size*0.25, size*0.1);
+  ctx.fill();
 }
 
 /* ══════════════════════════════════════
