@@ -200,7 +200,7 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
         <button onclick="switchGrade('grade3')" data-grade="grade3" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟥 3학년</button>
         <button onclick="switchGrade('grade4')" data-grade="grade4" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟧 4학년</button>
         <button onclick="switchGrade('grade5')" data-grade="grade5" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟨 5학년</button>
-        <button onclick="switchGrade('grade6')" data-grade="grade6" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟩 6학년 ✅</button>
+        <button onclick="switchGrade('grade6')" data-grade="grade6" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟩 6학년</button>
       </div>
     </div>
     
@@ -612,11 +612,12 @@ function switchGrade(gid){
   switchTab('minigame');
   if(gid==='grade6'){showGrade6Launcher();return;}
   if(gid==='grade5'){showGrade5Launcher();return;}
+  if(gid==='grade4'){showGrade4Launcher();return;}
+  if(gid==='grade12'){showGrade12Launcher();return;}
   if(gid==='common'){showCommonLauncher();return;}
   const info={
     grade12:{emoji:'🐥',label:'1~2학년(저학년군) 교과 연계 게임',games:'구구단 레이스, 시계 보기, 덧셈 뺄셈 팡팡, 글자 찾기'},
-    grade3:{emoji:'🟥',label:'3학년 교과 연계 게임',games:'분수 피자 만들기, 도형 맞추기, 곱셈 배틀'},
-    grade4:{emoji:'🟧',label:'4학년 교과 연계 게임',games:'지도 퍼즐, 소수 점프, 혼합계산 레이스'},
+    grade3:{emoji:'🟥',label:'3학년 교과 연계 게임',games:'분수 피자 만들기, 도형 맞추기, 곱셈 배틀'}
   }[gid];
   document.getElementById('gradeLabel').textContent=info.emoji+' '+info.label;
   document.getElementById('gradeContent').innerHTML=`<div class="dashed-zone"><span class="text-5xl">${info.emoji}</span><p class="font-black text-lg">${info.label}</p><p class="text-sm text-gray-500 mt-2">준비 중인 게임: ${info.games}</p></div>`;
@@ -636,6 +637,52 @@ function showCommonLauncher(){
       <div class="text-5xl">📜</div>
       <p class="font-black text-gray-800">긴 글 타자연습</p>
       <p class="text-xs text-gray-500">이야기를 한 줄씩 따라 쳐보세요!</p>
+    </button>
+  </div>`;
+}
+
+/* ══════════ 1~2학년 런처 ══════════ */
+function showGrade12Launcher(){
+  document.getElementById('gradeLabel').textContent='🐥 1~2학년(저학년군) - 게임을 골라요!';
+  document.getElementById('gradeContent').innerHTML = `
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <button onclick="startGame('gugu_race')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FEF3C7;border:2.5px solid #FCD34D;">
+      <div class="text-5xl">🏎️</div>
+      <p class="font-black text-gray-800">구구단 레이스</p>
+      <p class="text-xs text-gray-500">구구단을 맞춰 자동차를 전진시켜요! (2학년 수학)</p>
+    </button>
+    <button onclick="startGame('clock_read')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#E0E7FF;border:2.5px solid #A5B4FC;">
+      <div class="text-5xl">⏰</div>
+      <p class="font-black text-gray-800">시계 보기 퀴즈</p>
+      <p class="text-xs text-gray-500">시곗바늘을 보고 시간을 맞춰요! (1~2학년 수학)</p>
+    </button>
+    <button onclick="startGame('math_pop')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FCE7F3;border:2.5px solid #F9A8D4;">
+      <div class="text-5xl">🎈</div>
+      <p class="font-black text-gray-800">덧셈 뺄셈 팡팡</p>
+      <p class="text-xs text-gray-500">정답이 같은 풍선을 터뜨려요! (1~2학년 수학)</p>
+    </button>
+    <button onclick="startGame('word_find')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#DCFCE7;border:2.5px solid #86EFAC;">
+      <div class="text-5xl">👀</div>
+      <p class="font-black text-gray-800">올바른 글자 찾기</p>
+      <p class="text-xs text-gray-500">그림에 맞는 올바른 낱말을 찾아요! (1~2학년 국어)</p>
+    </button>
+  </div>`;
+}
+
+/* ══════════ 4학년 런처 ══════════ */
+function showGrade4Launcher(){
+  document.getElementById('gradeLabel').textContent='🟧 4학년 - 게임을 골라요!';
+  document.getElementById('gradeContent').innerHTML = `
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <button onclick="startGame('fossil_dig')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF5F0;border:2.5px solid #FED7AA;">
+      <div class="text-5xl">🦕</div>
+      <p class="font-black text-gray-800">화석 발굴단</p>
+      <p class="text-xs text-gray-500">지층을 깨고 공룡 화석을 찾아요! (과학)</p>
+    </button>
+    <button onclick="startGame('decimal_jump')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F0FDF4;border:2.5px solid #86EFAC;">
+      <div class="text-5xl">🐸</div>
+      <p class="font-black text-gray-800">소수 점프</p>
+      <p class="text-xs text-gray-500">알맞은 소수를 찾아 점프해요! (수학)</p>
     </button>
   </div>`;
 }
@@ -678,6 +725,265 @@ function startGame(id){
   if(id==='typing_long')  initLongTypingMenu();
   if(id==='history_train') initHistoryTrain();
   if(id==='math_multiple') initMathMultiple();
+  if(id==='fossil_dig') initFossilDig();
+  if(id==='decimal_jump') initDecimalJump();
+  if(id==='gugu_race') initGuguRace();
+  if(id==='clock_read') initClockRead();
+  if(id==='math_pop') initMathPop();
+  if(id==='word_find') initWordFind();
+}
+
+/* ══════════════════════════════════════
+   🦕 화석 발굴단 (4학년 과학)
+══════════════════════════════════════ */
+let fdGrid = [];
+let fdPickaxes = 15;
+let fdFound = 0;
+let fdTotal = 0;
+
+function initFossilDig(round = 1) {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  if(round > 3) {
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-4 py-8 text-center">
+        <span class="text-6xl">🦕</span><h4 class="text-2xl font-black text-amber-800">화석 발굴 마스터!</h4>
+        <p class="text-gray-500 text-sm font-bold">희귀한 화석을 모두 발굴했어요!</p>
+        <button onclick="initFossilDig(1)" class="btn btn-blue mt-4">🔄 다시 하기</button>
+      </div>`;
+    return;
+  }
+  
+  fdPickaxes = 15 - (round * 2); 
+  fdFound = 0;
+  fdTotal = 4 + round; 
+
+  fdGrid = Array(6).fill(0).map(()=>Array(6).fill({type:'dirt', hp:1, revealed:false, isFossil:false}));
+  
+  let emojis = ['🦴', '🦕', '🦖', '💀', '💎', '🏺'];
+  let placed = 0;
+  while(placed < fdTotal) {
+    let r = Math.floor(Math.random() * 6);
+    let c = Math.floor(Math.random() * 6);
+    if(!fdGrid[r][c].isFossil) {
+      let icon = emojis[Math.floor(Math.random() * emojis.length)];
+      fdGrid[r][c] = {type:'dirt', hp: Math.random()>0.6?2:1, revealed:false, isFossil:true, icon: icon};
+      placed++;
+    }
+  }
+  for(let i=0; i<8; i++) {
+    let r = Math.floor(Math.random() * 6);
+    let c = Math.floor(Math.random() * 6);
+    if(!fdGrid[r][c].isFossil) fdGrid[r][c].hp = 2;
+  }
+  renderFossilDig(round);
+}
+
+function renderFossilDig(round) {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  let html = `<div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <button onclick="showGrade4Launcher()" class="btn btn-ghost text-xs">← 4학년 목록</button>
+      <span class="text-sm font-black text-amber-800">🦕 화석 발굴단 (라운드 ${round}/3)</span>
+      <span class="text-sm font-black text-white bg-amber-600 px-3 py-1 rounded-full shadow-sm">⛏️ ${fdPickaxes}개 남음</span>
+    </div>
+    <div class="text-center mb-1">
+      <h3 class="text-lg font-black text-slate-800">숨겨진 화석 <span class="text-orange-600 text-2xl mx-1">${fdTotal}</span>개를 찾아라!</h3>
+      <p class="text-[11px] text-gray-500 font-bold mt-1 bg-amber-50 py-1.5 px-3 rounded-lg inline-block border border-amber-100 shadow-sm">💡 흙 타일(🟫)은 <b>1번</b>, 단단한 바위(🪨)는 <b>2번</b> 클릭해야 깨집니다.</p>
+    </div>
+    <div class="grid grid-cols-6 gap-1.5 p-3 bg-amber-900 rounded-xl mx-auto border-4 border-amber-950 shadow-inner" style="max-width:380px;">`;
+  
+  for(let r=0; r<6; r++) {
+    for(let c=0; c<6; c++) {
+      let cell = fdGrid[r][c];
+      let bg = '';
+      let content = '';
+      let shadow = '';
+      
+      if (cell.revealed) {
+        if (cell.isFossil) {
+          bg = 'bg-yellow-100 border-2 border-yellow-400 z-10';
+          content = cell.icon;
+          shadow = 'box-shadow: 0 0 15px rgba(251,191,36,0.8); transform: scale(1.05);';
+        } else {
+          bg = 'bg-amber-950 border-0 opacity-40';
+          shadow = 'box-shadow: inset 0 4px 6px rgba(0,0,0,0.5);';
+        }
+      } else {
+        if (cell.hp === 2) {
+          bg = 'bg-slate-400 border-b-4 border-r-4 border-slate-600 hover:brightness-110';
+          content = '🪨';
+        } else {
+          bg = 'bg-amber-600 border-b-4 border-r-4 border-amber-800 hover:brightness-110';
+          content = '';
+        }
+      }
+      
+      html += `<div onclick="fdClick(${r},${c},${round})" class="h-12 sm:h-14 rounded flex items-center justify-center text-3xl cursor-pointer transition-all active:scale-95 ${bg}" style="${shadow}">${content}</div>`;
+    }
+  }
+  
+  html += `</div></div>`;
+  gc.innerHTML = html;
+}
+
+function fdClick(r, c, round) {
+  if(fdPickaxes <= 0 || fdGrid[r][c].revealed) return;
+  
+  fdPickaxes--;
+  fdGrid[r][c].hp--;
+  
+  if(fdGrid[r][c].hp <= 0) {
+    fdGrid[r][c].revealed = true;
+    if(fdGrid[r][c].isFossil) fdFound++;
+  }
+  
+  if(fdFound >= fdTotal) {
+    renderFossilDig(round);
+    setTimeout(() => initFossilDig(round + 1), 1000);
+    return;
+  }
+  
+  if(fdPickaxes <= 0 && fdFound < fdTotal) {
+    renderFossilDig(round);
+    setTimeout(() => {
+      const gc = document.getElementById('gradeContent');
+      gc.innerHTML = `<div class="flex flex-col items-center gap-4 py-8 text-center"><span class="text-6xl">⛏️</span><h4 class="text-2xl font-black text-red-600">발굴 실패!</h4><p class="text-gray-500 text-sm font-bold">곡괭이가 모두 망가졌어요.</p><button onclick="initFossilDig(1)" class="btn btn-blue mt-4">🔄 다시 도전하기</button></div>`;
+    }, 800);
+    return;
+  }
+  renderFossilDig(round);
+}
+
+/* ══════════════════════════════════════
+   🐸 소수 점프 (4학년 수학)
+══════════════════════════════════════ */
+let djScore = 0;
+let djHealth = 3;
+let djEq = {};
+let djOptions = [];
+let djFrogPos = 1; 
+let djFallingY = 0;
+let djAnim = null;
+let djSpeed = 0.6;
+let djFrogY = 0;
+let djFrogVy = 0;
+
+function initDecimalJump() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  djScore = 0; djHealth = 3; djSpeed = 0.6; djFrogPos = 1; djFrogY = 0; djFrogVy = 0;
+  djNextQuestion();
+  renderDecimalJump();
+  if(djAnim) cancelAnimationFrame(djAnim);
+  djAnim = requestAnimationFrame(djLoop);
+  
+  document.removeEventListener('keydown', djKeydown);
+  document.addEventListener('keydown', djKeydown);
+}
+
+function djKeydown(e) {
+  if (!djAnim) return; 
+  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'a', 'A', 'd', 'D', 'w', 'W', ' '].includes(e.key)) {
+    e.preventDefault();
+  }
+  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') djMove(-1);
+  else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') djMove(1);
+  else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') djJump();
+}
+
+function djJump() {
+  if(djFrogY === 0) djFrogVy = 22; // Jump power
+}
+
+function djNextQuestion() {
+  djFallingY = 0; djFrogY = 0; djFrogVy = 0;
+  let isAdd = Math.random() > 0.5;
+  let a = Math.floor(Math.random() * 90 + 10) / 10; 
+  let b = Math.floor(Math.random() * 90 + 10) / 10;
+  if(!isAdd && a < b) { let t=a; a=b; b=t; }
+  
+  let ans = isAdd ? (a + b) : (a - b);
+  ans = Math.round(ans * 10) / 10;
+  
+  djEq = { a: a.toFixed(1), b: b.toFixed(1), op: isAdd ? '+' : '-', ans };
+  
+  let w1 = ans + (Math.floor(Math.random()*5+1)/10) * (Math.random()>0.5?1:-1);
+  let w2 = ans + (Math.floor(Math.random()*5+1)/10) * (Math.random()>0.5?1:-1);
+  w1 = Math.round(w1 * 10) / 10; w2 = Math.round(w2 * 10) / 10;
+  if(w1 === ans) w1 += 0.1; if(w2 === ans || w2 === w1) w2 -= 0.1;
+  
+  djOptions = [ans, w1, w2].sort(() => Math.random() - 0.5);
+  djSpeed = 0.6 + (djScore * 0.012); // Reduced acceleration to 30%
+}
+
+function renderDecimalJump() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <button onclick="cancelAnimationFrame(djAnim); djAnim=null; showGrade4Launcher()" class="btn btn-ghost text-xs">← 4학년 목록</button>
+      <span class="text-sm font-black text-gray-600">🐸 소수 점프 (점프 2배!)</span>
+      <span class="text-sm font-bold text-red-500">❤️ ${djHealth}</span>
+    </div>
+    <div class="flex items-center justify-between bg-blue-50 p-4 rounded-xl border border-blue-200">
+      <span class="text-lg font-black text-blue-800">점수: ${djScore}</span>
+      <span class="text-2xl font-black tracking-widest">${djEq.a} ${djEq.op} ${djEq.b} = ?</span>
+    </div>
+    <div style="position:relative; width:100%; height:600px; background:linear-gradient(to bottom, #87CEEB, #E0F6FF); border-radius:1rem; border:4px solid #34495E; overflow:hidden;">
+      <div id="djBlock0" class="absolute w-1/3 text-center text-2xl font-black bg-white border-b-4 border-gray-300 rounded-lg py-2 shadow-sm" style="left:0%; top:0;">${djOptions[0].toFixed(1)}</div>
+      <div id="djBlock1" class="absolute w-1/3 text-center text-2xl font-black bg-white border-b-4 border-gray-300 rounded-lg py-2 shadow-sm" style="left:33.3%; top:0;">${djOptions[1].toFixed(1)}</div>
+      <div id="djBlock2" class="absolute w-1/3 text-center text-2xl font-black bg-white border-b-4 border-gray-300 rounded-lg py-2 shadow-sm" style="left:66.6%; top:0;">${djOptions[2].toFixed(1)}</div>
+      
+      <div id="djFrog" class="absolute text-5xl transition-transform" style="bottom:10px; left:33.3%; width:33.3%; text-align:center;">🐸</div>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="djMove(-1)" class="btn bg-gray-200 flex-1 py-4 text-xl">⬅️</button>
+      <button onclick="djJump()" class="btn bg-yellow-200 flex-1 py-4 text-sm font-black">⬆️ 점프<br>(2배!)</button>
+      <button onclick="djMove(1)" class="btn bg-gray-200 flex-1 py-4 text-xl">➡️</button>
+    </div>
+  </div>`;
+}
+
+function djMove(dir) {
+  djFrogPos += dir;
+  if(djFrogPos < 0) djFrogPos = 0;
+  if(djFrogPos > 2) djFrogPos = 2;
+  const frog = document.getElementById('djFrog');
+  if(frog) frog.style.left = (djFrogPos * 33.3) + '%';
+}
+
+function djLoop() {
+  djFallingY += djSpeed;
+  for(let i=0; i<3; i++) {
+    const el = document.getElementById('djBlock'+i);
+    if(el) el.style.top = djFallingY + 'px';
+  }
+  
+  if (djFrogY > 0 || djFrogVy !== 0) {
+    djFrogY += djFrogVy;
+    djFrogVy -= 1; // Gravity
+    if (djFrogY < 0) { djFrogY = 0; djFrogVy = 0; }
+    const frog = document.getElementById('djFrog');
+    if (frog) frog.style.bottom = (10 + djFrogY) + 'px';
+  }
+  
+  if(djFallingY >= 490 - djFrogY) { 
+    if(djOptions[djFrogPos] === djEq.ans) {
+      if(djFrogY > 10) djScore += 20; // Jump bonus 2x
+      else djScore += 10;
+      djNextQuestion();
+      renderDecimalJump();
+    } else {
+      djHealth--;
+      if(djHealth <= 0) {
+        document.getElementById('gradeContent').innerHTML = `<div class="flex flex-col items-center gap-4 py-8 text-center"><span class="text-6xl">💥</span><h4 class="text-2xl font-black text-red-600">게임 오버!</h4><p class="text-gray-500 text-sm">최종 점수: ${djScore}</p><button onclick="initDecimalJump()" class="btn btn-blue mt-4">🔄 다시 하기</button></div>`;
+        return;
+      }
+      djNextQuestion();
+      renderDecimalJump();
+    }
+  }
+  
+  djAnim = requestAnimationFrame(djLoop);
 }
 
 /* ══════════════════════════════════════
@@ -3530,7 +3836,7 @@ function rSpinWheel() {
       rWheelAngle = startAngle + diff;
       rDrawWheel(rWheelAngle);
       rAssign[rTargetIdx] = winnerRole.id;
-      beep();
+      // beep removed
       toast(`🎉 ${rTargetIdx+1}번 학생: ${winnerRole.icon} ${winnerRole.name} 당첨!`);
       
       rSpinning = false;
@@ -3838,7 +4144,7 @@ function gClickStudent(type, index, gIndex) {
     
     gSelected = null;
     gRender();
-    beep();
+    // beep removed
   }
 }
 
@@ -4189,6 +4495,7 @@ let pjDrag = {active: false, sx: 0, sy: 0, ex: 0, ey: 0};
 let pMaxHeight = 0;
 
 let pjBirds = [];
+let pjItems = [];
 
 function initPotJump() {
   const gc = document.getElementById('freeGameContent');
@@ -4196,11 +4503,12 @@ function initPotJump() {
   gc.innerHTML = `
     <div style="position:relative; width:100%; height:70vh; background:linear-gradient(to bottom, #87CEEB, #E0F6FF); border-radius:1rem; border:4px solid #34495E; overflow:hidden;">
       <canvas id="pjCanvas" style="display:block; width:100%; height:100%; touch-action:none;"></canvas>
-      <div style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.5); color:white; padding:5px 15px; border-radius:10px; font-weight:bold;">
-        최고 높이: <span id="pjScore">0</span>m
+      <div style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.5); color:white; padding:8px 15px; border-radius:10px; font-weight:bold; line-height:1.5;">
+        최고 높이: <span id="pjScore">0</span>m<br>
+        현재 높이: <span id="pjCurrentHeight">0</span>m
       </div>
     </div>
-    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">마우스나 터치로 항아리를 뒤로 당겼다 놓아 점프하세요! 날아다니는 독수리를 조심하세요... 🍯🦅</p>
+    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">항아리를 당겼다 놓아 점프하세요! (연속 점프는 1초 대기 필요)<br>독수리(🦅)를 피하고 아이템(🚀 로켓, 🎈 풍선)을 먹어보세요!</p>
   `;
   setTimeout(() => {
     const c = document.getElementById('pjCanvas');
@@ -4212,6 +4520,7 @@ function initPotJump() {
     
     pjPlatforms = [];
     pjBirds = [];
+    pjItems = [];
     pjHighestGeneratedY = c.height - 350;
     
     // Floor (Massive depth to look like ground below)
@@ -4244,6 +4553,14 @@ function generateMorePj(cw, targetY) {
         vx: (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 2 + 1),
         w: 30, h: 20
       });
+    } else if(Math.random() < 0.25) { // 25% chance to spawn an item instead of a bird
+      pjItems.push({
+        type: Math.random() > 0.5 ? '🚀' : '🎈',
+        x: Math.random() * (cw - 40) + 20,
+        y: pjHighestGeneratedY - 40,
+        w: 30, h: 30,
+        active: true
+      });
     }
     
     pjHighestGeneratedY -= (Math.random() * 80 + 80);
@@ -4251,7 +4568,9 @@ function generateMorePj(cw, targetY) {
 }
 
 function setupPjInput(c) {
+  let pjLastJumpTime = 0;
   const down = (x, y) => {
+    if(Date.now() - pjLastJumpTime < 1000) return;
     pjDrag.active = true;
     pjDrag.sx = x; pjDrag.sy = y;
     pjDrag.ex = x; pjDrag.ey = y;
@@ -4276,8 +4595,9 @@ function setupPjInput(c) {
     if(dy > 0) dy = 0; // Prevent shooting downwards (dragging up)
     
     if(dist > 10) {
-      pjPlayer.vx = dx * 0.12; 
-      pjPlayer.vy = dy * 0.15; // Shoot up (since dy is negative)
+      pjPlayer.vx = dx * 0.034; 
+      pjPlayer.vy = dy * 0.067; // Shoot up (since dy is negative)
+      pjLastJumpTime = Date.now();
     }
   };
   
@@ -4297,11 +4617,11 @@ function pjLoop() {
   const ctx = c.getContext('2d');
   
   // Physics
-  pjPlayer.vy += 0.4; // Gravity
+  pjPlayer.vy += 0.1; // Gravity
   pjPlayer.x += pjPlayer.vx;
   pjPlayer.y += pjPlayer.vy;
   
-  pjPlayer.vx *= 0.98; // Air resistance
+  pjPlayer.vx *= 0.98; // Air resistance (stronger to slow down horizontal movement)
   
   // Wall collision (bouncy)
   if(pjPlayer.x < pjPlayer.r) { pjPlayer.x = pjPlayer.r; pjPlayer.vx *= -0.8; }
@@ -4370,6 +4690,26 @@ function pjLoop() {
       pjPlayer.vy = 2; // drop
     }
   }
+
+  // Item collision
+  for(let i=0; i<pjItems.length; i++) {
+    let it = pjItems[i];
+    if(!it.active) continue;
+    let dx = pjPlayer.x - it.x;
+    let dy = pjPlayer.y - it.y;
+    if (dx*dx + dy*dy <= (pjPlayer.r + it.w/2)*(pjPlayer.r + it.w/2)) {
+      it.active = false;
+      if(it.type === '🚀') {
+        pjPlayer.vy = -18; // Massive super jump
+        pjPlayer.vx = 0;
+        toast('🚀 슈퍼 로켓 점프!');
+      } else if(it.type === '🎈') {
+        pjPlayer.vy = -6; // Light floaty jump
+        pjPlayer.vx = 0;
+        toast('🎈 두둥실 풍선 점프!');
+      }
+    }
+  }
   
   // Camera smooth follow
   let targetCamY = (c.height * 0.7) - pjPlayer.y;
@@ -4383,6 +4723,8 @@ function pjLoop() {
   let heightSc = Math.floor(Math.max(0, c.height - pjPlayer.y - 50));
   if(heightSc > pMaxHeight) pMaxHeight = heightSc;
   document.getElementById('pjScore').innerText = Math.floor(pMaxHeight / 10);
+  const curHeightEl = document.getElementById('pjCurrentHeight');
+  if(curHeightEl) curHeightEl.innerText = Math.floor(heightSc / 10);
   
   ctx.clearRect(0, 0, c.width, c.height);
   
@@ -4410,6 +4752,16 @@ function pjLoop() {
       ctx.textBaseline = 'middle';
       ctx.fillText('🦅', 0, 0);
       ctx.restore();
+    }
+  }
+
+  // Draw items
+  for(let it of pjItems) {
+    if(it.active && it.y + pjCamY > -100 && it.y + pjCamY < c.height + 100) {
+      ctx.font = '28px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(it.type, it.x, it.y + Math.sin(Date.now()/200)*3);
     }
   }
   
@@ -4440,6 +4792,400 @@ function pjLoop() {
   
   pjAnim = requestAnimationFrame(pjLoop);
 }
+
+/* ══════════════════════════════════════
+   🏎️ 구구단 레이스 (2학년 수학)
+══════════════════════════════════════ */
+let grStage = 0;
+let grTotal = 10;
+let grCarPos = 0;
+
+function initGuguRace(reset=true) {
+  if(reset) { grStage = 0; grCarPos = 0; }
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  
+  if(grStage >= grTotal) {
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-4 py-8 text-center">
+        <span class="text-6xl">🏆</span>
+        <h4 class="text-2xl font-black text-amber-600">완주 성공!</h4>
+        <p class="text-gray-500 font-bold">구구단 레이싱 챔피언이 되었습니다!</p>
+        <button onclick="initGuguRace(true)" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 달리기</button>
+      </div>`;
+    return;
+  }
+  
+  let a = Math.floor(Math.random()*8)+2;
+  let b = Math.floor(Math.random()*9)+1;
+  let ans = a * b;
+  
+  let options = [ans];
+  while(options.length < 3) {
+    let wrong = (Math.floor(Math.random()*8)+2) * (Math.floor(Math.random()*9)+1);
+    if(!options.includes(wrong) && wrong !== ans) options.push(wrong);
+  }
+  options.sort(() => Math.random() - 0.5);
+  
+  let progress = (grStage / grTotal) * 100;
+  
+  gc.innerHTML = `
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <button onclick="showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <span class="text-sm font-black text-amber-800">🏎️ 구구단 레이스 (${grStage+1}/${grTotal})</span>
+        <div class="w-16"></div>
+      </div>
+      
+      <!-- Track -->
+      <div class="relative w-full h-24 bg-gray-200 rounded-full border-4 border-gray-300 overflow-hidden shadow-inner">
+        <div class="absolute top-0 bottom-0 left-0 bg-green-400 opacity-20" style="width:${progress}%"></div>
+        <div class="absolute top-1/2 -translate-y-1/2 w-full border-t-4 border-dashed border-white"></div>
+        <div class="absolute top-1/2 -translate-y-1/2 text-5xl transition-all duration-500 ease-out z-10" style="left: calc(${progress}% - 20px);">🚗</div>
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-5xl opacity-80">🏁</div>
+      </div>
+      
+      <!-- Question -->
+      <div class="text-center py-4 bg-white rounded-3xl shadow-sm border-2 border-amber-100">
+        <p class="text-6xl font-black text-slate-800 tracking-widest">${a} × ${b} <span class="text-amber-500">=</span> ?</p>
+      </div>
+      
+      <!-- Options -->
+      <div class="grid grid-cols-3 gap-4 px-2" id="grOptions">
+        ${options.map(opt => `
+          <button onclick="grClick(${opt}, ${ans}, this)" class="h-24 rounded-2xl bg-amber-400 border-b-8 border-amber-600 text-5xl font-black text-white shadow-md active:border-b-0 active:translate-y-2 transition-all">
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function grClick(selected, answer, btn) {
+  if(selected === answer) {
+    // beep removed
+    btn.classList.replace('bg-amber-400', 'bg-green-500');
+    btn.classList.replace('border-amber-600', 'border-green-700');
+    grStage++;
+    document.getElementById('grOptions').style.pointerEvents = 'none';
+    setTimeout(() => initGuguRace(false), 600);
+  } else {
+    btn.classList.replace('bg-amber-400', 'bg-red-500');
+    btn.classList.replace('border-amber-600', 'border-red-700');
+    btn.classList.add('animate-bounce');
+    setTimeout(() => {
+      btn.classList.replace('bg-red-500', 'bg-amber-400');
+      btn.classList.replace('border-red-700', 'border-amber-600');
+      btn.classList.remove('animate-bounce');
+    }, 500);
+  }
+}
+
+/* ══════════════════════════════════════
+   ⏰ 시계 보기 퀴즈 (1~2학년 수학)
+══════════════════════════════════════ */
+let crStage = 0;
+let crTotal = 5;
+
+function initClockRead(reset=true) {
+  if(reset) crStage = 0;
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  
+  if(crStage >= crTotal) {
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-4 py-8 text-center">
+        <span class="text-6xl">🌟</span>
+        <h4 class="text-2xl font-black text-indigo-600">시간 박사님!</h4>
+        <p class="text-gray-500 font-bold">시계 보기를 완벽하게 마스터했어요!</p>
+        <button onclick="initClockRead(true)" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 하기</button>
+      </div>`;
+    return;
+  }
+  
+  let mins = [0, 30][Math.floor(Math.random()*2)]; 
+  let hour = Math.floor(Math.random()*12)+1;
+  
+  let ansStr = `${hour}시 ${mins===0 ? '정각' : mins+'분'}`;
+  if(mins===0) ansStr = `${hour}시`;
+  
+  let options = [ansStr];
+  while(options.length < 3) {
+    let wrongH = Math.floor(Math.random()*12)+1;
+    let wrongM = [0, 30][Math.floor(Math.random()*2)];
+    let wStr = wrongM===0 ? `${wrongH}시` : `${wrongH}시 ${wrongM}분`;
+    if(!options.includes(wStr)) options.push(wStr);
+  }
+  options.sort(() => Math.random() - 0.5);
+  
+  let mAngle = mins * 6;
+  let hAngle = (hour % 12) * 30 + (mins * 0.5);
+  
+  gc.innerHTML = `
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <button onclick="showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <span class="text-sm font-black text-indigo-800">⏰ 시계 보기 퀴즈 (${crStage+1}/${crTotal})</span>
+        <div class="w-16"></div>
+      </div>
+      
+      <div class="flex justify-center py-2">
+        <svg width="220" height="220" viewBox="0 0 200 200" style="filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));">
+          <circle cx="100" cy="100" r="95" fill="#ffffff" stroke="#C7D2FE" stroke-width="10"/>
+          ${[...Array(12)].map((_, i) => {
+             const a = (i+1)*30 * Math.PI / 180;
+             const x = 100 + 75 * Math.sin(a);
+             const y = 100 - 75 * Math.cos(a);
+             return `<text x="${x}" y="${y+8}" font-family="Arial" font-size="24" font-weight="900" fill="#4F46E5" text-anchor="middle">${i+1}</text>`;
+          }).join('')}
+          <line x1="100" y1="100" x2="${100 + 45 * Math.sin(hAngle * Math.PI/180)}" y2="${100 - 45 * Math.cos(hAngle * Math.PI/180)}" stroke="#1E1B4B" stroke-width="8" stroke-linecap="round"/>
+          <line x1="100" y1="100" x2="${100 + 65 * Math.sin(mAngle * Math.PI/180)}" y2="${100 - 65 * Math.cos(mAngle * Math.PI/180)}" stroke="#EF4444" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="100" cy="100" r="8" fill="#1E1B4B"/>
+        </svg>
+      </div>
+      
+      <div class="text-center">
+        <p class="text-xl font-black text-slate-700">시계가 가리키는 시간은?</p>
+      </div>
+      
+      <div class="flex flex-col gap-3 px-4" id="crOptions">
+        ${options.map(opt => `
+          <button onclick="crClick('${opt}', '${ansStr}', this)" class="py-5 rounded-2xl bg-indigo-100 border-b-4 border-indigo-300 text-2xl font-black text-indigo-900 shadow-sm active:border-b-0 active:translate-y-1 transition-all">
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function crClick(selected, answer, btn) {
+  if(selected === answer) {
+    // beep removed
+    btn.classList.replace('bg-indigo-100', 'bg-green-400');
+    btn.classList.replace('border-indigo-300', 'border-green-600');
+    btn.classList.replace('text-indigo-900', 'text-white');
+    crStage++;
+    document.getElementById('crOptions').style.pointerEvents = 'none';
+    setTimeout(() => initClockRead(false), 700);
+  } else {
+    btn.classList.replace('bg-indigo-100', 'bg-red-400');
+    btn.classList.replace('border-indigo-300', 'border-red-600');
+    btn.classList.replace('text-indigo-900', 'text-white');
+    btn.classList.add('animate-bounce');
+    setTimeout(() => {
+      btn.classList.replace('bg-red-400', 'bg-indigo-100');
+      btn.classList.replace('border-red-600', 'border-indigo-300');
+      btn.classList.replace('text-white', 'text-indigo-900');
+      btn.classList.remove('animate-bounce');
+    }, 500);
+  }
+}
+
+/* ══════════════════════════════════════
+   🎈 덧셈 뺄셈 팡팡 (1~2학년 수학)
+══════════════════════════════════════ */
+let mpTarget = 0;
+let mpScore = 0;
+let mpInterval = null;
+let mpActive = false;
+
+function initMathPop() {
+  mpScore = 0;
+  mpActive = true;
+  genMpTarget();
+  renderMathPop();
+  if(mpInterval) clearInterval(mpInterval);
+  mpInterval = setInterval(spawnMpBalloon, 1500);
+}
+
+function genMpTarget() {
+  mpTarget = Math.floor(Math.random()*15)+5; 
+  const el = document.getElementById('mpTargetTxt');
+  if(el) el.textContent = mpTarget;
+}
+
+function renderMathPop() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+    <div class="relative w-full h-[65vh] bg-blue-50 rounded-2xl border-4 border-blue-200 overflow-hidden flex flex-col">
+      <div class="absolute top-2 left-2 z-20">
+        <button onclick="mpActive=false;clearInterval(mpInterval);showGrade12Launcher()" class="btn btn-ghost bg-white/50 text-xs shadow-sm">← 나가기</button>
+      </div>
+      <div class="absolute top-2 right-4 z-20 text-lg font-black text-pink-600 bg-white/90 px-4 py-1 rounded-full shadow-sm">
+        점수: <span id="mpScoreTxt">0</span>점
+      </div>
+      
+      <div class="w-full text-center py-4 z-10 mt-10">
+        <p class="text-sm font-bold text-slate-500 mb-2">정답이 맞는 풍선을 터뜨려요!</p>
+        <div class="inline-block bg-white border-4 border-pink-300 rounded-3xl px-10 py-3 shadow-md">
+          <span class="text-6xl font-black text-pink-500" id="mpTargetTxt">${mpTarget}</span>
+        </div>
+      </div>
+      
+      <div id="mpArea" class="flex-1 relative w-full overflow-hidden"></div>
+    </div>
+  `;
+}
+
+function spawnMpBalloon() {
+  if(!mpActive) return;
+  const area = document.getElementById('mpArea');
+  if(!area) return;
+  
+  let isCorrect = Math.random() < 0.35;
+  let a, b, isAdd;
+  if(isCorrect) {
+    isAdd = Math.random() > 0.3;
+    if(isAdd) {
+      a = Math.floor(Math.random()*(mpTarget-1))+1;
+      b = mpTarget - a;
+    } else {
+      a = mpTarget + Math.floor(Math.random()*10)+1;
+      b = a - mpTarget;
+    }
+  } else {
+    isAdd = Math.random() > 0.5;
+    a = Math.floor(Math.random()*20)+1;
+    b = Math.floor(Math.random()*10)+1;
+    if(!isAdd && a < b) { let t=a;a=b;b=t; }
+    if((isAdd?a+b:a-b) === mpTarget) a++; 
+  }
+  
+  let eq = `${a} ${isAdd?'+':'-'} ${b}`;
+  let val = isAdd ? a+b : a-b;
+  
+  const bEl = document.createElement('div');
+  bEl.className = 'absolute flex items-center justify-center cursor-pointer transition-transform active:scale-90 select-none';
+  bEl.style.left = (Math.random()*70 + 10) + '%';
+  bEl.style.bottom = '-80px';
+  bEl.style.width = '75px';
+  bEl.style.height = '90px';
+  bEl.style.transition = 'bottom 4s linear, opacity 0.2s';
+  
+  let hue = Math.floor(Math.random()*360);
+  bEl.innerHTML = `
+    <span class="absolute text-[80px] leading-none" style="filter: hue-rotate(${hue}deg) drop-shadow(0 4px 6px rgba(0,0,0,0.1)); z-index:-1; top: -10px;">🎈</span>
+    <span class="font-black text-slate-900 text-xl z-10 bg-white/70 px-2 py-0.5 rounded-xl shadow-sm mt-[-25px] whitespace-nowrap">${eq}</span>
+  `;
+  
+  bEl.onclick = () => {
+    if(val === mpTarget) {
+      // beep removed
+      mpScore += 10;
+      document.getElementById('mpScoreTxt').textContent = mpScore;
+      bEl.innerHTML = '<span class="text-6xl">💥</span>';
+      setTimeout(()=>bEl.remove(), 200);
+      genMpTarget(); 
+    } else {
+      bEl.innerHTML = '<span class="text-6xl">❌</span>';
+      setTimeout(()=>bEl.remove(), 300);
+      mpScore = Math.max(0, mpScore - 5);
+      document.getElementById('mpScoreTxt').textContent = mpScore;
+    }
+  };
+  
+  area.appendChild(bEl);
+  
+  setTimeout(() => {
+    if(bEl.parentNode) bEl.style.bottom = '120%';
+  }, 50);
+  
+  setTimeout(() => {
+    if(bEl.parentNode) bEl.remove();
+  }, 4050);
+}
+
+/* ══════════════════════════════════════
+   👀 올바른 글자 찾기 (1~2학년 국어)
+══════════════════════════════════════ */
+let wfStage = 0;
+let wfTotal = 5;
+
+const WF_DATA = [
+  { img: '🐘', correct: '코끼리', wrongs: ['코기리', '고끼리', '코끼기'] },
+  { img: '🚲', correct: '자전거', wrongs: ['자전거', '자정거', '차전거'] },
+  { img: '🐢', correct: '거북이', wrongs: ['거북히', '거부기', '거북애'] },
+  { img: '🐰', correct: '토끼', wrongs: ['토기', '도끼', '토키'] },
+  { img: '🌻', correct: '해바라기', wrongs: ['해바라게', '해버라기', '헤바라기'] },
+  { img: '🎈', correct: '풍선', wrongs: ['풍션', '핑선', '풍성'] },
+  { img: '🦋', correct: '나비', wrongs: ['나비이', '내비', '마비'] },
+  { img: '🚁', correct: '헬리콥터', wrongs: ['헬리곱터', '할리콥터', '헬리콥도'] }
+];
+
+let wfCurrentQueue = [];
+
+function initWordFind(reset=true) {
+  if(reset) {
+    wfStage = 0;
+    wfCurrentQueue = [...WF_DATA].sort(()=>Math.random()-0.5).slice(0, wfTotal);
+  }
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  
+  if(wfStage >= wfTotal) {
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-4 py-8 text-center">
+        <span class="text-6xl">💯</span>
+        <h4 class="text-2xl font-black text-green-600">한글 척척박사!</h4>
+        <p class="text-gray-500 font-bold">모든 낱말을 올바르게 찾았어요!</p>
+        <button onclick="initWordFind(true)" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 찾기</button>
+      </div>`;
+    return;
+  }
+  
+  let item = wfCurrentQueue[wfStage];
+  let options = [item.correct, ...item.wrongs].sort(()=>Math.random()-0.5);
+  
+  gc.innerHTML = `
+    <div class="space-y-6">
+      <div class="flex items-center justify-between">
+        <button onclick="showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <span class="text-sm font-black text-green-800">👀 올바른 글자 찾기 (${wfStage+1}/${wfTotal})</span>
+        <div class="w-16"></div>
+      </div>
+      
+      <div class="text-center py-6 bg-green-50 rounded-3xl border-4 border-green-100 shadow-inner">
+        <span class="text-8xl select-none">${item.img}</span>
+        <p class="mt-4 text-lg font-black text-slate-700">그림에 맞는 올바른 낱말은?</p>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-3 px-2" id="wfOptions">
+        ${options.map(opt => `
+          <button onclick="wfClick('${opt}', '${item.correct}', this)" class="py-6 rounded-2xl bg-white border-b-6 border-gray-300 text-3xl font-black text-slate-800 shadow-md active:border-b-0 active:translate-y-1.5 transition-all">
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function wfClick(selected, answer, btn) {
+  if(selected === answer) {
+    // beep removed
+    btn.classList.replace('bg-white', 'bg-green-400');
+    btn.classList.replace('text-slate-800', 'text-white');
+    btn.classList.replace('border-gray-300', 'border-green-600');
+    wfStage++;
+    document.getElementById('wfOptions').style.pointerEvents = 'none';
+    setTimeout(() => initWordFind(false), 700);
+  } else {
+    btn.classList.replace('bg-white', 'bg-red-400');
+    btn.classList.replace('text-slate-800', 'text-white');
+    btn.classList.replace('border-gray-300', 'border-red-600');
+    btn.classList.add('animate-bounce');
+    setTimeout(() => {
+      btn.classList.replace('bg-red-400', 'bg-white');
+      btn.classList.replace('text-white', 'text-slate-800');
+      btn.classList.replace('border-red-600', 'border-gray-300');
+      btn.classList.remove('animate-bounce');
+    }, 500);
+  }
+}
+
+
+
+
+
 
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.records))throw 0;localStorage.setItem(K_REC,JSON.stringify(d.records));refreshRecCount();closeModal();toast(`✅ ${d.records.length}건 복원됐어요!`);}catch{toast('❌ 올바른 백업 파일이 아니에요.');}};r.readAsText(f);}
 
