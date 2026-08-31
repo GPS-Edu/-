@@ -211,6 +211,7 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
         <span id="freegameArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
       </button>
       <div id="freegameSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <button onclick="switchTab('freegame'); showFreeGame('potjump')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🍯 항아리 점프</button>
         <button onclick="switchTab('freegame'); showFreeGame('blockblast')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🧩 블록 블라스트</button>
         <button onclick="switchTab('freegame'); showFreeGame('typing')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⌨️ 타자 게임</button>
         <button onclick="switchTab('freegame'); showFreeGame('stairs')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐹 무한의 계단</button>
@@ -467,6 +468,9 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
           <a id="bungeoLink" href="https://jammintamer.github.io/Bungeo-ppang/" target="_blank" class="btn btn-ghost text-xs">⛶ 새 탭에서 열기</a>
         </div>
         <div class="flex gap-2 mb-6 flex-wrap">
+          <button class="util-tab" data-free="potjump" onclick="showFreeGame('potjump')">🍯 항아리 점프</button>
+          <button class="util-tab" data-free="blockblast" onclick="showFreeGame('blockblast')">🧩 블록 블라스트</button>
+          <button class="util-tab" data-free="typing" onclick="showFreeGame('typing')">⌨️ 타자 게임</button>
           <button class="util-tab util-active" data-free="stairs" onclick="showFreeGame('stairs')">🐹 무한의 계단</button>
           <button class="util-tab" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
           <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아게임</button>
@@ -4165,7 +4169,280 @@ function saveRecord(){const c=document.getElementById('evalResult').value.trim()
 function copyResult(){const t=document.getElementById('evalResult').value;if(!t){toast('📋 복사할 내용이 없어요.');return;}navigator.clipboard.writeText(t).then(()=>toast('📋 복사됐어요!'));}
 function refreshRecCount(){const n=JSON.parse(localStorage.getItem(K_REC)||'[]').length;const el=document.getElementById('recCount');if(el)el.textContent=n;}
 function exportData(){const blob=new Blob([JSON.stringify({version:'1.0',date:new Date().toISOString(),records:JSON.parse(localStorage.getItem(K_REC)||'[]')},null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`GPS_Edu_백업_${new Date().toISOString().slice(0,10)}.json`});a.click();URL.revokeObjectURL(a.href);toast('📥 백업 파일 다운로드됐어요!');}
+const origShowFreeGame = window.showFreeGame;
+window.showFreeGame = function(id) {
+  if (id === 'potjump') {
+    document.querySelectorAll('.util-tab').forEach(b => {
+      if(b.dataset.free) b.classList.toggle('util-active', b.dataset.free === id);
+    });
+    initPotJump();
+    return;
+  }
+  if (origShowFreeGame) origShowFreeGame(id);
+};
+
+let pjAnim;
+let pjPlayer = {x: 200, y: 500, vx: 0, vy: 0, r: 15};
+let pjPlatforms = [];
+let pjCamY = 0;
+let pjDrag = {active: false, sx: 0, sy: 0, ex: 0, ey: 0};
+let pMaxHeight = 0;
+
+let pjBirds = [];
+
+function initPotJump() {
+  const gc = document.getElementById('freeGameContent');
+  if(!gc) return;
+  gc.innerHTML = `
+    <div style="position:relative; width:100%; height:70vh; background:linear-gradient(to bottom, #87CEEB, #E0F6FF); border-radius:1rem; border:4px solid #34495E; overflow:hidden;">
+      <canvas id="pjCanvas" style="display:block; width:100%; height:100%; touch-action:none;"></canvas>
+      <div style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.5); color:white; padding:5px 15px; border-radius:10px; font-weight:bold;">
+        최고 높이: <span id="pjScore">0</span>m
+      </div>
+    </div>
+    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">마우스나 터치로 항아리를 뒤로 당겼다 놓아 점프하세요! 날아다니는 독수리를 조심하세요... 🍯🦅</p>
+  `;
+  setTimeout(() => {
+    const c = document.getElementById('pjCanvas');
+    c.width = c.clientWidth;
+    c.height = c.clientHeight;
+    pjPlayer = {x: c.width/2, y: c.height - 250, vx: 0, vy: 0, r: 15};
+    pjCamY = 0;
+    pMaxHeight = 0;
+    
+    pjPlatforms = [];
+    pjBirds = [];
+    pjHighestGeneratedY = c.height - 350;
+    
+    // Floor (Massive depth to look like ground below)
+    pjPlatforms.push({x: -100, y: c.height - 220, w: c.width + 200, h: 2000});
+    
+    // Generate initial chunk
+    generateMorePj(c.width, -5000);
+    
+    setupPjInput(c);
+    if(pjAnim) cancelAnimationFrame(pjAnim);
+    pjLoop();
+  }, 0);
+}
+
+let pjHighestGeneratedY = 0;
+
+function generateMorePj(cw, targetY) {
+  while(pjHighestGeneratedY > targetY) {
+    pjPlatforms.push({
+      x: Math.random() * (cw - 80),
+      y: pjHighestGeneratedY,
+      w: Math.random() * 50 + 50,
+      h: 20
+    });
+    
+    if(Math.random() < 0.3) { // 30% chance per platform level to spawn a bird
+      pjBirds.push({
+        x: Math.random() * cw,
+        y: pjHighestGeneratedY - 50,
+        vx: (Math.random() > 0.5 ? 1 : -1) * (Math.random() * 2 + 1),
+        w: 30, h: 20
+      });
+    }
+    
+    pjHighestGeneratedY -= (Math.random() * 80 + 80);
+  }
+}
+
+function setupPjInput(c) {
+  const down = (x, y) => {
+    pjDrag.active = true;
+    pjDrag.sx = x; pjDrag.sy = y;
+    pjDrag.ex = x; pjDrag.ey = y;
+  };
+  const move = (x, y) => {
+    if(!pjDrag.active) return;
+    pjDrag.ex = x; pjDrag.ey = y;
+  };
+  const up = () => {
+    if(!pjDrag.active) return;
+    pjDrag.active = false;
+    let dx = pjDrag.sx - pjDrag.ex;
+    let dy = pjDrag.sy - pjDrag.ey; // dy < 0 means dragged down
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    
+    let maxDist = 200;
+    if(dist > maxDist) {
+      dx = (dx/dist) * maxDist;
+      dy = (dy/dist) * maxDist;
+    }
+    
+    if(dy > 0) dy = 0; // Prevent shooting downwards (dragging up)
+    
+    if(dist > 10) {
+      pjPlayer.vx = dx * 0.12; 
+      pjPlayer.vy = dy * 0.15; // Shoot up (since dy is negative)
+    }
+  };
+  
+  c.onmousedown = e => { down(e.offsetX, e.offsetY); };
+  c.onmousemove = e => { move(e.offsetX, e.offsetY); };
+  c.onmouseup = e => { up(); };
+  c.onmouseleave = e => { up(); };
+  
+  c.ontouchstart = e => { const r=c.getBoundingClientRect(); down(e.touches[0].clientX-r.left, e.touches[0].clientY-r.top); };
+  c.ontouchmove = e => { e.preventDefault(); const r=c.getBoundingClientRect(); move(e.touches[0].clientX-r.left, e.touches[0].clientY-r.top); };
+  c.ontouchend = e => { up(); };
+}
+
+function pjLoop() {
+  const c = document.getElementById('pjCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  
+  // Physics
+  pjPlayer.vy += 0.4; // Gravity
+  pjPlayer.x += pjPlayer.vx;
+  pjPlayer.y += pjPlayer.vy;
+  
+  pjPlayer.vx *= 0.98; // Air resistance
+  
+  // Wall collision (bouncy)
+  if(pjPlayer.x < pjPlayer.r) { pjPlayer.x = pjPlayer.r; pjPlayer.vx *= -0.8; }
+  if(pjPlayer.x > c.width - pjPlayer.r) { pjPlayer.x = c.width - pjPlayer.r; pjPlayer.vx *= -0.8; }
+  
+  // Platform collision (Solid bouncing)
+  for(let p of pjPlatforms) {
+    let testX = pjPlayer.x;
+    let testY = pjPlayer.y;
+    
+    if (pjPlayer.x < p.x) testX = p.x;
+    else if (pjPlayer.x > p.x + p.w) testX = p.x + p.w;
+    
+    if (pjPlayer.y < p.y) testY = p.y;
+    else if (pjPlayer.y > p.y + p.h) testY = p.y + p.h;
+    
+    let distX = pjPlayer.x - testX;
+    let distY = pjPlayer.y - testY;
+    let distance = Math.sqrt((distX*distX) + (distY*distY));
+    
+    if (distance <= pjPlayer.r) {
+      let overlap = pjPlayer.r - distance;
+      if (distance === 0) {
+        pjPlayer.y -= overlap;
+        pjPlayer.vy *= -0.5;
+      } else {
+        let nx = distX / distance;
+        let ny = distY / distance;
+        
+        pjPlayer.x += nx * overlap;
+        pjPlayer.y += ny * overlap;
+        
+        let dot = (pjPlayer.vx * nx) + (pjPlayer.vy * ny);
+        if (dot < 0) {
+          let bounce = 0.4;
+          pjPlayer.vx -= (1 + bounce) * dot * nx;
+          pjPlayer.vy -= (1 + bounce) * dot * ny;
+          
+          if (ny < -0.5) {
+             pjPlayer.vx *= 0.6; // High friction on ground
+             if (Math.abs(pjPlayer.vy) < 2.5) pjPlayer.vy = 0; // Stop micro-bouncing
+          }
+        }
+      }
+    }
+  }
+  
+  // Bird update & collision
+  for(let b of pjBirds) {
+    b.x += b.vx;
+    if(b.x < 0) { b.x = 0; b.vx *= -1; }
+    if(b.x > c.width - b.w) { b.x = c.width - b.w; b.vx *= -1; }
+    
+    // Collision with player (circle vs rect)
+    let testX = pjPlayer.x, testY = pjPlayer.y;
+    if (pjPlayer.x < b.x) testX = b.x;
+    else if (pjPlayer.x > b.x + b.w) testX = b.x + b.w;
+    if (pjPlayer.y < b.y) testY = b.y;
+    else if (pjPlayer.y > b.y + b.h) testY = b.y + b.h;
+    
+    let distX = pjPlayer.x - testX;
+    let distY = pjPlayer.y - testY;
+    if ((distX*distX + distY*distY) <= pjPlayer.r * pjPlayer.r) {
+      // Hit a bird! Stunned drop
+      pjPlayer.vx = (pjPlayer.x > b.x + b.w/2) ? 3 : -3;
+      pjPlayer.vy = 2; // drop
+    }
+  }
+  
+  // Camera smooth follow
+  let targetCamY = (c.height * 0.7) - pjPlayer.y;
+  // No clamping to 0, allowing floor to float up
+  pjCamY += (targetCamY - pjCamY) * 0.1;
+  
+  if (pjPlayer.y < pjHighestGeneratedY + 2000) {
+    generateMorePj(c.width, pjHighestGeneratedY - 5000);
+  }
+  
+  let heightSc = Math.floor(Math.max(0, c.height - pjPlayer.y - 50));
+  if(heightSc > pMaxHeight) pMaxHeight = heightSc;
+  document.getElementById('pjScore').innerText = Math.floor(pMaxHeight / 10);
+  
+  ctx.clearRect(0, 0, c.width, c.height);
+  
+  ctx.save();
+  ctx.translate(0, pjCamY);
+  
+  for(let p of pjPlatforms) {
+    // Check if any part of the platform is visible
+    if(p.y + p.h + pjCamY > -100 && p.y + pjCamY < c.height + 100) {
+      ctx.fillStyle = '#654321';
+      ctx.fillRect(p.x, p.y, p.w, p.h);
+      ctx.fillStyle = '#228B22'; // Grass top
+      ctx.fillRect(p.x, p.y, p.w, 5);
+    }
+  }
+  
+  // Draw birds
+  for(let b of pjBirds) {
+    if(b.y + pjCamY > -100 && b.y + pjCamY < c.height + 100) {
+      ctx.save();
+      ctx.translate(b.x + b.w/2, b.y + b.h/2);
+      if (b.vx > 0) ctx.scale(-1, 1);
+      ctx.font = '28px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🦅', 0, 0);
+      ctx.restore();
+    }
+  }
+  
+  if(pjDrag.active) {
+    let dx = pjDrag.sx - pjDrag.ex;
+    let dy = pjDrag.sy - pjDrag.ey;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    if(dist > 200) { dx = (dx/dist)*200; dy = (dy/dist)*200; }
+    if(dy > 0) dy = 0; // Prevent aiming downwards
+    
+    ctx.beginPath();
+    ctx.moveTo(pjPlayer.x, pjPlayer.y);
+    // Draw the trajectory line pointing in the launch direction (dx, dy)
+    ctx.lineTo(pjPlayer.x + dx, pjPlayer.y + dy);
+    ctx.strokeStyle = 'rgba(255, 50, 50, 0.6)';
+    ctx.lineWidth = 5;
+    ctx.setLineDash([10, 10]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  
+  ctx.font = '30px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🍯', pjPlayer.x, pjPlayer.y);
+  
+  ctx.restore();
+  
+  pjAnim = requestAnimationFrame(pjLoop);
+}
+
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.records))throw 0;localStorage.setItem(K_REC,JSON.stringify(d.records));refreshRecCount();closeModal();toast(`✅ ${d.records.length}건 복원됐어요!`);}catch{toast('❌ 올바른 백업 파일이 아니에요.');}};r.readAsText(f);}
+
 let _tt;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2600);}
 </script>
