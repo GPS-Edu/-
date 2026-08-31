@@ -195,6 +195,7 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
         <span id="gradeArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
       </button>
       <div id="gradeSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <button onclick="switchGrade('common')" data-grade="common" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🌈 공통학년</button>
         <button onclick="switchGrade('grade3')" data-grade="grade3" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟥 3학년</button>
         <button onclick="switchGrade('grade4')" data-grade="grade4" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟧 4학년</button>
         <button onclick="switchGrade('grade5')" data-grade="grade5" class="grade-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100">🟨 5학년</button>
@@ -209,6 +210,8 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
         <span id="freegameArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
       </button>
       <div id="freegameSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <button onclick="switchTab('freegame'); showFreeGame('typing')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⌨️ 타자 게임</button>
+        <button onclick="switchTab('freegame'); showFreeGame('stairs')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐹 무한의 계단</button>
         <button onclick="switchTab('freegame'); showFreeGame('bungeo')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐟 붕어빵 타이쿤</button>
         <button onclick="switchTab('freegame'); showFreeGame('mafia')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🕵️ 마피아게임</button>
       </div>
@@ -462,7 +465,8 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: #1
           <a id="bungeoLink" href="https://jammintamer.github.io/Bungeo-ppang/" target="_blank" class="btn btn-ghost text-xs">⛶ 새 탭에서 열기</a>
         </div>
         <div class="flex gap-2 mb-6 flex-wrap">
-          <button class="util-tab util-active" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
+          <button class="util-tab util-active" data-free="stairs" onclick="showFreeGame('stairs')">🐹 무한의 계단</button>
+          <button class="util-tab" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
           <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아게임</button>
         </div>
         <div id="freeGameContent">
@@ -601,6 +605,7 @@ function switchGrade(gid){
   document.querySelectorAll('.grade-btn').forEach(b=>b.classList.toggle('grade-active',b.dataset.grade===gid));
   switchTab('minigame');
   if(gid==='grade6'){showGrade6Launcher();return;}
+  if(gid==='common'){showCommonLauncher();return;}
   const info={
     grade3:{emoji:'🟥',label:'3학년 교과 연계 게임',games:'분수 피자 만들기, 도형 맞추기, 곱셈 배틀'},
     grade4:{emoji:'🟧',label:'4학년 교과 연계 게임',games:'지도 퍼즐, 소수 점프, 혼합계산 레이스'},
@@ -608,6 +613,24 @@ function switchGrade(gid){
   }[gid];
   document.getElementById('gradeLabel').textContent=info.emoji+' '+info.label;
   document.getElementById('gradeContent').innerHTML=`<div class="dashed-zone"><span class="text-5xl">${info.emoji}</span><p class="font-black text-lg">${info.label}</p><p class="text-sm">준비 중인 게임: ${info.games}</p></div>`;
+}
+
+/* ══════════ 공통학년 런처 ══════════ */
+function showCommonLauncher(){
+  document.getElementById('gradeLabel').textContent='🌈 공통학년 - 게임을 골라요!';
+  document.getElementById('gradeContent').innerHTML=`
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <button onclick="startGame('typing_short')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F0F9FF;border:2.5px solid #BAE6FD;">
+      <div class="text-5xl">📝</div>
+      <p class="font-black text-gray-800">짧은 글 타자연습</p>
+      <p class="text-xs text-gray-500">속담, 명언 등을 빠르고 정확하게!</p>
+    </button>
+    <button onclick="startGame('typing_long')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF9C4;border:2.5px solid #FFF59D;">
+      <div class="text-5xl">📜</div>
+      <p class="font-black text-gray-800">긴 글 타자연습</p>
+      <p class="text-xs text-gray-500">이야기를 한 줄씩 따라 쳐보세요!</p>
+    </button>
+  </div>`;
 }
 
 /* ══════════ 6학년 런처 ══════════ */
@@ -626,6 +649,435 @@ function startGame(id){
   if(id==='stacking')   initStacking();
   if(id==='proportion') initProportion();
   if(id==='history')    initHistory();
+  if(id==='typing_short') initShortTyping();
+  if(id==='typing_long')  initLongTypingMenu();
+}
+
+/* ══════════════════════════════════════
+   📝 짧은 글 타자연습
+══════════════════════════════════════ */
+const TP_SHORT_TEXTS = [
+  "가는 말이 고와야 오는 말이 곱다.", "개구리 올챙이 적 생각 못한다.",
+  "사공이 많으면 배가 산으로 간다.", "발 없는 말이 천 리 간다.",
+  "백지장도 맞들면 낫다.", "티끌 모아 태산이다.", "천 리 길도 한 걸음부터.",
+  "세 살 버릇 여든까지 간다.", "원숭이도 나무에서 떨어질 때가 있다.", "소 잃고 외양간 고친다."
+];
+
+let tsLines = [], tsCurrent = 0, tsTotalChars = 0, tsTotalTypos = 0, tsStartTime = 0;
+
+function initShortTyping() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  tsLines = [...TP_SHORT_TEXTS].sort(()=>Math.random()-0.5).slice(0, 5);
+  tsCurrent = 0; tsTotalChars = 0; tsTotalTypos = 0; tsStartTime = 0;
+  
+  gc.innerHTML = `
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <button onclick="showCommonLauncher()" class="btn btn-ghost text-xs">← 목록</button>
+      <span class="text-sm font-black text-gray-600">📝 짧은 글 타자연습</span>
+      <button onclick="initShortTyping()" class="btn btn-blue text-xs">🔄 다시 하기</button>
+    </div>
+    <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
+      <div class="flex justify-between mb-4 text-sm font-bold text-gray-500">
+        <span>진행도: <span id="tsProgress">1/5</span></span>
+        <span>현재 타수: <span id="tsWpm" class="text-indigo-600">0</span> 타/분</span>
+        <span>정확도: <span id="tsAcc">100</span>%</span>
+      </div>
+      <div class="bg-gray-50 p-6 rounded-xl mb-6 min-h-[120px] flex flex-col items-center justify-center border-2 border-gray-100">
+        <p class="text-xs text-gray-400 mb-2 font-bold">다음 글: <span id="tsNextText" class="text-gray-500 font-normal"></span></p>
+        <p id="tsTargetText" class="text-2xl font-black text-gray-800 tracking-wide text-center leading-relaxed"></p>
+      </div>
+      <input type="text" id="tsInput" class="w-full text-xl py-4 px-5 font-bold text-center border-2 border-indigo-200 rounded-xl focus:border-indigo-500 outline-none transition-colors" placeholder="여기에 입력하고 Enter를 누르세요" autocomplete="off" oninput="tsCheckInput()" onkeydown="tsKeyDown(event)">
+    </div>
+  </div>`;
+  
+  tsUpdateLine();
+  setTimeout(()=>document.getElementById('tsInput').focus(), 0);
+}
+
+function tsUpdateLine() {
+  if(tsCurrent >= tsLines.length) {
+    document.getElementById('tsTargetText').innerHTML = '🎉 <span class="text-green-600">연습을 완료했습니다!</span>';
+    document.getElementById('tsNextText').innerText = '-';
+    document.getElementById('tsInput').disabled = true;
+    return;
+  }
+  document.getElementById('tsTargetText').innerText = tsLines[tsCurrent];
+  document.getElementById('tsNextText').innerText = tsCurrent + 1 < tsLines.length ? tsLines[tsCurrent+1] : '끝';
+  document.getElementById('tsProgress').innerText = `${tsCurrent+1}/${tsLines.length}`;
+}
+
+function tsCheckInput() {
+  if(tsCurrent >= tsLines.length) return;
+  if(tsStartTime === 0) tsStartTime = performance.now();
+  
+  const inp = document.getElementById('tsInput');
+  const target = tsLines[tsCurrent];
+  const val = inp.value;
+  
+  let html = '', typos = 0;
+  for(let i=0; i<target.length; i++) {
+    if(i < val.length) {
+      if(val[i] === target[i]) { html += `<span class="text-indigo-600">${target[i]}</span>`; }
+      else { html += `<span class="text-red-500 bg-red-100">${target[i]}</span>`; typos++; }
+    } else { html += `<span class="text-gray-400">${target[i]}</span>`; }
+  }
+  if(val.length > target.length) {
+    html += `<span class="text-red-500 bg-red-100">${val.substring(target.length)}</span>`;
+    typos += (val.length - target.length);
+  }
+  document.getElementById('tsTargetText').innerHTML = html;
+  
+  const timeSec = (performance.now() - tsStartTime) / 1000;
+  const typed = tsTotalChars + val.length;
+  if(timeSec > 0 && typed > 0) {
+    document.getElementById('tsWpm').innerText = Math.floor((typed / timeSec) * 60);
+    document.getElementById('tsAcc').innerText = Math.max(0, Math.floor(((typed - (tsTotalTypos + typos)) / typed) * 100));
+  }
+}
+
+function tsKeyDown(e) {
+  if(e.key === 'Enter') {
+    const val = document.getElementById('tsInput').value;
+    if(val.length === 0) return;
+    const target = tsLines[tsCurrent];
+    for(let i=0; i<target.length; i++) {
+      if(i >= val.length || val[i] !== target[i]) tsTotalTypos++;
+    }
+    if(val.length > target.length) tsTotalTypos += (val.length - target.length);
+    tsTotalChars += Math.max(target.length, val.length);
+    
+    tsCurrent++;
+    document.getElementById('tsInput').value = '';
+    tsUpdateLine();
+  }
+}
+
+/* ══════════════════════════════════════
+   📜 긴 글 타자연습
+══════════════════════════════════════ */
+const TP_LONG_TEXTS = [
+  {title: "흥부와 놀부", text: "옛날 옛적 어느 마을에\n마음씨 착한 흥부와\n욕심쟁이 놀부가 살았습니다.\n놀부는 부모님의 재산을 모두 차지하고\n흥부네 가족을 내쫓았습니다.\n어느 날 흥부는 다리가 부러진\n제비를 치료해 주었습니다.\n이듬해 제비는 은혜를 갚기 위해\n박씨 하나를 물어다 주었습니다."},
+  {title: "토끼와 거북이", text: "숲 속에 토끼와 거북이가 살았습니다.\n토끼는 언제나 자신의 빠른 발을 자랑했습니다.\n거북이는 그런 토끼에게 경주를 제안했습니다.\n경주가 시작되자 토끼는 멀리 앞서 나갔고\n중간에 나무 그늘에서 낮잠을 잤습니다.\n하지만 거북이는 포기하지 않고\n끝까지 엉금엉금 기어갔습니다.\n결국 거북이가 먼저 결승선을 통과했습니다."},
+  {title: "별 헤는 밤 (윤동주)", text: "계절이 지나가는 하늘에는\n가을로 가득 차 있습니다.\n나는 아무 걱정도 없이\n가을 속의 별들을 다 헤일 듯합니다.\n가슴 속에 하나 둘 새겨지는 별을\n이제 다 못 헤는 것은\n쉬이 아침이 오는 까닭이요\n내일 밤이 남은 까닭이요\n아직 나의 청춘이 다하지 않은 까닭입니다."}
+];
+
+let tlData = null, tlLines = [], tlCurrent = 0, tlTotalChars = 0, tlTotalTypos = 0, tlStartTime = 0;
+
+function initLongTypingMenu() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  let listHtml = TP_LONG_TEXTS.map((item, idx) => `
+    <div onclick="initLongTyping(${idx})" class="p-4 border-2 border-gray-100 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors flex justify-between items-center bg-gray-50">
+      <div>
+        <h4 class="font-black text-lg text-gray-800">${item.title}</h4>
+        <p class="text-xs text-gray-500 mt-1">총 ${item.text.split('\n').length}줄</p>
+      </div>
+      <div class="text-blue-500 font-bold text-sm bg-white px-3 py-1 rounded-lg border border-blue-200">시작하기 ▶</div>
+    </div>
+  `).join('');
+  
+  gc.innerHTML = `
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <button onclick="showCommonLauncher()" class="btn btn-ghost text-xs">← 목록</button>
+      <span class="text-sm font-black text-gray-600">📜 긴 글 타자연습</span>
+      <div></div>
+    </div>
+    <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
+      <h3 class="text-lg font-black text-gray-800 mb-4">원하는 글을 선택하세요</h3>
+      <div class="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
+        ${listHtml}
+      </div>
+    </div>
+  </div>`;
+}
+
+function initLongTyping(idx) {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  tlData = TP_LONG_TEXTS[idx];
+  tlLines = tlData.text.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  tlCurrent = 0; tlTotalChars = 0; tlTotalTypos = 0; tlStartTime = 0;
+  
+  gc.innerHTML = `
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <button onclick="initLongTypingMenu()" class="btn btn-ghost text-xs">← 목록</button>
+      <span class="text-sm font-black text-gray-600">📜 ${tlData.title}</span>
+      <button onclick="initLongTyping(${idx})" class="btn btn-blue text-xs">🔄 다시 하기</button>
+    </div>
+    
+    <div class="p-5 bg-white rounded-2xl shadow-sm border border-gray-200 flex flex-col gap-4">
+      <div class="flex justify-between text-sm font-bold text-gray-500 px-2">
+        <span>진행도: <span id="tlProgress">1/${tlLines.length}</span></span>
+        <span>현재 타수: <span id="tlWpm" class="text-indigo-600">0</span> 타/분</span>
+        <span>정확도: <span id="tlAcc">100</span>%</span>
+      </div>
+      
+      <div id="tlTextContainer" class="bg-gray-50 rounded-xl p-4 overflow-y-auto" style="height:40vh; min-height:220px; font-size:18px; line-height:2.2; border:2px solid #E5E7EB;">
+        ${tlLines.map((line, i) => `
+          <div id="tlLine_${i}" class="px-3 py-1 rounded transition-colors ${i===0 ? 'bg-blue-100 font-bold text-blue-900 border-l-4 border-blue-500' : 'text-gray-400'}">
+            ${line}
+          </div>
+        `).join('')}
+      </div>
+      
+      <input type="text" id="tlInput" class="w-full text-xl py-3 px-4 font-bold border-2 border-indigo-200 rounded-xl focus:border-indigo-500 outline-none transition-colors" placeholder="파란색으로 표시된 문장을 똑같이 입력하세요" autocomplete="off" oninput="tlCheckInput()" onkeydown="tlKeyDown(event)">
+    </div>
+  </div>`;
+  
+  setTimeout(()=>document.getElementById('tlInput').focus(), 0);
+}
+
+function tlCheckInput() {
+  if(tlCurrent >= tlLines.length) return;
+  if(tlStartTime === 0) tlStartTime = performance.now();
+  
+  const inp = document.getElementById('tlInput');
+  const target = tlLines[tlCurrent];
+  const val = inp.value;
+  
+  let html = '', typos = 0;
+  for(let i=0; i<target.length; i++) {
+    if(i < val.length) {
+      if(val[i] === target[i]) { html += `<span class="text-blue-600">${target[i]}</span>`; }
+      else { html += `<span class="text-red-500 bg-red-100">${target[i]}</span>`; typos++; }
+    } else { html += `<span>${target[i]}</span>`; }
+  }
+  if(val.length > target.length) {
+    html += `<span class="text-red-500 bg-red-100">${val.substring(target.length)}</span>`;
+    typos += (val.length - target.length);
+  }
+  
+  document.getElementById(`tlLine_${tlCurrent}`).innerHTML = html;
+  
+  const timeSec = (performance.now() - tlStartTime) / 1000;
+  const typed = tlTotalChars + val.length;
+  if(timeSec > 0 && typed > 0) {
+    document.getElementById('tlWpm').innerText = Math.floor((typed / timeSec) * 60);
+    document.getElementById('tlAcc').innerText = Math.max(0, Math.floor(((typed - (tlTotalTypos + typos)) / typed) * 100));
+  }
+}
+
+function tlKeyDown(e) {
+  if(e.key === 'Enter') {
+    const val = document.getElementById('tlInput').value;
+    if(val.length === 0) return;
+    
+    const target = tlLines[tlCurrent];
+    for(let i=0; i<target.length; i++) {
+      if(i >= val.length || val[i] !== target[i]) tlTotalTypos++;
+    }
+    if(val.length > target.length) tlTotalTypos += (val.length - target.length);
+    tlTotalChars += Math.max(target.length, val.length);
+    
+    // Mark current as done
+    const currEl = document.getElementById(`tlLine_${tlCurrent}`);
+    currEl.classList.remove('bg-blue-100', 'font-bold', 'text-blue-900', 'border-l-4', 'border-blue-500');
+    currEl.classList.add('text-gray-300');
+    currEl.innerHTML = target;
+    
+    tlCurrent++;
+    document.getElementById('tlInput').value = '';
+    
+    if(tlCurrent >= tlLines.length) {
+      document.getElementById('tlInput').disabled = true;
+      alert(`🎉 완료했습니다!\n평균 타수: ${document.getElementById('tlWpm').innerText}\n정확도: ${document.getElementById('tlAcc').innerText}%`);
+      return;
+    }
+    
+    const nextEl = document.getElementById(`tlLine_${tlCurrent}`);
+    nextEl.classList.remove('text-gray-400');
+    nextEl.classList.add('bg-blue-100', 'font-bold', 'text-blue-900', 'border-l-4', 'border-blue-500');
+    nextEl.scrollIntoView({behavior: 'smooth', block: 'center'});
+    
+    document.getElementById('tlProgress').innerText = `${tlCurrent+1}/${tlLines.length}`;
+  }
+}
+
+/* ══════════════════════════════════════
+   ⌨️ 타자 게임 (자유 미니게임)
+══════════════════════════════════════ */
+let tpWords = [];
+let tpScore = 0;
+let tpHealth = 5;
+let tpIsPlaying = false;
+let tpLastTime = 0;
+let tpAnimFrame = null;
+let tpSpawnTimer = 0;
+
+const TP_WORD_LIST = ['학교','선생님','친구','숙제','급식','운동장','수업','우유','가방','연필','지우개','공책','칠판','분필','짝꿍','알림장','미술','체육','음악','수학','국어','쉬는시간','방학','과학','사회','영어','일기','동화책','도서관'];
+
+function initTyping() {
+  const gc = document.getElementById('freeGameContent'); if(!gc) return;
+  gc.innerHTML = `
+  <div class="space-y-4">
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-black text-gray-600">점수: <span id="tpScoreDisplay" class="text-indigo-600">0</span> | 생명: <span id="tpHealthDisplay">❤️❤️❤️❤️❤️</span></span>
+      <button onclick="tpStartGame()" class="btn btn-blue text-xs">🔄 재시작</button>
+    </div>
+    
+    <div style="position:relative; width:100%; height:55vh; min-height:400px; background:#2C3E50; border-radius:1rem; border:4px solid #34495E; overflow:hidden;">
+      <canvas id="tpCanvas" style="display:block; width:100%; height:100%;"></canvas>
+      <div id="tpOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; backdrop-filter:blur(4px);">
+        <h1 id="tpModalTitle" style="color:#FFF; font-size:32px; font-weight:900; margin-bottom:10px;">타자 게임 ⌨️</h1>
+        <p id="tpModalDesc" style="color:#BDC3C7; font-weight:600; margin-bottom:20px; font-size:16px;">내려오는 단어를 정확히 입력하고 엔터를 누르세요!</p>
+        <button onclick="tpStartGame()" style="background:#2ECC71; color:white; font-size:18px; font-weight:900; padding:12px 30px; border:none; border-radius:12px; cursor:pointer; box-shadow:0 5px 0 #27AE60;">게임 시작!</button>
+      </div>
+    </div>
+    
+    <div class="flex gap-2">
+      <input type="text" id="tpInput" class="inp flex-1 text-2xl py-4 px-4 font-black text-center" placeholder="단어 입력 후 Enter" disabled autocomplete="off">
+    </div>
+  </div>`;
+  
+  setTimeout(() => {
+    tpResize();
+    window.addEventListener('resize', tpResize);
+    document.getElementById('tpInput').addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        tpCheckWord();
+      }
+    });
+  }, 0);
+}
+
+function tpResize() {
+  const c = document.getElementById('tpCanvas');
+  if(c && c.parentElement) {
+    c.width = c.parentElement.clientWidth;
+    c.height = c.parentElement.clientHeight;
+  }
+}
+
+function tpStartGame() {
+  document.getElementById('tpOverlay').style.display = 'none';
+  const inp = document.getElementById('tpInput');
+  inp.disabled = false;
+  inp.value = '';
+  inp.focus();
+  
+  tpScore = 0;
+  tpHealth = 5;
+  tpWords = [];
+  tpIsPlaying = true;
+  tpSpawnTimer = 0;
+  tpLastTime = performance.now();
+  tpUpdateUI();
+  
+  if(tpAnimFrame) cancelAnimationFrame(tpAnimFrame);
+  tpAnimFrame = requestAnimationFrame(tpGameLoop);
+}
+
+function tpGameOver(reason) {
+  tpIsPlaying = false;
+  const overlay = document.getElementById('tpOverlay');
+  if(overlay) {
+    overlay.style.display = 'flex';
+    document.getElementById('tpModalTitle').innerText = '게임 오버 😭';
+    document.getElementById('tpModalDesc').innerText = reason + ' (최종 점수: ' + tpScore + ')';
+    document.querySelector('#tpOverlay button').innerText = '다시 하기';
+  }
+  document.getElementById('tpInput').disabled = true;
+}
+
+function tpCheckWord() {
+  if(!tpIsPlaying) return;
+  const inp = document.getElementById('tpInput');
+  const text = inp.value.trim();
+  if(!text) return;
+  
+  let matchedIdx = -1;
+  let maxWait = -1;
+  for(let i = 0; i < tpWords.length; i++) {
+    if(tpWords[i].text === text) {
+      if(tpWords[i].y > maxWait) {
+        maxWait = tpWords[i].y;
+        matchedIdx = i;
+      }
+    }
+  }
+  
+  if(matchedIdx !== -1) {
+    tpWords.splice(matchedIdx, 1);
+    tpScore += 10;
+    tpUpdateUI();
+    inp.value = '';
+  } else {
+    inp.value = '';
+    inp.style.transform = 'translateX(-5px)';
+    setTimeout(() => inp.style.transform = 'translateX(5px)', 50);
+    setTimeout(() => inp.style.transform = 'none', 100);
+  }
+}
+
+function tpUpdateUI() {
+  const sd = document.getElementById('tpScoreDisplay');
+  if(sd) sd.innerText = tpScore;
+  const hd = document.getElementById('tpHealthDisplay');
+  if(hd) hd.innerText = '❤️'.repeat(tpHealth) + '🖤'.repeat(5 - tpHealth);
+}
+
+function tpGameLoop(timestamp) {
+  if(!tpIsPlaying) return;
+  if(!tpLastTime) tpLastTime = timestamp;
+  const dt = timestamp - tpLastTime;
+  tpLastTime = timestamp;
+
+  const c = document.getElementById('tpCanvas');
+  if(!c) return;
+
+  tpSpawnTimer += dt;
+  const spawnInterval = Math.max(800, 2500 - tpScore * 8); 
+  
+  if(tpSpawnTimer > spawnInterval) {
+    tpSpawnTimer = 0;
+    const wordText = TP_WORD_LIST[Math.floor(Math.random() * TP_WORD_LIST.length)];
+    tpWords.push({
+      text: wordText,
+      x: 70 + Math.random() * (c.width - 140),
+      y: -30,
+      speed: 40 + Math.random() * 30 + (tpScore * 0.3),
+      color: 'hsl(' + (Math.random() * 360) + ', 80%, 75%)'
+    });
+  }
+
+  for(let i = tpWords.length - 1; i >= 0; i--) {
+    tpWords[i].y += (tpWords[i].speed * dt) / 1000;
+    if(tpWords[i].y > c.height) {
+      tpWords.splice(i, 1);
+      tpHealth--;
+      tpUpdateUI();
+      
+      c.style.background = '#E74C3C';
+      setTimeout(() => c.style.background = '#2C3E50', 100);
+      
+      if(tpHealth <= 0) {
+        tpGameOver('하트가 모두 떨어졌습니다!');
+        return;
+      }
+    }
+  }
+
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+
+  ctx.font = 'bold 24px Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  for(const w of tpWords) {
+    const wWidth = ctx.measureText(w.text).width + 40;
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.roundRect(w.x - wWidth/2, w.y - 20, wWidth, 40, 20);
+    ctx.fill();
+    
+    ctx.fillStyle = w.color;
+    ctx.fillText(w.text, w.x, w.y);
+  }
+
+  tpAnimFrame = requestAnimationFrame(tpGameLoop);
 }
 
 /* ══════════════════════════════════════
@@ -1092,6 +1544,10 @@ function showFreeGame(type){
   document.querySelectorAll('[data-free]').forEach(b=>b.classList.toggle('util-active',b.dataset.free===type));
   const gc=document.getElementById('freeGameContent');if(!gc)return;
   const bl=document.getElementById('bungeoLink');
+  if(type==='typing'){
+    if(bl)bl.style.display='none';
+    initTyping();
+  }
   if(type==='bungeo'){
     if(bl)bl.style.display='';
     gc.innerHTML=`<div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:70vh;min-height:450px;max-height:850px;"><iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>`;
@@ -1100,6 +1556,218 @@ function showFreeGame(type){
     if(bl)bl.style.display='none';
     mPhase='setup'; mP=[]; mVotes={};
     renderMafia();
+  }
+  if(type==='stairs'){
+    if(bl)bl.style.display='none';
+    initStairs();
+  }
+}
+
+/* ══════════════════════════════════════
+   🐹 무한의 계단
+══════════════════════════════════════ */
+let stIsPlaying = false;
+let stScore = 0;
+let stMaxTime = 100;
+let stTimeLeft = stMaxTime;
+let stLastTime = 0;
+let stStairs = [];
+let stCurrentDir = 1;
+let stStairIndex = 0;
+let stCameraX = 0;
+let stCameraY = 0;
+let stTargetCameraX = 0;
+let stTargetCameraY = 0;
+let stAnimFrame = null;
+let stHamsterJumpY = 0;
+let stIsJumping = false;
+
+function initStairs() {
+  const gc = document.getElementById('freeGameContent'); if(!gc) return;
+  gc.innerHTML = `
+  <div style="position:relative; width:100%; height:70vh; min-height:450px; max-height:850px; background:linear-gradient(180deg, #A0E2FF 0%, #E6F7FF 100%); border-radius:1rem; border:2px solid #87CEEB; overflow:hidden; touch-action:none;">
+    <canvas id="stCanvas" style="display:block; width:100%; height:100%;"></canvas>
+    
+    <div style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; display:flex; flex-direction:column; justify-content:space-between;">
+      
+      <div style="padding:15px; display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:20px;">
+        <div style="background:rgba(255,255,255,0.9); padding:5px 30px; border-radius:30px; font-size:36px; font-weight:900; color:#FF7F50; border:4px solid #FFF; box-shadow:0 4px 10px rgba(0,0,0,0.15);"><span id="stScoreDisplay">0</span></div>
+        <div style="width:200px; height:24px; background:rgba(0,0,0,0.2); border-radius:12px; border:3px solid #FFF; overflow:hidden; box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+          <div id="stTimerFill" style="height:100%; background:#FF6B6B; width:100%; transition:width 0.1s linear;"></div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; padding:15px; pointer-events:auto; padding-bottom:30px;">
+        <button id="btnStLeft" style="width:46%; padding:20px 0; font-size:18px; font-weight:900; border:none; border-radius:15px; color:white; background:#FF6B6B; box-shadow:0 6px 0 rgba(0,0,0,0.2); cursor:pointer; -webkit-tap-highlight-color:transparent;" onmousedown="stInput('left')" ontouchstart="event.preventDefault(); stInput('left')">왼쪽 ⬅️<br><span style="font-size:11px; opacity:0.8;">(PC: 좌방향키)</span></button>
+        <button id="btnStRight" style="width:46%; padding:20px 0; font-size:18px; font-weight:900; border:none; border-radius:15px; color:white; background:#4D96FF; box-shadow:0 6px 0 rgba(0,0,0,0.2); cursor:pointer; -webkit-tap-highlight-color:transparent;" onmousedown="stInput('right')" ontouchstart="event.preventDefault(); stInput('right')">오른쪽 ➡️<br><span style="font-size:11px; opacity:0.8;">(PC: 우방향키)</span></button>
+      </div>
+    </div>
+    
+    <div id="stOverlay" style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; backdrop-filter:blur(4px);">
+      <div style="background:#FFF; padding:30px; border-radius:25px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3); border:5px solid #FFE4B5;">
+        <div style="font-size:50px; margin-bottom:10px;">🐹</div>
+        <h1 id="stModalTitle" style="margin:0 0 10px 0; color:#333; font-size:24px; font-weight:900;">무한의 계단</h1>
+        <p id="stModalDesc" style="color:#666; font-weight:600; margin-bottom:20px; font-size:14px;">왼쪽 계단은 왼쪽 버튼/방향키<br>오른쪽 계단은 오른쪽 버튼/방향키!</p>
+        <h2 id="stFinalScore" style="display:none; color:#FF6B6B; font-size:28px; margin-bottom:20px; font-weight:900;">점수: 0</h2>
+        <button onclick="stStartGame()" style="background:#FFD700; color:#8B4500; font-size:18px; font-weight:900; padding:12px 25px; border:none; border-radius:12px; cursor:pointer; box-shadow:0 5px 0 #DAA520;">게임 시작!</button>
+      </div>
+    </div>
+  </div>`;
+  
+  setTimeout(() => {
+    stResize();
+    stDraw();
+    window.addEventListener('resize', stResize);
+    document.removeEventListener('keydown', stKeydown);
+    document.addEventListener('keydown', stKeydown);
+  }, 0);
+}
+
+function stStartGame() {
+  document.getElementById('stOverlay').style.display = 'none';
+  stScore = 0;
+  stTimeLeft = stMaxTime;
+  stStairs = [0];
+  stCurrentDir = 1;
+  stStairIndex = 0;
+  stCameraX = 0;
+  stCameraY = 0;
+  stTargetCameraX = 0;
+  stTargetCameraY = 0;
+  for(let i=0; i<30; i++) stAddStair();
+  stUpdateScore();
+  stIsPlaying = true;
+  stLastTime = performance.now();
+  if(stAnimFrame) cancelAnimationFrame(stAnimFrame);
+  stAnimFrame = requestAnimationFrame(stGameLoop);
+}
+
+function stResize() {
+  const c = document.getElementById('stCanvas');
+  if(c && c.parentElement) {
+    c.width = c.parentElement.clientWidth;
+    c.height = c.parentElement.clientHeight;
+    stDraw();
+  }
+}
+
+function stKeydown(e) {
+  if(!stIsPlaying) return;
+  if(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '].includes(e.key)) {
+    e.preventDefault();
+  }
+  if(e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') stInput('left');
+  else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') stInput('right');
+}
+
+function stAddStair() {
+  stStairs.push(stStairs[stStairs.length - 1] + (Math.random() < 0.5 ? -1 : 1));
+}
+
+function stInput(action) {
+  if(!stIsPlaying) return;
+  const btn = document.getElementById(action === 'left' ? 'btnStLeft' : 'btnStRight');
+  if(btn) {
+    btn.style.transform = 'translateY(6px)';
+    btn.style.boxShadow = '0 0px 0 rgba(0,0,0,0.2)';
+    setTimeout(() => { btn.style.transform = 'none'; btn.style.boxShadow = '0 6px 0 rgba(0,0,0,0.2)'; }, 100);
+  }
+  
+  const expectedNext = stStairs[stStairIndex + 1];
+  const userAttempt = stStairs[stStairIndex] + (action === 'left' ? -1 : 1);
+
+  if(userAttempt === expectedNext) {
+    stScore++;
+    stStairIndex++;
+    stCurrentDir = action === 'left' ? 0 : 1;
+    const recovery = Math.max(5, 12 - stScore * 0.05); // 회복량 너무 낮아지지 않게 조정
+    stTimeLeft = Math.min(stMaxTime, stTimeLeft + recovery);
+    stAddStair();
+    stUpdateScore();
+    stIsJumping = true; stHamsterJumpY = -20; setTimeout(() => { stHamsterJumpY = 0; stIsJumping = false; }, 100);
+  } else {
+    stGameOver('앗! 떨어졌어요!');
+  }
+}
+
+function stGameOver(reason) {
+  stIsPlaying = false;
+  const overlay = document.getElementById('stOverlay');
+  if(overlay) {
+    overlay.style.display = 'flex';
+    document.getElementById('stModalTitle').innerText = '게임 오버 😭';
+    document.getElementById('stModalDesc').innerText = reason;
+    document.getElementById('stFinalScore').style.display = 'block';
+    document.getElementById('stFinalScore').innerText = '최종 점수: ' + stScore;
+    document.querySelector('#stOverlay button').innerText = '다시 하기';
+  }
+}
+
+function stUpdateScore() {
+  const sd = document.getElementById('stScoreDisplay');
+  if(sd) sd.innerText = stScore;
+}
+
+function stGameLoop(timestamp) {
+  if(!stIsPlaying) return;
+  if(!stLastTime) stLastTime = timestamp;
+  const dt = timestamp - stLastTime;
+  stLastTime = timestamp;
+
+  // 직선형(Linear)으로 꾸준히 속도 가속
+  const depletionRate = 20 + (stScore * 0.2);
+  stTimeLeft -= (depletionRate * dt) / 1000;
+  
+  const fill = document.getElementById('stTimerFill');
+  if(fill) fill.style.width = Math.max(0, (stTimeLeft / stMaxTime) * 100) + '%';
+  
+  if(stTimeLeft <= 0) stGameOver('시간 초과!');
+
+  stDraw();
+  stAnimFrame = requestAnimationFrame(stGameLoop);
+}
+
+function stDraw() {
+  const c = document.getElementById('stCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  
+  const BLOCK_W = 100, BLOCK_H = 30;
+  const cx = c.width / 2;
+  
+  // 카메라 타겟 계산 (X축 추가하여 화면 안 벗어나게 유지)
+  stTargetCameraY = (stStairIndex * BLOCK_H) - (c.height * 0.25);
+  stTargetCameraX = -(stStairs[stStairIndex] * (BLOCK_W / 2));
+  
+  // 카메라 부드럽게 이동
+  stCameraY += (stTargetCameraY - stCameraY) * 0.2;
+  stCameraX += (stTargetCameraX - stCameraX) * 0.2;
+
+  const startIdx = Math.max(0, stStairIndex - 5);
+  const endIdx = Math.min(stStairs.length - 1, stStairIndex + 30);
+
+  for(let i = endIdx; i >= startIdx; i--) {
+    const pos = stStairs[i];
+    const x = cx + (pos * (BLOCK_W / 2)) - BLOCK_W / 2 + stCameraX;
+    const y = c.height - (i * BLOCK_H) + stCameraY;
+    
+    const isCur = (i === stStairIndex);
+    ctx.fillStyle = isCur ? '#FFD54F' : '#FFCA28';
+    ctx.fillRect(x, y, BLOCK_W, BLOCK_H);
+    
+    ctx.strokeStyle = isCur ? '#F57F17' : '#F9A825';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(x, y, BLOCK_W, BLOCK_H);
+    
+    if(i === stStairIndex) {
+      ctx.save();
+      ctx.translate(x + BLOCK_W/2, y - 25 + stHamsterJumpY);
+      if(stCurrentDir === 0) ctx.scale(-1, 1);
+      ctx.font = '50px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('🐹', 0, 0);
+      ctx.restore();
+    }
   }
 }
 
@@ -1604,7 +2272,7 @@ function mafClientGameHTML() {
   const helpBtn = `<button onclick="document.getElementById('mafHelpModal').classList.remove('hidden')" class="absolute top-4 right-4 btn btn-ghost text-xs bg-gray-200 hover:bg-gray-300 rounded-full z-10 shadow-sm">❓ 도움말</button>`;
   
   if (mafSubPhase === 'waiting') {
-    return `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-50 relative">${helpBtn}<div class="spin mx-auto mb-4 border-blue-500"></div><h3 class="font-black text-xl text-gray-700">대기실</h3><p class="text-sm text-gray-500 mt-2 font-bold">선생님이 게임을 시작할 때까지 기다려주세요...</p></div>`;
+    return `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-50 relative">${helpBtn}<div class="spin mx-auto mb-4 border-blue-500"></div><h3 class="font-black text-xl text-gray-700">대기실</h3><p class="text-sm text-gray-500 mt-2 font-bold">선생님이 게임 시작할 때까지 기다려주세요...</p></div>`;
   }
   
   const cTimerHTML = (window.mafTimeLeft > 0) ? `<div id="mafClientTimerDisplay" class="text-2xl font-black font-mono text-red-500 mb-4 text-center animate-pulse drop-shadow-md">⏳ ${Math.floor(window.mafTimeLeft/60)}:${(window.mafTimeLeft%60).toString().padStart(2,'0')} 남음</div>` : '<div id="mafClientTimerDisplay"></div>';
