@@ -596,7 +596,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
               <p class="text-[13px] text-slate-500 font-medium mt-1">교과 무관 · 자유 플레이</p>
             </div>
           </div>
-          <a id="bungeoLink" href="https://jammintamer.github.io/Bungeo-ppang/" target="_blank" class="btn btn-ghost text-xs">⛶ 새 탭에서 열기</a>
+          <a id="bungeoLink" href="https://gps-edu.github.io/Bungeo-ppang/" target="_blank" class="btn btn-ghost text-xs">⛶ 새 탭에서 열기</a>
         </div>
         <div class="flex gap-2 mb-6 flex-wrap">
           <button class="util-tab" data-free="potjump" onclick="showFreeGame('potjump')">🍯 항아리 점프</button>
@@ -609,7 +609,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
         </div>
         <div id="freeGameContent">
           <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style="height:70vh;min-height:450px;max-height:850px;">
-            <iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe>
+            <iframe src="https://gps-edu.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe>
           </div>
           <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>
         </div>
@@ -2570,7 +2570,7 @@ function showFreeGame(type){
   }
   if(type==='bungeo'){
     if(bl)bl.style.display='';
-    gc.innerHTML=`<div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:70vh;min-height:450px;max-height:850px;"><iframe src="https://jammintamer.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>`;
+    gc.innerHTML=`<div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:70vh;min-height:450px;max-height:850px;"><iframe src="https://gps-edu.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>`;
   }
   if(type==='mafia'){
     if(bl)bl.style.display='none';
@@ -2581,6 +2581,46 @@ function showFreeGame(type){
     if(bl)bl.style.display='none';
     initStairs();
   }
+}
+
+/* ══════════════════════════════════════
+   🔊 게임 공용 사운드 유틸 (Web Audio API로 실시간 생성 — 음원 파일 불필요)
+══════════════════════════════════════ */
+let gpsAudioCtx = null;
+function gpsAudio(){
+  if(!gpsAudioCtx) gpsAudioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if(gpsAudioCtx.state === 'suspended') gpsAudioCtx.resume();
+  return gpsAudioCtx;
+}
+// 순수 톤(삐-) 하나: freq(Hz), 시작지연(s), 길이(s), 파형, 볼륨
+function gpsTone(freq, delay=0, dur=0.12, type='sine', vol=0.25){
+  try{
+    const ctx = gpsAudio();
+    const t0 = ctx.currentTime + delay;
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t0);
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(vol, t0 + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    o.start(t0); o.stop(t0 + dur + 0.02);
+  }catch(e){}
+}
+// 짧은 백색소음 버스트(퍽/휙 느낌)
+function gpsNoiseBurst(delay=0, dur=0.08, vol=0.18, hpFreq=800){
+  try{
+    const ctx = gpsAudio();
+    const t0 = ctx.currentTime + delay;
+    const bufSize = Math.floor(ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for(let i=0;i<bufSize;i++) data[i] = (Math.random()*2-1) * (1 - i/bufSize);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const hp = ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value = hpFreq;
+    const g = ctx.createGain(); g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+    src.connect(hp); hp.connect(g); g.connect(ctx.destination);
+    src.start(t0); src.stop(t0+dur+0.02);
+  }catch(e){}
 }
 
 /* ══════════════════════════════════════
@@ -2601,6 +2641,21 @@ const BB_SHAPES = [
   [[1,1,0],[0,1,1]], [[0,1,1],[1,1,0]]
 ];
 let bbAnimFrame = null;
+
+// 블록을 보드에 놓을 때: 짧고 통통 튀는 '톡' 소리
+function bbSoundPlace(){
+  gpsTone(180, 0, 0.09, 'triangle', 0.22);
+  gpsNoiseBurst(0, 0.05, 0.10, 500);
+}
+// 줄이 터질 때: 노이즈 휙 + 콤보가 높을수록 더 화려해지는 상승 아르페지오
+function bbSoundClear(combo){
+  gpsNoiseBurst(0, 0.12, 0.18, 1000);
+  const baseNotes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+  const extra = Math.min(Math.max(combo-1,0), 3);
+  const notes = baseNotes.slice(0, 3 + extra);
+  const pitchBoost = 1 + Math.min(Math.max(combo-1,0), 5) * 0.03;
+  notes.forEach((f, i) => gpsTone(f * pitchBoost, i*0.05, 0.18, 'triangle', 0.20));
+}
 
 function initBlockBlast() {
   const gc = document.getElementById('freeGameContent'); if(!gc) return;
@@ -2747,6 +2802,7 @@ function bbPointerUp(e) {
   
   if(bbCanPlace(p.shape, gridX, gridY)) {
     bbPlace(p.shape, gridX, gridY, p.color);
+    bbSoundPlace();
     p.used = true;
     if(bbState.pieces.every(pi => pi.used)) setTimeout(bbSpawnPieces, 200);
     else bbCheckGameOver();
@@ -2795,6 +2851,7 @@ function bbPlace(shape, gx, gy, color) {
   const totalLines = linesToClearR.length + linesToClearC.length;
   if(totalLines > 0) {
     bbState.combo++;
+    bbSoundClear(bbState.combo);
     // Base piece points
     bbState.score += placed;
     // Line clear points
@@ -6220,13 +6277,14 @@ window.mrStartGame = function() {
   mrPlayer.clones = 0;
   mrPlayer.weapon = 'default';
   mrPlayer.r = 15;
+  mrPlayer.magnet = false;
   
   mrPetCounts = { dog: 0, turtle: 0, cat: 0, dragon: 0 };
   mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false };
   let wrap = document.getElementById('mrGameWrapper');
   if(wrap) wrap.style.background = `linear-gradient(to bottom, ${mrBiomes[0].colors[0]}, ${mrBiomes[0].colors[1]})`;
   
-  mrSpeed = 3.5;
+  mrSpeed = 1.8;
   mrDistance = 0;
   mrScore = 0;
   mrRunCoins = 0;
@@ -6243,6 +6301,7 @@ window.mrStartGame = function() {
   mrDragonTimer = Date.now();
   mrChests = [];
   mrLastShot = 0;
+  window.mrSpawnCount = 0;
   
   mrIsPaused = false;
   mrRewardQueue = [];
@@ -6289,14 +6348,12 @@ function mrSpawnGate(y) {
     if(Math.random() < 0.05) t = 'pet_turtle'; // 5% chance to override to turtle
     
     if(t === 'math') {
-      const ops = ['+', '-', '×', '÷'];
+      const ops = ['+', '+', '+', '-', '×'];
       let op = ops[Math.floor(Math.random() * ops.length)];
-      let bonus = Math.floor(mrDistance / 500) * 3;
       let val = 0;
-      if(op === '+') val = Math.floor(Math.random()*10)+5 + bonus;
-      if(op === '-') val = Math.floor(Math.random()*5)+5;
-      if(op === '×') val = Math.floor(Math.random()*2)+2;
-      if(op === '÷') val = Math.floor(Math.random()*2)+2;
+      if(op === '+') val = Math.floor(Math.random()*5)+3; // +3 to +7
+      if(op === '-') val = Math.floor(Math.random()*3)+1; // -1 to -3
+      if(op === '×') val = 2; // only x2
       return { type: 'math', op, val, text: `${op} ${val}` };
     }
     if(t === 'dmg') return { type: 'dmg', val: 1, text: `💥 공격력 +1` };
@@ -6318,9 +6375,14 @@ function mrSpawnGate(y) {
 
 function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
   let diff = mrDistance / 1000;
-  let baseHp = 5 + Math.floor(diff * 15) + Math.floor(diff * diff * 5); // Early nerf, late huge buff
-  let power = baseHp + Math.floor(mrPlayer.count * (1.5 + Math.random() * 0.8));
+  let baseHp = 1 + Math.floor(diff * 3) + Math.floor(diff * diff * 0.5);
+  let power = baseHp + Math.floor(mrPlayer.count * (0.5 + Math.random() * 0.5));
   if(power < 1) power = 1;
+  
+  window.mrSpawnCount = (window.mrSpawnCount || 0) + 1;
+  if (window.mrSpawnCount <= 10) {
+    power = Math.min(power, 10);
+  }
   
   let baseEnemy = {
     id: mrEnIdCounter++,
@@ -6337,12 +6399,12 @@ function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
   
   let enObj;
   if (isBoss) {
-    let bossMult = 5.0 + diff * 1.5;
+    let bossMult = 5.0 + diff * 3.0;
     enObj = {
       ...baseEnemy,
       isBoss: true,
       x: canvasWidth / 2,
-      w: canvasWidth * 1.2, h: 80, // Unavoidable
+      w: canvasWidth * 0.6, h: 80, // Dodgeable now
       hp: power * bossMult,
       maxHp: power * bossMult
     };
@@ -6359,7 +6421,7 @@ function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
 }
 
 function mrRewardEnemy(en) {
-  let dropChance = mrRelics.cursedPact ? 1.0 : 0.5;
+  let dropChance = mrRelics.cursedPact ? 1.0 : 0.8;
   if (!en.isBoss && Math.random() > dropChance) return;
   
   if (mrPetCounts.cat > 0) {
@@ -6396,7 +6458,9 @@ window.mrShowItemSelect = function(isBoss) {
     { type: 'heal', icon: '💖', name: '대량회복', desc: isBoss ? '+50명' : '+2명' },
     { type: 'ice', icon: '🧊', name: '빙결총알', desc: isBoss ? '감속 폭 증대' : '적 이속 저하' },
     { type: 'fire', icon: '🔥', name: '불꽃총알', desc: isBoss ? '화상 딜 증대' : '지속 화상 피해' },
-    { type: 'zap', icon: '🌩️', name: '번개총알', desc: isBoss ? '스플래시 증대' : '광역 피해' }
+    { type: 'zap', icon: '🌩️', name: '번개총알', desc: isBoss ? '스플래시 증대' : '광역 피해' },
+    { type: 'magnet', icon: '🧲', name: '슈퍼 자석', desc: '상자와 코인 끌어당김' },
+    { type: 'bomb', icon: '💣', name: '싹쓸이 폭탄', desc: '화면 내 적/함정 전멸' }
   ];
   
   if (Math.random() < 0.2) {
@@ -6437,6 +6501,14 @@ window.mrSelectItem = function(type, isBoss) {
   else if(type === 'ice') { mrPlayer.ice += (isBoss ? 3 : 1); toast(`🧊 얼음 속성 강화!`); }
   else if(type === 'fire') { mrPlayer.fire += (isBoss ? 3 : 1); toast(`🔥 불꽃 속성 강화!`); }
   else if(type === 'zap') { mrPlayer.zap += (isBoss ? 3 : 1); toast(`🌩️ 번개 속성 강화!`); }
+  else if(type === 'magnet') { mrPlayer.magnet = true; toast(`🧲 슈퍼 자석 작동!`); }
+  else if(type === 'bomb') {
+    for(let en of mrEnemies) { en.hp = 0; en.active = false; mrScore += 50; }
+    mrTraps.length = 0;
+    mrEnemyBullets.length = 0;
+    mrEnemyLasers.length = 0;
+    toast(`💣 화면 싹쓸이!`);
+  }
   else if(type === 'clone') { mrPlayer.clones += 1; toast(`👯 발사 열(Row) 추가!`); }
   
   mrRunCoins += (isBoss ? 30 : 1) * (mrData.upgrades.coinMult || 1);
@@ -6498,7 +6570,8 @@ window.mrShowWeaponSelect = function() {
   const options = [
     { type: 'blue', icon: '🔵', name: '블루 블래스터', desc: '연사속도 2배, 데미지 1/2' },
     { type: 'red', icon: '🔴', name: '레드 캐논', desc: '데미지 2배, 연사속도 2/3' },
-    { type: 'sword', icon: '🟣', name: '소드 런처', desc: '관통 미니회전검, 데미지 80%' }
+    { type: 'sword', icon: '🟣', name: '소드 런처', desc: '관통 미니회전검, 데미지 80%' },
+    { type: 'homing', icon: '🚀', name: '유도 미사일', desc: '자동 추적, 데미지 80%' }
   ];
   
   options.forEach((opt) => {
@@ -6526,9 +6599,9 @@ window.mrSelectWeapon = function(type) {
 
 function mrSpawnTrap(y, canvasWidth) {
   mrTraps.push({
-    x: (Math.random() > 0.5) ? canvasWidth*0.25 : canvasWidth*0.75,
+    x: canvasWidth * 0.15 + Math.random() * (canvasWidth * 0.7),
     y: y,
-    w: canvasWidth * 0.45,
+    w: canvasWidth * 0.22,
     h: 40,
     active: true
   });
@@ -6583,10 +6656,10 @@ function mrLoop() {
   }
   
   mrDistance += mrSpeed;
-  mrSpeed += 0.001;
+  mrSpeed += 0.0007;
   if(mrPlayer.invincible > 0) mrPlayer.invincible--;
   
-  mrSwordsRot += 0.08;
+  mrSwordsRot += 0.04;
   mrTurtlesRot += 0.04;
   const py = c.height - 120;
   
@@ -6604,7 +6677,7 @@ function mrLoop() {
   // Sword damage
   if (mrPlayer.swords > 0) {
     let baseRadius = 180 + mrPlayer.swords * 1.5;
-    let swordRadius = baseRadius * 1.5; // 1.5x radius
+    let swordRadius = baseRadius * 1.05; // 30% reduced radius
     for (let en of mrEnemies) {
       if (!en.active) continue;
       // Check collision with each sword dot
@@ -6664,21 +6737,22 @@ function mrLoop() {
   let isFrost = (mrPlayer.weapon === 'sword' && mrPlayer.ice >= 5);
   
   const now = Date.now();
-  let baseInterval = Math.max(100, 300 - mrPlayer.rate * 20);
+  let baseInterval = Math.max(80, 240 - mrPlayer.rate * 20);
   let fireRateMult = (mrPlayer.weapon === 'blue') ? 0.5 : (mrPlayer.weapon === 'red' ? 1.5 : 1.0);
   if (isChain) fireRateMult = 0.25;
   let shootInterval = baseInterval * fireRateMult;
   
   if (now - mrLastShot > shootInterval) {
     mrLastShot = now;
-    let num = Math.min(mrPlayer.count, 30);
-    let baseBulletDmg = mrPlayer.dmg + (mrPlayer.count / num);
+    let safeCount = Math.max(1, Math.floor(mrPlayer.count));
+    let num = Math.min(safeCount, 30);
+    let baseBulletDmg = mrPlayer.dmg + (safeCount / num);
     if(mrRelics.glassCannon) baseBulletDmg *= 3;
     
-    let wDmgMult = (mrPlayer.weapon === 'red') ? 2.0 : (mrPlayer.weapon === 'blue' ? 0.5 : (mrPlayer.weapon === 'sword' ? 0.8 : 1.0));
+    let wDmgMult = (mrPlayer.weapon === 'red') ? 2.0 : (mrPlayer.weapon === 'blue' ? 0.5 : (mrPlayer.weapon === 'sword' ? 0.8 : (mrPlayer.weapon === 'homing' ? 0.8 : 1.0)));
     let bulletDmg = baseBulletDmg * wDmgMult;
-    let bulletColor = (mrPlayer.weapon === 'red') ? '#ef4444' : (mrPlayer.weapon === 'blue' ? '#3b82f6' : (mrPlayer.weapon === 'sword' ? '#94a3b8' : '#f59e0b'));
-    let bulletW = (mrPlayer.weapon === 'red') ? 16 : (mrPlayer.weapon === 'sword' ? 24 : 6);
+    let bulletColor = (mrPlayer.weapon === 'red') ? '#ef4444' : (mrPlayer.weapon === 'blue' ? '#3b82f6' : (mrPlayer.weapon === 'sword' ? '#94a3b8' : (mrPlayer.weapon === 'homing' ? '#f472b6' : '#f59e0b')));
+    let bulletW = (mrPlayer.weapon === 'red') ? 24 : (mrPlayer.weapon === 'sword' ? 32 : (mrPlayer.weapon === 'homing' ? 16 : 12));
     
     if (isChain) bulletColor = '#22d3ee'; // cyan
     if (isMeteor) { bulletColor = '#ea580c'; bulletW = 40; } // orange, huge
@@ -6712,7 +6786,24 @@ function mrLoop() {
   
   for(let i=mrBullets.length-1; i>=0; i--) {
      let b = mrBullets[i];
-     b.y -= 14; 
+     if (b.wType === 'homing') {
+       let target = null;
+       let minDist = 99999;
+       for(let en of mrEnemies) {
+         if(!en.active || en.y > py) continue;
+         let d = Math.hypot(en.x - b.x, en.y - b.y);
+         if (d < minDist) { minDist = d; target = en; }
+       }
+       if (target) {
+         let angle = Math.atan2(target.y - b.y, target.x - b.x);
+         b.x += Math.cos(angle) * 12;
+         b.y += Math.sin(angle) * 12;
+       } else {
+         b.y -= 14;
+       }
+     } else {
+       b.y -= 14; 
+     }
      let hit = false;
      for(let en of mrEnemies) {
         if (en.active && b.y > en.y - en.h/2 && b.y < en.y + en.h/2 && Math.abs(b.x - en.x) < (en.w/2 + b.w/2)) {
@@ -6760,7 +6851,7 @@ function mrLoop() {
      }
      if (hit || b.y < -50) mrBullets.splice(i, 1);
   }
-  let enemyBulletDmg = 1 + Math.floor((mrDistance / 1000) * 1.5);
+  let enemyBulletDmg = 1 + Math.floor(mrDistance / 3000);
   for(let i = mrEnemies.length-1; i>=0; i--) {
     let en = mrEnemies[i];
     
@@ -6788,17 +6879,17 @@ function mrLoop() {
     if (en.active && en.y > 0 && en.y < py - 100) {
       let now = Date.now();
       let diff = mrDistance / 1000;
-      let shotDelay = en.isBoss ? Math.max(300, 1000 - diff * 30) : (en.isElite ? Math.max(400, 1200 - diff * 40) : Math.max(600, 1800 - diff * 50));
+      let shotDelay = en.isBoss ? Math.max(800, 1500 - diff * 30) : (en.isElite ? Math.max(800, 2000 - diff * 40) : Math.max(1000, 2500 - diff * 50));
       if (now - en.lastShot > shotDelay) {
         en.lastShot = now;
         if(en.isBoss) {
           for(let ang of [-0.6, -0.3, 0, 0.3, 0.6]) {
-            mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: Math.sin(ang)*4, vy: Math.cos(ang)*4, r: 8, dmg: enemyBulletDmg * 2 });
+            mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: Math.sin(ang)*2.5, vy: Math.cos(ang)*2.5, r: 8, dmg: enemyBulletDmg * 2 });
           }
         } else if (en.isElite) {
-          mrEnemyLasers.push({ x: mrPlayer.x, y: en.y + en.h/2, w: 60, timer: 60, dmg: Math.max(1, Math.floor(enemyBulletDmg / 2)) });
+          mrEnemyLasers.push({ x: mrPlayer.x, y: en.y + en.h/2, w: 40, timer: 100, dmg: Math.max(1, enemyBulletDmg) });
         } else {
-          mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: 0, vy: 5, r: 6, dmg: enemyBulletDmg });
+          mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: 0, vy: 3, r: 6, dmg: enemyBulletDmg });
         }
       }
     }
@@ -6884,11 +6975,11 @@ function mrLoop() {
     if (t.y > c.height + 100) mrTraps.splice(i, 1);
   }
   
-  // Dog Magnet for Chests
+  // Dog / Super Magnet for Chests
   let dogCount = mrPetCounts.dog;
-  if(dogCount > 0) {
-    let pullSpeed = (dogCount >= 3) ? 0.05 : 0.015 * dogCount;
-    let range = (dogCount >= 3) ? 1000 : 300;
+  if(dogCount > 0 || mrPlayer.magnet) {
+    let pullSpeed = mrPlayer.magnet ? 0.15 : ((dogCount >= 3) ? 0.05 : 0.015 * dogCount);
+    let range = mrPlayer.magnet ? 2000 : ((dogCount >= 3) ? 1000 : 300);
     for(let ch of mrChests) {
       if(ch.active && ch.y > 0 && ch.y < c.height) {
         let dist = Math.hypot(mrPlayer.x - ch.x, py - ch.y);
@@ -6948,25 +7039,30 @@ function mrLoop() {
   if (mrDistance % 3000 < mrSpeed) mrSpawnGate(-100);
   if (mrDistance > 1000 && mrDistance % 8000 < mrSpeed) mrAltars.push({x: c.width/2, y: -100, w: 60, h: 60, active: true});
   
-  if (mrDistance > 100 && mrDistance % 800 < mrSpeed && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
+  let spawnInterval = mrDistance < 4000 ? 2500 : (mrDistance < 8000 ? 1500 : 1000);
+  if (mrDistance > 1500 && mrDistance % spawnInterval < mrSpeed && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
     let spawnLoops = mrRelics.cursedPact ? 2 : 1;
+    if (mrDistance > 10000) spawnLoops += 1;
+    if (mrDistance > 20000) spawnLoops += 1;
     for(let sl=0; sl<spawnLoops; sl++) {
-      if (Math.random() < 0.2) {
+      if (Math.random() < 0.2 && mrDistance > 5000) {
         mrSpawnEnemy(-100 - sl*80, c.width, true);
       } else {
-        let count = 1 + Math.floor(Math.random() * 3); // 1 to 3 enemies
+        let maxEnemies = (mrDistance < 4000) ? 1 : (mrDistance < 8000 ? 2 : 3);
+        let count = 1 + Math.floor(Math.random() * maxEnemies);
         for(let i=0; i<count; i++) {
           let en = mrSpawnEnemy(-100 - i*70 - sl*80, c.width, false);
-          if (mrDistance > 10000 && Math.random() < 0.1) {
+          if (mrDistance > 5000 && Math.random() < (mrDistance > 10000 ? 0.4 : 0.2)) {
             en.isElite = true;
-            en.hp *= 3; en.maxHp *= 3;
+            en.hp *= (mrDistance > 10000 ? 3 : 2); 
+            en.maxHp = en.hp;
             en.w = 100; en.h = 100;
           }
         }
       }
     }
   }
-  if (mrDistance > 1500 && mrDistance % 1100 < mrSpeed) {
+  if (mrDistance > 3000 && mrDistance % 1200 < mrSpeed) {
     mrSpawnTrap(-100, c.width);
   }
   
@@ -7168,7 +7264,7 @@ function mrLoop() {
   
   if (mrPlayer.swords > 0) {
     let baseRadius = 180 + mrPlayer.swords * 1.5;
-    let swordRadius = baseRadius * 1.5;
+    let swordRadius = baseRadius * 1.05;
     for(let s=0; s<mrPlayer.swords; s++) {
       let angle = mrSwordsRot + (Math.PI*2 / mrPlayer.swords) * s;
       let sx = mrPlayer.x + Math.cos(angle) * swordRadius;
@@ -7213,8 +7309,9 @@ function mrLoop() {
   ctx.strokeStyle = '#000';
   ctx.lineWidth = 4;
   let textY = py - Math.sqrt(maxDraw)*5 - 15;
-  ctx.strokeText(mrPlayer.count, mrPlayer.x, textY);
-  ctx.fillText(mrPlayer.count, mrPlayer.x, textY);
+  let dispCount = Math.max(0, Math.floor(mrPlayer.count)) || 0;
+  ctx.strokeText(dispCount, mrPlayer.x, textY);
+  ctx.fillText(dispCount, mrPlayer.x, textY);
   
   if (mrRelics.glassCannon) {
     ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
