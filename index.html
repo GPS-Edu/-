@@ -142,6 +142,7 @@ body.theme-dark .sidebar-hd div.bg-indigo-50 { background-color: var(--d-border)
 body.theme-dark header { background-color: var(--d-surface) !important; border-bottom: 1px solid var(--d-border) !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5) !important; }
 body.theme-dark .card { background-color: var(--d-surface) !important; border: 1px solid var(--d-border) !important; border-radius: 1.5rem !important; box-shadow: none !important; }
 body.theme-dark .btn-blue, body.theme-dark .btn-green { background: var(--d-accent2) !important; border-color: var(--d-accent-hover) !important; box-shadow: none !important; color: white !important; }
+body.theme-dark .btn:not(.btn-blue):not(.btn-green):not(.btn-red), body.theme-dark .h-card { background-color: var(--d-surface) !important; border-color: var(--d-border) !important; color: var(--d-text) !important; }
 body.theme-dark .btn-blue:active, body.theme-dark .btn-green:active { transform: translateY(2px) !important; }
 body.theme-dark .inp { border: 1px solid var(--d-border2) !important; border-radius: 1rem !important; background-color: var(--d-bg) !important; color: var(--d-text) !important; }
 body.theme-dark .inp:focus { border-color: var(--d-accent2) !important; box-shadow: 0 0 0 3px rgba(59,130,246, 0.2) !important; }
@@ -237,9 +238,6 @@ body.theme-dark .hover\:bg-orange-100:hover {
     </button>
     
     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider pt-5 pb-1.5 px-1">🕹️ Edu Arcade</p>
-    <button onclick="switchTab('economy')" data-target="economy" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
-      <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">💰</span>학급 경제 놀이
-    </button>
     
     <div>
       <button onclick="toggleGradeMenu()" data-target="minigame" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
@@ -271,6 +269,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
         <button onclick="switchTab('freegame'); showFreeGame('stairs')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐹 무한의 계단</button>
         <button onclick="switchTab('freegame'); showFreeGame('bungeo')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐟 붕어빵 타이쿤</button>
         <button onclick="switchTab('freegame'); showFreeGame('mafia')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🕵️ 마피아게임</button>
+        <button onclick="switchTab('freegame'); showFreeGame('escape')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🔐 교실 방탈출 자물쇠</button>
       </div>
     </div>
     
@@ -285,6 +284,9 @@ body.theme-dark .hover\:bg-orange-100:hover {
         <button onclick="switchTab('utility'); showUtil('stopwatch')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⏱️ 스톱워치</button>
         <button onclick="switchTab('utility'); showUtil('noise')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🔊 소음 신호등</button>
         <button onclick="switchTab('utility'); showUtil('picker')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🎯 랜덤 발표자</button>
+        <button onclick="switchTab('utility'); showUtil('notice')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">📝 AI 스마트 알림장</button>
+        <button onclick="switchTab('utility'); showUtil('qrcode')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">📱 QR코드 생성기</button>
+        <button onclick="switchTab('utility'); showUtil('whitenoise')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🎧 명상/백색소음</button>
       </div>
     </div>
     
@@ -385,10 +387,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
               <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">🪑</div>
               <span class="font-bold text-slate-700 text-sm group-hover:text-emerald-600 transition-colors">자리 배치</span>
             </button>
-            <button onclick="switchTab('economy')" class="group p-5 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-200 transition-all text-center flex flex-col items-center gap-3">
-              <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">💰</div>
-              <span class="font-bold text-slate-700 text-sm group-hover:text-amber-600 transition-colors">경제 놀이</span>
-            </button>
+
             <button onclick="switchTab('freegame'); showFreeGame('math_runner')" class="group p-5 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-rose-200 transition-all text-center flex flex-col items-center gap-3">
               <div class="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">🏃</div>
               <span class="font-bold text-slate-700 text-sm group-hover:text-rose-600 transition-colors">수학 런너</span>
@@ -568,22 +567,6 @@ body.theme-dark .hover\:bg-orange-100:hover {
       </div>
     </section>
 
-    <section id="economy" class="tab-content max-w-5xl mx-auto space-y-6">
-      <div class="card p-6 md:p-8">
-        <div class="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
-          <div class="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-3xl shadow-sm">💰</div>
-          <div>
-            <h3 class="text-xl font-black text-slate-800">학급 경제 놀이</h3>
-            <p class="text-[13px] text-slate-500 font-medium mt-1">학급 화폐 · 은행 · 경매 · 부동산</p>
-          </div>
-        </div>
-        <div class="dashed-zone py-20">
-          <span class="text-5xl opacity-80 mb-2">🏦</span>
-          <p class="font-black text-lg text-slate-600">학급 은행 & 통장 관리 준비 중</p>
-        </div>
-      </div>
-    </section>
-
     <!-- 교과 미니게임 -->
     <section id="minigame" class="tab-content max-w-5xl mx-auto space-y-6">
       <div class="card p-3 sm:p-6 md:p-8">
@@ -622,6 +605,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
           <button class="util-tab util-active" data-free="stairs" onclick="showFreeGame('stairs')">🐹 무한의 계단</button>
           <button class="util-tab" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
           <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아게임</button>
+          <button class="util-tab" data-free="escape" onclick="showFreeGame('escape')">🔐 방탈출 자물쇠</button>
         </div>
         <div id="freeGameContent">
           <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style="height:70vh;min-height:450px;max-height:850px;">
@@ -647,6 +631,9 @@ body.theme-dark .hover\:bg-orange-100:hover {
           <button class="util-tab" data-util="stopwatch" onclick="showUtil('stopwatch')">⏱️ 스톱워치</button>
           <button class="util-tab" data-util="noise" onclick="showUtil('noise')">🔊 소음 신호등</button>
           <button class="util-tab" data-util="picker" onclick="showUtil('picker')">🎯 랜덤 발표자</button>
+          <button class="util-tab" data-util="notice" onclick="showUtil('notice')">📝 AI 스마트 알림장</button>
+          <button class="util-tab" data-util="qrcode" onclick="showUtil('qrcode')">📱 QR코드 생성기</button>
+          <button class="util-tab" data-util="whitenoise" onclick="showUtil('whitenoise')">🎧 명상/백색소음</button>
         </div>
         <div id="utilContent"></div>
       </div>
@@ -710,7 +697,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
 <script>
 /* ══ 상수 ══ */
 const K_API='gps_api_v1', K_REC='gps_rec_v1';
-const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},whiteboard:{title:'전자칠판 화면',icon:'🖥️'},education:{title:'교육자료',icon:'📚'},economy:{title:'학급 경제 놀이',icon:'💰'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'}};
+const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},whiteboard:{title:'전자칠판 화면',icon:'🖥️'},education:{title:'교육자료',icon:'📚'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'}};
 
 
 
@@ -4663,7 +4650,130 @@ function showUtil(type){
   if(type==='stopwatch'){gc.innerHTML=stopwatchHTML();updateSwUI();}
   if(type==='noise'){stopNoise();gc.innerHTML=noiseHTML();}
   if(type==='picker'){gc.innerHTML=capsuleHTML(); setTimeout(()=>{renderCapGlobe(); renderCapPickedList();},10);}
+  if(type==='notice'){gc.innerHTML=noticeHTML();}
+  if(type==='qrcode'){gc.innerHTML=qrcodeHTML();}
+  if(type==='whitenoise'){gc.innerHTML=whitenoiseHTML();}
 }
+
+function qrcodeHTML() {
+  return `
+  <div class="flex flex-col items-center gap-6 py-8">
+    <div class="w-full max-w-lg space-y-3">
+      <label class="text-sm font-bold text-slate-700">웹사이트 주소 또는 텍스트 입력</label>
+      <div class="flex gap-2">
+        <input type="text" id="qrInput" class="inp flex-1 text-lg" placeholder="https://..." onkeydown="if(event.key==='Enter') generateQR()">
+        <button onclick="generateQR()" class="btn btn-blue px-6">생성</button>
+      </div>
+    </div>
+    <div id="qrResult" class="hidden flex flex-col items-center gap-4 p-6 bg-white border border-slate-200 rounded-3xl shadow-sm">
+      <img id="qrImage" src="" alt="QR Code" class="w-64 h-64 object-contain">
+      <p class="text-xs font-bold text-slate-500">우클릭하여 이미지 복사 또는 저장이 가능합니다.</p>
+    </div>
+  </div>`;
+}
+window.generateQR = function() {
+  const txt = document.getElementById('qrInput').value.trim();
+  if(!txt) { toast('⚠️ 주소를 입력해주세요!'); return; }
+  const img = document.getElementById('qrImage');
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(txt);
+  document.getElementById('qrResult').classList.remove('hidden');
+}
+
+function whitenoiseHTML() {
+  return `
+  <div class="flex flex-col items-center gap-6 py-4">
+    <div class="flex items-center gap-4 bg-emerald-50 border border-emerald-100 p-4 rounded-2xl w-full max-w-3xl">
+      <div class="text-3xl">🎧</div>
+      <div>
+        <h4 class="font-black text-emerald-900">명상 및 집중력 백색소음</h4>
+        <p class="text-xs font-bold text-emerald-700 mt-0.5">자습 시간이나 아침 명상 시간에 활용하기 좋은 배경음악입니다.</p>
+      </div>
+    </div>
+    
+    <div class="w-full max-w-3xl p-10 flex flex-col items-center justify-center gap-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl text-center">
+      <div class="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center text-3xl animate-pulse">🎵</div>
+      <div>
+        <p class="font-bold text-slate-600 mb-1">음원 준비 중입니다.</p>
+        <p class="text-xs font-medium text-slate-400">나중에 추가될 자체 음원을 기다려주세요!</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* AI 스마트 알림장 */
+function noticeHTML() {
+  return `
+  <div class="space-y-6">
+    <div class="flex items-center gap-4 bg-indigo-50 border border-indigo-100 p-4 rounded-2xl">
+      <div class="text-3xl">📝</div>
+      <div>
+        <h4 class="font-black text-indigo-900">AI 스마트 알림장 생성기</h4>
+        <p class="text-xs font-bold text-indigo-700 mt-0.5">내용을 대충 입력해도 학부모님께 보내기 좋은 정돈된 글로 완성해 드려요.</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-bold text-gray-600 block mb-1">📅 안내 날짜</label>
+          <input type="text" id="noticeDate" class="inp" placeholder="예: 5월 12일 (수)">
+        </div>
+        <div>
+          <label class="text-xs font-bold text-gray-600 block mb-1">📌 준비물 및 숙제 (핵심 단어만 써도 OK)</label>
+          <textarea id="noticeInput" class="inp resize-none" rows="6" placeholder="예: 국어 활동책 12쪽 풀기, 내일 체육복 입기, 리코더 가져오기"></textarea>
+        </div>
+        <button id="btnGenNotice" onclick="generateNotice()" class="btn btn-blue w-full">✨ AI 알림장 생성</button>
+      </div>
+      <div class="flex flex-col h-full space-y-2">
+        <div class="flex justify-between items-center">
+          <label class="text-xs font-bold text-emerald-700 block">완성된 알림장</label>
+          <button onclick="copyNotice()" class="text-[11px] bg-white border border-emerald-200 text-emerald-600 font-bold px-2 py-1 rounded shadow-sm hover:bg-emerald-50">📋 복사</button>
+        </div>
+        <textarea id="noticeOutput" class="inp flex-1 min-h-[150px] resize-none border-emerald-200 focus:border-emerald-500 text-[13px] leading-relaxed bg-white" placeholder="완성된 알림장이 이곳에 나타납니다. 복사해서 클래스팅이나 하이클래스 등에 붙여넣기 하세요!"></textarea>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function generateNotice() {
+  const key = await getKey();
+  if(!key) { openModal(); toast('⚠️ API 키를 먼저 등록해주세요!'); return; }
+  const date = document.getElementById('noticeDate').value.trim() || new Date().toLocaleDateString('ko-KR');
+  const input = document.getElementById('noticeInput').value.trim();
+  if(!input) { toast('✏️ 안내할 내용을 입력해주세요!'); return; }
+  
+  const btn = document.getElementById('btnGenNotice');
+  const out = document.getElementById('noticeOutput');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spin mx-auto w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>';
+  
+  try {
+    const prompt = `당신은 친절하고 다정한 초등학교 담임 선생님입니다. 학부모님과 학생들에게 전달할 알림장을 작성해주세요.
+[안내 날짜]: ${date}
+[전달 내용]: ${input}
+[작성 규칙]
+1. 정중하고 따뜻한 어조(~해요, ~합니다) 사용.
+2. 이모지를 적절히 활용하여 보기 좋게 꾸미기.
+3. 준비물과 숙제를 명확하게 구분(글머리 기호 대신 줄바꿈이나 이모지 사용).
+4. 학부모님께 드리는 다정한 끝인사 포함.
+5. 절대로 마크다운 기호(*, **, # 등)를 텍스트에 포함하지 말고 순수 텍스트로만 작성할 것.`;
+    
+    out.value = await gemini(key, prompt);
+    toast('✨ 알림장 작성이 완료됐어요!');
+  } catch(e) {
+    toast('❌ 생성 중 오류가 발생했습니다.');
+    out.value = e.message;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ AI 알림장 생성';
+  }
+}
+function copyNotice() {
+  const out = document.getElementById('noticeOutput').value;
+  if(out) {
+    navigator.clipboard.writeText(out).then(() => toast('📋 복사 완료!'));
+  }
+}
+
 
 /* 스톱워치 */
 let swTime=0,swRunning=false,swInterval=null,swLaps=[];
@@ -4813,36 +4923,129 @@ async function startNoise(){
 function stopNoise(){if(noiseRaf){cancelAnimationFrame(noiseRaf);noiseRaf=null;}if(noiseStream){noiseStream.getTracks().forEach(t=>t.stop());noiseStream=null;}if(noiseCtx){noiseCtx.close().catch(()=>{});noiseCtx=null;}noiseAnalyser=null;}
 
 /* ══════════════════════════════════════
-   API / 저장소
+   🔒 API / 저장소 (기기 전용 AES-GCM 암호화)
+   - API 키는 이 브라우저(기기)에만 암호화되어 저장됩니다.
+   - 키는 오직 Google Gemini 서버로만 직접 전송되며, 그 외 어떤 서버로도 전송되지 않습니다.
+   - 암호화 키는 브라우저 IndexedDB에 "추출 불가능한(non-extractable)" 형태로 보관되어,
+     외부 스크립트나 로컬 파일 탐색만으로는 원문 키 값을 읽어낼 수 없습니다.
 ══════════════════════════════════════ */
-function getKey(){return(localStorage.getItem(K_API)||'').trim();}
-function saveKey(){const k=document.getElementById('inputKey').value.trim();k?localStorage.setItem(K_API,k):localStorage.removeItem(K_API);refreshStatus();closeModal();toast(k?'✅ API 키 저장됐어요!':'🗑️ API 키 삭제됐어요.');}
-function refreshStatus(){const has=!!getKey();document.getElementById('apiDot').className='dot '+(has?'dot-green':'dot-amber');document.getElementById('apiTxt').textContent=has?'연결됨':'미연결';document.getElementById('apiTxt').className='text-xs font-bold '+(has?'text-green-600':'text-amber-600');document.getElementById('noKeyWarn')?.classList.toggle('hidden',has);}
-function openModal(){document.getElementById('inputKey').value=getKey();document.getElementById('testOut').classList.add('hidden');document.getElementById('modal').classList.add('open');}
+const GPS_IDB_NAME = 'gps_secure_store', GPS_IDB_STORE = 'keys';
+function gpsIdbOpen(){
+  return new Promise((resolve, reject)=>{
+    const req = indexedDB.open(GPS_IDB_NAME, 1);
+    req.onupgradeneeded = () => { req.result.createObjectStore(GPS_IDB_STORE); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function gpsIdbGet(k){
+  const db = await gpsIdbOpen();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(GPS_IDB_STORE, 'readonly');
+    const req = tx.objectStore(GPS_IDB_STORE).get(k);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function gpsIdbSet(k, v){
+  const db = await gpsIdbOpen();
+  return new Promise((resolve, reject)=>{
+    const tx = db.transaction(GPS_IDB_STORE, 'readwrite');
+    tx.objectStore(GPS_IDB_STORE).put(v, k);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+let _gpsCryptoKeyPromise = null;
+async function gpsGetCryptoKey(){
+  if(_gpsCryptoKeyPromise) return _gpsCryptoKeyPromise;
+  _gpsCryptoKeyPromise = (async () => {
+    let key = await gpsIdbGet('deviceKey').catch(()=>null);
+    if(!key){
+      key = await crypto.subtle.generateKey({name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+      await gpsIdbSet('deviceKey', key);
+    }
+    return key;
+  })();
+  return _gpsCryptoKeyPromise;
+}
+function gpsBufToB64(buf){ return btoa(String.fromCharCode(...new Uint8Array(buf))); }
+function gpsB64ToBuf(b64){ const bin = atob(b64); const arr = new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i); return arr.buffer; }
+async function gpsEncrypt(plaintext){
+  const key = await gpsGetCryptoKey();
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(plaintext));
+  return JSON.stringify({ iv: gpsBufToB64(iv), ct: gpsBufToB64(ct) });
+}
+async function gpsDecrypt(payload){
+  try{
+    const {iv, ct} = JSON.parse(payload);
+    const key = await gpsGetCryptoKey();
+    const dec = await crypto.subtle.decrypt({name:'AES-GCM', iv: gpsB64ToBuf(iv)}, key, gpsB64ToBuf(ct));
+    return new TextDecoder().decode(dec);
+  }catch(e){ return ''; }
+}
+function hasKey(){ return !!localStorage.getItem(K_API); }
+async function getKey(){
+  const raw = localStorage.getItem(K_API);
+  if(!raw) return '';
+  if(!raw.startsWith('{')){ // 이전 버전(평문) 데이터 자동 마이그레이션
+    try{ localStorage.setItem(K_API, await gpsEncrypt(raw)); }catch(e){}
+    return raw.trim();
+  }
+  return (await gpsDecrypt(raw)).trim();
+}
+async function saveKey(){
+  const k=document.getElementById('inputKey').value.trim();
+  if(k){ localStorage.setItem(K_API, await gpsEncrypt(k)); } else { localStorage.removeItem(K_API); }
+  refreshStatus();closeModal();toast(k?'✅ API 키가 안전하게 암호화되어 저장됐어요!':'🗑️ API 키 삭제됐어요.');
+}
+function refreshStatus(){const has=hasKey();document.getElementById('apiDot').className='dot '+(has?'dot-green':'dot-amber');document.getElementById('apiTxt').textContent=has?'연결됨':'미연결';document.getElementById('apiTxt').className='text-xs font-bold '+(has?'text-green-600':'text-amber-600');document.getElementById('noKeyWarn')?.classList.toggle('hidden',has);}
+async function openModal(){document.getElementById('inputKey').value=await getKey();document.getElementById('testOut').classList.add('hidden');document.getElementById('modal').classList.add('open');}
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 async function testKey(){const k=document.getElementById('inputKey').value.trim();const out=document.getElementById('testOut'),btn=document.getElementById('btnTest');if(!k){showTO('⚠️ 키를 먼저 입력해주세요.',false);return;}btn.textContent='⏳ 테스트 중...';btn.disabled=true;out.classList.add('hidden');try{const r=await gemini(k,'연결 테스트입니다. "연결 성공"이라고만 답해주세요.');showTO('✅ '+r.slice(0,60),true);}catch(e){showTO('❌ '+e.message,false);}btn.textContent='🧪 API 키 연결 테스트';btn.disabled=false;}
 function showTO(msg,ok){const el=document.getElementById('testOut');el.textContent=msg;el.style.cssText=ok?'background:#F0FFF4;color:#276749;border:2px solid #9AE6B4;':'background:#FFF5F5;color:#C53030;border:2px solid #FEB2B2;';el.classList.remove('hidden');}
 async function gemini(key,prompt){
-  const MODELS=['gemini-2.0-flash', 'gemini-1.5-flash'];let lastErr;
+  // gemini-3.6-flash: 안정판(GA) 메인 모델. gemini-3.5-flash-lite: 무료 티어에서도 요청 한도가 넉넉한 경량 모델(대체용).
+  const MODELS=['gemini-3.6-flash', 'gemini-3.5-flash-lite'];
+  let lastErr;
   for(const model of MODELS){
     try{
-      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.7,maxOutputTokens:1024}})});
-      if(!res.ok){const e=await res.json().catch(()=>({}));const msg=e?.error?.message||`HTTP ${res.status}`;if(res.status===400||res.status===404||res.status===503||res.status===429||msg.includes('not found')||msg.includes('high demand')||msg.includes('exhausted')||msg.includes('overloaded')){lastErr=new Error(msg);continue;}throw new Error(msg);}
-      const data=await res.json();const text=data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.7,maxOutputTokens:2048}})});
+      if(!res.ok){
+        const e=await res.json().catch(()=>({}));
+        const msg=e?.error?.message||`HTTP ${res.status}`;
+        if([404,403,503,429].includes(res.status)||/not found|permission|high demand|exhausted|overloaded|quota/i.test(msg)){
+          lastErr=new Error(msg);
+          continue;
+        }
+        if(res.status===400||res.status===401){
+          throw new Error('API 키가 올바르지 않거나 만료됐어요. 설정에서 키를 다시 확인해주세요. ('+msg+')');
+        }
+        throw new Error(msg);
+      }
+      const data=await res.json();let text=data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if(!text){const r=data?.candidates?.[0]?.finishReason;throw new Error(r==='SAFETY'?'안전 정책으로 차단됨.':'빈 응답.');}
+      text = text.replace(/<think>[\s\S]*?<\/think>/gi, '').replace(/<thought>[\s\S]*?<\/thought>/gi, '').trim();
       return text;
-    }catch(e){if(e.message.includes('not found')||e.message.includes('400')||e.message.includes('404')||e.message.includes('high demand')||e.message.includes('503')){lastErr=e;continue;}throw e;}
+    }catch(e){
+      if(/not found|404|permission|high demand|503|quota|exhausted|overloaded/i.test(e.message)){
+        lastErr=e;
+        continue;
+      }
+      throw e;
+    }
   }
-  throw lastErr||new Error('사용 가능한 모델이 없습니다.');
+  throw new Error('사용 가능한 AI 모델을 찾지 못했어요. 잠시 후 다시 시도해주세요. (마지막 오류: '+(lastErr?.message||'알 수 없음')+')');
 }
 async function generateEval(){
-  const key=getKey();if(!key){openModal();toast('⚠️ API 키를 먼저 등록해주세요!');return;}
+  const key=await getKey();if(!key){openModal();toast('⚠️ API 키를 먼저 등록해주세요!');return;}
   const name=document.getElementById('studentName').value.trim()||'해당 학생';
   const subject=document.getElementById('evalSubject').value;
   const kw=document.getElementById('evalKeywords').value.trim();if(!kw){toast('✏️ 관찰 내용을 입력해주세요!');return;}
   const btn=document.getElementById('btnGenerate'),out=document.getElementById('evalResult'),err=document.getElementById('evalErr');
   err.classList.add('hidden');btn.disabled=true;btn.innerHTML='<div class="spin"></div><span>생성 중...</span>';out.value='';
-  try{out.value=await gemini(key,`당신은 대한민국 초·중·고 담임교사입니다.\n다음 관찰 기록을 바탕으로 학교생활기록부 '${subject}' 란에 기재할 전문적이고 따뜻한 문장을 3~5문장으로 작성해주세요.\n- 학생: ${name} / 영역: ${subject}\n- 관찰: ${kw}\n[규칙] 과거형 어미 일관 사용, 구체적 행동 사례 포함, 긍정·성장 중심, 주어 없이 서술어로 시작`);toast('✅ AI 평가 문장이 생성됐어요!');}
+  try{out.value=await gemini(key,`당신은 대한민국 초·중·고 담임교사입니다.\n다음 관찰 기록을 바탕으로 학교생활기록부 '${subject}' 란에 기재할 전문적이고 따뜻한 문장을 3~5문장으로 작성해주세요.\n- 학생: ${name} / 영역: ${subject}\n- 관찰: ${kw}\n[규칙]\n1. 과거형 어미 일관 사용\n2. 구체적 행동 사례 포함\n3. 긍정·성장 중심\n4. 주어 없이 서술어로 시작\n5. 마크다운 기호(*, **, # 등)를 절대 사용하지 말고 순수 텍스트로만 작성`);toast('✅ AI 평가 문장이 생성됐어요!');}
   catch(e){err.textContent='❌ '+e.message;err.classList.remove('hidden');toast('❌ 오류가 발생했어요.');}
   finally{btn.disabled=false;btn.innerHTML='✨ AI 평가 문장 생성';}
 }
@@ -4865,6 +5068,13 @@ window.showFreeGame = function(id) {
       if(b.dataset.free) b.classList.toggle('util-active', b.dataset.free === id);
     });
     initMathRunner();
+    return;
+  }
+  if (id === 'escape') {
+    document.querySelectorAll('.util-tab').forEach(b => {
+      if(b.dataset.free) b.classList.toggle('util-active', b.dataset.free === id);
+    });
+    initEscapeRoom();
     return;
   }
   if (origShowFreeGame) origShowFreeGame(id);
@@ -6006,6 +6216,7 @@ window.mrStartGame = function() {
   mrPlayer.zap = 0;
   mrPlayer.clones = 0;
   mrPlayer.weapon = 'default';
+  mrPlayer.r = 15;
   
   mrPetCounts = { dog: 0, turtle: 0, cat: 0, dragon: 0 };
   mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false };
@@ -6239,7 +6450,7 @@ window.mrShowRelicSelect = function() {
   container.innerHTML = '';
   
   const relics = [
-    { type: 'glassCannon', icon: '🍷', name: '유리 대포', desc: '데미지 3배 상승, 단 한대 맞으면 즉사' },
+    { type: 'glassCannon', icon: '🍷', name: '유리 대포', desc: '데미지 3배 상승, 단 피격 시 받는 데미지 5배' },
     { type: 'goldenBlood', icon: '🩸', name: '황금의 피', desc: '피격 시 인원수 대신 코인이 100씩 깎임' },
     { type: 'cursedPact', icon: '📜', name: '저주받은 계약', desc: '적 2배 등장, 상자 100% 드롭' }
   ].filter(r => !mrRelics[r.type]); // only show unobtained
@@ -6323,14 +6534,15 @@ function mrSpawnTrap(y, canvasWidth) {
 function triggerMrGameOver() {
   if (mrPetCounts.turtle > 0) {
     mrPetCounts.turtle--;
-    mrPlayer.count = mrRelics.glassCannon ? 1 : (50 + mrData.upgrades.count * 10);
+    mrPlayer.count = 50 + mrData.upgrades.count * 10;
+    mrPlayer.invincible = 120;
     toast('🐢 거북이가 희생하여 부활했습니다!');
     
     // Clear screen for safety
     for(let en of mrEnemies) { en.hp = 0; en.active = false; }
-    mrEnemyBullets = [];
-    mrEnemyLasers = [];
-    mrTraps = [];
+    mrEnemyBullets.length = 0;
+    mrEnemyLasers.length = 0;
+    mrTraps.length = 0;
     return;
   }
 
@@ -6369,6 +6581,7 @@ function mrLoop() {
   
   mrDistance += mrSpeed;
   mrSpeed += 0.001;
+  if(mrPlayer.invincible > 0) mrPlayer.invincible--;
   
   mrSwordsRot += 0.08;
   mrTurtlesRot += 0.04;
@@ -6544,8 +6757,7 @@ function mrLoop() {
      }
      if (hit || b.y < -50) mrBullets.splice(i, 1);
   }
-
-  let enemyBulletDmg = 1 + Math.floor((mrDistance / 1000) * 5);
+  let enemyBulletDmg = 1 + Math.floor((mrDistance / 1000) * 1.5);
   for(let i = mrEnemies.length-1; i>=0; i--) {
     let en = mrEnemies[i];
     
@@ -6590,8 +6802,10 @@ function mrLoop() {
     
     if (en.active && Math.abs(en.y - py) < en.h/2 + mrPlayer.r) {
       if (Math.abs(en.x - mrPlayer.x) < en.w/2 + mrPlayer.r * 2) {
+        if (mrPlayer.invincible > 0) continue;
         mrPlayer.count = 0;
         triggerMrGameOver();
+        break;
       }
     }
 
@@ -6609,19 +6823,19 @@ function mrLoop() {
     // Turtle blocking removed, now acts as extra life
     
     if (Math.hypot(dx, dy) < mrPlayer.r + eb.r) {
-      if(mrRelics.glassCannon) {
-        mrPlayer.count = 0;
-        triggerMrGameOver();
-      } else if(mrRelics.goldenBlood) {
+      if (mrPlayer.invincible > 0) continue;
+      let dmgTaken = eb.dmg * (mrRelics.glassCannon ? 5 : 1);
+      if(mrRelics.goldenBlood) {
         if(mrRunCoins >= 10) mrRunCoins -= 10;
-        else mrPlayer.count -= eb.dmg;
+        else mrPlayer.count -= dmgTaken;
       } else {
-        mrPlayer.count -= eb.dmg;
+        mrPlayer.count -= dmgTaken;
       }
       mrEnemyBullets.splice(i, 1);
       if (mrPlayer.count <= 0) {
         mrPlayer.count = 0;
         triggerMrGameOver();
+        break;
       }
       continue;
     }
@@ -6637,18 +6851,18 @@ function mrLoop() {
     if (ls.timer <= 30 && ls.timer > 0) {
       // Firing phase
       if (Math.abs(mrPlayer.x - ls.x) < ls.w/2 + mrPlayer.r) {
-        if(mrRelics.glassCannon) {
-          mrPlayer.count = 0;
-          triggerMrGameOver();
-        } else if(mrRelics.goldenBlood) {
+        if (mrPlayer.invincible > 0) continue;
+        let dmgTaken = ls.dmg * (mrRelics.glassCannon ? 5 : 1);
+        if(mrRelics.goldenBlood) {
           if(mrRunCoins >= 10) mrRunCoins -= 10;
-          else mrPlayer.count -= ls.dmg;
+          else mrPlayer.count -= dmgTaken;
         } else {
-          mrPlayer.count -= ls.dmg;
+          mrPlayer.count -= dmgTaken;
         }
         if (mrPlayer.count <= 0) {
           mrPlayer.count = 0;
           triggerMrGameOver();
+          break;
         }
       }
     }
@@ -6659,8 +6873,10 @@ function mrLoop() {
     let t = mrTraps[i];
     t.y += mrSpeed;
     if (t.active && Math.abs(t.y - py) < t.h/2 + mrPlayer.r && Math.abs(t.x - mrPlayer.x) < t.w/2 + mrPlayer.r * 2) {
+      if (mrPlayer.invincible > 0) continue;
       mrPlayer.count = 0;
       triggerMrGameOver();
+      break;
     }
     if (t.y > c.height + 100) mrTraps.splice(i, 1);
   }
@@ -6974,7 +7190,11 @@ function mrLoop() {
     let px = mrPlayer.x;
     if(rows > 1) px = mrPlayer.x - (rows-1)*35 + r*70;
     
-    ctx.fillStyle = (r === Math.floor(rows/2)) ? '#3b82f6' : '#60a5fa'; // main player blue, clones light blue
+    if(mrPlayer.invincible > 0 && Math.floor(mrPlayer.invincible / 5) % 2 === 0) {
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+    } else {
+      ctx.fillStyle = (r === Math.floor(rows/2)) ? '#3b82f6' : '#60a5fa'; // main player blue, clones light blue
+    }
     for(let i=0; i<maxDraw; i++) {
       let angle = i * 2.4;
       let rad = Math.sqrt(i) * 5;
@@ -6993,6 +7213,16 @@ function mrLoop() {
   ctx.strokeText(mrPlayer.count, mrPlayer.x, textY);
   ctx.fillText(mrPlayer.count, mrPlayer.x, textY);
   
+  if (mrRelics.glassCannon) {
+    ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(mrPlayer.x, py, mrPlayer.r, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.1)';
+    ctx.fill();
+  }
+  
   mrAnim = requestAnimationFrame(mrLoop);
 }
 
@@ -7000,6 +7230,69 @@ function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileRe
 
 let _tt;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2600);}
+
+function initEscapeRoom() {
+  const gc = document.getElementById('freeGameContent');
+  if(!gc) return;
+  gc.innerHTML = `
+    <div style="position:relative; width:100%; height:70vh; background:linear-gradient(135deg, #1e293b, #0f172a); border-radius:1rem; border:4px solid #334155; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-white" id="escapeContainer">
+      
+      <div id="escapeSetup" class="p-8 text-center bg-slate-800 rounded-2xl border border-slate-600 shadow-2xl w-full max-w-md">
+        <h2 class="text-3xl font-black text-amber-400 mb-2">🔐 자물쇠 설정</h2>
+        <p class="text-sm text-slate-400 mb-6">학생들이 풀어야 할 정답을 설정하세요.</p>
+        <input type="text" id="escapeAnsInput" class="w-full text-center text-2xl p-4 font-bold rounded-xl text-black uppercase mb-4 focus:ring-4 ring-amber-400 outline-none" placeholder="정답 (영어/숫자 등)">
+        <button onclick="startEscapeRoom()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 text-xl font-black rounded-xl transition-colors">자물쇠 채우기 🔒</button>
+      </div>
+
+      <div id="escapePlay" class="hidden p-8 text-center flex-col items-center w-full max-w-md">
+        <h2 class="text-5xl font-black text-red-500 mb-4 animate-pulse" style="filter: drop-shadow(0 0 10px rgba(239,68,68,0.5))">🔒 방탈출 자물쇠</h2>
+        <p class="text-lg text-slate-300 mb-8">단서를 찾아 정답을 입력하세요!</p>
+        <input type="text" id="escapeTryInput" class="w-full text-center text-4xl p-4 font-black rounded-xl text-slate-900 uppercase tracking-widest mb-6 focus:ring-4 ring-amber-400 outline-none transition-all duration-200" style="background:#f8fafc; border:4px solid #94a3b8;" autocomplete="off">
+        <button onclick="tryEscape()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 py-4 px-12 text-2xl font-black rounded-xl shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-transform active:scale-95">열기 🔑</button>
+      </div>
+      
+      <div id="escapeSuccess" class="hidden absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 flex-col items-center justify-center z-50">
+        <div class="text-[120px] mb-4 animate-bounce" style="filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2))">🔓</div>
+        <h1 class="text-6xl font-black text-white drop-shadow-lg mb-8 text-center tracking-tight">탈출 성공!</h1>
+        <button onclick="initEscapeRoom()" class="bg-white text-emerald-700 py-3 px-8 text-xl font-bold rounded-full hover:bg-gray-100 shadow-xl transition-transform active:scale-95">다시 설정하기</button>
+      </div>
+    </div>
+    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">선생님이 미리 정답을 설정해두면, 학생들이 정답을 입력해 방탈출을 완료할 수 있습니다.</p>
+  `;
+}
+
+let escapeAnswer = '';
+
+window.startEscapeRoom = function() {
+  const ans = document.getElementById('escapeAnsInput').value.trim().toUpperCase();
+  if(!ans) { toast('⚠️ 정답을 입력해주세요!'); return; }
+  escapeAnswer = ans;
+  document.getElementById('escapeSetup').classList.add('hidden');
+  document.getElementById('escapePlay').classList.remove('hidden');
+  document.getElementById('escapePlay').classList.add('flex');
+  document.getElementById('escapeTryInput').value = '';
+}
+
+window.tryEscape = function() {
+  const tr = document.getElementById('escapeTryInput').value.trim().toUpperCase();
+  if (tr === escapeAnswer) {
+    document.getElementById('escapePlay').classList.add('hidden');
+    document.getElementById('escapePlay').classList.remove('flex');
+    document.getElementById('escapeSuccess').classList.remove('hidden');
+    document.getElementById('escapeSuccess').classList.add('flex');
+    try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=1046.50;g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start(c.currentTime);o.stop(c.currentTime+.5);}catch(e){} // success beep
+  } else {
+    const inp = document.getElementById('escapeTryInput');
+    inp.style.background = '#fca5a5';
+    inp.style.transform = 'translateX(-10px)';
+    setTimeout(()=>inp.style.transform='translateX(10px)', 50);
+    setTimeout(()=>inp.style.transform='none', 100);
+    setTimeout(()=>inp.style.background='#f8fafc', 300);
+    inp.value = '';
+    toast('❌ 비밀번호가 틀렸습니다!');
+    try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=200;g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start(c.currentTime);o.stop(c.currentTime+.3);}catch(e){} // error beep
+  }
+}
 </script>
 </body>
 </html>
