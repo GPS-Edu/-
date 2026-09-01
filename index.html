@@ -5535,13 +5535,23 @@ let mrAltars = [];
 let mrDragonTimer = 0;
 let mrEnIdCounter = 0;
 
+let mrPetCounts = { dog: 0, turtle: 0, cat: 0, dragon: 0 };
+let mrTurtlesRot = 0;
+let mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false };
+let mrBiomes = [
+  { dist: 0, colors: ['#dcfce7', '#f0fdf4'] },
+  { dist: 10000, colors: ['#e0f2fe', '#f0f9ff'] },
+  { dist: 20000, colors: ['#fecaca', '#fef2f2'] },
+  { dist: 30000, colors: ['#e9d5ff', '#faf5ff'] }
+];
+
 function initMathRunner() {
   if (window.gpsActiveView && window.gpsActiveView !== 'math_runner') return;
   const gc = document.getElementById('freeGameContent');
   if(!gc) return;
   
   gc.innerHTML = `
-    <div style="position:relative; width:100%; height:70vh; background:linear-gradient(to bottom, #dcfce7, #f0fdf4); border-radius:1rem; border:4px solid #34495e; overflow:hidden; touch-action:none;">
+    <div id="mrGameWrapper" style="position:relative; width:100%; height:70vh; background:linear-gradient(to bottom, #dcfce7, #f0fdf4); border-radius:1rem; border:4px solid #34495e; overflow:hidden; touch-action:none; transition: background 2s;">
       
       <div id="mrStartScreen" class="absolute inset-0 bg-slate-800 flex flex-col items-center justify-center text-white z-50">
         <h2 class="text-4xl font-black text-amber-400 mb-2">🏃 수학 런너 (Math Row)</h2>
@@ -5600,6 +5610,13 @@ function initMathRunner() {
         <h2 class="text-3xl font-black text-amber-400 mb-6 drop-shadow-lg">보상 선택!</h2>
         <div id="mrItemContainer" class="flex gap-3 px-4"></div>
       </div>
+      
+      <div id="mrRelicSelect" class="hidden absolute inset-0 bg-black/80 flex-col items-center justify-center text-white z-50">
+        <h2 class="text-3xl font-black text-purple-400 mb-6 drop-shadow-lg text-center">💀 저주받은 유물 발견!</h2>
+        <p class="text-sm text-slate-300 mb-6 text-center">유물은 강력하지만 치명적인 대가를 요구합니다.</p>
+        <div id="mrRelicContainer" class="flex gap-4 px-4 flex-wrap justify-center"></div>
+        <button onclick="mrSkipRelic()" class="mt-8 text-slate-400 underline">건너뛰기</button>
+      </div>
     </div>
     <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">좌우로 드래그하여 이동하세요! 몬스터를 요격하고, 상자를 부숴 보상을 얻으세요!<br>가시 함정을 피하고, 다양한 게이트로 스펙을 올려보세요.</p>
   `;
@@ -5649,6 +5666,11 @@ window.mrStartGame = function() {
   mrPlayer.zap = 0;
   mrPlayer.clones = 0;
   mrPlayer.weapon = 'default';
+  
+  mrPetCounts = { dog: 0, turtle: 0, cat: 0, dragon: 0 };
+  mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false };
+  let wrap = document.getElementById('mrGameWrapper');
+  if(wrap) wrap.style.background = `linear-gradient(to bottom, ${mrBiomes[0].colors[0]}, ${mrBiomes[0].colors[1]})`;
   
   mrSpeed = 3.5;
   mrDistance = 0;
@@ -5754,35 +5776,43 @@ function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
     burnLevel: 0
   };
   
+  let enObj;
   if (isBoss) {
     let bossMult = 5.0 + diff * 1.5;
-    mrEnemies.push({
+    enObj = {
       ...baseEnemy,
       isBoss: true,
       x: canvasWidth / 2,
       w: canvasWidth * 1.2, h: 80, // Unavoidable
       hp: power * bossMult,
       maxHp: power * bossMult
-    });
+    };
   } else {
-    mrEnemies.push({
+    enObj = {
       ...baseEnemy,
       isBoss: false,
       x: (Math.random() > 0.5) ? canvasWidth*0.25 : canvasWidth*0.75,
       w: 80, h: 80
-    });
+    };
   }
+  mrEnemies.push(enObj);
+  return enObj;
 }
 
 function mrRewardEnemy(en) {
-  // 50% chance for normal monsters to drop a chest, 100% for bosses
-  if (!en.isBoss && Math.random() > 0.5) return;
+  let dropChance = mrRelics.cursedPact ? 1.0 : 0.5;
+  if (!en.isBoss && Math.random() > dropChance) return;
+  
+  if (mrPetCounts.cat > 0 && Math.random() < (0.1 * mrPetCounts.cat)) {
+    mrRunCoins += 5; // Cat pet coins
+  }
   
   mrChests.push({
     x: en.x,
     y: en.y,
     w: 50, h: 50,
     isBoss: en.isBoss,
+    isRelic: (en.isBoss && Math.random() < 0.25),
     active: true
   });
 }
@@ -5829,7 +5859,15 @@ window.mrSelectItem = function(type, isBoss) {
   else if(type === 'dmg') { mrPlayer.dmg += (isBoss ? 3 : 0.2); toast(`💥 공격력 상승!`); }
   else if(type === 'rate') { mrPlayer.rate += (isBoss ? 3 : 0.2); toast(`⚡ 연사속도 상승!`); }
   else if(type === 'sword') { mrPlayer.swords += (isBoss ? 2 : 1); toast(`⚔️ 회전검 획득!`); }
-  else if(type === 'pet') { mrPlayer.pets += (isBoss ? 2 : 1); toast(`🐶 펫 획득!`); }
+  else if(type === 'pet') {
+    let petTypes = ['dog', 'turtle', 'cat', 'dragon'];
+    let count = isBoss ? 2 : 1;
+    for(let i=0; i<count; i++) {
+      let pt = petTypes[Math.floor(Math.random()*petTypes.length)];
+      mrPetCounts[pt]++;
+    }
+    toast(`🐶 펫 획득!`);
+  }
   else if(type === 'heal') { mrPlayer.count += (isBoss ? 50 : 2); toast(`💖 대량 회복!`); }
   else if(type === 'ice') { mrPlayer.ice += (isBoss ? 3 : 1); toast(`🧊 얼음 속성 강화!`); }
   else if(type === 'fire') { mrPlayer.fire += (isBoss ? 3 : 1); toast(`🔥 불꽃 속성 강화!`); }
@@ -5840,6 +5878,49 @@ window.mrSelectItem = function(type, isBoss) {
   
   document.getElementById('mrItemSelect').classList.add('hidden');
   document.getElementById('mrItemSelect').classList.remove('flex');
+  mrLastShot = Date.now();
+  mrIsPaused = false;
+};
+
+window.mrShowRelicSelect = function() {
+  mrIsPaused = true;
+  const container = document.getElementById('mrRelicContainer');
+  container.innerHTML = '';
+  
+  const relics = [
+    { type: 'glassCannon', icon: '🍷', name: '유리 대포', desc: '데미지 3배 상승, 단 한대 맞으면 즉사' },
+    { type: 'goldenBlood', icon: '🩸', name: '황금의 피', desc: '피격 시 인원수 대신 코인이 100씩 깎임' },
+    { type: 'cursedPact', icon: '📜', name: '저주받은 계약', desc: '적 2배 등장, 상자 100% 드롭' }
+  ].filter(r => !mrRelics[r.type]); // only show unobtained
+  
+  if (relics.length === 0) {
+    mrSkipRelic();
+    return;
+  }
+  
+  // pick up to 2
+  let chosen = relics.sort(() => 0.5 - Math.random()).slice(0, 2);
+  chosen.forEach((opt) => {
+    let btn = document.createElement('button');
+    btn.className = "bg-slate-900 hover:bg-slate-800 border-2 border-purple-600 rounded-xl p-4 flex flex-col items-center transition-transform hover:scale-105 w-32";
+    btn.innerHTML = `<span class="text-4xl mb-2">${opt.icon}</span><span class="font-bold text-sm text-purple-200 mb-1 break-keep">${opt.name}</span><span class="text-xs text-slate-400 text-center break-keep">${opt.desc}</span>`;
+    btn.onclick = () => mrSelectRelic(opt.type);
+    container.appendChild(btn);
+  });
+  
+  document.getElementById('mrRelicSelect').classList.remove('hidden');
+  document.getElementById('mrRelicSelect').classList.add('flex');
+};
+
+window.mrSelectRelic = function(type) {
+  mrRelics[type] = true;
+  toast(`💀 유물 획득!`);
+  mrSkipRelic();
+};
+
+window.mrSkipRelic = function() {
+  document.getElementById('mrRelicSelect').classList.add('hidden');
+  document.getElementById('mrRelicSelect').classList.remove('flex');
   mrLastShot = Date.now();
   mrIsPaused = false;
 };
@@ -5912,8 +5993,12 @@ function mrLoop() {
   }
   
   if (mrRewardQueue.length > 0) {
-    let isBoss = mrRewardQueue.shift();
-    mrShowItemSelect(isBoss);
+    let rw = mrRewardQueue.shift();
+    if(rw.isRelic) {
+      mrShowRelicSelect();
+    } else {
+      mrShowItemSelect(rw.isBoss);
+    }
     mrAnim = requestAnimationFrame(mrLoop);
     return;
   }
@@ -5922,7 +6007,19 @@ function mrLoop() {
   mrSpeed += 0.001;
   
   mrSwordsRot += 0.08;
+  mrTurtlesRot += 0.04;
   const py = c.height - 120;
+  
+  // Background Biomes logic
+  let currentBiome = mrBiomes[0];
+  for(let b of mrBiomes) {
+    if (mrDistance > b.dist) currentBiome = b;
+  }
+  let wrap = document.getElementById('mrGameWrapper');
+  if(wrap && wrap.dataset.biome !== currentBiome.colors[0]) {
+    wrap.dataset.biome = currentBiome.colors[0];
+    wrap.style.background = `linear-gradient(to bottom, ${currentBiome.colors[0]}, ${currentBiome.colors[1]})`;
+  }
   
   // Sword damage
   if (mrPlayer.swords > 0) {
@@ -5970,20 +6067,30 @@ function mrLoop() {
     if (g.y > c.height + 100) mrGates.splice(i, 1);
   }
   
+  let isChain = (mrPlayer.weapon === 'blue' && mrPlayer.zap >= 5);
+  let isMeteor = (mrPlayer.weapon === 'red' && mrPlayer.fire >= 5);
+  let isFrost = (mrPlayer.weapon === 'sword' && mrPlayer.ice >= 5);
+  
   const now = Date.now();
   let baseInterval = Math.max(100, 300 - mrPlayer.rate * 20);
   let fireRateMult = (mrPlayer.weapon === 'blue') ? 0.5 : (mrPlayer.weapon === 'red' ? 1.5 : 1.0);
+  if (isChain) fireRateMult = 0.25;
   let shootInterval = baseInterval * fireRateMult;
   
   if (now - mrLastShot > shootInterval) {
     mrLastShot = now;
     let num = Math.min(mrPlayer.count, 30);
     let baseBulletDmg = mrPlayer.dmg + (mrPlayer.count / num);
+    if(mrRelics.glassCannon) baseBulletDmg *= 3;
     
     let wDmgMult = (mrPlayer.weapon === 'red') ? 2.0 : (mrPlayer.weapon === 'blue' ? 0.5 : (mrPlayer.weapon === 'sword' ? 0.8 : 1.0));
     let bulletDmg = baseBulletDmg * wDmgMult;
     let bulletColor = (mrPlayer.weapon === 'red') ? '#ef4444' : (mrPlayer.weapon === 'blue' ? '#3b82f6' : (mrPlayer.weapon === 'sword' ? '#94a3b8' : '#f59e0b'));
     let bulletW = (mrPlayer.weapon === 'red') ? 16 : (mrPlayer.weapon === 'sword' ? 24 : 6);
+    
+    if (isChain) bulletColor = '#22d3ee'; // cyan
+    if (isMeteor) { bulletColor = '#ea580c'; bulletW = 40; } // orange, huge
+    if (isFrost) bulletColor = '#93c5fd';
     
     let spread = Math.min(num * 12, 140);
     let rows = mrPlayer.clones + 1;
@@ -5996,17 +6103,13 @@ function mrLoop() {
       for(let i=0; i<num; i++) {
          let bx = originX;
          if (num > 1) bx = originX - spread/2 + (spread / (num-1)) * i;
-         mrBullets.push({ x: bx, y: py - 20, dmg: bulletDmg, color: bulletColor, w: bulletW, wType: mrPlayer.weapon, hitIds: [] });
+         mrBullets.push({ x: bx, y: py - 20, dmg: bulletDmg, color: bulletColor, w: bulletW, wType: mrPlayer.weapon, hitIds: [], isMeteor: isMeteor, isFrost: isFrost, isChain: isChain });
       }
     }
     
-    let dragons = Math.floor(mrPlayer.pets / 9);
-    let lions = Math.floor((mrPlayer.pets % 9) / 3);
-    let dogs = mrPlayer.pets % 3;
     let petList = [];
-    for(let i=0; i<dragons; i++) petList.push({ dmg: 9, color: '#ef4444' });
-    for(let i=0; i<lions; i++) petList.push({ dmg: 3, color: '#f97316' });
-    for(let i=0; i<dogs; i++) petList.push({ dmg: 1, color: '#3b82f6' });
+    for(let i=0; i<mrPetCounts.dragon; i++) petList.push({ dmg: 9, color: '#ef4444' });
+    for(let i=0; i<mrPetCounts.cat; i++) petList.push({ dmg: 2, color: '#facc15' });
     
     for(let p=0; p<petList.length; p++) {
        let pt = petList[p];
@@ -6026,24 +6129,40 @@ function mrLoop() {
              b.hitIds.push(en.id);
            }
            en.hp -= b.dmg;
-           if (b.wType !== 'sword') hit = true;
+           if (b.wType !== 'sword' && !b.isMeteor) hit = true;
+           if (b.isMeteor && b.wType !== 'sword') hit = true; // Meteor dies on hit, but explodes
            
            if (en.hp <= 0) {
               en.active = false;
               mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
               mrRewardEnemy(en);
            } else {
-             if(mrPlayer.ice > 0) { en.frozenTimer = 60; en.frozenLevel = mrPlayer.ice; }
-             if(mrPlayer.fire > 0) { en.burnTimer = 120; en.burnLevel = mrPlayer.fire; }
-             if(mrPlayer.zap > 0) {
+             if(mrPlayer.ice > 0 || b.isFrost) { en.frozenTimer = b.isFrost ? 120 : 60; en.frozenLevel = mrPlayer.ice; }
+             if(mrPlayer.fire > 0 || b.isMeteor) { en.burnTimer = b.isMeteor ? 180 : 120; en.burnLevel = mrPlayer.fire; }
+             
+             let doZap = (mrPlayer.zap > 0);
+             if (doZap) {
+               let zapRadius = b.isChain ? 300 : 150;
+               let zapDmg = b.isChain ? b.dmg * mrPlayer.zap : b.dmg * mrPlayer.zap * 0.5;
                for(let e2 of mrEnemies) {
-                 if(e2.active && e2 !== en && Math.hypot(e2.x-en.x, e2.y-en.y) < 150) {
-                   e2.hp -= b.dmg * mrPlayer.zap * 0.5;
+                 if(e2.active && e2 !== en && Math.hypot(e2.x-en.x, e2.y-en.y) < zapRadius) {
+                   e2.hp -= zapDmg;
                    mrZaps.push({x1: en.x, y1: en.y, x2: e2.x, y2: e2.y, timer: 5});
                  }
                }
              }
            }
+           
+           if (b.isMeteor) {
+             // Meteor splash
+             for(let e2 of mrEnemies) {
+               if(e2.active && e2 !== en && Math.hypot(e2.x-b.x, e2.y-b.y) < 150) {
+                 e2.hp -= b.dmg;
+                 e2.burnTimer = 180; e2.burnLevel = mrPlayer.fire;
+               }
+             }
+           }
+           
            if (hit) break;
         }
      }
@@ -6077,12 +6196,20 @@ function mrLoop() {
     
     if (en.active && en.y > 0 && en.y < py - 100) {
       let now = Date.now();
-      if (now - en.lastShot > (en.isBoss ? 1000 : 1800)) {
+      let shotDelay = en.isBoss ? 1000 : (en.isElite ? 1200 : 1800);
+      if (now - en.lastShot > shotDelay) {
         en.lastShot = now;
         if(en.isBoss) {
           for(let ang of [-0.6, -0.3, 0, 0.3, 0.6]) {
             mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: Math.sin(ang)*4, vy: Math.cos(ang)*4, r: 8, dmg: enemyBulletDmg * 2 });
           }
+        } else if (en.isElite) {
+          let dx = mrPlayer.x - en.x;
+          let dy = py - (en.y + en.h/2);
+          let dist = Math.hypot(dx, dy);
+          let vx = (dx/dist)*5;
+          let vy = (dy/dist)*5;
+          mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: vx, vy: vy, r: 10, dmg: enemyBulletDmg * 3, isHoming: true });
         } else {
           mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: 0, vy: 5, r: 6, dmg: enemyBulletDmg });
         }
@@ -6108,12 +6235,48 @@ function mrLoop() {
   
   for(let i=mrEnemyBullets.length-1; i>=0; i--) {
     let eb = mrEnemyBullets[i];
+    
+    if(eb.isHoming) {
+      let dx = mrPlayer.x - eb.x;
+      let dy = py - eb.y;
+      let dist = Math.hypot(dx, dy);
+      if(dist > 50) {
+        eb.vx = eb.vx * 0.95 + (dx/dist)*0.3;
+        eb.vy = eb.vy * 0.95 + (dy/dist)*0.3;
+      }
+    }
+    
     eb.x += eb.vx;
     eb.y += eb.vy;
     let dx = eb.x - mrPlayer.x;
     let dy = eb.y - py;
-    if (Math.sqrt(dx*dx + dy*dy) < mrPlayer.r + eb.r) {
-      mrPlayer.count -= eb.dmg;
+    
+    // Turtle blocks bullets
+    let blocked = false;
+    if(mrPetCounts.turtle > 0) {
+      let tr = 70;
+      for(let t=0; t<mrPetCounts.turtle; t++) {
+        let tAng = mrTurtlesRot + (Math.PI*2 / mrPetCounts.turtle) * t;
+        let tx = mrPlayer.x + Math.cos(tAng)*tr;
+        let ty = py + Math.sin(tAng)*tr;
+        if(Math.hypot(eb.x - tx, eb.y - ty) < 20) {
+          blocked = true;
+          break;
+        }
+      }
+    }
+    if(blocked) { mrEnemyBullets.splice(i, 1); continue; }
+    
+    if (Math.hypot(dx, dy) < mrPlayer.r + eb.r) {
+      if(mrRelics.glassCannon) {
+        mrPlayer.count = 0;
+        triggerMrGameOver();
+      } else if(mrRelics.goldenBlood) {
+        if(mrRunCoins >= 100) mrRunCoins -= 100;
+        else mrPlayer.count -= eb.dmg;
+      } else {
+        mrPlayer.count -= eb.dmg;
+      }
       mrEnemyBullets.splice(i, 1);
       if (mrPlayer.count <= 0) {
         mrPlayer.count = 0;
@@ -6127,20 +6290,26 @@ function mrLoop() {
   for(let i = mrTraps.length-1; i>=0; i--) {
     let t = mrTraps[i];
     t.y += mrSpeed;
-    if (t.active && Math.abs(t.y - py) < t.h/2 + mrPlayer.r) {
-      if (Math.abs(t.x - mrPlayer.x) < t.w/2 + mrPlayer.r * 2) {
+    if (t.active && Math.abs(t.y - py) < t.h/2 + mrPlayer.r && Math.abs(t.x - mrPlayer.x) < t.w/2 + mrPlayer.r * 2) {
+      if(mrRelics.glassCannon) {
+        mrPlayer.count = 0;
+        triggerMrGameOver();
+      } else if(mrRelics.goldenBlood) {
+        if(mrRunCoins >= 10) mrRunCoins -= 10;
+        else mrPlayer.count -= 1;
+      } else {
         mrPlayer.count -= 1; // rapid damage
-        if (mrPlayer.count < 1) {
-          mrPlayer.count = 0;
-          triggerMrGameOver();
-        }
+      }
+      if (mrPlayer.count < 1) {
+        mrPlayer.count = 0;
+        triggerMrGameOver();
       }
     }
     if (t.y > c.height + 100) mrTraps.splice(i, 1);
   }
   
   // Dog Magnet for Chests
-  let dogCount = mrPlayer.pets % 3;
+  let dogCount = mrPetCounts.dog;
   if(dogCount > 0) {
     let pullSpeed = 0.015 * dogCount;
     for(let ch of mrChests) {
@@ -6160,7 +6329,7 @@ function mrLoop() {
     if (ch.active && Math.abs(ch.y - py) < ch.h/2 + mrPlayer.r) {
       if (Math.abs(ch.x - mrPlayer.x) < ch.w/2 + mrPlayer.r * 2) {
         ch.active = false;
-        mrRewardQueue.push(ch.isBoss);
+        mrRewardQueue.push({ isBoss: ch.isBoss, isRelic: ch.isRelic });
       }
     }
     if (ch.y > c.height + 100) mrChests.splice(i, 1);
@@ -6195,12 +6364,20 @@ function mrLoop() {
   if (mrDistance > 1000 && mrDistance % 8000 < mrSpeed) mrAltars.push({x: c.width/2, y: -100, w: 60, h: 60, active: true});
   
   if (mrDistance > 100 && mrDistance % 800 < mrSpeed && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
-    if (Math.random() < 0.2) {
-      mrSpawnEnemy(-100, c.width, true);
-    } else {
-      let count = 1 + Math.floor(Math.random() * 3); // 1 to 3 enemies
-      for(let i=0; i<count; i++) {
-        mrSpawnEnemy(-100 - i*70, c.width, false);
+    let spawnLoops = mrRelics.cursedPact ? 2 : 1;
+    for(let sl=0; sl<spawnLoops; sl++) {
+      if (Math.random() < 0.2) {
+        mrSpawnEnemy(-100 - sl*80, c.width, true);
+      } else {
+        let count = 1 + Math.floor(Math.random() * 3); // 1 to 3 enemies
+        for(let i=0; i<count; i++) {
+          let en = mrSpawnEnemy(-100 - i*70 - sl*80, c.width, false);
+          if (mrDistance > 10000 && Math.random() < 0.1) {
+            en.isElite = true;
+            en.hp *= 3; en.maxHp *= 3;
+            en.w = 100; en.h = 100;
+          }
+        }
       }
     }
   }
@@ -6243,7 +6420,8 @@ function mrLoop() {
       ctx.font = '40px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(ch.isBoss ? '👑' : '🎁', ch.x, ch.y);
+      if (ch.isRelic) ctx.fillText('💀', ch.x, ch.y);
+      else ctx.fillText(ch.isBoss ? '👑' : '🎁', ch.x, ch.y);
     }
   }
   
@@ -6270,6 +6448,12 @@ function mrLoop() {
         ctx.fillRect(en.x - en.w/2, en.y - en.h/2, en.w, en.h);
         ctx.fillStyle = '#854d0e';
         ctx.fillRect(en.x - en.w/2, en.y - 10, en.w, 20);
+      } else if(en.isElite) {
+        ctx.fillStyle = en.frozenTimer > 0 ? '#60a5fa' : (en.burnTimer > 0 ? '#f97316' : '#9333ea');
+        ctx.fillRect(en.x - en.w/2, en.y - en.h/2, en.w, en.h);
+        ctx.fillStyle = '#fff';
+        ctx.font = '30px Arial';
+        ctx.fillText('👿', en.x, en.y - 35);
       } else {
         ctx.fillStyle = en.frozenTimer > 0 ? '#60a5fa' : (en.burnTimer > 0 ? '#f97316' : '#ef4444');
         ctx.fillRect(en.x - en.w/2, en.y - en.h/2, en.w, en.h);
@@ -6333,18 +6517,26 @@ function mrLoop() {
     if(z.timer <= 0) mrZaps.splice(i, 1);
   }
   
-  let dragonsDraw = Math.floor(mrPlayer.pets / 9);
-  let lionsDraw = Math.floor((mrPlayer.pets % 9) / 3);
-  let dogsDraw = mrPlayer.pets % 3;
-  let petDrawList = [];
-  for(let i=0; i<dragonsDraw; i++) petDrawList.push('🐲');
-  for(let i=0; i<lionsDraw; i++) petDrawList.push('🦁');
-  for(let i=0; i<dogsDraw; i++) petDrawList.push('🐶');
+  let petList = [];
+  for(let i=0; i<mrPetCounts.dragon; i++) petList.push('🐲');
+  for(let i=0; i<mrPetCounts.cat; i++) petList.push('🐈');
+  for(let i=0; i<mrPetCounts.dog; i++) petList.push('🐶');
   
-  for(let p=0; p<petDrawList.length; p++) {
+  for(let p=0; p<petList.length; p++) {
      let px = mrPlayer.x + ((p%2===0)?-1:1) * (40 + Math.floor(p/2)*30);
      ctx.font = '24px Arial';
-     ctx.fillText(petDrawList[p], px, py);
+     ctx.fillText(petList[p], px, py);
+  }
+  
+  if (mrPetCounts.turtle > 0) {
+    let tr = 70;
+    for(let t=0; t<mrPetCounts.turtle; t++) {
+      let tAng = mrTurtlesRot + (Math.PI*2 / mrPetCounts.turtle) * t;
+      let tx = mrPlayer.x + Math.cos(tAng)*tr;
+      let ty = py + Math.sin(tAng)*tr;
+      ctx.font = '24px Arial';
+      ctx.fillText('🐢', tx, ty);
+    }
   }
   
   if (mrPlayer.swords > 0) {
