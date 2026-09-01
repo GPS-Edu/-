@@ -174,6 +174,27 @@ body.theme-dark #tText { fill: var(--d-text) !important; }
 body.theme-dark .text-gray-800, body.theme-dark .text-gray-700, body.theme-dark .text-gray-600 { color: var(--d-text) !important; }
 body.theme-dark .text-gray-500, body.theme-dark .text-gray-400 { color: var(--d-text-muted) !important; }
 body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: var(--d-surface) !important; border-color: var(--d-border) !important; }
+body.theme-dark .hover\:bg-slate-100:hover,
+body.theme-dark .hover\:bg-gray-100:hover,
+body.theme-dark .hover\:bg-gray-200:hover,
+body.theme-dark .hover\:bg-blue-50:hover,
+body.theme-dark .hover\:bg-blue-100:hover,
+body.theme-dark .hover\:bg-orange-100:hover {
+  background-color: var(--d-border) !important;
+  color: var(--d-text) !important;
+}
+@keyframes wbFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(3deg); }
+}
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+.animate-blob { animation: blob 7s infinite; }
+.animation-delay-2000 { animation-delay: 2s; }
 </style>
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800 bg-slate-50">
@@ -183,8 +204,9 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: va
   <div class="sidebar-hd flex items-center gap-3">
     <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-xl shadow-sm border border-indigo-100">🎒</div>
     <div>
+      <p class="text-[10px] font-bold text-slate-500 mb-0.5">교육의</p>
       <h1 class="text-[17px] font-black text-slate-800 tracking-tight leading-tight">G.P.S Edu</h1>
-      <p class="text-[10px] font-bold text-slate-500">Teacher Suite & Arcade</p>
+      <p class="text-[10px] font-bold text-slate-500 mt-0.5">Teacher Suite & Arcade</p>
     </div>
   </div>
   <nav class="flex-1 overflow-y-auto px-4 pt-6 pb-3 space-y-1 custom-scrollbar">
@@ -209,6 +231,10 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: va
         <button onclick="switchTab('management'); showMgmt('group')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">👥 모둠 구성</button>
       </div>
     </div>
+    
+    <button onclick="switchTab('whiteboard')" data-target="whiteboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+      <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">🖥️</span>전자칠판 화면
+    </button>
     
     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider pt-5 pb-1.5 px-1">🕹️ Edu Arcade</p>
     <button onclick="switchTab('economy')" data-target="economy" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
@@ -262,20 +288,30 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: va
       </div>
     </div>
     
-    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider pt-5 pb-1.5 px-1">🌐 External Links</p>
-    <div class="space-y-1">
-      <a href="https://www.i-scream.co.kr" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
-        <span class="opacity-80">🍦</span><span>아이스크림 (i-Scream)</span>
-      </a>
-      <a href="https://www.indischool.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
-        <span class="opacity-80">🏫</span><span>인디스쿨 (Indischool)</span>
-      </a>
-      <a href="https://www.youtube.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
-        <span class="opacity-80">▶️</span><span>유튜브 (YouTube)</span>
-      </a>
-      <a href="https://www.naver.com" target="_blank" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
-        <span class="opacity-80">🟢</span><span>네이버 (Naver)</span>
-      </a>
+    <button onclick="switchTab('education')" data-target="education" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold mt-2">
+      <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">📚</span>교육자료
+    </button>
+    
+    <div class="pt-2">
+      <button onclick="toggleSupportMenu()" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold">
+        <span class="icon-bg w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0 transition-colors">🔗</span>
+        <span class="flex-1 text-left">교사지원사이트</span>
+        <span id="supportArrow" class="text-slate-400 text-[10px] transition-transform">▶</span>
+      </button>
+      <div id="supportSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
+        <a href="https://www.i-scream.co.kr" target="_blank" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+          <span class="opacity-80">🍦</span><span>아이스크림 (i-Scream)</span>
+        </a>
+        <a href="https://www.indischool.com" target="_blank" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+          <span class="opacity-80">🏫</span><span>인디스쿨 (Indischool)</span>
+        </a>
+        <a href="https://www.youtube.com" target="_blank" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+          <span class="opacity-80">▶️</span><span>유튜브 (YouTube)</span>
+        </a>
+        <a href="https://www.naver.com" target="_blank" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
+          <span class="opacity-80">🟢</span><span>네이버 (Naver)</span>
+        </a>
+      </div>
     </div>
   </nav>
   
@@ -307,66 +343,150 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: va
   <div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
 
     <!-- 대시보드 -->
-    <section id="dashboard" class="tab-content active max-w-5xl mx-auto space-y-6">
-      <!-- 웰컴 배너 -->
-      <div class="rounded-2xl p-6 text-white relative overflow-hidden shadow-sm bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 border border-indigo-200">
-        <div class="relative z-10 flex items-start gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl shadow-sm border border-white/30">🏫</div>
-          <div class="flex-1">
-            <h3 class="text-xl font-black mb-1">G.P.S 스마트 에듀 플랫폼</h3>
-            <p class="text-indigo-100 text-sm mb-4 font-medium">학생 주도적 참여를 이끌어내는 차세대 교실 플랫폼입니다. 모든 활동 데이터는 로컬 환경에 안전하게 보관됩니다.</p>
-            <div class="flex flex-wrap gap-2">
-              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">🔒 최고 수준의 데이터 보안</span>
-              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">📊 맞춤형 학습 분석</span>
-              <span class="px-3 py-1 text-[11px] font-bold rounded-lg bg-white/20 backdrop-blur border border-white/20">⚡ 융합형 에듀테크</span>
+    <section id="dashboard" class="tab-content active max-w-6xl mx-auto space-y-8 pb-10">
+      <!-- 웰컴 배너 (Hero Section) -->
+      <div class="relative rounded-[2rem] p-8 md:p-10 overflow-hidden shadow-sm border border-indigo-50" style="background: linear-gradient(120deg, #EEF2FF 0%, #F5F3FF 50%, #FDF2F8 100%);">
+        <div class="relative z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-md text-indigo-700 font-bold text-xs mb-4 shadow-sm border border-white/50">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> G.P.S 스마트 에듀 플랫폼
+          </div>
+          <h2 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tight leading-tight mb-3">선생님, 오늘 하루도 응원합니다! 🌟</h2>
+          <p class="text-slate-600 font-medium text-sm md:text-base max-w-xl leading-relaxed">
+            학생 주도적 참여를 이끌어내는 교실 통합 플랫폼입니다.<br>
+            평가 자동화부터 미니게임까지 모든 기능을 안전하게 사용하세요.
+          </p>
+          
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button onclick="switchTab('whiteboard')" class="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-sm shadow-md hover:bg-indigo-700 transition-transform hover:-translate-y-0.5 flex items-center gap-2">
+              🖥️ 전자칠판 띄우기
+            </button>
+            <button onclick="switchTab('evaluation')" class="px-5 py-2.5 rounded-xl bg-white text-indigo-600 font-bold text-sm shadow-sm border border-indigo-100 hover:bg-indigo-50 transition-transform hover:-translate-y-0.5 flex items-center gap-2">
+              📝 AI 평가 시작하기
+            </button>
+          </div>
+        </div>
+        <!-- Decorative Blobs -->
+        <div class="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
+        <div class="absolute -bottom-8 right-32 w-72 h-72 bg-gradient-to-br from-pink-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <!-- 퀵 메뉴 (좌측 8칸) -->
+        <div class="md:col-span-8 space-y-4">
+          <div class="flex items-center justify-between pl-1">
+            <h3 class="font-black text-slate-800 text-lg flex items-center gap-2">🚀 가장 많이 쓰는 기능</h3>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <button onclick="switchTab('utility'); showUtil('timer')" class="group p-5 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all text-center flex flex-col items-center gap-3">
+              <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">⏳</div>
+              <span class="font-bold text-slate-700 text-sm group-hover:text-indigo-600 transition-colors">수업 타이머</span>
+            </button>
+            <button onclick="switchTab('management'); showMgmt('seat')" class="group p-5 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-200 transition-all text-center flex flex-col items-center gap-3">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">🪑</div>
+              <span class="font-bold text-slate-700 text-sm group-hover:text-emerald-600 transition-colors">자리 배치</span>
+            </button>
+            <button onclick="switchTab('economy')" class="group p-5 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-amber-200 transition-all text-center flex flex-col items-center gap-3">
+              <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">💰</div>
+              <span class="font-bold text-slate-700 text-sm group-hover:text-amber-600 transition-colors">경제 놀이</span>
+            </button>
+            <button onclick="switchTab('freegame'); showFreeGame('math_runner')" class="group p-5 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-rose-200 transition-all text-center flex flex-col items-center gap-3">
+              <div class="w-14 h-14 rounded-2xl bg-rose-50 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform duration-300">🏃</div>
+              <span class="font-bold text-slate-700 text-sm group-hover:text-rose-600 transition-colors">수학 런너</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 상태 위젯 (우측 4칸) -->
+        <div class="md:col-span-4 space-y-4">
+          <h3 class="font-black text-slate-800 text-lg flex items-center gap-2 pl-1">📊 현황 요약</h3>
+          
+          <!-- 데이터 백업 -->
+          <div class="p-6 rounded-3xl bg-slate-800 text-white shadow-lg relative overflow-hidden flex flex-col justify-between group h-[120px]">
+            <div class="relative z-10 flex items-start justify-between">
+              <div>
+                <p class="text-slate-300 font-bold text-xs mb-1">안전 보관중인 평가 기록</p>
+                <p class="text-3xl font-black tabular-nums tracking-tight"><span id="recCount">0</span><span class="text-sm text-slate-400 font-medium ml-1">건</span></p>
+              </div>
+              <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-lg">💾</div>
+            </div>
+            <button onclick="exportData()" class="relative z-10 mt-auto w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-xs font-bold flex items-center justify-center gap-1 opacity-90 hover:opacity-100">
+              📥 전체 데이터 백업하기
+            </button>
+            <div class="absolute -bottom-8 -right-8 text-9xl opacity-5 group-hover:scale-105 transition-transform duration-500">📝</div>
+          </div>
+
+          <!-- API 안내 -->
+          <div class="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm flex items-center justify-between group cursor-pointer hover:border-indigo-200 hover:shadow-md transition-all h-[95px]" onclick="openModal()">
+            <div class="flex items-center gap-4 w-full">
+              <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform duration-300 shrink-0">🤖</div>
+              <div class="flex-1 min-w-0">
+                <p class="font-bold text-sm text-slate-800 truncate">AI 시스템 연동</p>
+                <p class="text-[11px] text-slate-500 font-medium truncate mt-0.5" id="apiStatusText">설정 열기 ➔</p>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- Decoration -->
-        <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
-        <div class="absolute bottom-0 right-20 -mb-10 w-32 h-32 bg-purple-300 opacity-20 rounded-full blur-xl"></div>
-      </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <!-- 기록 카드 -->
-        <div class="card p-5 flex flex-col justify-between h-40">
-          <div class="flex items-center justify-between"><span class="text-sm font-bold text-slate-700">📁 평가 기록</span><span class="px-2.5 py-1 text-[10px] font-bold rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100">안전 보관중</span></div>
-          <p class="text-4xl font-black text-slate-800 text-center py-2" id="recCount">0</p>
-          <button onclick="exportData()" class="text-xs text-indigo-600 font-bold hover:text-indigo-700 hover:underline flex items-center justify-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> 전체 데이터 백업</button>
-        </div>
-        
-        <!-- 퀵 실행 카드 -->
-        <div class="card p-5 flex flex-col justify-between h-40">
-          <span class="text-sm font-bold text-slate-700">⚡ 주요 기능</span>
-          <div class="grid grid-cols-2 gap-2 mt-auto">
-            <button onclick="switchTab('evaluation')" class="flex flex-col items-center justify-center gap-1 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 transition-colors text-xs font-bold text-slate-600"><span class="text-lg mb-1">📝</span>AI 평가</button>
-            <button onclick="switchTab('utility')" class="flex flex-col items-center justify-center gap-1 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 transition-colors text-xs font-bold text-slate-600"><span class="text-lg mb-1">⏱️</span>타이머</button>
-          </div>
-        </div>
-        
-        <!-- API 토큰 안내 카드 -->
-        <div class="card p-5 flex flex-col justify-between h-40 bg-gradient-to-b from-white to-slate-50">
-          <span class="text-sm font-bold text-slate-700 flex items-center gap-1"><svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> AI 시스템 연동</span>
-          <div class="space-y-1.5 text-[11px] text-slate-600 font-medium my-auto pl-1">
-            <p class="flex items-center gap-1.5"><span class="text-indigo-500">✓</span> Gemini AI 공식 지원</p>
-            <p class="flex items-center gap-1.5"><span class="text-indigo-500">✓</span> 교내 네트워크 환경 최적화</p>
-            <p class="flex items-center gap-1.5"><span class="text-indigo-500">✓</span> 종단 간(End-to-End) 안전 연동</p>
-          </div>
-          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:underline inline-block mt-1">🔑 연동 키(API) 발급 안내 →</a>
+
         </div>
       </div>
-      
-      <div id="noKeyWarn" class="rounded-xl p-4 flex items-start gap-4 hidden bg-amber-50 border border-amber-200 shadow-sm">
-        <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-xl shrink-0">💡</div>
-        <div>
-          <p class="font-bold text-sm text-amber-900 mb-1">Gemini API 키가 아직 등록되지 않았어요!</p>
-          <p class="text-xs text-amber-700 font-medium">평가 자동화 기능을 쓰려면 API 키를 먼저 등록해주세요. 선생님의 개인정보는 완벽히 보호됩니다.</p>
-          <button onclick="openModal()" class="mt-2 text-xs font-bold text-amber-800 bg-amber-200/50 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors">⚙️ 지금 설정하기</button>
+
+      <div id="noKeyWarn" class="rounded-3xl p-5 md:p-6 flex items-start sm:items-center gap-5 hidden bg-amber-50 border border-amber-200 shadow-sm">
+        <div class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shrink-0 animate-bounce">💡</div>
+        <div class="flex-1">
+          <p class="font-black text-sm md:text-base text-amber-900 mb-1">Gemini AI 시스템 연동이 필요합니다!</p>
+          <p class="text-xs text-amber-700 font-medium leading-relaxed">행동특성 및 종합의견, 수행평가 자동 생성 기능을 사용하려면 API 키를 등록해주세요.<br>선생님의 키는 기기에만 안전하게 암호화되어 보관됩니다.</p>
+        </div>
+        <button onclick="openModal()" class="shrink-0 mt-3 sm:mt-0 text-xs md:text-sm font-bold text-amber-900 bg-amber-200 hover:bg-amber-300 px-5 py-2.5 rounded-xl transition-transform hover:-translate-y-0.5 shadow-sm">⚙️ 지금 설정하기</button>
+      </div>
+    </section>
+
+    <!-- 전자칠판 화면 -->
+    <section id="whiteboard" class="tab-content max-w-6xl mx-auto space-y-6">
+      <div class="card p-6 md:p-8 min-h-[75vh] relative overflow-hidden flex flex-col items-center justify-center transition-all duration-500" id="wbContainer" style="background-color: var(--wb-bg, #ffffff);">
+        <div class="absolute top-4 right-4 z-10 flex gap-2">
+          <button onclick="setWbTheme('simple')" id="btnWbSimple" class="px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-transform hover:scale-105 border-2" style="background:#1E293B; color:#FFF; border-color:#0F172A;">단정 모드</button>
+          <button onclick="setWbTheme('cute')" id="btnWbCute" class="px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-transform hover:scale-105 border-2" style="background:#FDF2F8; color:#BE185D; border-color:#FBCFE8;">캐릭터 모드</button>
+        </div>
+        
+        <div class="w-full flex flex-col-reverse md:flex-row gap-8 items-center justify-center h-full relative z-0">
+          <div class="w-full md:w-1/3 p-6 rounded-3xl shadow-lg border-2 transition-all duration-500 flex flex-col gap-6" id="wbTimetablePanel" style="background: var(--wb-card-bg, #F8FAFC); border-color: var(--wb-card-border, #E2E8F0);">
+            <div>
+              <h3 class="text-xl font-black mb-4 flex items-center justify-center gap-2" id="wbTimetableTitle" style="color: var(--wb-text, #1E293B);">📅 오늘 시간표</h3>
+              <div class="space-y-3" id="wbTimetableItems"></div>
+              <button onclick="editWbTimetable()" class="mt-4 w-full text-xs font-bold bg-white/50 py-2 rounded-xl border border-dashed transition-colors hover:bg-white/80" style="color: var(--wb-text, #475569); border-color: var(--wb-text, #CBD5E1);">✏️ 시간표 수정하기</button>
+            </div>
+            <div class="border-t-2 pt-4" style="border-color: var(--wb-card-border, #E2E8F0);">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-black flex items-center gap-2" style="color: var(--wb-text, #1E293B);">🍽️ 오늘의 급식</h3>
+                <button onclick="openSchoolSearch()" class="text-[10px] font-bold px-2 py-1 rounded bg-slate-200 text-slate-600 hover:bg-slate-300">학교 설정</button>
+              </div>
+              <div id="wbLunchContent" class="text-sm font-bold text-center p-4 rounded-xl space-y-2 leading-relaxed" style="background: rgba(255,255,255,0.5); color: var(--wb-text, #334155);">
+                <button onclick="openSchoolSearch()" class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors w-full text-sm">🏫 우리 학교 설정하기</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="w-full md:w-1/2 flex flex-col items-center justify-center text-center">
+            <div id="wbGreeting" class="text-lg md:text-xl font-bold mb-4 px-6 py-2 rounded-full hidden" style="background: var(--wb-greet-bg); color: var(--wb-greet-text);">좋은 아침이에요! 오늘도 화이팅! ☀️</div>
+            <div id="wbDate" class="text-2xl md:text-3xl font-extrabold mb-2 transition-colors" style="color: var(--wb-text-light, #64748B);"></div>
+            <div id="wbTime" class="text-7xl md:text-9xl font-black tracking-tighter transition-colors tabular-nums" style="color: var(--wb-text, #0F172A);">00:00</div>
+            <div id="wbSec" class="text-2xl md:text-4xl font-bold mt-2 transition-colors tabular-nums" style="color: var(--wb-text-light, #64748B);">00</div>
+            
+            <div id="wbCharacter" class="mt-12 text-8xl hidden" style="animation: wbFloat 3s ease-in-out infinite;">🐻</div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 평가 자동화 (초등 전 교과) -->
+    <!-- 교육자료 -->
+    <section id="education" class="tab-content max-w-5xl mx-auto space-y-6">
+      <div class="card p-6 md:p-8 flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
+        <span class="text-6xl drop-shadow-md">📚</span>
+        <h3 class="text-2xl font-black text-slate-800">교육자료 아카이브</h3>
+        <p class="text-slate-500 font-medium leading-relaxed">선생님만의 유용한 교육 자료를 이곳에 모아둘 수 있습니다.<br>추후 업데이트를 통해 수업 자료 및 링크 관리 기능이 지원될 예정입니다.</p>
+        <button onclick="switchTab('dashboard')" class="mt-4 px-6 py-2.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">대시보드로 돌아가기</button>
+      </div>
+    </section>
+
     <!-- 평가 자동화 (초등 전 교과) -->
     <section id="evaluation" class="tab-content max-w-5xl mx-auto space-y-6">
       <div class="card p-6 md:p-8 space-y-6">
@@ -566,16 +686,35 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: va
     </div>
   </div>
 </div>
+<!-- 학교 검색 모달 -->
+<div id="schoolModal" class="overlay">
+  <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200">
+    <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+      <div class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center text-lg">🏫</span>
+        <h3 class="text-base font-black text-slate-800">우리 학교 검색</h3>
+      </div>
+      <button onclick="closeSchoolSearch()" class="w-8 h-8 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full flex items-center justify-center font-black text-xl transition-colors">×</button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="flex gap-2">
+        <input type="text" id="schSearchInp" class="inp flex-1 font-bold" placeholder="학교 이름 입력 (예: 서울초)" onkeydown="if(event.key==='Enter') searchSchool()">
+        <button onclick="searchSchool()" class="px-4 py-2 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-700">검색</button>
+      </div>
+      <div id="schSearchRes" class="max-h-60 overflow-y-auto space-y-2 custom-scrollbar"></div>
+    </div>
+  </div>
+</div>
 <div id="toast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg z-50"></div>
 
 <script>
 /* ══ 상수 ══ */
 const K_API='gps_api_v1', K_REC='gps_rec_v1';
-const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},economy:{title:'학급 경제 놀이',icon:'💰'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'}};
+const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},whiteboard:{title:'전자칠판 화면',icon:'🖥️'},education:{title:'교육자료',icon:'📚'},economy:{title:'학급 경제 놀이',icon:'💰'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'}};
 
 
 
-window.addEventListener('DOMContentLoaded',()=>{refreshStatus();refreshRecCount();showUtil('timer');initManagementSeat();showMgmt('seat');loadTheme();});
+window.addEventListener('DOMContentLoaded',()=>{refreshStatus();refreshRecCount();showUtil('timer');initManagementSeat();showMgmt('seat');loadTheme();initWhiteboard();});
 
 /* ══ 테마 관리 ══ */
 function changeTheme(theme) {
@@ -596,7 +735,7 @@ function switchTab(id){
   window.gpsActiveView = id;
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
   document.getElementById(id)?.classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.toggle('nav-active',btn.dataset.target===id));
+  document.querySelectorAll('.nav-btn').forEach(btn=>{if(btn.dataset.target) btn.classList.toggle('nav-active',btn.dataset.target===id);});
   const m=PAGE[id]||{title:id,icon:'📌'};
   document.getElementById('pageTitle').textContent=m.title;
   document.getElementById('pageIcon').textContent=m.icon;
@@ -605,6 +744,7 @@ function switchTab(id){
     const fgc = document.getElementById('freeGameContent');
     if(fgc && fgc.innerHTML.includes('<iframe')) { fgc.innerHTML = ''; }
   }
+  if(id==='whiteboard') initWhiteboard();
 }
 
 function toggleGradeMenu(){
@@ -634,6 +774,162 @@ function toggleFreegameMenu(){
   sub.classList.toggle('hidden',open);
   arrow.textContent=open?'▶':'▼';
   switchTab('freegame');
+}
+function toggleSupportMenu(){
+  const sub=document.getElementById('supportSubmenu'),arrow=document.getElementById('supportArrow');
+  const open=!sub.classList.contains('hidden');
+  sub.classList.toggle('hidden',open);
+  arrow.textContent=open?'▶':'▼';
+}
+
+/* ══ 전자칠판 화면 ══ */
+let wbTimerId = null;
+let wbTimetable = ['국어', '수학', '수학', '미술', '미술', '체육'];
+let wbTheme = 'simple';
+let wbCharacters = ['🐻', '🐰', '🦁', '🐶', '🐱', '🐣'];
+
+function initWhiteboard() {
+  setWbTheme(wbTheme);
+  renderWbTimetable();
+  if(!wbTimerId) wbTimerId = setInterval(updateWbClock, 1000);
+  updateWbClock();
+  fetchLunch();
+}
+
+function updateWbClock() {
+  const now = new Date();
+  const d = document.getElementById('wbDate');
+  const t = document.getElementById('wbTime');
+  const s = document.getElementById('wbSec');
+  if(!d || !t || !s) return;
+  
+  const days = ['일','월','화','수','목','금','토'];
+  d.textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 ${days[now.getDay()]}요일`;
+  t.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  s.textContent = String(now.getSeconds()).padStart(2,'0');
+}
+
+function setWbTheme(theme) {
+  wbTheme = theme;
+  const root = document.getElementById('wbContainer');
+  const greeting = document.getElementById('wbGreeting');
+  const character = document.getElementById('wbCharacter');
+  if(!root) return;
+  
+  if(theme === 'simple') {
+    root.style.setProperty('--wb-bg', '#ffffff');
+    root.style.setProperty('--wb-card-bg', '#F8FAFC');
+    root.style.setProperty('--wb-card-border', '#E2E8F0');
+    root.style.setProperty('--wb-text', '#1E293B');
+    root.style.setProperty('--wb-text-light', '#64748B');
+    greeting.classList.add('hidden');
+    character.classList.add('hidden');
+  } else if(theme === 'cute') {
+    root.style.setProperty('--wb-bg', '#FDF2F8');
+    root.style.setProperty('--wb-card-bg', '#FFF1F2');
+    root.style.setProperty('--wb-card-border', '#FECDD3');
+    root.style.setProperty('--wb-text', '#881337');
+    root.style.setProperty('--wb-text-light', '#BE185D');
+    root.style.setProperty('--wb-greet-bg', '#FCE7F3');
+    root.style.setProperty('--wb-greet-text', '#9D174D');
+    greeting.classList.remove('hidden');
+    character.classList.remove('hidden');
+    character.textContent = wbCharacters[Math.floor(Math.random() * wbCharacters.length)];
+  }
+}
+
+function renderWbTimetable() {
+  const container = document.getElementById('wbTimetableItems');
+  if(!container) return;
+  container.innerHTML = wbTimetable.map((subject, idx) => `
+    <div class="flex items-center gap-4 p-3 rounded-xl shadow-sm transition-transform hover:translate-x-2 border" style="background:var(--wb-bg,#fff); border-color:var(--wb-card-border,#E2E8F0);">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm" style="background:var(--wb-text-light,#94A3B8);color:#fff;">${idx+1}</div>
+      <div class="font-bold text-lg" style="color:var(--wb-text,#334155);">${subject}</div>
+    </div>
+  `).join('');
+}
+
+function editWbTimetable() {
+  const input = prompt('시간표를 쉼표(,)로 구분하여 입력하세요', wbTimetable.join(', '));
+  if(input) {
+    wbTimetable = input.split(',').map(s=>s.trim()).filter(s=>s);
+    renderWbTimetable();
+    toast('시간표가 업데이트 되었습니다!');
+  }
+}
+
+/* ══ 급식 메뉴 연동 ══ */
+function openSchoolSearch() {
+  document.getElementById('schoolModal').classList.add('open');
+  setTimeout(() => document.getElementById('schSearchInp').focus(), 100);
+}
+function closeSchoolSearch() {
+  document.getElementById('schoolModal').classList.remove('open');
+}
+async function searchSchool() {
+  const q = document.getElementById('schSearchInp').value.trim();
+  const resDiv = document.getElementById('schSearchRes');
+  if(!q) return;
+  resDiv.innerHTML = '<div class="text-center p-4"><div class="spin mx-auto w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>';
+  try {
+    const url = `https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=50&SCHUL_NM=${encodeURIComponent(q)}`;
+    const req = await fetch(url);
+    const data = await req.json();
+    if(data.schoolInfo && data.schoolInfo[1].row) {
+      const schools = data.schoolInfo[1].row;
+      resDiv.innerHTML = schools.map(s => `
+        <div onclick="selectSchool('${s.ATPT_OFCDC_SC_CODE}', '${s.SD_SCHUL_CODE}', '${s.SCHUL_NM}')" class="p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-blue-50 cursor-pointer transition-colors text-left">
+          <p class="font-bold text-slate-800">${s.SCHUL_NM}</p>
+          <p class="text-xs text-slate-500">${s.ORG_RDNMA}</p>
+        </div>
+      `).join('');
+    } else {
+      resDiv.innerHTML = '<p class="text-center text-slate-500 font-bold p-4">검색 결과가 없습니다.</p>';
+    }
+  } catch(e) {
+    resDiv.innerHTML = '<p class="text-center text-red-500 font-bold p-4">검색 중 오류가 발생했습니다.</p>';
+  }
+}
+function selectSchool(atpt, sd, name) {
+  localStorage.setItem('gps_sch_atpt', atpt);
+  localStorage.setItem('gps_sch_sd', sd);
+  localStorage.setItem('gps_sch_name', name);
+  closeSchoolSearch();
+  toast(name + ' 설정 완료!');
+  fetchLunch();
+}
+async function fetchLunch() {
+  const atpt = localStorage.getItem('gps_sch_atpt');
+  const sd = localStorage.getItem('gps_sch_sd');
+  const lc = document.getElementById('wbLunchContent');
+  if(!lc) return;
+  
+  if(!atpt || !sd) {
+    lc.innerHTML = `<button onclick="openSchoolSearch()" class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors w-full text-sm">🏫 우리 학교 설정하기</button>`;
+    return;
+  }
+  
+  lc.innerHTML = '<div class="spin mx-auto w-6 h-6 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>';
+  
+  try {
+    const now = new Date();
+    const ymd = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+    const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&ATPT_OFCDC_SC_CODE=${atpt}&SD_SCHUL_CODE=${sd}&MLSV_YMD=${ymd}`;
+    const req = await fetch(url);
+    const data = await req.json();
+    
+    if(data.mealServiceDietInfo && data.mealServiceDietInfo[1].row) {
+      let menuStr = data.mealServiceDietInfo[1].row[0].DDISH_NM;
+      // 알레르기 정보 및 특수문자 제거
+      menuStr = menuStr.replace(/([0-9]+\.)+[0-9]*/g, '').replace(/[\(\)\*]/g, ''); 
+      const menus = menuStr.split('<br/>').map(s=>s.trim()).filter(s=>s);
+      lc.innerHTML = menus.map(m => `<div>${m}</div>`).join('');
+    } else {
+      lc.innerHTML = '<p>오늘 급식 정보가 없습니다.</p>';
+    }
+  } catch(e) {
+    lc.innerHTML = '<p class="text-red-500">급식 정보를 불러오지 못했습니다.</p>';
+  }
 }
 
 function switchGrade(gid){
@@ -1371,7 +1667,7 @@ function initShortTyping() {
         <p class="text-xs text-gray-400 mb-2 font-bold">다음 글: <span id="tsNextText" class="text-gray-500 font-normal"></span></p>
         <p id="tsTargetText" class="text-2xl font-black text-gray-800 tracking-wide text-center leading-relaxed"></p>
       </div>
-      <input type="text" id="tsInput" class="w-full text-xl py-4 px-5 font-bold text-center border-2 border-indigo-200 rounded-xl focus:border-indigo-500 outline-none transition-colors" placeholder="여기에 입력하고 Enter를 누르세요" autocomplete="off" oninput="tsCheckInput()" onkeydown="tsKeyDown(event)">
+      <input type="text" id="tsInput" class="inp w-full text-xl py-4 px-5 font-bold text-center border-2 border-indigo-200 rounded-xl focus:border-indigo-500 outline-none transition-colors" placeholder="여기에 입력하고 Enter를 누르세요" autocomplete="off" oninput="tsCheckInput()" onkeydown="tsKeyDown(event)">
     </div>
   </div>`;
   
@@ -1531,7 +1827,7 @@ function initLongTyping(idx) {
         `).join('')}
       </div>
       
-      <input type="text" id="tlInput" class="w-full text-xl py-3 px-4 font-bold border-2 border-indigo-200 rounded-xl focus:border-indigo-500 outline-none transition-colors" placeholder="파란색으로 표시된 문장을 똑같이 입력하세요" autocomplete="off" oninput="tlCheckInput()" onkeydown="tlKeyDown(event)">
+      <input type="text" id="tlInput" class="inp w-full text-xl py-3 px-4 font-bold border-2 border-indigo-200 rounded-xl focus:border-indigo-500 outline-none transition-colors" placeholder="파란색으로 표시된 문장을 똑같이 입력하세요" autocomplete="off" oninput="tlCheckInput()" onkeydown="tlKeyDown(event)">
     </div>
   </div>`;
   
@@ -5529,6 +5825,7 @@ function mrSave() { localStorage.setItem('gps_mr_data', JSON.stringify(mrData));
 
 let mrPlayer = { x: 0, count: 1, r: 15, dmg: 1, rate: 0, swords: 0, pets: 0, ice: 0, fire: 0, zap: 0, clones: 0, weapon: 'default' };
 let mrEnemyBullets = [];
+let mrEnemyLasers = [];
 let mrZaps = [];
 let mrSwordsRot = 0;
 let mrAltars = [];
@@ -5565,19 +5862,19 @@ function initMathRunner() {
         <div class="grid grid-cols-2 gap-3 mb-6 w-full max-w-md px-4 overflow-y-auto max-h-48">
           <button onclick="mrBuy('count')" class="bg-blue-600 hover:bg-blue-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors">
             <span>👥 시작 인원 +1</span>
-            <span class="text-blue-200 text-xs mt-1">(현재 +${mrData.upgrades.count-1}) 🪙 ${50 * mrData.upgrades.count}</span>
+            <span class="text-blue-200 text-xs mt-1">(현재 +${mrData.upgrades.count-1}) 🪙 ${mrGetCost(mrData.upgrades.count)}</span>
           </button>
           <button onclick="mrBuy('dmg')" class="bg-red-600 hover:bg-red-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors">
             <span>💥 기본 공격력 +1</span>
-            <span class="text-red-200 text-xs mt-1">(현재 +${mrData.upgrades.dmg-1}) 🪙 ${100 * mrData.upgrades.dmg}</span>
+            <span class="text-red-200 text-xs mt-1">(현재 +${mrData.upgrades.dmg-1}) 🪙 ${mrGetCost(mrData.upgrades.dmg)}</span>
           </button>
           <button onclick="mrBuy('startSword')" class="bg-slate-600 hover:bg-slate-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors">
             <span>⚔️ 시작 회전검 +1</span>
-            <span class="text-slate-200 text-xs mt-1">(현재 +${mrData.upgrades.startSword}) 🪙 ${300 + 200*mrData.upgrades.startSword}</span>
+            <span class="text-slate-200 text-xs mt-1">(현재 +${mrData.upgrades.startSword}) 🪙 ${mrGetCost(mrData.upgrades.startSword + 1)}</span>
           </button>
           <button onclick="mrBuy('coinMult')" class="bg-yellow-600 hover:bg-yellow-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors">
             <span>💰 코인 획득량 증가</span>
-            <span class="text-yellow-200 text-xs mt-1">(현재 x${mrData.upgrades.coinMult}) 🪙 ${500*mrData.upgrades.coinMult}</span>
+            <span class="text-yellow-200 text-xs mt-1">(현재 x${mrData.upgrades.coinMult}) 🪙 ${mrGetCost(mrData.upgrades.coinMult)}</span>
           </button>
           <button onclick="mrBuy('fourChoice')" class="bg-purple-600 hover:bg-purple-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors col-span-2">
             <span>🎁 보스 상자 선택지 4개로 확장</span>
@@ -5585,7 +5882,40 @@ function initMathRunner() {
           </button>
         </div>
         
-        <button onclick="mrStartGame()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 text-xl font-black px-12 py-3 rounded-full shadow-lg transition-transform hover:scale-105">게임 시작!</button>
+        <div class="flex gap-4">
+          <button onclick="mrStartGame()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 text-xl font-black px-12 py-3 rounded-full shadow-lg transition-transform hover:scale-105">게임 시작!</button>
+          <button onclick="document.getElementById('mrHelpModal').classList.remove('hidden'); document.getElementById('mrHelpModal').classList.add('flex');" class="bg-slate-600 hover:bg-slate-500 text-white text-xl font-black px-6 py-3 rounded-full shadow-lg transition-transform hover:scale-105">?</button>
+        </div>
+      </div>
+      
+      <div id="mrHelpModal" class="hidden absolute inset-0 bg-slate-900/95 flex-col items-center justify-center text-white z-[60] px-4 py-8">
+        <h2 class="text-3xl font-black text-amber-400 mb-4">📖 게임 방법 및 아이템</h2>
+        <div class="overflow-y-auto max-h-[60vh] w-full max-w-lg bg-slate-800 p-4 rounded-xl text-sm leading-relaxed border border-slate-600 shadow-inner">
+          <p class="mb-2"><strong class="text-amber-300">🎮 조작법:</strong> 화면을 좌우로 드래그하여 이동합니다. 총알은 자동으로 발사됩니다.</p>
+          <p class="mb-4"><strong class="text-amber-300">🎯 목표:</strong> 더 멀리 이동하며 몬스터를 처치하고, 코인을 모아 시작 스펙을 업그레이드하세요.</p>
+          
+          <h3 class="text-lg font-bold text-blue-300 mt-4 border-b border-slate-600 pb-1 mb-2">🎁 보물상자 아이템</h3>
+          <ul class="list-disc pl-5 mb-4 text-slate-200">
+            <li><strong class="text-white">👥 인원추가:</strong> HP 역할이자 공격력의 근원인 인원수 증가</li>
+            <li><strong class="text-white">💥 공격력/⚡ 연사속도:</strong> 기본 공격 강화</li>
+            <li><strong class="text-white">⚔️ 회전검:</strong> 주위를 도는 검. 몹이 닿으면 엄청난 피해</li>
+            <li><strong class="text-white">💖 대량회복:</strong> 잃은 인원수를 크게 회복</li>
+            <li><strong class="text-white">속성(🧊빙결, 🔥불꽃, 🌩️번개):</strong> 5레벨 달성 시 강력한 시너지 효과 발동!</li>
+          </ul>
+          
+          <h3 class="text-lg font-bold text-green-300 mt-4 border-b border-slate-600 pb-1 mb-2">🐶 펫 시스템 (3마리 모으면 진화!)</h3>
+          <ul class="list-disc pl-5 mb-4 text-slate-200">
+            <li><strong class="text-white">강아지 펫:</strong> 주위의 보물상자를 끌어당깁니다. <span class="text-yellow-200">(진화 시 범위/속도 대폭 증가)</span></li>
+            <li><strong class="text-white">고양이 펫:</strong> 몹 처치 시 추가 코인을 획득합니다. <span class="text-yellow-200">(진화 시 코인량 3배, 확률 대폭 증가)</span></li>
+            <li><strong class="text-white">드래곤 펫:</strong> 주기적으로 전방에 강력한 브레스를 쏩니다. <span class="text-yellow-200">(진화 시 범위 2배, 쿨타임 절반, 데미지 극대화)</span></li>
+            <li><strong class="text-white">거북이 펫 (희귀):</strong> 죽음에 달하는 피해를 입었을 때 <span class="text-red-400">대신 희생하여 부활</span>시켜 줍니다.</li>
+          </ul>
+          
+          <h3 class="text-lg font-bold text-purple-300 mt-4 border-b border-slate-600 pb-1 mb-2">💀 엘리트 및 보스</h3>
+          <p class="text-slate-200"><strong class="text-red-400">엘리트(😈):</strong> 10000m 이후 등장. 플레이어를 향해 예고 후 레이저를 쏩니다.<br>
+          <strong class="text-red-400">보스(👑):</strong> 주기적으로 5갈래 탄을 쏘며, 처치 시 가끔 '저주받은 유물(💀)'을 떨어뜨립니다.</p>
+        </div>
+        <button onclick="document.getElementById('mrHelpModal').classList.add('hidden'); document.getElementById('mrHelpModal').classList.remove('flex');" class="mt-6 bg-slate-600 hover:bg-slate-500 px-8 py-2 rounded-full font-bold">닫기</button>
       </div>
       
       <canvas id="mrCanvas" style="display:block; width:100%; height:100%;"></canvas>
@@ -5594,6 +5924,7 @@ function initMathRunner() {
         점수: <span id="mrScore">0</span><br>
         거리: <span id="mrDist">0</span>m<br>
         코인: 💰 <span id="mrInGameCoins">0</span>
+        <div id="mrTurtleUI" style="display:none; margin-top:4px; font-size:16px;"></div>
       </div>
       
       <div id="mrGameOver" class="hidden absolute inset-0 bg-black/80 flex-col items-center justify-center text-white z-50">
@@ -5622,12 +5953,21 @@ function initMathRunner() {
   `;
 }
 
+window.mrGetCost = function(level) {
+  if (level === 1) return 10;
+  if (level === 2) return 50;
+  if (level === 3) return 100;
+  if (level === 4) return 200;
+  if (level === 5) return 500;
+  return 500 + (level - 5) * 500;
+};
+
 window.mrBuy = function(type) {
   let cost = 0;
-  if(type === 'count') cost = 50 * mrData.upgrades.count;
-  if(type === 'dmg') cost = 100 * mrData.upgrades.dmg;
-  if(type === 'startSword') cost = 300 + 200 * mrData.upgrades.startSword;
-  if(type === 'coinMult') cost = 500 * mrData.upgrades.coinMult;
+  if(type === 'count') cost = mrGetCost(mrData.upgrades.count);
+  if(type === 'dmg') cost = mrGetCost(mrData.upgrades.dmg);
+  if(type === 'startSword') cost = mrGetCost(mrData.upgrades.startSword + 1);
+  if(type === 'coinMult') cost = mrGetCost(mrData.upgrades.coinMult);
   if(type === 'fourChoice') cost = 1000;
   
   if(type === 'fourChoice' && mrData.upgrades.fourChoice) {
@@ -5682,6 +6022,7 @@ window.mrStartGame = function() {
   mrEnemies = [];
   mrBullets = [];
   mrEnemyBullets = [];
+  mrEnemyLasers = [];
   mrZaps = [];
   mrAltars = [];
   mrTraps = [];
@@ -5692,7 +6033,6 @@ window.mrStartGame = function() {
   mrIsPaused = false;
   mrRewardQueue = [];
   
-  mrSpawnGate(-100);
   mrSpawnEnemy(-500, c.width, false);
   
   setupMrInput(c);
@@ -5728,10 +6068,12 @@ function setupMrInput(c) {
 }
 
 function mrSpawnGate(y) {
-  const types = ['math', 'math', 'math', 'dmg', 'rate', 'sword', 'pet'];
+  const types = ['math', 'math', 'math', 'dmg', 'rate', 'sword', 'pet_dog', 'pet_cat', 'pet_dragon', 'pet_dog', 'pet_cat'];
   
   const getGate = () => {
     let t = types[Math.floor(Math.random() * types.length)];
+    if(Math.random() < 0.05) t = 'pet_turtle'; // 5% chance to override to turtle
+    
     if(t === 'math') {
       const ops = ['+', '-', '×', '÷'];
       let op = ops[Math.floor(Math.random() * ops.length)];
@@ -5746,7 +6088,10 @@ function mrSpawnGate(y) {
     if(t === 'dmg') return { type: 'dmg', val: 1, text: `💥 공격력 +1` };
     if(t === 'rate') return { type: 'rate', val: 1, text: `⚡ 속도 UP` };
     if(t === 'sword') return { type: 'sword', val: 1, text: `⚔️ 회전검` };
-    if(t === 'pet') return { type: 'pet', val: 1, text: `🐶 펫 추가` };
+    if(t === 'pet_dog') return { type: 'pet_dog', val: 1, text: `🐶 강아지 펫` };
+    if(t === 'pet_cat') return { type: 'pet_cat', val: 1, text: `🐈 고양이 펫` };
+    if(t === 'pet_turtle') return { type: 'pet_turtle', val: 1, text: `🐢 거북이(부활)` };
+    if(t === 'pet_dragon') return { type: 'pet_dragon', val: 1, text: `🐲 드래곤 펫` };
   };
   
   mrGates.push({
@@ -5759,7 +6104,7 @@ function mrSpawnGate(y) {
 
 function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
   let diff = mrDistance / 1000;
-  let baseHp = 20 + Math.floor(diff * 40);
+  let baseHp = 5 + Math.floor(diff * 15) + Math.floor(diff * diff * 5); // Early nerf, late huge buff
   let power = baseHp + Math.floor(mrPlayer.count * (1.5 + Math.random() * 0.8));
   if(power < 1) power = 1;
   
@@ -5803,8 +6148,12 @@ function mrRewardEnemy(en) {
   let dropChance = mrRelics.cursedPact ? 1.0 : 0.5;
   if (!en.isBoss && Math.random() > dropChance) return;
   
-  if (mrPetCounts.cat > 0 && Math.random() < (0.1 * mrPetCounts.cat)) {
-    mrRunCoins += 5; // Cat pet coins
+  if (mrPetCounts.cat > 0) {
+    let chance = (mrPetCounts.cat >= 3) ? 0.5 : (0.1 * mrPetCounts.cat);
+    let coins = (mrPetCounts.cat >= 3) ? 15 : 5;
+    if (Math.random() < chance) {
+      mrRunCoins += coins;
+    }
   }
   
   mrChests.push({
@@ -5827,12 +6176,18 @@ window.mrShowItemSelect = function(isBoss) {
     { type: 'dmg', icon: '💥', name: '공격력', desc: isBoss ? '+3.0' : '+0.2' },
     { type: 'rate', icon: '⚡', name: '연사속도', desc: isBoss ? '+3.0' : '+0.2' },
     { type: 'sword', icon: '⚔️', name: '회전검', desc: isBoss ? '+2개' : '+1개' },
-    { type: 'pet', icon: '🐶', name: '펫소환', desc: isBoss ? '+2마리' : '+1마리' },
+    { type: 'pet_dog', icon: '🐶', name: '강아지 펫', desc: isBoss ? '+2마리' : '+1마리' },
+    { type: 'pet_cat', icon: '🐈', name: '고양이 펫', desc: isBoss ? '+2마리' : '+1마리' },
+    { type: 'pet_dragon', icon: '🐲', name: '드래곤 펫', desc: isBoss ? '+2마리' : '+1마리' },
     { type: 'heal', icon: '💖', name: '대량회복', desc: isBoss ? '+50명' : '+2명' },
     { type: 'ice', icon: '🧊', name: '빙결총알', desc: isBoss ? '감속 폭 증대' : '적 이속 저하' },
     { type: 'fire', icon: '🔥', name: '불꽃총알', desc: isBoss ? '화상 딜 증대' : '지속 화상 피해' },
     { type: 'zap', icon: '🌩️', name: '번개총알', desc: isBoss ? '스플래시 증대' : '광역 피해' }
   ];
+  
+  if (Math.random() < 0.2) {
+    optionsPool.push({ type: 'pet_turtle', icon: '🐢', name: '거북이 펫', desc: isBoss ? '2회 부활' : '1회 부활(희귀)' });
+  }
   
   if (isBoss) {
     optionsPool.push({ type: 'clone', icon: '👯', name: '발사 열 추가', desc: '분신이 생성됩니다' });
@@ -5859,14 +6214,10 @@ window.mrSelectItem = function(type, isBoss) {
   else if(type === 'dmg') { mrPlayer.dmg += (isBoss ? 3 : 0.2); toast(`💥 공격력 상승!`); }
   else if(type === 'rate') { mrPlayer.rate += (isBoss ? 3 : 0.2); toast(`⚡ 연사속도 상승!`); }
   else if(type === 'sword') { mrPlayer.swords += (isBoss ? 2 : 1); toast(`⚔️ 회전검 획득!`); }
-  else if(type === 'pet') {
-    let petTypes = ['dog', 'turtle', 'cat', 'dragon'];
-    let count = isBoss ? 2 : 1;
-    for(let i=0; i<count; i++) {
-      let pt = petTypes[Math.floor(Math.random()*petTypes.length)];
-      mrPetCounts[pt]++;
-    }
-    toast(`🐶 펫 획득!`);
+  else if(type.startsWith('pet_')) {
+    let pt = type.replace('pet_', '');
+    mrPetCounts[pt] += (isBoss ? 2 : 1);
+    toast(`펫 획득!`);
   }
   else if(type === 'heal') { mrPlayer.count += (isBoss ? 50 : 2); toast(`💖 대량 회복!`); }
   else if(type === 'ice') { mrPlayer.ice += (isBoss ? 3 : 1); toast(`🧊 얼음 속성 강화!`); }
@@ -5970,6 +6321,19 @@ function mrSpawnTrap(y, canvasWidth) {
 }
 
 function triggerMrGameOver() {
+  if (mrPetCounts.turtle > 0) {
+    mrPetCounts.turtle--;
+    mrPlayer.count = mrRelics.glassCannon ? 1 : (50 + mrData.upgrades.count * 10);
+    toast('🐢 거북이가 희생하여 부활했습니다!');
+    
+    // Clear screen for safety
+    for(let en of mrEnemies) { en.hp = 0; en.active = false; }
+    mrEnemyBullets = [];
+    mrEnemyLasers = [];
+    mrTraps = [];
+    return;
+  }
+
   mrGameOver = true;
   mrData.coins += mrRunCoins;
   mrSave();
@@ -6023,18 +6387,29 @@ function mrLoop() {
   
   // Sword damage
   if (mrPlayer.swords > 0) {
-    let swordRadius = 180 + mrPlayer.swords * 1.5;
+    let baseRadius = 180 + mrPlayer.swords * 1.5;
+    let swordRadius = baseRadius * 1.5; // 1.5x radius
     for (let en of mrEnemies) {
       if (!en.active) continue;
-      let dx = en.x - mrPlayer.x;
-      let dy = en.y - py;
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < swordRadius + Math.max(en.w, en.h)/2) {
-        en.hp -= (mrPlayer.swords * mrPlayer.dmg * 0.8); // continuous damage
-        if(en.hp <= 0) {
-          en.active = false;
-          mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
-          mrRewardEnemy(en);
+      // Check collision with each sword dot
+      for(let i=0; i<mrPlayer.swords; i++) {
+        let ang = mrSwordsRot + (Math.PI*2 / mrPlayer.swords) * i;
+        let sx = mrPlayer.x + Math.cos(ang) * swordRadius;
+        let sy = py + Math.sin(ang) * swordRadius;
+        
+        let dx = en.x - sx;
+        let dy = en.y - sy;
+        let dist = Math.hypot(dx, dy);
+        
+        // Dot radius is 10
+        if (dist < 10 + Math.max(en.w, en.h)/2) {
+          en.hp -= (mrPlayer.swords * mrPlayer.dmg * 3.0); // buffed continuous damage
+          if(en.hp <= 0) {
+            en.active = false;
+            mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
+            mrRewardEnemy(en);
+          }
+          break; // Don't get hit by multiple swords in same frame to avoid crazy overkill? Or allow it? break is safer.
         }
       }
     }
@@ -6058,8 +6433,9 @@ function mrLoop() {
         mrPlayer.rate += side.val;
       } else if (side.type === 'sword') {
         mrPlayer.swords += side.val;
-      } else if (side.type === 'pet') {
-        mrPlayer.pets += side.val;
+      } else if (side.type.startsWith('pet_')) {
+        let pt = side.type.replace('pet_', '');
+        mrPetCounts[pt] += side.val;
       }
       
       toast(`[ ${side.text} ] 획득!`);
@@ -6196,7 +6572,8 @@ function mrLoop() {
     
     if (en.active && en.y > 0 && en.y < py - 100) {
       let now = Date.now();
-      let shotDelay = en.isBoss ? 1000 : (en.isElite ? 1200 : 1800);
+      let diff = mrDistance / 1000;
+      let shotDelay = en.isBoss ? Math.max(300, 1000 - diff * 30) : (en.isElite ? Math.max(400, 1200 - diff * 40) : Math.max(600, 1800 - diff * 50));
       if (now - en.lastShot > shotDelay) {
         en.lastShot = now;
         if(en.isBoss) {
@@ -6204,12 +6581,7 @@ function mrLoop() {
             mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: Math.sin(ang)*4, vy: Math.cos(ang)*4, r: 8, dmg: enemyBulletDmg * 2 });
           }
         } else if (en.isElite) {
-          let dx = mrPlayer.x - en.x;
-          let dy = py - (en.y + en.h/2);
-          let dist = Math.hypot(dx, dy);
-          let vx = (dx/dist)*5;
-          let vy = (dy/dist)*5;
-          mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: vx, vy: vy, r: 10, dmg: enemyBulletDmg * 3, isHoming: true });
+          mrEnemyLasers.push({ x: mrPlayer.x, y: en.y + en.h/2, w: 60, timer: 60, dmg: Math.max(1, Math.floor(enemyBulletDmg / 2)) });
         } else {
           mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: 0, vy: 5, r: 6, dmg: enemyBulletDmg });
         }
@@ -6218,15 +6590,8 @@ function mrLoop() {
     
     if (en.active && Math.abs(en.y - py) < en.h/2 + mrPlayer.r) {
       if (Math.abs(en.x - mrPlayer.x) < en.w/2 + mrPlayer.r * 2) {
-        if (mrPlayer.count > en.hp) {
-          mrPlayer.count -= Math.floor(en.hp);
-          mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
-          en.active = false;
-          mrRewardEnemy(en);
-        } else {
-          mrPlayer.count = 0;
-          triggerMrGameOver();
-        }
+        mrPlayer.count = 0;
+        triggerMrGameOver();
       }
     }
 
@@ -6236,43 +6601,19 @@ function mrLoop() {
   for(let i=mrEnemyBullets.length-1; i>=0; i--) {
     let eb = mrEnemyBullets[i];
     
-    if(eb.isHoming) {
-      let dx = mrPlayer.x - eb.x;
-      let dy = py - eb.y;
-      let dist = Math.hypot(dx, dy);
-      if(dist > 50) {
-        eb.vx = eb.vx * 0.95 + (dx/dist)*0.3;
-        eb.vy = eb.vy * 0.95 + (dy/dist)*0.3;
-      }
-    }
-    
     eb.x += eb.vx;
     eb.y += eb.vy;
     let dx = eb.x - mrPlayer.x;
     let dy = eb.y - py;
     
-    // Turtle blocks bullets
-    let blocked = false;
-    if(mrPetCounts.turtle > 0) {
-      let tr = 70;
-      for(let t=0; t<mrPetCounts.turtle; t++) {
-        let tAng = mrTurtlesRot + (Math.PI*2 / mrPetCounts.turtle) * t;
-        let tx = mrPlayer.x + Math.cos(tAng)*tr;
-        let ty = py + Math.sin(tAng)*tr;
-        if(Math.hypot(eb.x - tx, eb.y - ty) < 20) {
-          blocked = true;
-          break;
-        }
-      }
-    }
-    if(blocked) { mrEnemyBullets.splice(i, 1); continue; }
+    // Turtle blocking removed, now acts as extra life
     
     if (Math.hypot(dx, dy) < mrPlayer.r + eb.r) {
       if(mrRelics.glassCannon) {
         mrPlayer.count = 0;
         triggerMrGameOver();
       } else if(mrRelics.goldenBlood) {
-        if(mrRunCoins >= 100) mrRunCoins -= 100;
+        if(mrRunCoins >= 10) mrRunCoins -= 10;
         else mrPlayer.count -= eb.dmg;
       } else {
         mrPlayer.count -= eb.dmg;
@@ -6287,23 +6628,39 @@ function mrLoop() {
     if (eb.y > c.height + 50 || eb.x < -50 || eb.x > c.width + 50) mrEnemyBullets.splice(i, 1);
   }
   
+  for(let i=mrEnemyLasers.length-1; i>=0; i--) {
+    let ls = mrEnemyLasers[i];
+    ls.timer--;
+    ls.y += mrSpeed; // move down with map? Or static relative to screen?
+    // Lasers usually are static to the screen, but we'll let it move with camera slightly to feel grounded
+    
+    if (ls.timer <= 30 && ls.timer > 0) {
+      // Firing phase
+      if (Math.abs(mrPlayer.x - ls.x) < ls.w/2 + mrPlayer.r) {
+        if(mrRelics.glassCannon) {
+          mrPlayer.count = 0;
+          triggerMrGameOver();
+        } else if(mrRelics.goldenBlood) {
+          if(mrRunCoins >= 10) mrRunCoins -= 10;
+          else mrPlayer.count -= ls.dmg;
+        } else {
+          mrPlayer.count -= ls.dmg;
+        }
+        if (mrPlayer.count <= 0) {
+          mrPlayer.count = 0;
+          triggerMrGameOver();
+        }
+      }
+    }
+    if (ls.timer <= 0) mrEnemyLasers.splice(i, 1);
+  }
+  
   for(let i = mrTraps.length-1; i>=0; i--) {
     let t = mrTraps[i];
     t.y += mrSpeed;
     if (t.active && Math.abs(t.y - py) < t.h/2 + mrPlayer.r && Math.abs(t.x - mrPlayer.x) < t.w/2 + mrPlayer.r * 2) {
-      if(mrRelics.glassCannon) {
-        mrPlayer.count = 0;
-        triggerMrGameOver();
-      } else if(mrRelics.goldenBlood) {
-        if(mrRunCoins >= 10) mrRunCoins -= 10;
-        else mrPlayer.count -= 1;
-      } else {
-        mrPlayer.count -= 1; // rapid damage
-      }
-      if (mrPlayer.count < 1) {
-        mrPlayer.count = 0;
-        triggerMrGameOver();
-      }
+      mrPlayer.count = 0;
+      triggerMrGameOver();
     }
     if (t.y > c.height + 100) mrTraps.splice(i, 1);
   }
@@ -6311,11 +6668,12 @@ function mrLoop() {
   // Dog Magnet for Chests
   let dogCount = mrPetCounts.dog;
   if(dogCount > 0) {
-    let pullSpeed = 0.015 * dogCount;
+    let pullSpeed = (dogCount >= 3) ? 0.05 : 0.015 * dogCount;
+    let range = (dogCount >= 3) ? 1000 : 300;
     for(let ch of mrChests) {
       if(ch.active && ch.y > 0 && ch.y < c.height) {
         let dist = Math.hypot(mrPlayer.x - ch.x, py - ch.y);
-        if(dist < 300) {
+        if(dist < range) {
           ch.x += (mrPlayer.x - ch.x) * pullSpeed;
           ch.y += (py - ch.y) * pullSpeed;
         }
@@ -6346,15 +6704,23 @@ function mrLoop() {
   }
   
   // Dragon Breath
-  let dragonCount = Math.floor(mrPlayer.pets / 9);
+  let dragonCount = mrPetCounts.dragon;
   if(dragonCount > 0) {
     let now = Date.now();
-    if(now - mrDragonTimer > 10000) {
+    let cooldown = (dragonCount >= 3) ? 5000 : 10000; // Half cooldown
+    if(now - mrDragonTimer > cooldown) {
       mrDragonTimer = now;
-      mrZaps.push({x1: mrPlayer.x, y1: py, x2: mrPlayer.x, y2: -100, timer: 30, w: 100});
+      let width = (dragonCount >= 3) ? 200 : 100;
+      mrZaps.push({x1: mrPlayer.x, y1: py, x2: mrPlayer.x, y2: -100, timer: 30, w: width});
       for(let en of mrEnemies) {
-        if(en.active && Math.abs(en.x - mrPlayer.x) < 50) {
-          en.hp -= mrPlayer.dmg * 50 * dragonCount;
+        if(en.active && Math.abs(en.x - mrPlayer.x) < width/2) {
+          let dmg = (dragonCount >= 3) ? (mrPlayer.dmg * 200) : (mrPlayer.dmg * 50 * dragonCount);
+          en.hp -= dmg;
+          if(en.hp <= 0) {
+            en.active = false;
+            mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
+            mrRewardEnemy(en);
+          }
         }
       }
     }
@@ -6391,6 +6757,15 @@ function mrLoop() {
   if(sd) sd.innerText = Math.floor(mrDistance/10);
   const si = document.getElementById('mrInGameCoins');
   if(si) si.innerText = mrRunCoins;
+  const tu = document.getElementById('mrTurtleUI');
+  if(tu) {
+    if(mrPetCounts.turtle > 0) {
+      tu.style.display = 'block';
+      tu.innerText = '🐢 x' + mrPetCounts.turtle;
+    } else {
+      tu.style.display = 'none';
+    }
+  }
   
   // Render
   ctx.clearRect(0, 0, c.width, c.height);
@@ -6505,6 +6880,30 @@ function mrLoop() {
     ctx.stroke();
   }
   
+  for(let ls of mrEnemyLasers) {
+    if (ls.timer > 30) {
+      // Warning line
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
+      ctx.fillRect(ls.x - ls.w/2, ls.y, ls.w, c.height);
+      
+      // Dashed center line for warning
+      ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 10]);
+      ctx.beginPath();
+      ctx.moveTo(ls.x, ls.y);
+      ctx.lineTo(ls.x, c.height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    } else {
+      // Firing laser
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.9)';
+      ctx.fillRect(ls.x - ls.w/2, ls.y, ls.w, c.height);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(ls.x - ls.w/4, ls.y, ls.w/2, c.height);
+    }
+  }
+  
   for(let i=mrZaps.length-1; i>=0; i--) {
     let z = mrZaps[i];
     z.timer--;
@@ -6517,30 +6916,40 @@ function mrLoop() {
     if(z.timer <= 0) mrZaps.splice(i, 1);
   }
   
-  let petList = [];
-  for(let i=0; i<mrPetCounts.dragon; i++) petList.push('🐲');
-  for(let i=0; i<mrPetCounts.cat; i++) petList.push('🐈');
-  for(let i=0; i<mrPetCounts.dog; i++) petList.push('🐶');
+  let petStats = [];
   
-  for(let p=0; p<petList.length; p++) {
-     let px = mrPlayer.x + ((p%2===0)?-1:1) * (40 + Math.floor(p/2)*30);
+  let ancientDragons = Math.floor(mrPetCounts.dragon / 3);
+  let normalDragons = mrPetCounts.dragon % 3;
+  if(ancientDragons > 0) petStats.push({icon: '🦖', count: ancientDragons});
+  if(normalDragons > 0) petStats.push({icon: '🐲', count: normalDragons});
+  
+  let tigers = Math.floor(mrPetCounts.cat / 3);
+  let normalCats = mrPetCounts.cat % 3;
+  if(tigers > 0) petStats.push({icon: '🐅', count: tigers});
+  if(normalCats > 0) petStats.push({icon: '🐈', count: normalCats});
+  
+  let wolves = Math.floor(mrPetCounts.dog / 3);
+  let normalDogs = mrPetCounts.dog % 3;
+  if(wolves > 0) petStats.push({icon: '🐺', count: wolves});
+  if(normalDogs > 0) petStats.push({icon: '🐶', count: normalDogs});
+  
+  for(let p=0; p<petStats.length; p++) {
+     let px = mrPlayer.x + ((p%2===0)?-1:1) * (40 + Math.floor(p/2)*45);
      ctx.font = '24px Arial';
-     ctx.fillText(petList[p], px, py);
-  }
-  
-  if (mrPetCounts.turtle > 0) {
-    let tr = 70;
-    for(let t=0; t<mrPetCounts.turtle; t++) {
-      let tAng = mrTurtlesRot + (Math.PI*2 / mrPetCounts.turtle) * t;
-      let tx = mrPlayer.x + Math.cos(tAng)*tr;
-      let ty = py + Math.sin(tAng)*tr;
-      ctx.font = '24px Arial';
-      ctx.fillText('🐢', tx, ty);
-    }
+     ctx.textAlign = 'center';
+     ctx.textBaseline = 'middle';
+     ctx.fillText(petStats[p].icon, px, py);
+     if (petStats[p].count > 1) {
+       ctx.font = 'bold 12px Arial';
+       ctx.fillStyle = '#fde047';
+       ctx.fillText('x' + petStats[p].count, px + 12, py + 12);
+       ctx.fillStyle = '#ffffff';
+     }
   }
   
   if (mrPlayer.swords > 0) {
-    let swordRadius = 180 + mrPlayer.swords * 1.5;
+    let baseRadius = 180 + mrPlayer.swords * 1.5;
+    let swordRadius = baseRadius * 1.5;
     for(let s=0; s<mrPlayer.swords; s++) {
       let angle = mrSwordsRot + (Math.PI*2 / mrPlayer.swords) * s;
       let sx = mrPlayer.x + Math.cos(angle) * swordRadius;
