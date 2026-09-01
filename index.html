@@ -27,6 +27,8 @@ body{font-family:'Pretendard',sans-serif;background:#F8FAFC;}
 .btn-ghost{background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;padding:.6rem 1.1rem;border-radius:0.75rem;}
 .btn-ghost:hover{background:#E2E8F0;color:#1E293B;}
 .btn-red{background:#EF4444;color:#fff;box-shadow:0 1px 2px rgba(0,0,0,0.05);padding:.6rem 1.2rem;}
+.gps-correct{color:#2563EB!important;}
+.gps-wrong{color:#EF4444!important;background:#FEE2E2;border-radius:.2rem;}
 .btn-red:hover{background:#DC2626;transform:translateY(-1px);box-shadow:0 4px 6px rgba(239,68,68,0.2);}
 .inp{width:100%;padding:.6rem .9rem;border:1px solid #CBD5E1;border-radius:0.75rem;font-size:.875rem;background:#F8FAFC;font-family:'Pretendard',sans-serif;transition:all .2s;}
 .inp:focus{outline:none;border-color:#6366F1;background:#fff;box-shadow:0 0 0 3px rgba(99,102,241,.15);}
@@ -237,6 +239,7 @@ body.theme-dark .bg-gray-50, body.theme-dark .bg-gray-100 { background-color: va
       </button>
       <div id="freegameSubmenu" class="hidden pl-11 pr-2 mt-1 space-y-1">
         <button onclick="switchTab('freegame'); showFreeGame('potjump')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🍯 항아리 점프</button>
+        <button onclick="switchTab('freegame'); showFreeGame('math_runner')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🏃 수학 런너</button>
         <button onclick="switchTab('freegame'); showFreeGame('blockblast')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🧩 블록 블라스트</button>
         <button onclick="switchTab('freegame'); showFreeGame('typing')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⌨️ 타자 게임</button>
         <button onclick="switchTab('freegame'); showFreeGame('stairs')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐹 무한의 계단</button>
@@ -590,6 +593,7 @@ function loadTheme() {
 }
 
 function switchTab(id){
+  window.gpsActiveView = id;
   document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
   document.getElementById(id)?.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.toggle('nav-active',btn.dataset.target===id));
@@ -633,6 +637,7 @@ function toggleFreegameMenu(){
 }
 
 function switchGrade(gid){
+  window.gpsActiveView = gid;
   document.querySelectorAll('.grade-btn').forEach(b=>b.classList.toggle('grade-active',b.dataset.grade===gid));
   switchTab('minigame');
   if(gid==='grade6'){showGrade6Launcher();return;}
@@ -743,6 +748,7 @@ function showGrade6Launcher(){
 }
 
 function startGame(id){
+  window.gpsActiveView = id;
   if(id==='stacking')   initStacking();
   if(id==='proportion') initProportion();
   if(id==='history')    initHistory();
@@ -767,6 +773,7 @@ let fdFound = 0;
 let fdTotal = 0;
 
 function initFossilDig(round = 1) {
+  if (window.gpsActiveView && window.gpsActiveView !== 'fossil_dig') return;
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   if(round > 3) {
     gc.innerHTML = `
@@ -894,6 +901,7 @@ let djFrogY = 0;
 let djFrogVy = 0;
 
 function initDecimalJump() {
+  if (window.gpsActiveView && window.gpsActiveView !== 'decimal_jump') return;
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   djScore = 0; djHealth = 3; djSpeed = 0.6; djFrogPos = 1; djFrogY = 0; djFrogVy = 0;
   djNextQuestion();
@@ -1037,6 +1045,7 @@ let htSelectedIndexes = [];
 let htLives = 3;
 
 function initHistoryTrain(round = 1) {
+  if (window.gpsActiveView && window.gpsActiveView !== 'history_train') return;
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   if(round === 1) htLives = 3;
   if(round > 5) {
@@ -1167,6 +1176,7 @@ let mmTimeElapsed = 0;
 let mmTotalTimeElapsed = 0;
 
 function initMathMultiple(round = 1) {
+  if (window.gpsActiveView && window.gpsActiveView !== 'math_multiple') return;
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   if(mmTimerInterval) clearInterval(mmTimerInterval);
   
@@ -1337,11 +1347,12 @@ const TP_SHORT_TEXTS = [
 ];
 
 let tsLines = [], tsCurrent = 0, tsTotalChars = 0, tsTotalTypos = 0, tsStartTime = 0;
+let tsStreak = 0, tsMaxStreak = 0;
 
 function initShortTyping() {
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   tsLines = [...TP_SHORT_TEXTS].sort(()=>Math.random()-0.5).slice(0, 5);
-  tsCurrent = 0; tsTotalChars = 0; tsTotalTypos = 0; tsStartTime = 0;
+  tsCurrent = 0; tsTotalChars = 0; tsTotalTypos = 0; tsStartTime = 0; tsStreak = 0; tsMaxStreak = 0;
   
   gc.innerHTML = `
   <div class="space-y-4">
@@ -1353,7 +1364,7 @@ function initShortTyping() {
     <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-200">
       <div class="flex justify-between mb-4 text-sm font-bold text-gray-500">
         <span>진행도: <span id="tsProgress">1/5</span></span>
-        <span>현재 타수: <span id="tsWpm" class="text-indigo-600">0</span> 타/분</span>
+        <span>현재 타수: <span id="tsWpm" class="text-indigo-600">0</span> 타/분 <span id="tsStreakTxt" class="text-orange-500"></span></span>
         <span>정확도: <span id="tsAcc">100</span>%</span>
       </div>
       <div class="bg-gray-50 p-6 rounded-xl mb-6 min-h-[120px] flex flex-col items-center justify-center border-2 border-gray-100">
@@ -1370,14 +1381,32 @@ function initShortTyping() {
 
 function tsUpdateLine() {
   if(tsCurrent >= tsLines.length) {
-    document.getElementById('tsTargetText').innerHTML = '🎉 <span class="text-green-600">연습을 완료했습니다!</span>';
-    document.getElementById('tsNextText').innerText = '-';
-    document.getElementById('tsInput').disabled = true;
+    const timeSec = (performance.now() - tsStartTime) / 1000;
+    const finalWpm = timeSec > 0 ? Math.floor((tsTotalChars / timeSec) * 60) : 0;
+    const finalAcc = tsTotalChars > 0 ? Math.max(0, Math.floor(((tsTotalChars - tsTotalTypos) / tsTotalChars) * 100)) : 100;
+    const {best, isNew} = gpsSetBest('typing_short_wpm', finalWpm);
+    const gc = document.getElementById('gradeContent');
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
+        <span class="text-6xl">🎉</span>
+        <h4 class="text-2xl font-black text-green-600">연습을 완료했습니다!</h4>
+        <p class="text-2xl">${gpsStars(finalAcc/100)}</p>
+        <div class="flex gap-6 mt-2">
+          <div class="text-center"><p class="text-3xl font-black text-indigo-600">${finalWpm}</p><p class="text-xs text-gray-400 font-bold">타/분</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-green-600">${finalAcc}%</p><p class="text-xs text-gray-400 font-bold">정확도</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}</p><p class="text-xs text-gray-400 font-bold">최고 타수</p></div>
+        </div>
+        ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+        <button onclick="initShortTyping()" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 하기</button>
+      </div>`;
+    gpsConfetti(window.innerWidth/2, window.innerHeight/3);
     return;
   }
   document.getElementById('tsTargetText').innerText = tsLines[tsCurrent];
   document.getElementById('tsNextText').innerText = tsCurrent + 1 < tsLines.length ? tsLines[tsCurrent+1] : '끝';
   document.getElementById('tsProgress').innerText = `${tsCurrent+1}/${tsLines.length}`;
+  const st = document.getElementById('tsStreakTxt');
+  if(st) st.textContent = tsStreak >= 2 ? `🔥${tsStreak}` : '';
 }
 
 function tsCheckInput() {
@@ -1391,12 +1420,12 @@ function tsCheckInput() {
   let html = '', typos = 0;
   for(let i=0; i<target.length; i++) {
     if(i < val.length) {
-      if(val[i] === target[i]) { html += `<span class="text-indigo-600">${target[i]}</span>`; }
-      else { html += `<span class="text-red-500 bg-red-100">${target[i]}</span>`; typos++; }
+      if(val[i] === target[i]) { html += `<span class="gps-correct">${target[i]}</span>`; }
+      else { html += `<span class="gps-wrong">${target[i]}</span>`; typos++; }
     } else { html += `<span class="text-gray-400">${target[i]}</span>`; }
   }
   if(val.length > target.length) {
-    html += `<span class="text-red-500 bg-red-100">${val.substring(target.length)}</span>`;
+    html += `<span class="gps-wrong">${val.substring(target.length)}</span>`;
     typos += (val.length - target.length);
   }
   document.getElementById('tsTargetText').innerHTML = html;
@@ -1414,11 +1443,16 @@ function tsKeyDown(e) {
     const val = document.getElementById('tsInput').value;
     if(val.length === 0) return;
     const target = tsLines[tsCurrent];
+    let lineTypos = 0;
     for(let i=0; i<target.length; i++) {
-      if(i >= val.length || val[i] !== target[i]) tsTotalTypos++;
+      if(i >= val.length || val[i] !== target[i]) lineTypos++;
     }
-    if(val.length > target.length) tsTotalTypos += (val.length - target.length);
+    if(val.length > target.length) lineTypos += (val.length - target.length);
+    tsTotalTypos += lineTypos;
     tsTotalChars += Math.max(target.length, val.length);
+    
+    if(lineTypos === 0) { tsStreak++; tsMaxStreak = Math.max(tsMaxStreak, tsStreak); }
+    else tsStreak = 0;
     
     tsCurrent++;
     document.getElementById('tsInput').value = '';
@@ -1515,12 +1549,12 @@ function tlCheckInput() {
   let html = '', typos = 0;
   for(let i=0; i<target.length; i++) {
     if(i < val.length) {
-      if(val[i] === target[i]) { html += `<span class="text-blue-600">${target[i]}</span>`; }
-      else { html += `<span class="text-red-500 bg-red-100">${target[i]}</span>`; typos++; }
+      if(val[i] === target[i]) { html += `<span class="gps-correct">${target[i]}</span>`; }
+      else { html += `<span class="gps-wrong">${target[i]}</span>`; typos++; }
     } else { html += `<span>${target[i]}</span>`; }
   }
   if(val.length > target.length) {
-    html += `<span class="text-red-500 bg-red-100">${val.substring(target.length)}</span>`;
+    html += `<span class="gps-wrong">${val.substring(target.length)}</span>`;
     typos += (val.length - target.length);
   }
   
@@ -1556,8 +1590,28 @@ function tlKeyDown(e) {
     document.getElementById('tlInput').value = '';
     
     if(tlCurrent >= tlLines.length) {
-      document.getElementById('tlInput').disabled = true;
-      alert(`🎉 완료했습니다!\n평균 타수: ${document.getElementById('tlWpm').innerText}\n정확도: ${document.getElementById('tlAcc').innerText}%`);
+      const timeSec = (performance.now() - tlStartTime) / 1000;
+      const finalWpm = timeSec > 0 ? Math.floor((tlTotalChars / timeSec) * 60) : 0;
+      const finalAcc = tlTotalChars > 0 ? Math.max(0, Math.floor(((tlTotalChars - tlTotalTypos) / tlTotalChars) * 100)) : 100;
+      const {best, isNew} = gpsSetBest('typing_long_wpm', finalWpm);
+      const gc = document.getElementById('gradeContent');
+      gc.innerHTML = `
+        <div class="flex flex-col items-center gap-3 py-8 text-center">
+          <span class="text-6xl">🎉</span>
+          <h4 class="text-2xl font-black text-blue-600">완료했습니다!</h4>
+          <p class="text-2xl">${gpsStars(finalAcc/100)}</p>
+          <div class="flex gap-6 mt-2">
+            <div class="text-center"><p class="text-3xl font-black text-indigo-600">${finalWpm}</p><p class="text-xs text-gray-400 font-bold">타/분</p></div>
+            <div class="text-center"><p class="text-3xl font-black text-green-600">${finalAcc}%</p><p class="text-xs text-gray-400 font-bold">정확도</p></div>
+            <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}</p><p class="text-xs text-gray-400 font-bold">최고 타수</p></div>
+          </div>
+          ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+          <div class="flex gap-3 mt-4">
+            <button onclick="initLongTypingMenu()" class="btn btn-ghost px-6 py-3">← 목록으로</button>
+            <button onclick="initLongTyping(TP_LONG_TEXTS.indexOf(tlData))" class="btn btn-blue px-8 py-3 text-lg">🔄 다시 하기</button>
+          </div>
+        </div>`;
+      gpsConfetti(window.innerWidth/2, window.innerHeight/3);
       return;
     }
     
@@ -4502,11 +4556,19 @@ function refreshRecCount(){const n=JSON.parse(localStorage.getItem(K_REC)||'[]')
 function exportData(){const blob=new Blob([JSON.stringify({version:'1.0',date:new Date().toISOString(),records:JSON.parse(localStorage.getItem(K_REC)||'[]')},null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`GPS_Edu_백업_${new Date().toISOString().slice(0,10)}.json`});a.click();URL.revokeObjectURL(a.href);toast('📥 백업 파일 다운로드됐어요!');}
 const origShowFreeGame = window.showFreeGame;
 window.showFreeGame = function(id) {
+  window.gpsActiveView = id;
   if (id === 'potjump') {
     document.querySelectorAll('.util-tab').forEach(b => {
       if(b.dataset.free) b.classList.toggle('util-active', b.dataset.free === id);
     });
     initPotJump();
+    return;
+  }
+  if (id === 'math_runner') {
+    document.querySelectorAll('.util-tab').forEach(b => {
+      if(b.dataset.free) b.classList.toggle('util-active', b.dataset.free === id);
+    });
+    initMathRunner();
     return;
   }
   if (origShowFreeGame) origShowFreeGame(id);
@@ -4819,22 +4881,83 @@ function pjLoop() {
 }
 
 /* ══════════════════════════════════════
+   🎉 저학년 게임 공통 업그레이드 유틸
+   (최고기록 · 컨페티 · 콤보 팝업 · 별점)
+══════════════════════════════════════ */
+function gpsSetBest(key, val){
+  const k = 'gps_best_' + key;
+  const cur = Number(localStorage.getItem(k) || 0);
+  if(val > cur){ localStorage.setItem(k, String(val)); return {best: val, isNew: true}; }
+  return {best: cur, isNew: false};
+}
+function gpsGetBest(key){ return Number(localStorage.getItem('gps_best_' + key) || 0); }
+function gpsConfetti(x, y){
+  const layer = document.createElement('div');
+  layer.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:9998;overflow:hidden;';
+  document.body.appendChild(layer);
+  const emojis = ['🎉','⭐','✨','🎊'];
+  for(let i=0;i<16;i++){
+    const p = document.createElement('span');
+    const ang = Math.random()*Math.PI*2, dist = 55+Math.random()*85;
+    const dx = Math.cos(ang)*dist, dy = Math.sin(ang)*dist - 35;
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.cssText = `position:absolute;left:${x}px;top:${y}px;font-size:${13+Math.random()*13}px;transform:translate(-50%,-50%);transition:transform .8s cubic-bezier(.2,.8,.3,1),opacity .8s ease-out;opacity:1;`;
+    layer.appendChild(p);
+    requestAnimationFrame(()=>{
+      p.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${(Math.random()*360)|0}deg) scale(1.3)`;
+      p.style.opacity = '0';
+    });
+  }
+  setTimeout(()=>layer.remove(), 900);
+}
+function gpsComboPopup(el, combo){
+  if(combo < 2 || !el) return;
+  const rect = el.getBoundingClientRect();
+  const p = document.createElement('div');
+  p.textContent = `🔥 ${combo}콤보!`;
+  p.style.cssText = `position:fixed;left:${rect.left+rect.width/2}px;top:${rect.top}px;transform:translate(-50%,-10px);font-weight:900;font-size:1.15rem;color:#F97316;z-index:9999;pointer-events:none;text-shadow:0 2px 4px rgba(0,0,0,.15);transition:transform .7s ease-out,opacity .7s ease-out;opacity:1;`;
+  document.body.appendChild(p);
+  requestAnimationFrame(()=>{ p.style.transform='translate(-50%,-50px)'; p.style.opacity='0'; });
+  setTimeout(()=>p.remove(), 750);
+}
+function gpsStars(ratio){ // ratio 0~1 -> ⭐ html string (max 3)
+  const n = ratio >= 0.9 ? 3 : ratio >= 0.6 ? 2 : 1;
+  return '⭐'.repeat(n) + '☆'.repeat(3-n);
+}
+
+/* ══════════════════════════════════════
    🏎️ 구구단 레이스 (2학년 수학)
 ══════════════════════════════════════ */
 let grStage = 0;
 let grTotal = 10;
-let grCarPos = 0;
+let grScore = 0;
+let grCombo = 0;
+let grMaxCombo = 0;
+let grTimeLeft = 12;
+let grTimerId = null;
+const GR_Q_TIME = 12;
+
+function grClearTimer(){ if(grTimerId){ clearInterval(grTimerId); grTimerId = null; } }
 
 function initGuguRace(reset=true) {
-  if(reset) { grStage = 0; grCarPos = 0; }
+  if (window.gpsActiveView && window.gpsActiveView !== 'gugu_race') return;
+  grClearTimer();
+  if(reset) { grStage = 0; grScore = 0; grCombo = 0; grMaxCombo = 0; }
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   
   if(grStage >= grTotal) {
+    const {best, isNew} = gpsSetBest('gugu_race', grScore);
     gc.innerHTML = `
-      <div class="flex flex-col items-center gap-4 py-8 text-center">
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
         <span class="text-6xl">🏆</span>
         <h4 class="text-2xl font-black text-amber-600">완주 성공!</h4>
         <p class="text-gray-500 font-bold">구구단 레이싱 챔피언이 되었습니다!</p>
+        <div class="flex gap-6 mt-2">
+          <div class="text-center"><p class="text-3xl font-black text-amber-600">${grScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-indigo-500">${grMaxCombo}</p><p class="text-xs text-gray-400 font-bold">최고 콤보</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+        </div>
+        ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
         <button onclick="initGuguRace(true)" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 달리기</button>
       </div>`;
     return;
@@ -4852,13 +4975,14 @@ function initGuguRace(reset=true) {
   options.sort(() => Math.random() - 0.5);
   
   let progress = (grStage / grTotal) * 100;
+  grTimeLeft = GR_Q_TIME;
   
   gc.innerHTML = `
-    <div class="space-y-6">
+    <div class="space-y-5">
       <div class="flex items-center justify-between">
-        <button onclick="showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <button onclick="grClearTimer();showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
         <span class="text-sm font-black text-amber-800">🏎️ 구구단 레이스 (${grStage+1}/${grTotal})</span>
-        <div class="w-16"></div>
+        <span class="text-sm font-black text-pink-500">${grScore}점 ${grCombo>=2?`· 🔥${grCombo}`:''}</span>
       </div>
       
       <!-- Track -->
@@ -4867,6 +4991,11 @@ function initGuguRace(reset=true) {
         <div class="absolute top-1/2 -translate-y-1/2 w-full border-t-4 border-dashed border-white"></div>
         <div class="absolute top-1/2 -translate-y-1/2 text-5xl transition-all duration-500 ease-out z-10" style="left: calc(${progress}% - 20px);">🚗</div>
         <div class="absolute right-4 top-1/2 -translate-y-1/2 text-5xl opacity-80">🏁</div>
+      </div>
+      
+      <!-- Timer bar -->
+      <div class="w-full h-2.5 bg-amber-100 rounded-full overflow-hidden">
+        <div id="grTimerBar" class="h-full bg-amber-400" style="width:100%;transition:width ${GR_Q_TIME}s linear;"></div>
       </div>
       
       <!-- Question -->
@@ -4884,20 +5013,43 @@ function initGuguRace(reset=true) {
       </div>
     </div>
   `;
+  
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('grTimerBar');
+    if(bar) bar.style.width = '0%';
+  });
+  grTimerId = setInterval(()=>{
+    grTimeLeft--;
+    if(grTimeLeft <= 0){
+      grClearTimer();
+      grCombo = 0;
+      grStage++;
+      const opts = document.getElementById('grOptions');
+      if(opts) opts.style.pointerEvents = 'none';
+      toast('⏰ 시간 초과! 다음 문제로 넘어가요');
+      setTimeout(() => initGuguRace(false), 700);
+    }
+  }, 1000);
 }
 
 function grClick(selected, answer, btn) {
+  grClearTimer();
   if(selected === answer) {
-    // beep removed
     btn.classList.replace('bg-amber-400', 'bg-green-500');
     btn.classList.replace('border-amber-600', 'border-green-700');
+    grCombo++; grMaxCombo = Math.max(grMaxCombo, grCombo);
+    grScore += 10 + Math.max(0, grTimeLeft) + (grCombo>=2 ? (grCombo-1)*5 : 0);
     grStage++;
     document.getElementById('grOptions').style.pointerEvents = 'none';
+    const rect = btn.getBoundingClientRect();
+    gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+    gpsComboPopup(btn, grCombo);
     setTimeout(() => initGuguRace(false), 600);
   } else {
     btn.classList.replace('bg-amber-400', 'bg-red-500');
     btn.classList.replace('border-amber-600', 'border-red-700');
     btn.classList.add('animate-bounce');
+    grCombo = 0;
     setTimeout(() => {
       btn.classList.replace('bg-red-500', 'bg-amber-400');
       btn.classList.replace('border-red-700', 'border-amber-600');
@@ -4911,17 +5063,29 @@ function grClick(selected, answer, btn) {
 ══════════════════════════════════════ */
 let crStage = 0;
 let crTotal = 5;
+let crCombo = 0;
+let crMaxCombo = 0;
+let crTimeLeft = 14;
+let crTimerId = null;
+const CR_Q_TIME = 14;
+
+function crClearTimer(){ if(crTimerId){ clearInterval(crTimerId); crTimerId = null; } }
 
 function initClockRead(reset=true) {
-  if(reset) crStage = 0;
+  if (window.gpsActiveView && window.gpsActiveView !== 'clock_read') return;
+  crClearTimer();
+  if(reset) { crStage = 0; crCombo = 0; crMaxCombo = 0; }
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   
   if(crStage >= crTotal) {
+    const ratio = crMaxCombo / crTotal;
     gc.innerHTML = `
-      <div class="flex flex-col items-center gap-4 py-8 text-center">
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
         <span class="text-6xl">🌟</span>
         <h4 class="text-2xl font-black text-indigo-600">시간 박사님!</h4>
         <p class="text-gray-500 font-bold">시계 보기를 완벽하게 마스터했어요!</p>
+        <p class="text-2xl">${gpsStars(ratio)}</p>
+        <p class="text-sm font-bold text-gray-400">최고 콤보 🔥 ${crMaxCombo}</p>
         <button onclick="initClockRead(true)" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 하기</button>
       </div>`;
     return;
@@ -4944,13 +5108,18 @@ function initClockRead(reset=true) {
   
   let mAngle = mins * 6;
   let hAngle = (hour % 12) * 30 + (mins * 0.5);
+  crTimeLeft = CR_Q_TIME;
   
   gc.innerHTML = `
-    <div class="space-y-6">
+    <div class="space-y-5">
       <div class="flex items-center justify-between">
-        <button onclick="showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <button onclick="crClearTimer();showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
         <span class="text-sm font-black text-indigo-800">⏰ 시계 보기 퀴즈 (${crStage+1}/${crTotal})</span>
-        <div class="w-16"></div>
+        <span class="text-sm font-black text-pink-500">${crCombo>=2?`🔥${crCombo}`:''}</span>
+      </div>
+      
+      <div class="w-full h-2.5 bg-indigo-100 rounded-full overflow-hidden">
+        <div id="crTimerBar" class="h-full bg-indigo-400" style="width:100%;transition:width ${CR_Q_TIME}s linear;"></div>
       </div>
       
       <div class="flex justify-center py-2">
@@ -4981,22 +5150,44 @@ function initClockRead(reset=true) {
       </div>
     </div>
   `;
+  
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('crTimerBar');
+    if(bar) bar.style.width = '0%';
+  });
+  crTimerId = setInterval(()=>{
+    crTimeLeft--;
+    if(crTimeLeft <= 0){
+      crClearTimer();
+      crCombo = 0;
+      crStage++;
+      const opts = document.getElementById('crOptions');
+      if(opts) opts.style.pointerEvents = 'none';
+      toast('⏰ 시간 초과! 다음 문제로 넘어가요');
+      setTimeout(() => initClockRead(false), 700);
+    }
+  }, 1000);
 }
 
 function crClick(selected, answer, btn) {
+  crClearTimer();
   if(selected === answer) {
-    // beep removed
     btn.classList.replace('bg-indigo-100', 'bg-green-400');
     btn.classList.replace('border-indigo-300', 'border-green-600');
     btn.classList.replace('text-indigo-900', 'text-white');
+    crCombo++; crMaxCombo = Math.max(crMaxCombo, crCombo);
     crStage++;
     document.getElementById('crOptions').style.pointerEvents = 'none';
+    const rect = btn.getBoundingClientRect();
+    gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+    gpsComboPopup(btn, crCombo);
     setTimeout(() => initClockRead(false), 700);
   } else {
     btn.classList.replace('bg-indigo-100', 'bg-red-400');
     btn.classList.replace('border-indigo-300', 'border-red-600');
     btn.classList.replace('text-indigo-900', 'text-white');
     btn.classList.add('animate-bounce');
+    crCombo = 0;
     setTimeout(() => {
       btn.classList.replace('bg-red-400', 'bg-indigo-100');
       btn.classList.replace('border-red-600', 'border-indigo-300');
@@ -5012,15 +5203,61 @@ function crClick(selected, answer, btn) {
 let mpTarget = 0;
 let mpScore = 0;
 let mpInterval = null;
+let mpTickId = null;
 let mpActive = false;
+let mpCombo = 0;
+let mpMaxCombo = 0;
+let mpTimeLeft = 60;
+const MP_GAME_TIME = 60;
+
+function mpSpawnDelay(){
+  // 점수가 오를수록 풍선이 빨리 떨어져 난이도가 올라감 (최소 1200ms)
+  return Math.max(1200, 2200 - mpScore * 3);
+}
+function mpRestartSpawner(){
+  clearInterval(mpInterval);
+  mpInterval = setInterval(spawnMpBalloon, mpSpawnDelay());
+}
 
 function initMathPop() {
-  mpScore = 0;
+  if (window.gpsActiveView && window.gpsActiveView !== 'math_pop') return;
+  mpScore = 0; mpCombo = 0; mpMaxCombo = 0; mpTimeLeft = MP_GAME_TIME;
   mpActive = true;
   genMpTarget();
   renderMathPop();
-  if(mpInterval) clearInterval(mpInterval);
-  mpInterval = setInterval(spawnMpBalloon, 1500);
+  mpRestartSpawner();
+  clearInterval(mpTickId);
+  mpTickId = setInterval(()=>{
+    mpTimeLeft--;
+    const t = document.getElementById('mpTimeTxt');
+    if(t) t.textContent = mpTimeLeft;
+    if(mpTimeLeft <= 0) mpEndGame();
+  }, 1000);
+}
+
+function mpEndGame(){
+  mpActive = false;
+  clearInterval(mpInterval);
+  clearInterval(mpTickId);
+  const area = document.getElementById('mpArea');
+  if(area) area.innerHTML = '';
+  const {best, isNew} = gpsSetBest('math_pop', mpScore);
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+    <div class="flex flex-col items-center gap-3 py-8 text-center">
+      <span class="text-6xl">⏰</span>
+      <h4 class="text-2xl font-black text-pink-600">시간 종료!</h4>
+      <div class="flex gap-6 mt-2">
+        <div class="text-center"><p class="text-3xl font-black text-pink-500">${mpScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+        <div class="text-center"><p class="text-3xl font-black text-indigo-500">${mpMaxCombo}</p><p class="text-xs text-gray-400 font-bold">최고 콤보</p></div>
+        <div class="text-center"><p class="text-3xl font-black text-amber-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+      </div>
+      ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+      <div class="flex gap-3 mt-4">
+        <button onclick="showGrade12Launcher()" class="btn btn-ghost px-6 py-3">← 메뉴로</button>
+        <button onclick="initMathPop()" class="btn btn-blue px-8 py-3 text-lg">🔄 다시 하기</button>
+      </div>
+    </div>`;
 }
 
 function genMpTarget() {
@@ -5033,11 +5270,12 @@ function renderMathPop() {
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   gc.innerHTML = `
     <div class="relative w-full h-[65vh] bg-blue-50 rounded-2xl border-4 border-blue-200 overflow-hidden flex flex-col">
-      <div class="absolute top-2 left-2 z-20">
-        <button onclick="mpActive=false;clearInterval(mpInterval);showGrade12Launcher()" class="btn btn-ghost bg-white/50 text-xs shadow-sm">← 나가기</button>
+      <div class="absolute top-2 left-2 z-20 flex items-center gap-2">
+        <button onclick="mpActive=false;clearInterval(mpInterval);clearInterval(mpTickId);showGrade12Launcher()" class="btn btn-ghost bg-white/50 text-xs shadow-sm">← 나가기</button>
+        <span class="bg-white/90 px-3 py-1 rounded-full text-xs font-black text-slate-500 shadow-sm">⏱️ <span id="mpTimeTxt">${mpTimeLeft}</span>초</span>
       </div>
       <div class="absolute top-2 right-4 z-20 text-lg font-black text-pink-600 bg-white/90 px-4 py-1 rounded-full shadow-sm">
-        점수: <span id="mpScoreTxt">0</span>점
+        점수: <span id="mpScoreTxt">0</span>점 <span id="mpComboTxt" class="text-orange-500 text-sm"></span>
       </div>
       
       <div class="w-full text-center py-4 z-10 mt-10">
@@ -5085,7 +5323,7 @@ function spawnMpBalloon() {
   bEl.style.bottom = '-80px';
   bEl.style.width = '75px';
   bEl.style.height = '90px';
-  bEl.style.transition = 'bottom 4s linear, opacity 0.2s';
+  bEl.style.transition = 'bottom 6s linear, opacity 0.2s';
   
   let hue = Math.floor(Math.random()*360);
   bEl.innerHTML = `
@@ -5094,16 +5332,25 @@ function spawnMpBalloon() {
   `;
   
   bEl.onclick = () => {
+    if(!mpActive) return;
     if(val === mpTarget) {
-      // beep removed
-      mpScore += 10;
+      mpCombo++; mpMaxCombo = Math.max(mpMaxCombo, mpCombo);
+      mpScore += 10 + (mpCombo>=2 ? (mpCombo-1)*2 : 0);
       document.getElementById('mpScoreTxt').textContent = mpScore;
+      const comboEl = document.getElementById('mpComboTxt');
+      if(comboEl) comboEl.textContent = mpCombo>=2 ? `🔥${mpCombo}` : '';
       bEl.innerHTML = '<span class="text-6xl">💥</span>';
+      const rect = bEl.getBoundingClientRect();
+      gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
       setTimeout(()=>bEl.remove(), 200);
-      genMpTarget(); 
+      genMpTarget();
+      mpRestartSpawner();
     } else {
       bEl.innerHTML = '<span class="text-6xl">❌</span>';
       setTimeout(()=>bEl.remove(), 300);
+      mpCombo = 0;
+      const comboEl = document.getElementById('mpComboTxt');
+      if(comboEl) comboEl.textContent = '';
       mpScore = Math.max(0, mpScore - 5);
       document.getElementById('mpScoreTxt').textContent = mpScore;
     }
@@ -5117,7 +5364,7 @@ function spawnMpBalloon() {
   
   setTimeout(() => {
     if(bEl.parentNode) bEl.remove();
-  }, 4050);
+  }, 6050);
 }
 
 /* ══════════════════════════════════════
@@ -5125,6 +5372,11 @@ function spawnMpBalloon() {
 ══════════════════════════════════════ */
 let wfStage = 0;
 let wfTotal = 5;
+let wfCombo = 0;
+let wfMaxCombo = 0;
+let wfTimeLeft = 12;
+let wfTimerId = null;
+const WF_Q_TIME = 12;
 
 const WF_DATA = [
   { img: '🐘', correct: '코끼리', wrongs: ['코기리', '고끼리', '코끼기'] },
@@ -5139,19 +5391,26 @@ const WF_DATA = [
 
 let wfCurrentQueue = [];
 
+function wfClearTimer(){ if(wfTimerId){ clearInterval(wfTimerId); wfTimerId = null; } }
+
 function initWordFind(reset=true) {
+  if (window.gpsActiveView && window.gpsActiveView !== 'word_find') return;
+  wfClearTimer();
   if(reset) {
-    wfStage = 0;
+    wfStage = 0; wfCombo = 0; wfMaxCombo = 0;
     wfCurrentQueue = [...WF_DATA].sort(()=>Math.random()-0.5).slice(0, wfTotal);
   }
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   
   if(wfStage >= wfTotal) {
+    const ratio = wfMaxCombo / wfTotal;
     gc.innerHTML = `
-      <div class="flex flex-col items-center gap-4 py-8 text-center">
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
         <span class="text-6xl">💯</span>
         <h4 class="text-2xl font-black text-green-600">한글 척척박사!</h4>
         <p class="text-gray-500 font-bold">모든 낱말을 올바르게 찾았어요!</p>
+        <p class="text-2xl">${gpsStars(ratio)}</p>
+        <p class="text-sm font-bold text-gray-400">최고 콤보 🔥 ${wfMaxCombo}</p>
         <button onclick="initWordFind(true)" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 찾기</button>
       </div>`;
     return;
@@ -5159,13 +5418,18 @@ function initWordFind(reset=true) {
   
   let item = wfCurrentQueue[wfStage];
   let options = [item.correct, ...item.wrongs].sort(()=>Math.random()-0.5);
+  wfTimeLeft = WF_Q_TIME;
   
   gc.innerHTML = `
-    <div class="space-y-6">
+    <div class="space-y-5">
       <div class="flex items-center justify-between">
-        <button onclick="showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <button onclick="wfClearTimer();showGrade12Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
         <span class="text-sm font-black text-green-800">👀 올바른 글자 찾기 (${wfStage+1}/${wfTotal})</span>
-        <div class="w-16"></div>
+        <span class="text-sm font-black text-pink-500">${wfCombo>=2?`🔥${wfCombo}`:''}</span>
+      </div>
+      
+      <div class="w-full h-2.5 bg-green-100 rounded-full overflow-hidden">
+        <div id="wfTimerBar" class="h-full bg-green-400" style="width:100%;transition:width ${WF_Q_TIME}s linear;"></div>
       </div>
       
       <div class="text-center py-6 bg-green-50 rounded-3xl border-4 border-green-100 shadow-inner">
@@ -5182,22 +5446,44 @@ function initWordFind(reset=true) {
       </div>
     </div>
   `;
+  
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('wfTimerBar');
+    if(bar) bar.style.width = '0%';
+  });
+  wfTimerId = setInterval(()=>{
+    wfTimeLeft--;
+    if(wfTimeLeft <= 0){
+      wfClearTimer();
+      wfCombo = 0;
+      wfStage++;
+      const opts = document.getElementById('wfOptions');
+      if(opts) opts.style.pointerEvents = 'none';
+      toast('⏰ 시간 초과! 다음 문제로 넘어가요');
+      setTimeout(() => initWordFind(false), 700);
+    }
+  }, 1000);
 }
 
 function wfClick(selected, answer, btn) {
+  wfClearTimer();
   if(selected === answer) {
-    // beep removed
     btn.classList.replace('bg-white', 'bg-green-400');
     btn.classList.replace('text-slate-800', 'text-white');
     btn.classList.replace('border-gray-300', 'border-green-600');
+    wfCombo++; wfMaxCombo = Math.max(wfMaxCombo, wfCombo);
     wfStage++;
     document.getElementById('wfOptions').style.pointerEvents = 'none';
+    const rect = btn.getBoundingClientRect();
+    gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+    gpsComboPopup(btn, wfCombo);
     setTimeout(() => initWordFind(false), 700);
   } else {
     btn.classList.replace('bg-white', 'bg-red-400');
     btn.classList.replace('text-slate-800', 'text-white');
     btn.classList.replace('border-gray-300', 'border-red-600');
     btn.classList.add('animate-bounce');
+    wfCombo = 0;
     setTimeout(() => {
       btn.classList.replace('bg-red-400', 'bg-white');
       btn.classList.replace('text-white', 'text-slate-800');
@@ -5211,6 +5497,903 @@ function wfClick(selected, answer, btn) {
 
 
 
+
+/* ══════════════════════════════════════
+   🏃 수학 런너 (Math Runner)
+══════════════════════════════════════ */
+let mrAnim = null;
+let mrSpeed = 4;
+let mrDistance = 0;
+let mrGates = [];
+let mrEnemies = [];
+let mrBullets = [];
+let mrTraps = [];
+let mrLastShot = 0;
+let mrScore = 0;
+let mrGameOver = false;
+let mrRunCoins = 0;
+let mrIsPaused = false;
+let mrRewardQueue = [];
+let mrChests = [];
+
+let mrData = JSON.parse(localStorage.getItem('gps_mr_data')) || {
+  coins: 0,
+  upgrades: { count: 1, dmg: 1, rate: 0, sword: 0, startSword: 0, coinMult: 1, fourChoice: 0 }
+};
+if(mrData.upgrades.startSword === undefined) {
+  mrData.upgrades.startSword = 0;
+  mrData.upgrades.coinMult = 1;
+  mrData.upgrades.fourChoice = 0;
+}
+function mrSave() { localStorage.setItem('gps_mr_data', JSON.stringify(mrData)); }
+
+let mrPlayer = { x: 0, count: 1, r: 15, dmg: 1, rate: 0, swords: 0, pets: 0, ice: 0, fire: 0, zap: 0, clones: 0, weapon: 'default' };
+let mrEnemyBullets = [];
+let mrZaps = [];
+let mrSwordsRot = 0;
+let mrAltars = [];
+let mrDragonTimer = 0;
+let mrEnIdCounter = 0;
+
+function initMathRunner() {
+  if (window.gpsActiveView && window.gpsActiveView !== 'math_runner') return;
+  const gc = document.getElementById('freeGameContent');
+  if(!gc) return;
+  
+  gc.innerHTML = `
+    <div style="position:relative; width:100%; height:70vh; background:linear-gradient(to bottom, #dcfce7, #f0fdf4); border-radius:1rem; border:4px solid #34495e; overflow:hidden; touch-action:none;">
+      
+      <div id="mrStartScreen" class="absolute inset-0 bg-slate-800 flex flex-col items-center justify-center text-white z-50">
+        <h2 class="text-4xl font-black text-amber-400 mb-2">🏃 수학 런너 (Math Row)</h2>
+        <p class="text-lg text-slate-300 mb-6">다양한 게이트와 함정, 보스 상자를 돌파하세요!</p>
+        
+        <div class="bg-slate-700 p-4 rounded-xl mb-6 text-center w-64 shadow-inner">
+          <p class="text-sm text-amber-300 font-bold mb-1">보유 코인</p>
+          <p class="text-3xl font-black font-mono">💰 <span id="mrShopCoins">${mrData.coins}</span></p>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3 mb-6 w-full max-w-md px-4 overflow-y-auto max-h-48">
+          <button onclick="mrBuy('count')" class="bg-blue-600 hover:bg-blue-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors">
+            <span>👥 시작 인원 +1</span>
+            <span class="text-blue-200 text-xs mt-1">(현재 +${mrData.upgrades.count-1}) 🪙 ${50 * mrData.upgrades.count}</span>
+          </button>
+          <button onclick="mrBuy('dmg')" class="bg-red-600 hover:bg-red-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors">
+            <span>💥 기본 공격력 +1</span>
+            <span class="text-red-200 text-xs mt-1">(현재 +${mrData.upgrades.dmg-1}) 🪙 ${100 * mrData.upgrades.dmg}</span>
+          </button>
+          <button onclick="mrBuy('startSword')" class="bg-slate-600 hover:bg-slate-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors">
+            <span>⚔️ 시작 회전검 +1</span>
+            <span class="text-slate-200 text-xs mt-1">(현재 +${mrData.upgrades.startSword}) 🪙 ${300 + 200*mrData.upgrades.startSword}</span>
+          </button>
+          <button onclick="mrBuy('coinMult')" class="bg-yellow-600 hover:bg-yellow-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors">
+            <span>💰 코인 획득량 증가</span>
+            <span class="text-yellow-200 text-xs mt-1">(현재 x${mrData.upgrades.coinMult}) 🪙 ${500*mrData.upgrades.coinMult}</span>
+          </button>
+          <button onclick="mrBuy('fourChoice')" class="bg-purple-600 hover:bg-purple-500 p-3 rounded-lg text-sm font-bold flex flex-col items-center transition-colors col-span-2">
+            <span>🎁 보스 상자 선택지 4개로 확장</span>
+            <span class="text-purple-200 text-xs mt-1">${mrData.upgrades.fourChoice ? '(적용됨)' : '🪙 1000'}</span>
+          </button>
+        </div>
+        
+        <button onclick="mrStartGame()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 text-xl font-black px-12 py-3 rounded-full shadow-lg transition-transform hover:scale-105">게임 시작!</button>
+      </div>
+      
+      <canvas id="mrCanvas" style="display:block; width:100%; height:100%;"></canvas>
+      
+      <div style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.6); color:white; padding:8px 15px; border-radius:10px; font-weight:bold; pointer-events:none;">
+        점수: <span id="mrScore">0</span><br>
+        거리: <span id="mrDist">0</span>m<br>
+        코인: 💰 <span id="mrInGameCoins">0</span>
+      </div>
+      
+      <div id="mrGameOver" class="hidden absolute inset-0 bg-black/80 flex-col items-center justify-center text-white z-50">
+        <h2 class="text-4xl font-black text-red-500 mb-2">게임 오버!</h2>
+        <p class="text-xl mb-2">최종 점수: <span id="mrFinalScore">0</span></p>
+        <p class="text-lg text-amber-400 mb-6">획득 코인: +<span id="mrFinalCoins">0</span></p>
+        <div class="flex gap-4">
+          <button onclick="initMathRunner()" class="btn bg-slate-600 px-6 py-3">🏠 상점/메뉴</button>
+          <button onclick="mrStartGame()" class="btn bg-blue-600 px-6 py-3">🔄 다시 하기</button>
+        </div>
+      </div>
+      
+      <div id="mrItemSelect" class="hidden absolute inset-0 bg-black/80 flex-col items-center justify-center text-white z-50">
+        <h2 class="text-3xl font-black text-amber-400 mb-6 drop-shadow-lg">보상 선택!</h2>
+        <div id="mrItemContainer" class="flex gap-3 px-4"></div>
+      </div>
+    </div>
+    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">좌우로 드래그하여 이동하세요! 몬스터를 요격하고, 상자를 부숴 보상을 얻으세요!<br>가시 함정을 피하고, 다양한 게이트로 스펙을 올려보세요.</p>
+  `;
+}
+
+window.mrBuy = function(type) {
+  let cost = 0;
+  if(type === 'count') cost = 50 * mrData.upgrades.count;
+  if(type === 'dmg') cost = 100 * mrData.upgrades.dmg;
+  if(type === 'startSword') cost = 300 + 200 * mrData.upgrades.startSword;
+  if(type === 'coinMult') cost = 500 * mrData.upgrades.coinMult;
+  if(type === 'fourChoice') cost = 1000;
+  
+  if(type === 'fourChoice' && mrData.upgrades.fourChoice) {
+    toast('이미 구매했습니다!'); return;
+  }
+  
+  if(mrData.coins >= cost) {
+    mrData.coins -= cost;
+    if(type === 'fourChoice') mrData.upgrades.fourChoice = 1;
+    else mrData.upgrades[type]++;
+    mrSave();
+    initMathRunner(); // refresh UI
+    toast('✅ 업그레이드 완료!');
+  } else {
+    toast('❌ 코인이 부족합니다!');
+  }
+};
+
+window.mrStartGame = function() {
+  document.getElementById('mrStartScreen').style.display = 'none';
+  document.getElementById('mrGameOver').classList.remove('flex');
+  document.getElementById('mrGameOver').classList.add('hidden');
+  
+  const c = document.getElementById('mrCanvas');
+  c.width = c.clientWidth;
+  c.height = c.clientHeight;
+  
+  mrPlayer.x = c.width / 2;
+  mrPlayer.count = mrData.upgrades.count;
+  mrPlayer.dmg = mrData.upgrades.dmg;
+  mrPlayer.rate = mrData.upgrades.rate;
+  mrPlayer.swords = mrData.upgrades.sword + (mrData.upgrades.startSword || 0);
+  mrPlayer.pets = 0;
+  mrPlayer.ice = 0;
+  mrPlayer.fire = 0;
+  mrPlayer.zap = 0;
+  mrPlayer.clones = 0;
+  mrPlayer.weapon = 'default';
+  
+  mrSpeed = 3.5;
+  mrDistance = 0;
+  mrScore = 0;
+  mrRunCoins = 0;
+  mrGameOver = false;
+  
+  mrGates = [];
+  mrEnemies = [];
+  mrBullets = [];
+  mrEnemyBullets = [];
+  mrZaps = [];
+  mrAltars = [];
+  mrTraps = [];
+  mrDragonTimer = Date.now();
+  mrChests = [];
+  mrLastShot = 0;
+  
+  mrIsPaused = false;
+  mrRewardQueue = [];
+  
+  mrSpawnGate(-100);
+  mrSpawnEnemy(-500, c.width, false);
+  
+  setupMrInput(c);
+  if(mrAnim) cancelAnimationFrame(mrAnim);
+  mrLoop();
+};
+
+function setupMrInput(c) {
+  let isDown = false;
+  const move = (x) => {
+    if(mrGameOver) return;
+    mrPlayer.x = x;
+    if(mrPlayer.x < mrPlayer.r) mrPlayer.x = mrPlayer.r;
+    if(mrPlayer.x > c.width - mrPlayer.r) mrPlayer.x = c.width - mrPlayer.r;
+  };
+  c.onmousedown = (e) => { isDown = true; move(e.offsetX); };
+  c.onmousemove = (e) => { if(isDown) move(e.offsetX); };
+  c.onmouseup = () => { isDown = false; };
+  c.onmouseleave = () => { isDown = false; };
+  
+  c.ontouchstart = (e) => { 
+    isDown = true; 
+    const r = c.getBoundingClientRect(); 
+    move(e.touches[0].clientX - r.left); 
+  };
+  c.ontouchmove = (e) => { 
+    if(!isDown) return; 
+    e.preventDefault(); 
+    const r = c.getBoundingClientRect(); 
+    move(e.touches[0].clientX - r.left); 
+  };
+  c.ontouchend = () => { isDown = false; };
+}
+
+function mrSpawnGate(y) {
+  const types = ['math', 'math', 'math', 'dmg', 'rate', 'sword', 'pet'];
+  
+  const getGate = () => {
+    let t = types[Math.floor(Math.random() * types.length)];
+    if(t === 'math') {
+      const ops = ['+', '-', '×', '÷'];
+      let op = ops[Math.floor(Math.random() * ops.length)];
+      let bonus = Math.floor(mrDistance / 500) * 3;
+      let val = 0;
+      if(op === '+') val = Math.floor(Math.random()*10)+5 + bonus;
+      if(op === '-') val = Math.floor(Math.random()*5)+5;
+      if(op === '×') val = Math.floor(Math.random()*2)+2;
+      if(op === '÷') val = Math.floor(Math.random()*2)+2;
+      return { type: 'math', op, val, text: `${op} ${val}` };
+    }
+    if(t === 'dmg') return { type: 'dmg', val: 1, text: `💥 공격력 +1` };
+    if(t === 'rate') return { type: 'rate', val: 1, text: `⚡ 속도 UP` };
+    if(t === 'sword') return { type: 'sword', val: 1, text: `⚔️ 회전검` };
+    if(t === 'pet') return { type: 'pet', val: 1, text: `🐶 펫 추가` };
+  };
+  
+  mrGates.push({
+    y: y,
+    passed: false,
+    left: getGate(),
+    right: getGate()
+  });
+}
+
+function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
+  let diff = mrDistance / 1000;
+  let baseHp = 20 + Math.floor(diff * 40);
+  let power = baseHp + Math.floor(mrPlayer.count * (1.5 + Math.random() * 0.8));
+  if(power < 1) power = 1;
+  
+  let baseEnemy = {
+    id: mrEnIdCounter++,
+    y: y,
+    hp: power,
+    maxHp: power,
+    active: true,
+    lastShot: Date.now() + Math.random() * 1000,
+    frozenTimer: 0,
+    frozenLevel: 0,
+    burnTimer: 0,
+    burnLevel: 0
+  };
+  
+  if (isBoss) {
+    let bossMult = 5.0 + diff * 1.5;
+    mrEnemies.push({
+      ...baseEnemy,
+      isBoss: true,
+      x: canvasWidth / 2,
+      w: canvasWidth * 1.2, h: 80, // Unavoidable
+      hp: power * bossMult,
+      maxHp: power * bossMult
+    });
+  } else {
+    mrEnemies.push({
+      ...baseEnemy,
+      isBoss: false,
+      x: (Math.random() > 0.5) ? canvasWidth*0.25 : canvasWidth*0.75,
+      w: 80, h: 80
+    });
+  }
+}
+
+function mrRewardEnemy(en) {
+  // 50% chance for normal monsters to drop a chest, 100% for bosses
+  if (!en.isBoss && Math.random() > 0.5) return;
+  
+  mrChests.push({
+    x: en.x,
+    y: en.y,
+    w: 50, h: 50,
+    isBoss: en.isBoss,
+    active: true
+  });
+}
+
+window.mrShowItemSelect = function(isBoss) {
+  mrIsPaused = true;
+  const container = document.getElementById('mrItemContainer');
+  container.innerHTML = '';
+  
+  const optionsPool = [
+    { type: 'count', icon: '👥', name: '인원추가', desc: isBoss ? '+30명' : '+1명' },
+    { type: 'dmg', icon: '💥', name: '공격력', desc: isBoss ? '+3.0' : '+0.2' },
+    { type: 'rate', icon: '⚡', name: '연사속도', desc: isBoss ? '+3.0' : '+0.2' },
+    { type: 'sword', icon: '⚔️', name: '회전검', desc: isBoss ? '+2개' : '+1개' },
+    { type: 'pet', icon: '🐶', name: '펫소환', desc: isBoss ? '+2마리' : '+1마리' },
+    { type: 'heal', icon: '💖', name: '대량회복', desc: isBoss ? '+50명' : '+2명' },
+    { type: 'ice', icon: '🧊', name: '빙결총알', desc: isBoss ? '감속 폭 증대' : '적 이속 저하' },
+    { type: 'fire', icon: '🔥', name: '불꽃총알', desc: isBoss ? '화상 딜 증대' : '지속 화상 피해' },
+    { type: 'zap', icon: '🌩️', name: '번개총알', desc: isBoss ? '스플래시 증대' : '광역 피해' }
+  ];
+  
+  if (isBoss) {
+    optionsPool.push({ type: 'clone', icon: '👯', name: '발사 열 추가', desc: '분신이 생성됩니다' });
+  }
+  
+  let shuffled = optionsPool.sort(() => 0.5 - Math.random());
+  let choiceCount = mrData.upgrades.fourChoice ? 4 : 3;
+  let chosen = shuffled.slice(0, choiceCount);
+  
+  chosen.forEach((opt) => {
+    let btn = document.createElement('button');
+    btn.className = "bg-slate-700 hover:bg-slate-600 border-2 border-amber-500 rounded-xl p-2 flex flex-col items-center transition-transform hover:scale-105 w-20 sm:w-24";
+    btn.innerHTML = `<span class="text-3xl mb-1">${opt.icon}</span><span class="font-bold text-xs sm:text-sm break-keep">${opt.name}</span><span class="text-[9px] sm:text-[10px] text-amber-300 mt-1 break-keep">${opt.desc}</span>`;
+    btn.onclick = () => mrSelectItem(opt.type, isBoss);
+    container.appendChild(btn);
+  });
+  
+  document.getElementById('mrItemSelect').classList.remove('hidden');
+  document.getElementById('mrItemSelect').classList.add('flex');
+};
+
+window.mrSelectItem = function(type, isBoss) {
+  if(type === 'count') { mrPlayer.count += (isBoss ? 30 : 1); toast(`👥 인원 추가!`); }
+  else if(type === 'dmg') { mrPlayer.dmg += (isBoss ? 3 : 0.2); toast(`💥 공격력 상승!`); }
+  else if(type === 'rate') { mrPlayer.rate += (isBoss ? 3 : 0.2); toast(`⚡ 연사속도 상승!`); }
+  else if(type === 'sword') { mrPlayer.swords += (isBoss ? 2 : 1); toast(`⚔️ 회전검 획득!`); }
+  else if(type === 'pet') { mrPlayer.pets += (isBoss ? 2 : 1); toast(`🐶 펫 획득!`); }
+  else if(type === 'heal') { mrPlayer.count += (isBoss ? 50 : 2); toast(`💖 대량 회복!`); }
+  else if(type === 'ice') { mrPlayer.ice += (isBoss ? 3 : 1); toast(`🧊 얼음 속성 강화!`); }
+  else if(type === 'fire') { mrPlayer.fire += (isBoss ? 3 : 1); toast(`🔥 불꽃 속성 강화!`); }
+  else if(type === 'zap') { mrPlayer.zap += (isBoss ? 3 : 1); toast(`🌩️ 번개 속성 강화!`); }
+  else if(type === 'clone') { mrPlayer.clones += 1; toast(`👯 발사 열(Row) 추가!`); }
+  
+  mrRunCoins += (isBoss ? 30 : 1) * (mrData.upgrades.coinMult || 1);
+  
+  document.getElementById('mrItemSelect').classList.add('hidden');
+  document.getElementById('mrItemSelect').classList.remove('flex');
+  mrLastShot = Date.now();
+  mrIsPaused = false;
+};
+
+window.mrShowWeaponSelect = function() {
+  mrIsPaused = true;
+  const container = document.getElementById('mrItemContainer');
+  container.innerHTML = '';
+  
+  const options = [
+    { type: 'blue', icon: '🔵', name: '블루 블래스터', desc: '연사속도 2배, 데미지 1/2' },
+    { type: 'red', icon: '🔴', name: '레드 캐논', desc: '데미지 2배, 연사속도 2/3' },
+    { type: 'sword', icon: '🟣', name: '소드 런처', desc: '관통 미니회전검, 데미지 80%' }
+  ];
+  
+  options.forEach((opt) => {
+    let btn = document.createElement('button');
+    btn.className = "bg-slate-700 hover:bg-slate-600 border-2 border-indigo-500 rounded-xl p-2 flex flex-col items-center transition-transform hover:scale-105 w-20 sm:w-28";
+    btn.innerHTML = `<span class="text-3xl mb-1">${opt.icon}</span><span class="font-bold text-xs sm:text-sm break-keep">${opt.name}</span><span class="text-[9px] sm:text-[10px] text-indigo-300 mt-1 break-keep">${opt.desc}</span>`;
+    btn.onclick = () => mrSelectWeapon(opt.type);
+    container.appendChild(btn);
+  });
+  
+  document.getElementById('mrItemSelect').querySelector('h2').innerText = '신성한 무기 제단';
+  document.getElementById('mrItemSelect').classList.remove('hidden');
+  document.getElementById('mrItemSelect').classList.add('flex');
+};
+
+window.mrSelectWeapon = function(type) {
+  mrPlayer.weapon = type;
+  toast(`무기 변경: ${type}!`);
+  document.getElementById('mrItemSelect').querySelector('h2').innerText = '보상 선택!';
+  document.getElementById('mrItemSelect').classList.add('hidden');
+  document.getElementById('mrItemSelect').classList.remove('flex');
+  mrLastShot = Date.now();
+  mrIsPaused = false;
+};
+
+function mrSpawnTrap(y, canvasWidth) {
+  mrTraps.push({
+    x: (Math.random() > 0.5) ? canvasWidth*0.25 : canvasWidth*0.75,
+    y: y,
+    w: canvasWidth * 0.45,
+    h: 40,
+    active: true
+  });
+}
+
+function triggerMrGameOver() {
+  mrGameOver = true;
+  mrData.coins += mrRunCoins;
+  mrSave();
+  document.getElementById('mrGameOver').classList.remove('hidden');
+  document.getElementById('mrGameOver').classList.add('flex');
+  document.getElementById('mrFinalScore').innerText = mrScore;
+  document.getElementById('mrFinalCoins').innerText = mrRunCoins;
+}
+
+function mrLoop() {
+  if (window.gpsActiveView && window.gpsActiveView !== 'math_runner') return;
+  const c = document.getElementById('mrCanvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  
+  if (mrGameOver) return;
+  
+  if (mrIsPaused) {
+    mrAnim = requestAnimationFrame(mrLoop);
+    return;
+  }
+  
+  if (mrRewardQueue.length > 0) {
+    let isBoss = mrRewardQueue.shift();
+    mrShowItemSelect(isBoss);
+    mrAnim = requestAnimationFrame(mrLoop);
+    return;
+  }
+  
+  mrDistance += mrSpeed;
+  mrSpeed += 0.001;
+  
+  mrSwordsRot += 0.08;
+  const py = c.height - 120;
+  
+  // Sword damage
+  if (mrPlayer.swords > 0) {
+    let swordRadius = 180 + mrPlayer.swords * 1.5;
+    for (let en of mrEnemies) {
+      if (!en.active) continue;
+      let dx = en.x - mrPlayer.x;
+      let dy = en.y - py;
+      let dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < swordRadius + Math.max(en.w, en.h)/2) {
+        en.hp -= (mrPlayer.swords * mrPlayer.dmg * 0.8); // continuous damage
+        if(en.hp <= 0) {
+          en.active = false;
+          mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
+          mrRewardEnemy(en);
+        }
+      }
+    }
+  }
+  
+  for(let i = mrGates.length-1; i>=0; i--) {
+    let g = mrGates[i];
+    g.y += mrSpeed;
+    if (!g.passed && g.y + 40 > py) {
+      g.passed = true;
+      let side = (mrPlayer.x < c.width/2) ? g.left : g.right;
+      
+      if (side.type === 'math') {
+        if (side.op === '+') mrPlayer.count += side.val;
+        else if (side.op === '-') mrPlayer.count = Math.max(1, mrPlayer.count - side.val);
+        else if (side.op === '×') mrPlayer.count *= side.val;
+        else if (side.op === '÷') mrPlayer.count = Math.max(1, Math.floor(mrPlayer.count / side.val));
+      } else if (side.type === 'dmg') {
+        mrPlayer.dmg += side.val;
+      } else if (side.type === 'rate') {
+        mrPlayer.rate += side.val;
+      } else if (side.type === 'sword') {
+        mrPlayer.swords += side.val;
+      } else if (side.type === 'pet') {
+        mrPlayer.pets += side.val;
+      }
+      
+      toast(`[ ${side.text} ] 획득!`);
+    }
+    if (g.y > c.height + 100) mrGates.splice(i, 1);
+  }
+  
+  const now = Date.now();
+  let baseInterval = Math.max(100, 300 - mrPlayer.rate * 20);
+  let fireRateMult = (mrPlayer.weapon === 'blue') ? 0.5 : (mrPlayer.weapon === 'red' ? 1.5 : 1.0);
+  let shootInterval = baseInterval * fireRateMult;
+  
+  if (now - mrLastShot > shootInterval) {
+    mrLastShot = now;
+    let num = Math.min(mrPlayer.count, 30);
+    let baseBulletDmg = mrPlayer.dmg + (mrPlayer.count / num);
+    
+    let wDmgMult = (mrPlayer.weapon === 'red') ? 2.0 : (mrPlayer.weapon === 'blue' ? 0.5 : (mrPlayer.weapon === 'sword' ? 0.8 : 1.0));
+    let bulletDmg = baseBulletDmg * wDmgMult;
+    let bulletColor = (mrPlayer.weapon === 'red') ? '#ef4444' : (mrPlayer.weapon === 'blue' ? '#3b82f6' : (mrPlayer.weapon === 'sword' ? '#94a3b8' : '#f59e0b'));
+    let bulletW = (mrPlayer.weapon === 'red') ? 16 : (mrPlayer.weapon === 'sword' ? 24 : 6);
+    
+    let spread = Math.min(num * 12, 140);
+    let rows = mrPlayer.clones + 1;
+    
+    for(let r = 0; r < rows; r++) {
+      let originX = mrPlayer.x;
+      if(rows > 1) {
+         originX = mrPlayer.x - (rows-1)*35 + r*70;
+      }
+      for(let i=0; i<num; i++) {
+         let bx = originX;
+         if (num > 1) bx = originX - spread/2 + (spread / (num-1)) * i;
+         mrBullets.push({ x: bx, y: py - 20, dmg: bulletDmg, color: bulletColor, w: bulletW, wType: mrPlayer.weapon, hitIds: [] });
+      }
+    }
+    
+    let dragons = Math.floor(mrPlayer.pets / 9);
+    let lions = Math.floor((mrPlayer.pets % 9) / 3);
+    let dogs = mrPlayer.pets % 3;
+    let petList = [];
+    for(let i=0; i<dragons; i++) petList.push({ dmg: 9, color: '#ef4444' });
+    for(let i=0; i<lions; i++) petList.push({ dmg: 3, color: '#f97316' });
+    for(let i=0; i<dogs; i++) petList.push({ dmg: 1, color: '#3b82f6' });
+    
+    for(let p=0; p<petList.length; p++) {
+       let pt = petList[p];
+       let px = mrPlayer.x + ((p%2===0)?-1:1) * (40 + Math.floor(p/2)*30);
+       mrBullets.push({ x: px, y: py - 10, dmg: mrPlayer.dmg * 2 * pt.dmg, color: pt.color, w: 6, wType: 'pet', hitIds: [] });
+    }
+  }
+  
+  for(let i=mrBullets.length-1; i>=0; i--) {
+     let b = mrBullets[i];
+     b.y -= 14; 
+     let hit = false;
+     for(let en of mrEnemies) {
+        if (en.active && b.y > en.y - en.h/2 && b.y < en.y + en.h/2 && Math.abs(b.x - en.x) < (en.w/2 + b.w/2)) {
+           if (b.wType === 'sword') {
+             if(b.hitIds.includes(en.id)) continue;
+             b.hitIds.push(en.id);
+           }
+           en.hp -= b.dmg;
+           if (b.wType !== 'sword') hit = true;
+           
+           if (en.hp <= 0) {
+              en.active = false;
+              mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
+              mrRewardEnemy(en);
+           } else {
+             if(mrPlayer.ice > 0) { en.frozenTimer = 60; en.frozenLevel = mrPlayer.ice; }
+             if(mrPlayer.fire > 0) { en.burnTimer = 120; en.burnLevel = mrPlayer.fire; }
+             if(mrPlayer.zap > 0) {
+               for(let e2 of mrEnemies) {
+                 if(e2.active && e2 !== en && Math.hypot(e2.x-en.x, e2.y-en.y) < 150) {
+                   e2.hp -= b.dmg * mrPlayer.zap * 0.5;
+                   mrZaps.push({x1: en.x, y1: en.y, x2: e2.x, y2: e2.y, timer: 5});
+                 }
+               }
+             }
+           }
+           if (hit) break;
+        }
+     }
+     if (hit || b.y < -50) mrBullets.splice(i, 1);
+  }
+
+  let enemyBulletDmg = 1 + Math.floor((mrDistance / 1000) * 5);
+  for(let i = mrEnemies.length-1; i>=0; i--) {
+    let en = mrEnemies[i];
+    
+    let slowFactor = 1.0;
+    if(en.frozenTimer > 0) {
+      en.frozenTimer--;
+      // max slow capped at 70% (moves at 30% speed) to prevent stopping
+      slowFactor = Math.max(0.3, 1.0 - (en.frozenLevel * 0.15));
+    }
+    
+    en.y += mrSpeed * slowFactor;
+    
+    if(en.burnTimer > 0) {
+      en.burnTimer--;
+      // fire damage scales with player dmg and fire level
+      en.hp -= (en.burnLevel * mrPlayer.dmg * 0.4);
+    }
+    
+    if(en.active && en.hp <= 0) {
+      en.active = false;
+      mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
+      mrRewardEnemy(en);
+    }
+    
+    if (en.active && en.y > 0 && en.y < py - 100) {
+      let now = Date.now();
+      if (now - en.lastShot > (en.isBoss ? 1000 : 1800)) {
+        en.lastShot = now;
+        if(en.isBoss) {
+          for(let ang of [-0.6, -0.3, 0, 0.3, 0.6]) {
+            mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: Math.sin(ang)*4, vy: Math.cos(ang)*4, r: 8, dmg: enemyBulletDmg * 2 });
+          }
+        } else {
+          mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: 0, vy: 5, r: 6, dmg: enemyBulletDmg });
+        }
+      }
+    }
+    
+    if (en.active && Math.abs(en.y - py) < en.h/2 + mrPlayer.r) {
+      if (Math.abs(en.x - mrPlayer.x) < en.w/2 + mrPlayer.r * 2) {
+        if (mrPlayer.count > en.hp) {
+          mrPlayer.count -= Math.floor(en.hp);
+          mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
+          en.active = false;
+          mrRewardEnemy(en);
+        } else {
+          mrPlayer.count = 0;
+          triggerMrGameOver();
+        }
+      }
+    }
+
+    if (en.y > c.height + 100) mrEnemies.splice(i, 1);
+  }
+  
+  for(let i=mrEnemyBullets.length-1; i>=0; i--) {
+    let eb = mrEnemyBullets[i];
+    eb.x += eb.vx;
+    eb.y += eb.vy;
+    let dx = eb.x - mrPlayer.x;
+    let dy = eb.y - py;
+    if (Math.sqrt(dx*dx + dy*dy) < mrPlayer.r + eb.r) {
+      mrPlayer.count -= eb.dmg;
+      mrEnemyBullets.splice(i, 1);
+      if (mrPlayer.count <= 0) {
+        mrPlayer.count = 0;
+        triggerMrGameOver();
+      }
+      continue;
+    }
+    if (eb.y > c.height + 50 || eb.x < -50 || eb.x > c.width + 50) mrEnemyBullets.splice(i, 1);
+  }
+  
+  for(let i = mrTraps.length-1; i>=0; i--) {
+    let t = mrTraps[i];
+    t.y += mrSpeed;
+    if (t.active && Math.abs(t.y - py) < t.h/2 + mrPlayer.r) {
+      if (Math.abs(t.x - mrPlayer.x) < t.w/2 + mrPlayer.r * 2) {
+        mrPlayer.count -= 1; // rapid damage
+        if (mrPlayer.count < 1) {
+          mrPlayer.count = 0;
+          triggerMrGameOver();
+        }
+      }
+    }
+    if (t.y > c.height + 100) mrTraps.splice(i, 1);
+  }
+  
+  // Dog Magnet for Chests
+  let dogCount = mrPlayer.pets % 3;
+  if(dogCount > 0) {
+    let pullSpeed = 0.015 * dogCount;
+    for(let ch of mrChests) {
+      if(ch.active && ch.y > 0 && ch.y < c.height) {
+        let dist = Math.hypot(mrPlayer.x - ch.x, py - ch.y);
+        if(dist < 300) {
+          ch.x += (mrPlayer.x - ch.x) * pullSpeed;
+          ch.y += (py - ch.y) * pullSpeed;
+        }
+      }
+    }
+  }
+
+  for(let i = mrChests.length-1; i>=0; i--) {
+    let ch = mrChests[i];
+    ch.y += mrSpeed;
+    if (ch.active && Math.abs(ch.y - py) < ch.h/2 + mrPlayer.r) {
+      if (Math.abs(ch.x - mrPlayer.x) < ch.w/2 + mrPlayer.r * 2) {
+        ch.active = false;
+        mrRewardQueue.push(ch.isBoss);
+      }
+    }
+    if (ch.y > c.height + 100) mrChests.splice(i, 1);
+  }
+  
+  for(let i = mrAltars.length-1; i>=0; i--) {
+    let alt = mrAltars[i];
+    alt.y += mrSpeed;
+    if(alt.active && Math.abs(alt.y - py) < alt.h/2 + mrPlayer.r && Math.abs(alt.x - mrPlayer.x) < alt.w/2 + mrPlayer.r * 2) {
+      alt.active = false;
+      mrShowWeaponSelect();
+    }
+    if(alt.y > c.height + 100) mrAltars.splice(i, 1);
+  }
+  
+  // Dragon Breath
+  let dragonCount = Math.floor(mrPlayer.pets / 9);
+  if(dragonCount > 0) {
+    let now = Date.now();
+    if(now - mrDragonTimer > 10000) {
+      mrDragonTimer = now;
+      mrZaps.push({x1: mrPlayer.x, y1: py, x2: mrPlayer.x, y2: -100, timer: 30, w: 100});
+      for(let en of mrEnemies) {
+        if(en.active && Math.abs(en.x - mrPlayer.x) < 50) {
+          en.hp -= mrPlayer.dmg * 50 * dragonCount;
+        }
+      }
+    }
+  }
+  
+  if (mrDistance % 3000 < mrSpeed) mrSpawnGate(-100);
+  if (mrDistance > 1000 && mrDistance % 8000 < mrSpeed) mrAltars.push({x: c.width/2, y: -100, w: 60, h: 60, active: true});
+  
+  if (mrDistance > 100 && mrDistance % 800 < mrSpeed && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
+    if (Math.random() < 0.2) {
+      mrSpawnEnemy(-100, c.width, true);
+    } else {
+      let count = 1 + Math.floor(Math.random() * 3); // 1 to 3 enemies
+      for(let i=0; i<count; i++) {
+        mrSpawnEnemy(-100 - i*70, c.width, false);
+      }
+    }
+  }
+  if (mrDistance > 1500 && mrDistance % 1100 < mrSpeed) {
+    mrSpawnTrap(-100, c.width);
+  }
+  
+  const sc = document.getElementById('mrScore');
+  if(sc) sc.innerText = mrScore;
+  const sd = document.getElementById('mrDist');
+  if(sd) sd.innerText = Math.floor(mrDistance/10);
+  const si = document.getElementById('mrInGameCoins');
+  if(si) si.innerText = mrRunCoins;
+  
+  // Render
+  ctx.clearRect(0, 0, c.width, c.height);
+  
+  for(let g of mrGates) {
+    if (g.y + 40 > 0 && g.y < c.height) {
+      ctx.fillStyle = g.passed ? 'rgba(59, 130, 246, 0.2)' : (g.left.type==='math'?'rgba(59, 130, 246, 0.7)':'rgba(168, 85, 247, 0.7)');
+      ctx.fillRect(0, g.y, c.width/2, 40);
+      ctx.fillStyle = g.passed ? 'rgba(255,255,255,0.5)' : '#fff';
+      ctx.font = 'bold 24px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(g.left.text, c.width/4, g.y + 20);
+      
+      ctx.fillStyle = g.passed ? 'rgba(239, 68, 68, 0.2)' : (g.right.type==='math'?'rgba(239, 68, 68, 0.7)':'rgba(168, 85, 247, 0.7)');
+      ctx.fillRect(c.width/2, g.y, c.width/2, 40);
+      ctx.fillStyle = g.passed ? 'rgba(255,255,255,0.5)' : '#fff';
+      ctx.fillText(g.right.text, c.width*0.75, g.y + 20);
+      
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(c.width/2 - 2, g.y, 4, 40);
+    }
+  }
+  
+  for(let ch of mrChests) {
+    if (ch.active && ch.y + ch.h > 0 && ch.y - ch.h < c.height) {
+      ctx.font = '40px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(ch.isBoss ? '👑' : '🎁', ch.x, ch.y);
+    }
+  }
+  
+  for(let t of mrTraps) {
+    if (t.active && t.y + t.h > 0 && t.y - t.h < c.height) {
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(t.x - t.w/2, t.y - t.h/2, t.w, t.h);
+      ctx.fillStyle = '#94a3b8';
+      for(let s=0; s<5; s++) {
+        ctx.beginPath();
+        let sx = t.x - t.w/2 + (t.w/5)*s + (t.w/10);
+        ctx.moveTo(sx - 10, t.y + t.h/2);
+        ctx.lineTo(sx + 10, t.y + t.h/2);
+        ctx.lineTo(sx, t.y - t.h/2 - 10);
+        ctx.fill();
+      }
+    }
+  }
+  
+  for(let en of mrEnemies) {
+    if (en.active && en.y + en.h > 0 && en.y - en.h < c.height) {
+      if(en.isBoss) {
+        ctx.fillStyle = en.frozenTimer > 0 ? '#60a5fa' : (en.burnTimer > 0 ? '#f97316' : '#eab308');
+        ctx.fillRect(en.x - en.w/2, en.y - en.h/2, en.w, en.h);
+        ctx.fillStyle = '#854d0e';
+        ctx.fillRect(en.x - en.w/2, en.y - 10, en.w, 20);
+      } else {
+        ctx.fillStyle = en.frozenTimer > 0 ? '#60a5fa' : (en.burnTimer > 0 ? '#f97316' : '#ef4444');
+        ctx.fillRect(en.x - en.w/2, en.y - en.h/2, en.w, en.h);
+        ctx.fillStyle = '#fff';
+        ctx.font = '24px Arial';
+        ctx.fillText('😈', en.x, en.y - 30);
+      }
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 20px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(Math.ceil(en.hp), en.x, en.y + (en.isBoss ? 15 : 0));
+    }
+  }
+  
+  for(let alt of mrAltars) {
+    if (alt.active && alt.y + alt.h > 0 && alt.y - alt.h < c.height) {
+      ctx.fillStyle = '#6366f1';
+      ctx.fillRect(alt.x - alt.w/2, alt.y - alt.h/2, alt.w, alt.h);
+      ctx.fillStyle = '#fff';
+      ctx.font = '30px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🔮', alt.x, alt.y);
+    }
+  }
+  
+  for(let b of mrBullets) {
+    if(b.wType === 'sword') {
+      ctx.save();
+      ctx.translate(b.x, b.y);
+      ctx.rotate(mrSwordsRot);
+      ctx.fillStyle = b.color;
+      ctx.fillRect(-b.w/2, -b.w/2, b.w, b.w);
+      ctx.restore();
+    } else {
+      ctx.fillStyle = b.color;
+      ctx.fillRect(b.x - b.w/2, b.y - 10, b.w, 20);
+    }
+  }
+  
+  for(let eb of mrEnemyBullets) {
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath();
+    ctx.arc(eb.x, eb.y, eb.r, 0, Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle = '#fca5a5';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  
+  for(let i=mrZaps.length-1; i>=0; i--) {
+    let z = mrZaps[i];
+    z.timer--;
+    ctx.strokeStyle = `rgba(250, 204, 21, ${z.timer/5})`;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(z.x1, z.y1);
+    ctx.lineTo(z.x2, z.y2);
+    ctx.stroke();
+    if(z.timer <= 0) mrZaps.splice(i, 1);
+  }
+  
+  let dragonsDraw = Math.floor(mrPlayer.pets / 9);
+  let lionsDraw = Math.floor((mrPlayer.pets % 9) / 3);
+  let dogsDraw = mrPlayer.pets % 3;
+  let petDrawList = [];
+  for(let i=0; i<dragonsDraw; i++) petDrawList.push('🐲');
+  for(let i=0; i<lionsDraw; i++) petDrawList.push('🦁');
+  for(let i=0; i<dogsDraw; i++) petDrawList.push('🐶');
+  
+  for(let p=0; p<petDrawList.length; p++) {
+     let px = mrPlayer.x + ((p%2===0)?-1:1) * (40 + Math.floor(p/2)*30);
+     ctx.font = '24px Arial';
+     ctx.fillText(petDrawList[p], px, py);
+  }
+  
+  if (mrPlayer.swords > 0) {
+    let swordRadius = 180 + mrPlayer.swords * 1.5;
+    for(let s=0; s<mrPlayer.swords; s++) {
+      let angle = mrSwordsRot + (Math.PI*2 / mrPlayer.swords) * s;
+      let sx = mrPlayer.x + Math.cos(angle) * swordRadius;
+      let sy = py + Math.sin(angle) * swordRadius;
+      
+      ctx.save();
+      ctx.translate(sx, sy);
+      ctx.rotate(angle + Math.PI/4);
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(-4, -15, 8, 30);
+      ctx.fillStyle = '#eab308';
+      ctx.fillRect(-8, 5, 16, 6);
+      ctx.restore();
+    }
+  }
+  
+  ctx.fillStyle = '#3b82f6';
+  let maxDraw = Math.min(mrPlayer.count, 50);
+  let rows = mrPlayer.clones + 1;
+  
+  for(let r=0; r<rows; r++) {
+    let px = mrPlayer.x;
+    if(rows > 1) px = mrPlayer.x - (rows-1)*35 + r*70;
+    
+    ctx.fillStyle = (r === Math.floor(rows/2)) ? '#3b82f6' : '#60a5fa'; // main player blue, clones light blue
+    for(let i=0; i<maxDraw; i++) {
+      let angle = i * 2.4;
+      let rad = Math.sqrt(i) * 5;
+      ctx.beginPath();
+      ctx.arc(px + Math.cos(angle)*rad, py + Math.sin(angle)*rad, 4, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+  
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 24px Arial';
+  ctx.textAlign = 'center';
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 4;
+  let textY = py - Math.sqrt(maxDraw)*5 - 15;
+  ctx.strokeText(mrPlayer.count, mrPlayer.x, textY);
+  ctx.fillText(mrPlayer.count, mrPlayer.x, textY);
+  
+  mrAnim = requestAnimationFrame(mrLoop);
+}
 
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.records))throw 0;localStorage.setItem(K_REC,JSON.stringify(d.records));refreshRecCount();closeModal();toast(`✅ ${d.records.length}건 복원됐어요!`);}catch{toast('❌ 올바른 백업 파일이 아니에요.');}};r.readAsText(f);}
 
