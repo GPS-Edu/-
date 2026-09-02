@@ -1009,7 +1009,7 @@ function showGrade4Launcher(){
 function showGrade5Launcher(){
   document.getElementById('gradeLabel').textContent='🟨 5학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <button onclick="startGame('history_train')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF8E7;border:2.5px solid #FDE68A;">
       <div class="text-5xl">🚂</div>
       <p class="font-black text-gray-800">역사 연표 기차</p>
@@ -1019,6 +1019,11 @@ function showGrade5Launcher(){
       <div class="text-5xl">🎈</div>
       <p class="font-black text-gray-800">배수 팡팡!</p>
       <p class="text-xs text-gray-500">목표 숫자의 배수를 빠르게 터뜨려요!</p>
+    </button>
+    <button onclick="startGame('planet_order')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EEF2FF;border:2.5px solid #C7D2FE;">
+      <div class="text-5xl">🪐</div>
+      <p class="font-black text-gray-800">태양계 탐사대</p>
+      <p class="text-xs text-gray-500">태양과 가까운 순서로 행성을 찾아요!</p>
     </button>
   </div>`;
 }
@@ -1044,6 +1049,7 @@ function startGame(id){
   if(id==='typing_long')  initLongTypingMenu();
   if(id==='history_train') initHistoryTrain();
   if(id==='math_multiple') initMathMultiple();
+  if(id==='planet_order') initPlanetOrder();
   if(id==='fossil_dig') initFossilDig();
   if(id==='decimal_jump') initDecimalJump();
   if(id==='gugu_race') initGuguRace();
@@ -1059,34 +1065,91 @@ let fdGrid = [];
 let fdPickaxes = 15;
 let fdFound = 0;
 let fdTotal = 0;
+let fdScore = 0;
+let fdStreak = 0;
+let fdMaxStreak = 0;
+let fdCollected = [];
+
+const FD_FOSSILS = [
+  { icon:'🦴', name:'공룡 뼈', pts:15, fact:'공룡의 뼈는 땅속에서 아주 오랜 시간이 지나며 돌처럼 단단하게 변해요.' },
+  { icon:'🐚', name:'조개 화석', pts:10, fact:'옛날에 바다였던 육지에서도 조개 화석이 발견되곤 해요.' },
+  { icon:'🦕', name:'공룡 발자국', pts:20, fact:'발자국 화석을 보면 공룡이 어떻게 걸었는지 알 수 있어요.' },
+  { icon:'🦖', name:'육식 공룡 이빨', pts:30, fact:'날카롭게 생긴 이빨 화석은 육식 공룡의 것일 가능성이 커요.' },
+  { icon:'🐌', name:'삼엽충', pts:25, fact:'삼엽충은 아주 먼 옛날 바다 밑바닥을 기어다니던 생물이에요.' },
+  { icon:'🌀', name:'암모나이트', pts:35, fact:'나선 모양의 암모나이트는 지층의 나이를 알려주는 표준화석이에요.' },
+  { icon:'💎', name:'호박(보석)', pts:50, fact:'투명한 호박(보석) 속에는 아주 오래된 곤충이 갇혀 있기도 해요!' },
+  { icon:'🏺', name:'토기 조각', pts:40, fact:'토기는 아주 오래 전 사람들이 쓰던 생활 도구예요.' }
+];
 
 function initFossilDig(round = 1) {
   if (window.gpsActiveView && window.gpsActiveView !== 'fossil_dig') return;
   const gc = document.getElementById('gradeContent'); if(!gc) return;
-  if(round > 3) {
+
+  if (round === 1) {
     gc.innerHTML = `
-      <div class="flex flex-col items-center gap-4 py-8 text-center">
+      <div class="flex flex-col items-center gap-3 py-6 text-center">
+        <span class="text-6xl">🦕</span>
+        <h4 class="text-xl font-black text-amber-800">화석 발굴단</h4>
+        <div class="text-left text-sm text-gray-700 font-bold bg-amber-50 border border-amber-200 rounded-xl p-4 space-y-2 max-w-sm break-keep">
+          <p>⛏️ 흙 칸을 클릭해서 곡괭이로 파헤쳐요. (클릭 1번 = 곡괭이 1개 소모)</p>
+          <p>🪨 회색 돌 칸은 단단해서 2번 파야 부서져요.</p>
+          <p>🔢 화석이 없는 칸을 파면 숫자가 나와요. 그 숫자는 바로 옆 8칸 중 화석이 묻힌 칸의 개수예요. 숫자를 보고 화석 위치를 추리해보세요!</p>
+          <p>🏆 곡괭이가 떨어지기 전에 숨겨진 화석을 모두 찾으면 다음 라운드로 올라가요. (총 3라운드)</p>
+        </div>
+        <button onclick="startFossilDigRound(1)" class="btn btn-blue mt-2 px-8">🚩 발굴 시작!</button>
+      </div>`;
+    return;
+  }
+
+  startFossilDigRound(round);
+}
+
+function startFossilDigRound(round = 1) {
+  if (window.gpsActiveView && window.gpsActiveView !== 'fossil_dig') return;
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  if(round > 3) {
+    const {best, isNew} = gpsSetBest('fossil_dig', fdScore);
+    gpsSoundFanfare();
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
         <span class="text-6xl">🦕</span><h4 class="text-2xl font-black text-amber-800">화석 발굴 마스터!</h4>
         <p class="text-gray-500 text-sm font-bold">희귀한 화석을 모두 발굴했어요!</p>
+        <div class="flex gap-6 mt-2">
+          <div class="text-center"><p class="text-3xl font-black text-amber-600">${fdScore}점</p><p class="text-xs text-gray-400 font-bold">총 점수</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-indigo-500">${fdMaxStreak}</p><p class="text-xs text-gray-400 font-bold">최고 연속 성공</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+        </div>
+        ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
         <button onclick="initFossilDig(1)" class="btn btn-blue mt-4">🔄 다시 하기</button>
       </div>`;
     return;
   }
   
-  fdPickaxes = 15 - (round * 2); 
+  if(round === 1) { fdScore = 0; fdStreak = 0; fdMaxStreak = 0; }
+  fdCollected = [];
+  fdPickaxes = 23 - (round * 3); // 4학년 난이도 완화: 기존(15-round*2)보다 여유있게 상향
   fdFound = 0;
   fdTotal = 4 + round; 
 
-  fdGrid = Array(6).fill(0).map(()=>Array(6).fill({type:'dirt', hp:1, revealed:false, isFossil:false}));
+  // 6x6 그리드: 매 칸을 독립된 객체로 새로 생성 (기존엔 Array.fill()로 객체 참조가 공유되어
+  // 한 칸의 hp를 바꾸면 같은 줄의 다른 칸들도 같이 바뀌는 버그가 있었음)
+  fdGrid = [];
+  for(let r=0; r<6; r++) {
+    let row = [];
+    for(let c=0; c<6; c++) row.push({ hp:1, revealed:false, isFossil:false, fossil:null, hint:0 });
+    fdGrid.push(row);
+  }
   
-  let emojis = ['🦴', '🦕', '🦖', '💀', '💎', '🏺'];
   let placed = 0;
+  let pool = round >= 2 ? FD_FOSSILS : FD_FOSSILS.slice(0, 5); // 라운드가 오를수록 희귀 화석 등장
   while(placed < fdTotal) {
     let r = Math.floor(Math.random() * 6);
     let c = Math.floor(Math.random() * 6);
     if(!fdGrid[r][c].isFossil) {
-      let icon = emojis[Math.floor(Math.random() * emojis.length)];
-      fdGrid[r][c] = {type:'dirt', hp: Math.random()>0.6?2:1, revealed:false, isFossil:true, icon: icon};
+      let f = pool[Math.floor(Math.random() * pool.length)];
+      fdGrid[r][c].isFossil = true;
+      fdGrid[r][c].fossil = f;
+      fdGrid[r][c].hp = Math.random() > 0.6 ? 2 : 1;
       placed++;
     }
   }
@@ -1095,38 +1158,57 @@ function initFossilDig(round = 1) {
     let c = Math.floor(Math.random() * 6);
     if(!fdGrid[r][c].isFossil) fdGrid[r][c].hp = 2;
   }
+  
+  // 지뢰찾기처럼, 화석이 없는 칸을 파면 '인접 8칸 중 화석 개수' 힌트 숫자가 보이도록 계산
+  for(let r=0; r<6; r++) {
+    for(let c=0; c<6; c++) {
+      if(fdGrid[r][c].isFossil) continue;
+      let cnt = 0;
+      for(let dr=-1; dr<=1; dr++) for(let dc=-1; dc<=1; dc++) {
+        if(dr===0 && dc===0) continue;
+        let nr=r+dr, nc=c+dc;
+        if(nr>=0 && nr<6 && nc>=0 && nc<6 && fdGrid[nr][nc].isFossil) cnt++;
+      }
+      fdGrid[r][c].hint = cnt;
+    }
+  }
+  
   renderFossilDig(round);
 }
 
 function renderFossilDig(round) {
   const gc = document.getElementById('gradeContent'); if(!gc) return;
-  let html = `<div class="space-y-4">
+  const hintColors = ['', '#2563EB', '#16A34A', '#D97706', '#DC2626', '#7C3AED', '#7C3AED', '#7C3AED', '#7C3AED'];
+  let html = `<div class="space-y-3">
     <div class="flex items-center justify-between">
       <button onclick="showGrade4Launcher()" class="btn btn-ghost text-xs">← 4학년 목록</button>
       <span class="text-sm font-black text-amber-800">🦕 화석 발굴단 (라운드 ${round}/3)</span>
       <span class="text-sm font-black text-white bg-amber-600 px-3 py-1 rounded-full shadow-sm">⛏️ ${fdPickaxes}개 남음</span>
     </div>
+    <div class="flex items-center justify-center gap-4 text-xs font-bold text-gray-500">
+      <span>점수 <span class="text-amber-600 text-base">${fdScore}</span></span>
+      ${fdStreak>=2 ? `<span class="text-orange-500">🔥연속 ${fdStreak}</span>` : ''}
+    </div>
     <div class="text-center mb-1">
       <h3 class="text-lg font-black text-slate-800">숨겨진 화석 <span class="text-orange-600 text-2xl mx-1">${fdTotal}</span>개를 찾아라!</h3>
-      <p class="text-[11px] text-gray-500 font-bold mt-1 bg-amber-50 py-1.5 px-3 rounded-lg inline-block border border-amber-100 shadow-sm">💡 흙 타일(🟫)은 <b>1번</b>, 단단한 바위(🪨)는 <b>2번</b> 클릭해야 깨집니다.</p>
+      <p class="text-[11px] text-gray-500 font-bold mt-1 bg-amber-50 py-1.5 px-3 rounded-lg inline-block border border-amber-100 shadow-sm">💡 흙을 파면 나오는 <b>숫자</b>는 바로 옆 8칸 중 화석이 묻힌 칸의 개수예요. 숫자를 보고 화석 위치를 추리해보세요!</p>
     </div>
     <div class="grid grid-cols-6 gap-1.5 p-3 bg-amber-900 rounded-xl mx-auto border-4 border-amber-950 shadow-inner" style="max-width:380px;">`;
   
   for(let r=0; r<6; r++) {
     for(let c=0; c<6; c++) {
       let cell = fdGrid[r][c];
-      let bg = '';
-      let content = '';
-      let shadow = '';
+      let bg = '', content = '', shadow = '', style = '';
       
       if (cell.revealed) {
         if (cell.isFossil) {
           bg = 'bg-yellow-100 border-2 border-yellow-400 z-10';
-          content = cell.icon;
+          content = cell.fossil.icon;
           shadow = 'box-shadow: 0 0 15px rgba(251,191,36,0.8); transform: scale(1.05);';
         } else {
-          bg = 'bg-amber-950 border-0 opacity-40';
+          bg = 'bg-amber-950 border-0';
           shadow = 'box-shadow: inset 0 4px 6px rgba(0,0,0,0.5);';
+          if(cell.hint > 0) { content = cell.hint; style = `color:${hintColors[cell.hint]};font-weight:900;`; }
         }
       } else {
         if (cell.hp === 2) {
@@ -1138,36 +1220,62 @@ function renderFossilDig(round) {
         }
       }
       
-      html += `<div onclick="fdClick(${r},${c},${round})" class="h-12 sm:h-14 rounded flex items-center justify-center text-3xl cursor-pointer transition-all active:scale-95 ${bg}" style="${shadow}">${content}</div>`;
+      html += `<div id="fdCell-${r}-${c}" onclick="fdClick(${r},${c},${round},event)" class="h-12 sm:h-14 rounded flex items-center justify-center text-2xl cursor-pointer transition-all active:scale-95 ${bg}" style="${shadow}${style}">${content}</div>`;
     }
   }
   
-  html += `</div></div>`;
+  html += `</div>`;
+  
+  if(fdCollected.length > 0) {
+    html += `<div class="flex flex-wrap gap-2 justify-center pt-1">
+      ${fdCollected.map(f => `<span title="${f.name}" class="text-2xl bg-yellow-50 border border-yellow-200 rounded-lg w-10 h-10 flex items-center justify-center shadow-sm">${f.icon}</span>`).join('')}
+    </div>`;
+  }
+  
+  html += `</div>`;
   gc.innerHTML = html;
 }
 
-function fdClick(r, c, round) {
+function fdClick(r, c, round, evt) {
   if(fdPickaxes <= 0 || fdGrid[r][c].revealed) return;
   
   fdPickaxes--;
   fdGrid[r][c].hp--;
+  const wasHardRock = fdGrid[r][c].hp > 0;
+  gpsTone(wasHardRock ? 130 : 170, 0, 0.08, 'triangle', 0.16);
+  gpsNoiseBurst(0, 0.05, 0.08, 300);
+  
+  let cellRect = evt && evt.target ? evt.target.getBoundingClientRect() : null;
   
   if(fdGrid[r][c].hp <= 0) {
     fdGrid[r][c].revealed = true;
-    if(fdGrid[r][c].isFossil) fdFound++;
+    if(fdGrid[r][c].isFossil) {
+      fdFound++;
+      fdStreak++; fdMaxStreak = Math.max(fdMaxStreak, fdStreak);
+      let f = fdGrid[r][c].fossil;
+      fdScore += f.pts + (fdStreak>=2 ? (fdStreak-1)*3 : 0);
+      fdCollected.push(f);
+      gpsSoundCorrect(fdStreak);
+      if(cellRect) gpsConfetti(cellRect.left+cellRect.width/2, cellRect.top+cellRect.height/2);
+      toast(`${f.icon} ${f.name} 발견! ${f.fact}`, 4200);
+    } else {
+      fdStreak = 0;
+    }
   }
   
   if(fdFound >= fdTotal) {
     renderFossilDig(round);
-    setTimeout(() => initFossilDig(round + 1), 1000);
+    gpsSoundFanfare();
+    setTimeout(() => initFossilDig(round + 1), 1200);
     return;
   }
   
   if(fdPickaxes <= 0 && fdFound < fdTotal) {
     renderFossilDig(round);
+    gpsSoundWrong();
     setTimeout(() => {
       const gc = document.getElementById('gradeContent');
-      gc.innerHTML = `<div class="flex flex-col items-center gap-4 py-8 text-center"><span class="text-6xl">⛏️</span><h4 class="text-2xl font-black text-red-600">발굴 실패!</h4><p class="text-gray-500 text-sm font-bold">곡괭이가 모두 망가졌어요.</p><button onclick="initFossilDig(1)" class="btn btn-blue mt-4">🔄 다시 도전하기</button></div>`;
+      gc.innerHTML = `<div class="flex flex-col items-center gap-4 py-8 text-center"><span class="text-6xl">⛏️</span><h4 class="text-2xl font-black text-red-600">발굴 실패!</h4><p class="text-gray-500 text-sm font-bold">곡괭이가 모두 망가졌어요. (이번 점수: ${fdScore}점)</p><button onclick="initFossilDig(1)" class="btn btn-blue mt-4">🔄 다시 도전하기</button></div>`;
     }, 800);
     return;
   }
@@ -1203,6 +1311,7 @@ function initDecimalJump() {
 
 function djKeydown(e) {
   if (!djAnim) return; 
+  if (window.gpsActiveView && window.gpsActiveView !== 'decimal_jump') return;
   if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'a', 'A', 'd', 'D', 'w', 'W', ' '].includes(e.key)) {
     e.preventDefault();
   }
@@ -1212,7 +1321,11 @@ function djKeydown(e) {
 }
 
 function djJump() {
-  if(djFrogY === 0) djFrogVy = 22; // Jump power
+  if(djFrogY === 0) {
+    djFrogVy = 22; // Jump power
+    gpsTone(420, 0, 0.09, 'sine', 0.16);
+    gpsTone(650, 0.06, 0.08, 'sine', 0.13);
+  }
 }
 
 function djNextQuestion() {
@@ -1273,6 +1386,14 @@ function djMove(dir) {
 }
 
 function djLoop() {
+  // 다른 게임으로 화면이 넘어갔는데도 이 루프가 백그라운드에서 계속 돌면서
+  // #gradeContent를 소수 점프 화면으로 덮어써버리던 문제 수정 (다른 게임들처럼 화면 체크 추가)
+  if (window.gpsActiveView && window.gpsActiveView !== 'decimal_jump') {
+    if(djAnim) cancelAnimationFrame(djAnim);
+    djAnim = null;
+    document.removeEventListener('keydown', djKeydown);
+    return;
+  }
   djFallingY += djSpeed;
   for(let i=0; i<3; i++) {
     const el = document.getElementById('djBlock'+i);
@@ -1291,11 +1412,16 @@ function djLoop() {
     if(djOptions[djFrogPos] === djEq.ans) {
       if(djFrogY > 10) djScore += 20; // Jump bonus 2x
       else djScore += 10;
+      gpsSoundCorrect(1);
       djNextQuestion();
       renderDecimalJump();
     } else {
       djHealth--;
+      gpsSoundWrong();
       if(djHealth <= 0) {
+        gpsTone(300, 0, 0.15, 'sawtooth', 0.18);
+        gpsTone(200, 0.15, 0.2, 'sawtooth', 0.16);
+        gpsTone(120, 0.32, 0.3, 'sawtooth', 0.14);
         document.getElementById('gradeContent').innerHTML = `<div class="flex flex-col items-center gap-4 py-8 text-center"><span class="text-6xl">💥</span><h4 class="text-2xl font-black text-red-600">게임 오버!</h4><p class="text-gray-500 text-sm">최종 점수: ${djScore}</p><button onclick="initDecimalJump()" class="btn btn-blue mt-4">🔄 다시 하기</button></div>`;
         return;
       }
@@ -1420,14 +1546,17 @@ function htPickCard(idx) {
   
   if(pickedEvent.era === minEra) {
     htSelectedIndexes.push(idx);
+    gpsSoundCorrect(htSelectedIndexes.length);
     if(htSelectedIndexes.length === 4) {
       renderHistoryTrain();
+      gpsSoundFanfare();
       setTimeout(() => initHistoryTrain(htRound + 1), 1000);
     } else {
       renderHistoryTrain();
     }
   } else {
     htLives--;
+    gpsSoundWrong();
     if(htLives <= 0) {
       renderHistoryTrain();
       setTimeout(() => {
@@ -1442,8 +1571,7 @@ function htPickCard(idx) {
         `;
       }, 500);
     } else {
-      alert("틀렸습니다! 어떤 사건이 먼저인지 다시 생각해보세요.");
-      htSelectedIndexes = [];
+      toast('❌ 아직 순서가 아니에요! 더 먼저 일어난 사건을 찾아보세요.', 1800);
       renderHistoryTrain();
     }
   }
@@ -1583,19 +1711,24 @@ function mmClick(idx) {
   if(n.val % mmTarget === 0) {
     n.state = 'correct';
     mmCorrectCount++;
+    gpsSoundCorrect(mmCorrectCount);
     if(el) {
       el.innerHTML = '💥';
       el.className = 'h-16 flex items-center justify-center rounded-2xl text-4xl transition-all duration-300 transform scale-150 opacity-0 pointer-events-none';
+      const r = el.getBoundingClientRect();
+      gpsConfetti(r.left + r.width/2, r.top + r.height/2);
     }
     
     if(mmCorrectCount >= mmTotalTarget) {
       clearInterval(mmTimerInterval);
       mmTotalTimeElapsed += (performance.now() - mmStartTime);
+      gpsSoundFanfare();
       setTimeout(() => initMathMultiple(mmRound + 1), 800);
     }
   } else {
     n.state = 'wrong';
     mmLives--;
+    gpsSoundWrong();
     if(el) {
       el.innerHTML = '❌';
       el.className = 'h-16 flex items-center justify-center rounded-2xl border-b-4 text-xl font-black transition-all duration-300 bg-red-500 border-red-600 text-white cursor-default opacity-80';
@@ -1620,6 +1753,176 @@ function mmClick(idx) {
           </div>
         `;
       }, 800);
+    }
+  }
+}
+
+/* ══════════════════════════════════════
+   🪐 태양계 탐사대 (5학년 과학 - 태양계와 별)
+══════════════════════════════════════ */
+const PO_PLANETS = [
+  { order:1, icon:'☿️', text:'수성', fact:'태양에서 가장 가까운 행성으로, 낮과 밤의 온도 차이가 아주 커요.' },
+  { order:2, icon:'♀️', text:'금성', fact:'태양계 행성 중 밤하늘에서 가장 밝게 보여요.' },
+  { order:3, icon:'🌍', text:'지구', fact:'생명체가 살고 있는 것으로 알려진 유일한 행성이에요.' },
+  { order:4, icon:'♂️', text:'화성', fact:'표면이 붉은 흙으로 덮여 있어 "붉은 행성"이라고 불려요.' },
+  { order:5, icon:'🪐', text:'목성', fact:'태양계에서 가장 큰 행성으로, 커다란 붉은 폭풍이 있어요.' },
+  { order:6, icon:'🪐', text:'토성', fact:'아름다운 고리를 가진 행성으로 유명해요.' },
+  { order:7, icon:'🔵', text:'천왕성', fact:'옆으로 거의 누운 채 자전하는 특이한 행성이에요.' },
+  { order:8, icon:'🔷', text:'해왕성', fact:'태양에서 가장 멀리 떨어진 행성이에요.' }
+];
+
+let poSelectedIndexes = [];
+let poLives = 3;
+let poStartTime = 0;
+let poTimerInterval = null;
+
+function initPlanetOrder() {
+  if (window.gpsActiveView && window.gpsActiveView !== 'planet_order') return;
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+    <div class="flex flex-col items-center gap-3 py-6 text-center">
+      <span class="text-6xl">🪐</span>
+      <h4 class="text-xl font-black text-indigo-800">태양계 탐사대</h4>
+      <div class="text-left text-sm text-gray-700 font-bold bg-indigo-50 border border-indigo-200 rounded-xl p-4 space-y-2 max-w-sm break-keep">
+        <p>🚀 태양에서 <b>가까운 순서</b>대로 8개 행성 카드를 순서대로 클릭하세요.</p>
+        <p>✅ 맞게 고르면 우주선이 다음 행성으로 이동하며 재미있는 우주 상식을 알려줘요.</p>
+        <p>❤️ 순서를 틀리면 목숨이 하나 줄어요. 목숨은 3개!</p>
+      </div>
+      <button onclick="startPlanetOrderRound()" class="btn btn-blue mt-2 px-8">🚀 탐사 출발!</button>
+    </div>`;
+}
+
+function startPlanetOrderRound() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  poSelectedIndexes = [];
+  poLives = 3;
+  poStartTime = performance.now();
+  if(poTimerInterval) clearInterval(poTimerInterval);
+  poTimerInterval = setInterval(() => {
+    const el = document.getElementById('poTimerDisplay');
+    if(el) el.innerText = ((performance.now() - poStartTime) / 1000).toFixed(1);
+  }, 100);
+  renderPlanetOrder();
+}
+
+function renderPlanetOrder() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  const pLivesSafe = Math.max(0, poLives);
+  const livesHtml = '❤️'.repeat(pLivesSafe) + '🖤'.repeat(Math.max(0, 3 - pLivesSafe));
+
+  let railHtml = `<div class="flex items-center gap-1.5 mb-4 overflow-x-auto py-2">
+    <div class="text-3xl">☀️</div>`;
+  for(let i=0; i<8; i++) {
+    if(i < poSelectedIndexes.length) {
+      const p = PO_PLANETS[poSelectedIndexes[i]];
+      railHtml += `<div class="bg-indigo-500 text-white font-bold text-[11px] p-1.5 rounded-lg whitespace-nowrap shadow-sm border-2 border-indigo-600 flex flex-col items-center animate-bounce">
+        <span class="text-lg">${p.icon}</span>${p.text}
+      </div>`;
+    } else {
+      railHtml += `<div class="bg-gray-200 border-2 border-dashed border-gray-400 text-gray-400 font-bold text-[10px] p-1.5 rounded-lg w-12 text-center">?</div>`;
+    }
+    if(i < 7) railHtml += `<div class="text-gray-300 text-xs">✦</div>`;
+  }
+  railHtml += `</div>`;
+
+  const shuffledOrder = poSelectedIndexes.length === 0 ? poDisplayOrder() : window._poDisplayOrder;
+
+  const cardsHtml = shuffledOrder.map((i) => {
+    const p = PO_PLANETS[i];
+    const isSelected = poSelectedIndexes.includes(i);
+    if(isSelected) {
+      return `<div class="p-3 rounded-xl border-2 border-gray-200 bg-gray-100 text-gray-400 text-center font-bold text-xs cursor-default opacity-50 flex flex-col items-center gap-1"><span class="text-2xl">${p.icon}</span>선택됨</div>`;
+    }
+    return `<div onclick="poPickCard(${i})" class="p-3 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-900 text-center font-bold text-xs cursor-pointer hover:bg-indigo-100 hover:-translate-y-1 transition-transform shadow-sm flex flex-col items-center gap-1">
+      <span class="text-3xl">${p.icon}</span>${p.text}
+    </div>`;
+  }).join('');
+
+  gc.innerHTML = `
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <button onclick="clearInterval(poTimerInterval); showGrade5Launcher()" class="btn btn-ghost text-xs">← 5학년 목록</button>
+        <span class="text-sm font-black text-gray-600">🪐 태양계 탐사대</span>
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-bold text-red-500">${livesHtml}</span>
+          <span class="text-sm font-bold text-slate-700 bg-slate-200 px-2 py-1 rounded-md">⏱️ <span id="poTimerDisplay">0.0</span>초</span>
+        </div>
+      </div>
+      <div class="text-center mb-2">
+        <h3 class="text-lg font-black text-slate-800">태양과 가까운 순서로 행성을 클릭하세요!</h3>
+      </div>
+      ${railHtml}
+      <div class="grid grid-cols-4 gap-2.5 min-h-[160px]">
+        ${cardsHtml}
+      </div>
+    </div>
+  `;
+}
+
+function poDisplayOrder() {
+  window._poDisplayOrder = PO_PLANETS.map((_, i) => i).sort(() => Math.random() - 0.5);
+  return window._poDisplayOrder;
+}
+
+function poPickCard(idx) {
+  if(poSelectedIndexes.includes(idx)) return;
+  const picked = PO_PLANETS[idx];
+  const nextOrder = poSelectedIndexes.length + 1;
+
+  if(picked.order === nextOrder) {
+    poSelectedIndexes.push(idx);
+    gpsSoundCorrect(poSelectedIndexes.length);
+    toast(`${picked.icon} ${picked.text}: ${picked.fact}`, 2600);
+    if(poSelectedIndexes.length === 8) {
+      clearInterval(poTimerInterval);
+      renderPlanetOrder();
+      gpsSoundFanfare();
+      const finalSec = ((performance.now() - poStartTime) / 1000).toFixed(1);
+      const elapsedMs = performance.now() - poStartTime;
+      const poBestKey = 'gps_best_planet_order_ms';
+      const prevBestMs = Number(localStorage.getItem(poBestKey) || 0);
+      const isNew = prevBestMs === 0 || elapsedMs < prevBestMs;
+      if(isNew) localStorage.setItem(poBestKey, String(Math.round(elapsedMs)));
+      const bestSec = (isNew ? elapsedMs : prevBestMs) / 1000;
+      setTimeout(() => {
+        const gc = document.getElementById('gradeContent');
+        gc.innerHTML = `
+          <div class="flex flex-col items-center gap-3 py-8 text-center">
+            <span class="text-6xl">🪐</span>
+            <h4 class="text-2xl font-black text-indigo-800">태양계 탐사 완료!</h4>
+            <p class="text-gray-500 text-sm font-bold">8개 행성을 모두 순서대로 찾았어요!</p>
+            <p class="text-xl font-bold text-indigo-600 mt-2">⏱️ 기록: ${finalSec}초</p>
+            <p class="text-sm font-bold text-slate-400">🏅 최고 기록: ${bestSec.toFixed(1)}초</p>
+            ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+            <div class="flex gap-3 mt-4">
+              <button onclick="showGrade5Launcher()" class="btn btn-ghost">← 목록</button>
+              <button onclick="startPlanetOrderRound()" class="btn btn-blue">🔄 다시 도전</button>
+            </div>
+          </div>`;
+      }, 1200);
+    } else {
+      renderPlanetOrder();
+    }
+  } else {
+    poLives--;
+    gpsSoundWrong();
+    if(poLives <= 0) {
+      clearInterval(poTimerInterval);
+      renderPlanetOrder();
+      setTimeout(() => {
+        const gc = document.getElementById('gradeContent');
+        gc.innerHTML = `
+          <div class="flex flex-col items-center gap-4 py-8 text-center">
+            <span class="text-6xl">☄️</span>
+            <h4 class="text-2xl font-black text-red-600">우주선이 궤도를 이탈했어요!</h4>
+            <p class="text-gray-500 text-sm">행성 순서를 다시 확인해보세요.</p>
+            <button onclick="initPlanetOrder()" class="btn btn-blue mt-4">🔄 다시 도전하기</button>
+          </div>
+        `;
+      }, 500);
+    } else {
+      toast('❌ 아직 순서가 아니에요! 태양과 더 가까운 행성을 찾아보세요.', 1800);
+      renderPlanetOrder();
     }
   }
 }
@@ -1922,8 +2225,40 @@ let tpIsPlaying = false;
 let tpLastTime = 0;
 let tpAnimFrame = null;
 let tpSpawnTimer = 0;
+let tpStreak = 0;
 
-const TP_WORD_LIST = ['학교','선생님','친구','숙제','급식','운동장','수업','우유','가방','연필','지우개','공책','칠판','분필','짝꿍','알림장','미술','체육','음악','수학','국어','쉬는시간','방학','과학','사회','영어','일기','동화책','도서관'];
+function tpSoundGameOver(){
+  gpsTone(300, 0, 0.18, 'sawtooth', 0.22);
+  gpsTone(250, 0.14, 0.18, 'sawtooth', 0.22);
+  gpsTone(180, 0.28, 0.32, 'sawtooth', 0.2);
+}
+
+const TP_WORD_LIST = [
+  // 학교생활
+  '학교','선생님','친구','숙제','급식','운동장','수업','가방','연필','지우개','공책','칠판','분필','짝꿍','알림장','시간표','청소','당번','반장','일기장','받아쓰기','발표','시험','상장','졸업식','입학식','현장학습','소풍','급식실','교무실',
+  // 교과목
+  '미술','체육','음악','수학','국어','과학','사회','영어','도덕','실과',
+  // 학용품·교실
+  '책상','의자','사물함','게시판','시계','창문','복도','계단','우유','도시락',
+  // 시간·계절
+  '쉬는시간','방학','아침','점심','저녁','봄','여름','가을','겨울','비','눈','바람','무지개',
+  // 책·이야기
+  '동화책','일기','편지','그림일기','도서관','만화책','시집',
+  // 동물
+  '강아지','고양이','토끼','호랑이','사자','코끼리','기린','판다','다람쥐','고슴도치','부엉이','독수리','거북이','금붕어','나비','벌','개구리','올챙이',
+  // 과일·채소·음식
+  '사과','바나나','포도','딸기','수박','참외','당근','토마토','감자','고구마','김밥','떡볶이','샌드위치','피자','치킨','미역국','짜장면',
+  // 가족·사람
+  '엄마','아빠','언니','오빠','동생','할머니','할아버지','이모','삼촌','가족',
+  // 자연·우주
+  '태양','달','별','구름','바다','산','나무','꽃','풀','호수','강','우주선','로켓','지구',
+  // 운동·놀이
+  '축구','야구','줄넘기','달리기','수영','자전거','그네','미끄럼틀','시소','딱지치기','공기놀이','숨바꼭질',
+  // 감정·마음
+  '기쁨','슬픔','행복','즐거움','용기','우정','사랑','칭찬',
+  // 교통·마을
+  '버스','자동차','기차','비행기','소방차','경찰차','신호등','횡단보도','우체국','병원','시장','놀이터'
+];
 
 function initTyping() {
   const gc = document.getElementById('freeGameContent'); if(!gc) return;
@@ -1978,6 +2313,7 @@ function tpStartGame() {
   tpScore = 0;
   tpHealth = 5;
   tpWords = [];
+  tpStreak = 0;
   tpIsPlaying = true;
   tpSpawnTimer = 0;
   tpLastTime = performance.now();
@@ -1989,6 +2325,7 @@ function tpStartGame() {
 
 function tpGameOver(reason) {
   tpIsPlaying = false;
+  tpSoundGameOver();
   const overlay = document.getElementById('tpOverlay');
   if(overlay) {
     overlay.style.display = 'flex';
@@ -2019,9 +2356,13 @@ function tpCheckWord() {
   if(matchedIdx !== -1) {
     tpWords.splice(matchedIdx, 1);
     tpScore += 10;
+    tpStreak++;
+    gpsSoundCorrect(tpStreak);
     tpUpdateUI();
     inp.value = '';
   } else {
+    gpsSoundWrong();
+    tpStreak = 0;
     inp.value = '';
     inp.style.transform = 'translateX(-5px)';
     setTimeout(() => inp.style.transform = 'translateX(5px)', 50);
@@ -2065,6 +2406,8 @@ function tpGameLoop(timestamp) {
     if(tpWords[i].y > c.height) {
       tpWords.splice(i, 1);
       tpHealth--;
+      tpStreak = 0;
+      gpsSoundTimeout();
       tpUpdateUI();
       
       c.style.background = '#E74C3C';
@@ -2636,6 +2979,26 @@ function gpsNoiseBurst(delay=0, dur=0.08, vol=0.18, hpFreq=800){
     src.connect(hp); hp.connect(g); g.connect(ctx.destination);
     src.start(t0); src.stop(t0+dur+0.02);
   }catch(e){}
+}
+// 저학년 교과 미니게임 공용 효과음 (정답/오답/시간초과/완료 팡파레)
+function gpsSoundCorrect(combo=1){
+  const notes = [880, 1108.73]; // A5, C#6
+  if(combo >= 2) notes.push(1318.51); // E6
+  if(combo >= 4) notes.push(1760);    // A6
+  notes.forEach((f,i) => gpsTone(f, i*0.06, 0.14, 'triangle', 0.22));
+}
+function gpsSoundWrong(){
+  gpsTone(180, 0, 0.12, 'sawtooth', 0.16);
+  gpsTone(140, 0.08, 0.16, 'sawtooth', 0.14);
+}
+function gpsSoundTimeout(){
+  gpsTone(520, 0, 0.09, 'square', 0.14);
+  gpsTone(390, 0.1, 0.09, 'square', 0.14);
+  gpsTone(260, 0.2, 0.14, 'square', 0.14);
+}
+function gpsSoundFanfare(){
+  const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51]; // C-E-G-C-E
+  notes.forEach((f,i) => gpsTone(f, i*0.09, 0.22, 'triangle', 0.22));
 }
 
 /* ══════════════════════════════════════
@@ -5228,7 +5591,7 @@ window.showFreeGame = function(id) {
 };
 
 let pjAnim;
-let pjPlayer = {x: 200, y: 500, vx: 0, vy: 0, r: 15};
+let pjPlayer = {x: 200, y: 500, vx: 0, vy: 0, r: 15, shieldTimer: 0, stunFallTimer: 0, starRushTimer: 0, tilt: 0};
 let pjPlatforms = [];
 let pjCamY = 0;
 let pjDrag = {active: false, sx: 0, sy: 0, ex: 0, ey: 0};
@@ -5236,27 +5599,44 @@ let pMaxHeight = 0;
 
 let pjBirds = [];
 let pjItems = [];
+let pjLightnings = [];
+let pjLightningTimer = 300;
+let pjWinds = [];
+let pjWindTimer = 500;
+const PJ_WIND_ANGLE = Math.PI / 6; // 강풍이 부는 각도: 수평 기준 30도 아래로 비스듬히
+let pjStarCount = 0;
+let pjStarField = [];
 
 function initPotJump() {
   const gc = document.getElementById('freeGameContent');
   if(!gc) return;
   gc.innerHTML = `
-    <div style="position:relative; width:100%; height:70vh; background:linear-gradient(to bottom, #87CEEB, #E0F6FF); border-radius:1rem; border:4px solid #34495E; overflow:hidden;">
+    <div style="position:relative; width:100%; height:70vh; background:#87CEEB; border-radius:1rem; border:4px solid #2c3e50; overflow:hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.2);">
       <canvas id="pjCanvas" style="display:block; width:100%; height:100%; touch-action:none;"></canvas>
-      <div style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.5); color:white; padding:8px 15px; border-radius:10px; font-weight:bold; line-height:1.5;">
-        최고 높이: <span id="pjScore">0</span>m<br>
-        현재 높이: <span id="pjCurrentHeight">0</span>m
+      <div style="position:absolute; top:10px; left:10px; background:rgba(20,20,40,0.55); backdrop-filter:blur(2px); color:white; padding:8px 14px; border-radius:12px; font-weight:bold; line-height:1.6; box-shadow:0 2px 8px rgba(0,0,0,0.25);">
+        🏆 최고 높이: <span id="pjScore">0</span>m<br>
+        📏 현재 높이: <span id="pjCurrentHeight">0</span>m<br>
+        <span id="pjStarUI">☆☆☆☆☆</span>
       </div>
     </div>
-    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">항아리를 당겼다 놓아 점프하세요! (연속 점프는 1초 대기 필요)<br>독수리(🦅)를 피하고 아이템(🚀 로켓, 🎈 풍선)을 먹어보세요!</p>
+    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">항아리를 당겼다 놓아 점프하세요! (연속 점프는 1초 대기 필요)<br>독수리(🦅)를 피하고 아이템(🚀 로켓, 🎈 풍선, ⭐ 별, 🛡️ 방패)을 먹어보세요!<br>⚠️ 붉은 줄이 나타나면 곧 번개⚡가 떨어져요! 재빨리 옆으로 피하세요. (맞으면 2초간 급강하)<br>💨 바람 경고가 뜨면 곧 강풍이 대각선 아래로 비스듬히 불어요! 옆으로 밀리면서 살짝 아래로도 눌리니 균형을 잡으세요. (방패 중엔 안전)<br>⭐ 별을 5개 모으면 무적 로켓 상승으로 하늘 높이 솟구쳐요!</p>
   `;
   setTimeout(() => {
     const c = document.getElementById('pjCanvas');
     c.width = c.clientWidth;
     c.height = c.clientHeight;
-    pjPlayer = {x: c.width/2, y: c.height - 250, vx: 0, vy: 0, r: 15};
+    pjPlayer = {x: c.width/2, y: c.height - 250, vx: 0, vy: 0, r: 15, shieldTimer: 0, stunFallTimer: 0, starRushTimer: 0, tilt: 0};
     pjCamY = 0;
     pMaxHeight = 0;
+    pjStarCount = 0;
+    pjLightnings = [];
+    pjLightningTimer = 240 + Math.random() * 180;
+    pjWinds = [];
+    pjWindTimer = 480 + Math.random() * 360; // 강풍은 번개보다 드물게: 약 8~14초 간격
+    pjStarField = Array.from({length: 50}, () => ({
+      x: Math.random() * c.width, y: Math.random() * c.height,
+      r: Math.random() * 1.4 + 0.4, tw: Math.random() * 10
+    }));
     
     pjPlatforms = [];
     pjBirds = [];
@@ -5277,6 +5657,15 @@ function initPotJump() {
 
 let pjHighestGeneratedY = 0;
 
+// 아이템 종류를 확률적으로 뽑기: 로켓/풍선은 흔하게, 별/방패는 희귀하게
+function pjRandomItemType() {
+  const r = Math.random();
+  if (r < 0.35) return '🚀';
+  if (r < 0.65) return '🎈';
+  if (r < 0.85) return '⭐';
+  return '🛡️';
+}
+
 function generateMorePj(cw, targetY) {
   while(pjHighestGeneratedY > targetY) {
     pjPlatforms.push({
@@ -5295,7 +5684,7 @@ function generateMorePj(cw, targetY) {
       });
     } else if(Math.random() < 0.25) { // 25% chance to spawn an item instead of a bird
       pjItems.push({
-        type: Math.random() > 0.5 ? '🚀' : '🎈',
+        type: pjRandomItemType(),
         x: Math.random() * (cw - 40) + 20,
         y: pjHighestGeneratedY - 40,
         w: 30, h: 30,
@@ -5311,6 +5700,7 @@ function setupPjInput(c) {
   let pjLastJumpTime = 0;
   const down = (x, y) => {
     if(Date.now() - pjLastJumpTime < 1000) return;
+    if(pjPlayer.stunFallTimer > 0 || pjPlayer.starRushTimer > 0) return; // 추락/로켓 상승 중엔 조작 불가
     pjDrag.active = true;
     pjDrag.sx = x; pjDrag.sy = y;
     pjDrag.ex = x; pjDrag.ey = y;
@@ -5357,9 +5747,20 @@ function pjLoop() {
   const ctx = c.getContext('2d');
   
   // Physics
-  pjPlayer.vy += 0.1; // Gravity
+  if (pjPlayer.starRushTimer > 0) {
+    pjPlayer.starRushTimer--;
+    pjPlayer.vy = -56; // 별 5개 완성: 무적 로켓 상승
+    pjPlayer.vx *= 0.9;
+  } else if (pjPlayer.stunFallTimer > 0) {
+    pjPlayer.stunFallTimer--;
+    pjPlayer.vy = 15; // 번개에 맞아 빠르게 추락
+  } else {
+    pjPlayer.vy += 0.1; // Gravity
+  }
+  if (pjPlayer.shieldTimer > 0) pjPlayer.shieldTimer--;
   pjPlayer.x += pjPlayer.vx;
   pjPlayer.y += pjPlayer.vy;
+  pjPlayer.tilt += ((pjPlayer.vx * 2) - pjPlayer.tilt) * 0.15; // 이동 방향에 따른 기울임(부드럽게 보간)
   
   pjPlayer.vx *= 0.98; // Air resistance (stronger to slow down horizontal movement)
   
@@ -5367,8 +5768,8 @@ function pjLoop() {
   if(pjPlayer.x < pjPlayer.r) { pjPlayer.x = pjPlayer.r; pjPlayer.vx *= -0.8; }
   if(pjPlayer.x > c.width - pjPlayer.r) { pjPlayer.x = c.width - pjPlayer.r; pjPlayer.vx *= -0.8; }
   
-  // Platform collision (Solid bouncing)
-  for(let p of pjPlatforms) {
+  // Platform collision (Solid bouncing) - 별 로켓 상승 중에는 모든 블록을 무시하고 통과
+  if (pjPlayer.starRushTimer <= 0) for(let p of pjPlatforms) {
     let testX = pjPlayer.x;
     let testY = pjPlayer.y;
     
@@ -5425,9 +5826,11 @@ function pjLoop() {
     let distX = pjPlayer.x - testX;
     let distY = pjPlayer.y - testY;
     if ((distX*distX + distY*distY) <= pjPlayer.r * pjPlayer.r) {
+      if (pjPlayer.shieldTimer > 0 || pjPlayer.starRushTimer > 0) continue; // 방패/로켓 상승 중엔 무시
       // Hit a bird! Stunned drop
       pjPlayer.vx = (pjPlayer.x > b.x + b.w/2) ? 3 : -3;
       pjPlayer.vy = 2; // drop
+      gpsSoundWrong();
     }
   }
 
@@ -5442,15 +5845,94 @@ function pjLoop() {
       if(it.type === '🚀') {
         pjPlayer.vy = -18; // Massive super jump
         pjPlayer.vx = 0;
+        gpsTone(700,0,0.06,'square',0.2); gpsTone(1000,0.05,0.1,'square',0.18);
         toast('🚀 슈퍼 로켓 점프!');
       } else if(it.type === '🎈') {
         pjPlayer.vy = -6; // Light floaty jump
         pjPlayer.vx = 0;
+        gpsTone(500,0,0.08,'triangle',0.18);
         toast('🎈 두둥실 풍선 점프!');
+      } else if(it.type === '⭐') {
+        pjStarCount++;
+        const sEl = document.getElementById('pjStarUI');
+        if(pjStarCount >= 5) {
+          pjStarCount = 0;
+          pjPlayer.starRushTimer = 90; // 약 1.5초간 무적 로켓 상승 (약 500m)
+          pjPlayer.stunFallTimer = 0;
+          pjPlayer.shieldTimer = Math.max(pjPlayer.shieldTimer, 90);
+          pjPlayer.vx = 0;
+          gpsSoundFanfare();
+          gpsConfetti(pjPlayer.x, pjPlayer.y);
+          if(sEl) sEl.innerText = '☆☆☆☆☆';
+          toast('⭐⭐⭐ 별 5개 완성! 무적 로켓 발사! 🚀', 2200);
+        } else {
+          if(sEl) sEl.innerText = '⭐'.repeat(pjStarCount) + '☆'.repeat(5 - pjStarCount);
+          gpsTone(1100 + pjStarCount*80, 0, 0.07, 'square', 0.2);
+          toast(`⭐ 별 ${pjStarCount}/5 모았어요!`, 1200);
+        }
+      } else if(it.type === '🛡️') {
+        pjPlayer.shieldTimer = 300; // 5초(60fps 기준)
+        gpsTone(600,0,0.08,'sine',0.2); gpsTone(900,0.06,0.1,'sine',0.2);
+        toast('🛡️ 방패 획득! 5초간 무적!');
       }
     }
   }
   
+  // 번개 함정: 일정 시간마다 랜덤한 세로 라인에 경고 표시 후 번개가 떨어짐
+  pjLightningTimer--;
+  if (pjLightningTimer <= 0) {
+    const bandW = 90;
+    pjLightnings.push({ x: Math.random() * (c.width - bandW) + bandW/2, w: bandW, timer: 60, state: 'warn' });
+    pjLightningTimer = 240 + Math.random() * 180; // 다음 번개까지 약 4~7초
+  }
+  for (let i = pjLightnings.length - 1; i >= 0; i--) {
+    let lt = pjLightnings[i];
+    lt.timer--;
+    if (lt.state === 'warn' && lt.timer <= 0) {
+      lt.state = 'strike';
+      lt.timer = 18; // 번개가 실제로 내리치는 시간 (약 0.3초)
+      gpsNoiseBurst(0, 0.15, 0.22, 400);
+      gpsTone(200, 0, 0.15, 'sawtooth', 0.2);
+    }
+    if (lt.state === 'strike') {
+      if (pjPlayer.shieldTimer <= 0 && pjPlayer.stunFallTimer <= 0 && pjPlayer.starRushTimer <= 0 &&
+          pjPlayer.x > lt.x - lt.w/2 && pjPlayer.x < lt.x + lt.w/2) {
+        pjPlayer.stunFallTimer = 120; // 2초간 급강하 (60fps 기준)
+        gpsSoundWrong();
+        toast('⚡ 번개에 맞았다! 2초간 빠르게 추락!');
+      }
+      if (lt.timer <= 0) pjLightnings.splice(i, 1);
+    }
+  }
+
+  // 💨 강풍 이벤트: 번개보다 드물게 발생하지만, 발동되면 꽤 오래·강하게 옆으로 밀어냄
+  pjWindTimer--;
+  if (pjWindTimer <= 0 && pjWinds.length === 0) {
+    const dir = Math.random() < 0.5 ? -1 : 1;
+    pjWinds.push({ dir, target: 8.5 + Math.random() * 3, timer: 55, state: 'warn' });
+    pjWindTimer = 480 + Math.random() * 360; // 다음 강풍까지 약 8~14초
+  }
+  for (let i = pjWinds.length - 1; i >= 0; i--) {
+    let wd = pjWinds[i];
+    wd.timer--;
+    if (wd.state === 'warn') {
+      if (wd.timer === 40) { gpsTone(500, 0, 0.1, 'sine', 0.12); gpsTone(420, 0.09, 0.1, 'sine', 0.12); toast('💨 강풍 주의! 곧 세게 밀려나요!'); }
+      if (wd.timer <= 0) {
+        wd.state = 'gust';
+        wd.timer = 110; // 강풍 지속시간 (약 1.8초)
+        gpsNoiseBurst(0, 0.5, 0.13, 250);
+        gpsTone(180, 0, 0.4, 'sine', 0.08);
+      }
+    } else if (wd.state === 'gust') {
+      if (pjPlayer.shieldTimer <= 0 && pjPlayer.starRushTimer <= 0) {
+        let targetVx = wd.dir * wd.target * Math.cos(PJ_WIND_ANGLE);
+        pjPlayer.vx += (targetVx - pjPlayer.vx) * 0.055;
+        pjPlayer.vy += wd.target * Math.sin(PJ_WIND_ANGLE) * 0.055; // 대각선 아래로도 지속적으로 밀림 (중력과 겹쳐 상승 방해)
+      }
+      if (wd.timer <= 0) pjWinds.splice(i, 1);
+    }
+  }
+
   // Camera smooth follow
   let targetCamY = (c.height * 0.7) - pjPlayer.y;
   // No clamping to 0, allowing floor to float up
@@ -5466,7 +5948,26 @@ function pjLoop() {
   const curHeightEl = document.getElementById('pjCurrentHeight');
   if(curHeightEl) curHeightEl.innerText = Math.floor(heightSc / 10);
   
-  ctx.clearRect(0, 0, c.width, c.height);
+  // ── 배경: 높이에 따라 하늘색이 낮→노을→노을→우주로 자연스럽게 변함 ──
+  const sky = pjSkyColor(heightSc);
+  const skyGrad = ctx.createLinearGradient(0, 0, 0, c.height);
+  skyGrad.addColorStop(0, sky.top);
+  skyGrad.addColorStop(1, sky.bot);
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, c.width, c.height);
+  
+  if (sky.nightT > 0.02) {
+    ctx.save();
+    ctx.globalAlpha = sky.nightT;
+    for (let s of pjStarField) {
+      const tw = 0.4 + 0.6 * Math.abs(Math.sin(Date.now()/700 + s.tw));
+      ctx.fillStyle = `rgba(255,255,255,${tw})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
   
   ctx.save();
   ctx.translate(0, pjCamY);
@@ -5474,34 +5975,67 @@ function pjLoop() {
   for(let p of pjPlatforms) {
     // Check if any part of the platform is visible
     if(p.y + p.h + pjCamY > -100 && p.y + pjCamY < c.height + 100) {
-      ctx.fillStyle = '#654321';
-      ctx.fillRect(p.x, p.y, p.w, p.h);
-      ctx.fillStyle = '#228B22'; // Grass top
-      ctx.fillRect(p.x, p.y, p.w, 5);
+      const capH = Math.min(p.h, 40);
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      pjRoundRect(ctx, p.x + 3, p.y + 6, p.w, capH, 6);
+      ctx.fill();
+      const dirtGrad = ctx.createLinearGradient(0, p.y, 0, p.y + capH);
+      dirtGrad.addColorStop(0, '#9a6a3a');
+      dirtGrad.addColorStop(1, '#5c3a1a');
+      ctx.fillStyle = dirtGrad;
+      pjRoundRect(ctx, p.x, p.y, p.w, p.h, 7);
+      ctx.fill();
+      ctx.fillStyle = '#3fa34d';
+      pjRoundRect(ctx, p.x, p.y, p.w, 8, 4);
+      ctx.fill();
+      ctx.fillStyle = '#2f8a3d';
+      for (let gx = p.x + 5; gx < p.x + p.w - 4; gx += 11) {
+        ctx.beginPath();
+        ctx.moveTo(gx, p.y);
+        ctx.lineTo(gx + 3, p.y - 6);
+        ctx.lineTo(gx + 6, p.y);
+        ctx.closePath();
+        ctx.fill();
+      }
     }
   }
   
-  // Draw birds
+  // Draw birds (날갯짓 애니메이션 + 그림자)
   for(let b of pjBirds) {
     if(b.y + pjCamY > -100 && b.y + pjCamY < c.height + 100) {
       ctx.save();
       ctx.translate(b.x + b.w/2, b.y + b.h/2);
       if (b.vx > 0) ctx.scale(-1, 1);
+      ctx.scale(1, 1 + Math.sin(Date.now()/100 + b.x) * 0.18);
       ctx.font = '28px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(0,0,0,0.25)';
+      ctx.shadowBlur = 5;
+      ctx.shadowOffsetY = 3;
       ctx.fillText('🦅', 0, 0);
       ctx.restore();
     }
   }
 
-  // Draw items
+  // Draw items (은은한 발광 + 두둥실 애니메이션)
+  const pjGlow = {'🚀':'255,140,60', '🎈':'110,180,255', '⭐':'255,215,70', '🛡️':'110,220,255'};
   for(let it of pjItems) {
     if(it.active && it.y + pjCamY > -100 && it.y + pjCamY < c.height + 100) {
-      ctx.font = '28px Arial';
+      const bob = Math.sin(Date.now()/220 + it.x) * 3;
+      const glow = pjGlow[it.type] || '255,255,255';
+      const pulse = 0.3 + 0.22 * Math.sin(Date.now()/280 + it.x);
+      const rg = ctx.createRadialGradient(it.x, it.y + bob, 2, it.x, it.y + bob, 22);
+      rg.addColorStop(0, `rgba(${glow},${pulse})`);
+      rg.addColorStop(1, `rgba(${glow},0)`);
+      ctx.fillStyle = rg;
+      ctx.beginPath();
+      ctx.arc(it.x, it.y + bob, 22, 0, Math.PI*2);
+      ctx.fill();
+      ctx.font = '26px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(it.type, it.x, it.y + Math.sin(Date.now()/200)*3);
+      ctx.fillText(it.type, it.x, it.y + bob);
     }
   }
   
@@ -5523,14 +6057,156 @@ function pjLoop() {
     ctx.setLineDash([]);
   }
   
+  // 별 로켓 상승 중 반짝이 궤적
+  if (pjPlayer.starRushTimer > 0) {
+    for (let k = 0; k < 3; k++) {
+      ctx.save();
+      ctx.globalAlpha = 0.5 + Math.random() * 0.4;
+      ctx.font = (10 + Math.random()*8) + 'px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('⭐', pjPlayer.x + (Math.random()-0.5)*24, pjPlayer.y + 18 + Math.random()*22);
+      ctx.restore();
+    }
+  }
+  
+  // 방패/로켓 상승 중 보호막 링
+  if (pjPlayer.shieldTimer > 0) {
+    ctx.beginPath();
+    ctx.arc(pjPlayer.x, pjPlayer.y, pjPlayer.r + 8, 0, Math.PI*2);
+    ctx.strokeStyle = pjPlayer.starRushTimer > 0
+      ? `rgba(255,210,60,${0.55 + 0.3*Math.sin(Date.now()/80)})`
+      : `rgba(80,180,255,${0.5 + 0.3*Math.sin(Date.now()/100)})`;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+  
+  // 항아리 캐릭터: 이동 방향으로 살짝 기울고, 속도에 따라 눌리고 늘어남 + 그림자
+  ctx.save();
+  ctx.translate(pjPlayer.x, pjPlayer.y);
+  const tiltRad = Math.max(-0.4, Math.min(0.4, pjPlayer.tilt * 0.05));
+  ctx.rotate(tiltRad);
+  const stretch = Math.max(0.8, Math.min(1.2, 1 - pjPlayer.vy * 0.008));
+  ctx.scale(1/stretch, stretch);
   ctx.font = '30px Arial';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('🍯', pjPlayer.x, pjPlayer.y);
-  
+  ctx.shadowColor = 'rgba(0,0,0,0.3)';
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetY = 4;
+  ctx.fillText('🍯', 0, 0);
   ctx.restore();
   
+  ctx.restore();
+
+  // 번개 함정 경고/발동 표시 (카메라 스크롤과 무관하게 화면 고정 위치에 표시)
+  for (let lt of pjLightnings) {
+    if (lt.state === 'warn') {
+      const alpha = 0.12 + 0.14 * Math.sin(Date.now()/80);
+      ctx.fillStyle = `rgba(255,50,50,${alpha})`;
+      ctx.fillRect(lt.x - lt.w/2, 0, lt.w, c.height);
+      ctx.font = 'bold 20px Arial';
+      ctx.fillStyle = '#ff2222';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('⚠️', lt.x, 8);
+    } else if (lt.state === 'strike') {
+      ctx.fillStyle = 'rgba(255,255,160,0.45)';
+      ctx.fillRect(lt.x - lt.w/2, 0, lt.w, c.height);
+      pjDrawBolt(ctx, lt.x - 12, 0, c.height, lt.w);
+      pjDrawBolt(ctx, lt.x + 12, 0, c.height, lt.w);
+    }
+  }
+  
+  // 💨 강풍 경고/발동 표시 (화면 고정 위치, 카메라 스크롤과 무관)
+  for (let wd of pjWinds) {
+    if (wd.state === 'warn') {
+      const alpha = 0.10 + 0.10 * Math.sin(Date.now()/70);
+      ctx.fillStyle = `rgba(120,200,255,${alpha})`;
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.font = 'bold 22px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      for (let k = 0; k < 3; k++) {
+        let yy = c.height * (0.25 + k * 0.25);
+        ctx.fillStyle = 'rgba(30,100,180,0.7)';
+        ctx.fillText(wd.dir > 0 ? '💨↘️' : '↙️💨', c.width/2, yy);
+      }
+    } else if (wd.state === 'gust') {
+      ctx.fillStyle = 'rgba(120,200,255,0.14)';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctx.lineWidth = 2;
+      const t = Date.now() / 1000;
+      const dxDir = Math.cos(PJ_WIND_ANGLE) * wd.dir, dyDir = Math.sin(PJ_WIND_ANGLE);
+      for (let k = 0; k < 14; k++) {
+        let yy = ((k * 53 + t * 220 * dyDir * 2.6) % (c.height + 80)) - 40;
+        let len = 40 + (k % 3) * 14;
+        let xStart = wd.dir > 0 ? -len : c.width + len;
+        ctx.beginPath();
+        ctx.moveTo(xStart, yy);
+        ctx.lineTo(xStart + dxDir * len, yy + dyDir * len);
+        ctx.stroke();
+      }
+      ctx.font = 'bold 26px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fillText('💨', c.width/2, 8);
+    }
+  }
+  
   pjAnim = requestAnimationFrame(pjLoop);
+}
+
+// 하늘 색: 현재 높이(px)에 따라 낮 → 노을 → 노을보라 → 우주 순으로 부드럽게 보간
+function pjSkyColor(heightPx) {
+  const m = heightPx / 10;
+  const stops = [
+    { m: 0,    top: [135,206,235], bot: [224,246,255] },
+    { m: 300,  top: [255,154,118], bot: [255,217,160] },
+    { m: 700,  top: [107,91,149],  bot: [179,153,212] },
+    { m: 1200, top: [11,16,38],    bot: [27,36,80]     }
+  ];
+  let idx = 0;
+  for (let i = 0; i < stops.length; i++) { if (m >= stops[i].m) idx = i; }
+  const a = stops[idx], b = stops[Math.min(idx+1, stops.length-1)];
+  const range = Math.max(1, b.m - a.m);
+  const t = a === b ? 1 : Math.min(1, Math.max(0, (m - a.m) / range));
+  const lerp = (c1, c2, tt) => c1.map((v,i) => Math.round(v + (c2[i]-v)*tt));
+  const top = lerp(a.top, b.top, t);
+  const bot = lerp(a.bot, b.bot, t);
+  return { top: `rgb(${top.join(',')})`, bot: `rgb(${bot.join(',')})`, nightT: Math.min(1, Math.max(0, (m-700)/500)) };
+}
+
+function pjRoundRect(ctx, x, y, w, h, r) {
+  const rr = Math.min(r, w/2, Math.max(h,0.001)/2);
+  ctx.beginPath();
+  ctx.moveTo(x+rr, y);
+  ctx.arcTo(x+w, y, x+w, y+h, rr);
+  ctx.arcTo(x+w, y+h, x, y+h, rr);
+  ctx.arcTo(x, y+h, x, y, rr);
+  ctx.arcTo(x, y, x+w, y, rr);
+  ctx.closePath();
+}
+
+function pjDrawBolt(ctx, cx, topY, bottomY, w) {
+  ctx.save();
+  ctx.strokeStyle = '#fff59d';
+  ctx.lineWidth = 3;
+  ctx.shadowColor = '#fff59d';
+  ctx.shadowBlur = 14;
+  ctx.beginPath();
+  let x = cx;
+  ctx.moveTo(x, topY);
+  const segs = 7;
+  for (let i = 1; i <= segs; i++) {
+    const y = topY + (bottomY - topY) * (i / segs);
+    x = cx + (Math.random() - 0.5) * w * 0.5;
+    ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.restore();
 }
 
 /* ══════════════════════════════════════
@@ -5600,6 +6276,7 @@ function initGuguRace(reset=true) {
   
   if(grStage >= grTotal) {
     const {best, isNew} = gpsSetBest('gugu_race', grScore);
+    gpsSoundFanfare();
     gc.innerHTML = `
       <div class="flex flex-col items-center gap-3 py-8 text-center">
         <span class="text-6xl">🏆</span>
@@ -5679,6 +6356,7 @@ function initGuguRace(reset=true) {
       grStage++;
       const opts = document.getElementById('grOptions');
       if(opts) opts.style.pointerEvents = 'none';
+      gpsSoundTimeout();
       toast('⏰ 시간 초과! 다음 문제로 넘어가요');
       setTimeout(() => initGuguRace(false), 700);
     }
@@ -5697,12 +6375,14 @@ function grClick(selected, answer, btn) {
     const rect = btn.getBoundingClientRect();
     gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
     gpsComboPopup(btn, grCombo);
+    gpsSoundCorrect(grCombo);
     setTimeout(() => initGuguRace(false), 600);
   } else {
     btn.classList.replace('bg-amber-400', 'bg-red-500');
     btn.classList.replace('border-amber-600', 'border-red-700');
     btn.classList.add('animate-bounce');
     grCombo = 0;
+    gpsSoundWrong();
     setTimeout(() => {
       btn.classList.replace('bg-red-500', 'bg-amber-400');
       btn.classList.replace('border-red-700', 'border-amber-600');
@@ -5732,6 +6412,7 @@ function initClockRead(reset=true) {
   
   if(crStage >= crTotal) {
     const ratio = crMaxCombo / crTotal;
+    gpsSoundFanfare();
     gc.innerHTML = `
       <div class="flex flex-col items-center gap-3 py-8 text-center">
         <span class="text-6xl">🌟</span>
@@ -5744,16 +6425,15 @@ function initClockRead(reset=true) {
     return;
   }
   
-  let mins = [0, 30][Math.floor(Math.random()*2)]; 
+  let mins = [0, 15, 30, 45][Math.floor(Math.random()*4)]; 
   let hour = Math.floor(Math.random()*12)+1;
   
-  let ansStr = `${hour}시 ${mins===0 ? '정각' : mins+'분'}`;
-  if(mins===0) ansStr = `${hour}시`;
+  let ansStr = mins===0 ? `${hour}시` : `${hour}시 ${mins}분`;
   
   let options = [ansStr];
   while(options.length < 3) {
     let wrongH = Math.floor(Math.random()*12)+1;
-    let wrongM = [0, 30][Math.floor(Math.random()*2)];
+    let wrongM = [0, 15, 30, 45][Math.floor(Math.random()*4)];
     let wStr = wrongM===0 ? `${wrongH}시` : `${wrongH}시 ${wrongM}분`;
     if(!options.includes(wStr)) options.push(wStr);
   }
@@ -5816,6 +6496,7 @@ function initClockRead(reset=true) {
       crStage++;
       const opts = document.getElementById('crOptions');
       if(opts) opts.style.pointerEvents = 'none';
+      gpsSoundTimeout();
       toast('⏰ 시간 초과! 다음 문제로 넘어가요');
       setTimeout(() => initClockRead(false), 700);
     }
@@ -5834,6 +6515,7 @@ function crClick(selected, answer, btn) {
     const rect = btn.getBoundingClientRect();
     gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
     gpsComboPopup(btn, crCombo);
+    gpsSoundCorrect(crCombo);
     setTimeout(() => initClockRead(false), 700);
   } else {
     btn.classList.replace('bg-indigo-100', 'bg-red-400');
@@ -5841,6 +6523,7 @@ function crClick(selected, answer, btn) {
     btn.classList.replace('text-indigo-900', 'text-white');
     btn.classList.add('animate-bounce');
     crCombo = 0;
+    gpsSoundWrong();
     setTimeout(() => {
       btn.classList.replace('bg-red-400', 'bg-indigo-100');
       btn.classList.replace('border-red-600', 'border-indigo-300');
@@ -5895,6 +6578,7 @@ function mpEndGame(){
   const area = document.getElementById('mpArea');
   if(area) area.innerHTML = '';
   const {best, isNew} = gpsSetBest('math_pop', mpScore);
+  gpsSoundFanfare();
   const gc = document.getElementById('gradeContent'); if(!gc) return;
   gc.innerHTML = `
     <div class="flex flex-col items-center gap-3 py-8 text-center">
@@ -5995,6 +6679,8 @@ function spawnMpBalloon() {
       bEl.innerHTML = '<span class="text-6xl">💥</span>';
       const rect = bEl.getBoundingClientRect();
       gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+      gpsNoiseBurst(0, 0.06, 0.14, 600);
+      gpsSoundCorrect(mpCombo);
       setTimeout(()=>bEl.remove(), 200);
       genMpTarget();
       mpRestartSpawner();
@@ -6006,6 +6692,7 @@ function spawnMpBalloon() {
       if(comboEl) comboEl.textContent = '';
       mpScore = Math.max(0, mpScore - 5);
       document.getElementById('mpScoreTxt').textContent = mpScore;
+      gpsSoundWrong();
     }
   };
   
@@ -6033,13 +6720,35 @@ const WF_Q_TIME = 12;
 
 const WF_DATA = [
   { img: '🐘', correct: '코끼리', wrongs: ['코기리', '고끼리', '코끼기'] },
-  { img: '🚲', correct: '자전거', wrongs: ['자전거', '자정거', '차전거'] },
+  { img: '🚲', correct: '자전거', wrongs: ['자전개', '자정거', '차전거'] },
   { img: '🐢', correct: '거북이', wrongs: ['거북히', '거부기', '거북애'] },
   { img: '🐰', correct: '토끼', wrongs: ['토기', '도끼', '토키'] },
   { img: '🌻', correct: '해바라기', wrongs: ['해바라게', '해버라기', '헤바라기'] },
   { img: '🎈', correct: '풍선', wrongs: ['풍션', '핑선', '풍성'] },
   { img: '🦋', correct: '나비', wrongs: ['나비이', '내비', '마비'] },
-  { img: '🚁', correct: '헬리콥터', wrongs: ['헬리곱터', '할리콥터', '헬리콥도'] }
+  { img: '🚁', correct: '헬리콥터', wrongs: ['헬리곱터', '할리콥터', '헬리콥도'] },
+  { img: '🐵', correct: '원숭이', wrongs: ['원숭희', '원충이', '원숭히'] },
+  { img: '🐱', correct: '고양이', wrongs: ['고냥이', '괴양이', '고양히'] },
+  { img: '🐶', correct: '강아지', wrongs: ['강아찌', '강애지', '강아디'] },
+  { img: '🐯', correct: '호랑이', wrongs: ['호냥이', '호랑히', '호란이'] },
+  { img: '🧊', correct: '냉장고', wrongs: ['냉장꼬', '낸장고', '냉짱고'] },
+  { img: '📺', correct: '텔레비전', wrongs: ['텔레비젼', '텔레비죤', '델레비전'] },
+  { img: '🚗', correct: '자동차', wrongs: ['자동챠', '자똥차', '자통차'] },
+  { img: '✈️', correct: '비행기', wrongs: ['비앵기', '비행끼', '비헹기'] },
+  { img: '🌈', correct: '무지개', wrongs: ['무지게', '무찌개', '무지캐'] },
+  { img: '⛄', correct: '눈사람', wrongs: ['눈사남', '눈싸람', '눈사랑'] },
+  { img: '☂️', correct: '우산', wrongs: ['우삼', '우선', '오산'] },
+  { img: '🍓', correct: '딸기', wrongs: ['딸끼', '딸키', '달기'] },
+  { img: '🍉', correct: '수박', wrongs: ['수밖', '수바', '수벅'] },
+  { img: '🍈', correct: '참외', wrongs: ['차뫼', '참왜', '참애'] },
+  { img: '🍙', correct: '김밥', wrongs: ['김빱', '깁밥', '김박'] },
+  { img: '🍢', correct: '떡볶이', wrongs: ['떡뽀끼', '떡볶기', '떢볶이'] },
+  { img: '✂️', correct: '가위', wrongs: ['가휘', '가외', '가유'] },
+  { img: '🖍️', correct: '색연필', wrongs: ['새견필', '생연필', '색년필'] },
+  { img: '🧽', correct: '지우개', wrongs: ['지우게', '지오개', '지운개'] },
+  { img: '🎒', correct: '책가방', wrongs: ['책까방', '책가밤', '챙가방'] },
+  { img: '🛝', correct: '놀이터', wrongs: ['노리터', '놀이더', '놀이털'] },
+  { img: '👥', correct: '그림자', wrongs: ['그림짜', '그린자', '그림쟈'] }
 ];
 
 let wfCurrentQueue = [];
@@ -6057,6 +6766,7 @@ function initWordFind(reset=true) {
   
   if(wfStage >= wfTotal) {
     const ratio = wfMaxCombo / wfTotal;
+    gpsSoundFanfare();
     gc.innerHTML = `
       <div class="flex flex-col items-center gap-3 py-8 text-center">
         <span class="text-6xl">💯</span>
@@ -6112,6 +6822,7 @@ function initWordFind(reset=true) {
       wfStage++;
       const opts = document.getElementById('wfOptions');
       if(opts) opts.style.pointerEvents = 'none';
+      gpsSoundTimeout();
       toast('⏰ 시간 초과! 다음 문제로 넘어가요');
       setTimeout(() => initWordFind(false), 700);
     }
@@ -6130,6 +6841,7 @@ function wfClick(selected, answer, btn) {
     const rect = btn.getBoundingClientRect();
     gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
     gpsComboPopup(btn, wfCombo);
+    gpsSoundCorrect(wfCombo);
     setTimeout(() => initWordFind(false), 700);
   } else {
     btn.classList.replace('bg-white', 'bg-red-400');
@@ -6137,6 +6849,7 @@ function wfClick(selected, answer, btn) {
     btn.classList.replace('border-gray-300', 'border-red-600');
     btn.classList.add('animate-bounce');
     wfCombo = 0;
+    gpsSoundWrong();
     setTimeout(() => {
       btn.classList.replace('bg-red-400', 'bg-white');
       btn.classList.replace('text-white', 'text-slate-800');
@@ -7764,7 +8477,7 @@ function mrLoop() {
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.records))throw 0;localStorage.setItem(K_REC,JSON.stringify(d.records));refreshRecCount();closeModal();toast(`✅ ${d.records.length}건 복원됐어요!`);}catch{toast('❌ 올바른 백업 파일이 아니에요.');}};r.readAsText(f);}
 
 let _tt;
-function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2600);}
+function toast(msg,dur=2600){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),dur);}
 
 function initEscapeRoom() {
   const gc = document.getElementById('freeGameContent');
