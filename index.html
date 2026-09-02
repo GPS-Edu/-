@@ -333,6 +333,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
   <header class="h-14 bg-white flex items-center justify-between px-6 shrink-0 border-b border-slate-200 shadow-sm transition-colors">
     <div class="flex items-center gap-2"><span id="pageIcon" class="text-xl drop-shadow-sm">🏠</span><h2 id="pageTitle" class="text-[17px] font-black text-slate-800">대시보드</h2></div>
     <div class="flex items-center gap-3">
+      <button id="gpsMuteBtn" onclick="gpsToggleMute()" title="효과음 켜기/끄기" class="text-lg w-9 h-9 flex items-center justify-center rounded-lg text-slate-600 bg-slate-50 border border-slate-200 hover:bg-slate-100 transition-colors shadow-sm">🔊</button>
       <select id="themeSelect" onchange="changeTheme(this.value)" class="text-xs font-bold text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-indigo-300 cursor-pointer transition-colors shadow-sm">
         <option value="modern">🌱 기본 테마</option>
         <option value="cute">🍭 솜사탕 테마</option>
@@ -2587,6 +2588,17 @@ function showFreeGame(type){
    🔊 게임 공용 사운드 유틸 (Web Audio API로 실시간 생성 — 음원 파일 불필요)
 ══════════════════════════════════════ */
 let gpsAudioCtx = null;
+let gpsMuted = localStorage.getItem('gps_muted') === '1';
+function gpsToggleMute(){
+  gpsMuted = !gpsMuted;
+  localStorage.setItem('gps_muted', gpsMuted ? '1' : '0');
+  gpsUpdateMuteBtn();
+}
+function gpsUpdateMuteBtn(){
+  const btn = document.getElementById('gpsMuteBtn');
+  if(btn) btn.textContent = gpsMuted ? '🔇' : '🔊';
+}
+gpsUpdateMuteBtn();
 function gpsAudio(){
   if(!gpsAudioCtx) gpsAudioCtx = new (window.AudioContext||window.webkitAudioContext)();
   if(gpsAudioCtx.state === 'suspended') gpsAudioCtx.resume();
@@ -2594,6 +2606,7 @@ function gpsAudio(){
 }
 // 순수 톤(삐-) 하나: freq(Hz), 시작지연(s), 길이(s), 파형, 볼륨
 function gpsTone(freq, delay=0, dur=0.12, type='sine', vol=0.25){
+  if(gpsMuted) return;
   try{
     const ctx = gpsAudio();
     const t0 = ctx.currentTime + delay;
@@ -2608,6 +2621,7 @@ function gpsTone(freq, delay=0, dur=0.12, type='sine', vol=0.25){
 }
 // 짧은 백색소음 버스트(퍽/휙 느낌)
 function gpsNoiseBurst(delay=0, dur=0.08, vol=0.18, hpFreq=800){
+  if(gpsMuted) return;
   try{
     const ctx = gpsAudio();
     const t0 = ctx.currentTime + delay;
@@ -2641,14 +2655,23 @@ const BB_SHAPES = [
   [[1,1,0],[0,1,1]], [[0,1,1],[1,1,0]]
 ];
 let bbAnimFrame = null;
+let bbMuted = localStorage.getItem('gps_muted_blockblast') === '1';
+function bbToggleMute(){
+  bbMuted = !bbMuted;
+  localStorage.setItem('gps_muted_blockblast', bbMuted ? '1' : '0');
+  const btn = document.getElementById('bbMuteBtn');
+  if(btn) btn.textContent = bbMuted ? '🔇' : '🔊';
+}
 
 // 블록을 보드에 놓을 때: 짧고 통통 튀는 '톡' 소리
 function bbSoundPlace(){
+  if(bbMuted) return;
   gpsTone(180, 0, 0.09, 'triangle', 0.22);
   gpsNoiseBurst(0, 0.05, 0.10, 500);
 }
 // 줄이 터질 때: 노이즈 휙 + 콤보가 높을수록 더 화려해지는 상승 아르페지오
 function bbSoundClear(combo){
+  if(bbMuted) return;
   gpsNoiseBurst(0, 0.12, 0.18, 1000);
   const baseNotes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
   const extra = Math.min(Math.max(combo-1,0), 3);
@@ -2663,7 +2686,10 @@ function initBlockBlast() {
   <div style="position:relative; width:100%; height:75vh; min-height:550px; max-height:850px; background:#1E293B; border-radius:1rem; border:4px solid #334155; overflow:hidden; touch-action:none; user-select:none;">
     <canvas id="bbCanvas" style="display:block; width:100%; height:100%; touch-action:none;"></canvas>
     <div style="position:absolute; top:15px; left:20px; color:#F8FAFC; font-size:24px; font-weight:900; text-shadow:0 2px 4px rgba(0,0,0,0.5);">점수: <span id="bbScoreUI">0</span></div>
-    <div style="position:absolute; top:15px; right:20px; color:#94A3B8; font-size:16px; font-weight:900;">최고: <span id="bbBestUI">`+bbState.best+`</span></div>
+    <div style="position:absolute; top:15px; right:20px; display:flex; align-items:center; gap:10px;">
+      <span style="color:#94A3B8; font-size:16px; font-weight:900;">최고: <span id="bbBestUI">`+bbState.best+`</span></span>
+      <button id="bbMuteBtn" onclick="bbToggleMute()" title="블록 블라스트 효과음 켜기/끄기" style="width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); color:#F8FAFC; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;">`+(bbMuted?'🔇':'🔊')+`</button>
+    </div>
     <div id="bbComboUI" style="position:absolute; top:55px; left:20px; color:#FBBF24; font-size:20px; font-weight:900; text-shadow:0 2px 4px rgba(0,0,0,0.5); opacity:0; transition:opacity 0.2s, transform 0.2s; transform:translateY(10px);"></div>
     <div id="bbGameOver" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.8); flex-direction:column; align-items:center; justify-content:center; z-index:10; backdrop-filter:blur(4px);">
       <h2 style="color:#FFF; font-size:40px; font-weight:900; margin-bottom:10px;">게임 오버!</h2>
@@ -4929,7 +4955,7 @@ function updateTimerUI(){
   const m=Math.floor(tLeft/60),s=tLeft%60;el.textContent=`${m}:${String(s).padStart(2,'0')}`;
   if(circ){circ.style.strokeDashoffset=String(TCIRC*(1-tTotal?tLeft/tTotal:1));circ.setAttribute('stroke',tLeft<=10?'#FF6B6B':tLeft<=30?'#FFD93D':'#4D96FF');}
 }
-function beep(){try{const c=new(window.AudioContext||window.webkitAudioContext)();[0,300,600].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.5,c.currentTime+t/1000);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t/1000+.4);o.start(c.currentTime+t/1000);o.stop(c.currentTime+t/1000+.4);});}catch(e){}}
+function beep(){if(gpsMuted)return;try{const c=new(window.AudioContext||window.webkitAudioContext)();[0,300,600].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.5,c.currentTime+t/1000);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t/1000+.4);o.start(c.currentTime+t/1000);o.stop(c.currentTime+t/1000+.4);});}catch(e){}}
 
 /* 소음신호등 */
 let noiseStream=null,noiseCtx=null,noiseAnalyser=null,noiseRaf=null;
@@ -6069,6 +6095,7 @@ function wfClick(selected, answer, btn) {
 ══════════════════════════════════════ */
 let mrAnim = null;
 let mrSpeed = 4;
+let mrLastFrameTime = 0;
 let mrDistance = 0;
 let mrGates = [];
 let mrEnemies = [];
@@ -6111,6 +6138,27 @@ let mrBiomes = [
   { dist: 20000, colors: ['#fecaca', '#fef2f2'] },
   { dist: 30000, colors: ['#e9d5ff', '#faf5ff'] }
 ];
+
+/* 🔊 수학 런너 전용 효과음 (공용 gpsTone/gpsNoiseBurst 사용, 음원 파일 불필요) */
+function mrSoundStart(){ gpsTone(440,0,0.08,'triangle',0.22); gpsTone(660,0.08,0.1,'triangle',0.22); gpsTone(880,0.16,0.16,'triangle',0.22); }
+function mrSoundGateMath(op){
+  if(op === '-') { gpsTone(260,0,0.1,'sawtooth',0.18); gpsTone(180,0.08,0.18,'sawtooth',0.18); }
+  else if(op === '×') { gpsTone(660,0,0.07,'square',0.2); gpsTone(990,0.05,0.12,'square',0.2); }
+  else { gpsTone(520,0,0.06,'triangle',0.2); gpsTone(780,0.05,0.12,'triangle',0.2); }
+}
+function mrSoundGateItem(){ gpsTone(500,0,0.07,'triangle',0.18); gpsTone(750,0.05,0.1,'triangle',0.18); }
+function mrSoundChest(){ gpsTone(600,0,0.06,'triangle',0.2); gpsTone(900,0.06,0.1,'triangle',0.2); gpsTone(1200,0.12,0.14,'triangle',0.18); }
+function mrSoundSelect(){ gpsTone(700,0,0.05,'square',0.15); gpsTone(1000,0.04,0.08,'square',0.15); }
+function mrSoundMagnet(){ gpsTone(300,0,0.05,'sine',0.15); gpsTone(500,0.03,0.05,'sine',0.15); gpsTone(700,0.06,0.08,'sine',0.15); }
+function mrSoundBomb(){ gpsNoiseBurst(0,0.28,0.28,150); gpsTone(90,0,0.28,'sawtooth',0.22); }
+function mrSoundWeapon(){ gpsTone(500,0,0.07,'square',0.2); gpsTone(700,0.06,0.08,'square',0.2); gpsTone(900,0.12,0.14,'square',0.2); }
+function mrSoundKill(isBoss){
+  if(isBoss){ gpsTone(220,0,0.15,'sawtooth',0.3); gpsTone(330,0.08,0.18,'sawtooth',0.28); gpsTone(440,0.16,0.28,'sawtooth',0.26); }
+  else { gpsTone(520,0,0.05,'square',0.1); gpsNoiseBurst(0,0.04,0.07,900); }
+}
+function mrSoundBossSpawn(){ gpsTone(110,0,0.35,'sawtooth',0.28); gpsTone(140,0.12,0.35,'sawtooth',0.24); }
+function mrSoundHurt(){ gpsNoiseBurst(0,0.09,0.18,300); gpsTone(140,0,0.14,'sawtooth',0.18); }
+function mrSoundGameOver(){ gpsTone(300,0,0.2,'sawtooth',0.25); gpsTone(250,0.15,0.2,'sawtooth',0.25); gpsTone(180,0.3,0.4,'sawtooth',0.25); }
 
 function initMathRunner() {
   if (window.gpsActiveView && window.gpsActiveView !== 'math_runner') return;
@@ -6160,10 +6208,13 @@ function initMathRunner() {
       
       <div id="mrHelpModal" class="hidden absolute inset-0 bg-slate-900/95 flex-col items-center justify-center text-white z-[60] px-4 py-8">
         <h2 class="text-3xl font-black text-amber-400 mb-4">📖 게임 방법 및 아이템</h2>
-        <div class="overflow-y-auto max-h-[60vh] w-full max-w-lg bg-slate-800 p-4 rounded-xl text-sm leading-relaxed border border-slate-600 shadow-inner">
+        <div class="overflow-y-auto max-h-[60vh] w-full max-w-lg bg-slate-800 p-4 rounded-xl text-sm leading-relaxed break-keep border border-slate-600 shadow-inner">
           <p class="mb-2"><strong class="text-amber-300">🎮 조작법:</strong> 화면을 좌우로 드래그하여 이동합니다. 총알은 자동으로 발사됩니다.</p>
           <p class="mb-4"><strong class="text-amber-300">🎯 목표:</strong> 더 멀리 이동하며 몬스터를 처치하고, 코인을 모아 시작 스펙을 업그레이드하세요.</p>
-          
+
+          <h3 class="text-lg font-bold text-orange-300 mt-4 border-b border-slate-600 pb-1 mb-2">➕ 수학 게이트</h3>
+          <p class="text-slate-200 mb-4">길이 좌우로 갈라지는 <strong class="text-white">게이트</strong>가 계속 등장합니다. 한쪽에는 인원수에 적용되는 연산(<strong class="text-white">+ / − / ×2</strong>)이, 다른 쪽에는 강화 아이템(공격력·연사속도·회전검·펫)이 걸려있어요. 원하는 쪽으로 이동해서 통과하면 그 효과를 즉시 획득합니다. 인원수가 0이 되면 게임이 끝나니, 뺄셈(−) 게이트는 신중하게 판단하세요!</p>
+
           <h3 class="text-lg font-bold text-blue-300 mt-4 border-b border-slate-600 pb-1 mb-2">🎁 보물상자 아이템</h3>
           <ul class="list-disc pl-5 mb-4 text-slate-200">
             <li><strong class="text-white">👥 인원추가:</strong> HP 역할이자 공격력의 근원인 인원수 증가</li>
@@ -6171,19 +6222,38 @@ function initMathRunner() {
             <li><strong class="text-white">⚔️ 회전검:</strong> 주위를 도는 검. 몹이 닿으면 엄청난 피해</li>
             <li><strong class="text-white">💖 대량회복:</strong> 잃은 인원수를 크게 회복</li>
             <li><strong class="text-white">속성(🧊빙결, 🔥불꽃, 🌩️번개):</strong> 5레벨 달성 시 강력한 시너지 효과 발동!</li>
+            <li><strong class="text-white">🧲 슈퍼 자석:</strong> 4초 동안 화면 전체의 상자와 코인을 강하게 끌어당깁니다. (시간제한)</li>
+            <li><strong class="text-white">💣 싹쓸이 폭탄:</strong> 획득 즉시 화면 안의 모든 적과 함정을 제거합니다.</li>
           </ul>
-          
+
+          <h3 class="text-lg font-bold text-indigo-300 mt-4 border-b border-slate-600 pb-1 mb-2">🔮 제단 & 무기 선택</h3>
+          <p class="text-slate-200 mb-2">1000m 이후 일정 거리마다 <strong class="text-white">🔮 제단</strong>을 지나면 주무기를 하나 선택할 수 있어요. (기본 공격은 그대로 유지되며 특성만 바뀝니다)</p>
+          <ul class="list-disc pl-5 mb-4 text-slate-200">
+            <li><strong class="text-white">🔵 블루 블래스터:</strong> 연사속도 2배, 데미지 1/2</li>
+            <li><strong class="text-white">🔴 레드 캐논:</strong> 데미지 2배, 연사속도 2/3</li>
+            <li><strong class="text-white">🟣 소드 런처:</strong> 적을 관통하는 미니 회전검, 데미지 80%</li>
+            <li><strong class="text-white">🚀 유도 미사일:</strong> 기본 탄은 그대로 유지되고, 자동으로 적을 추적하는 유도탄이 추가로 발사됩니다.</li>
+          </ul>
+
           <h3 class="text-lg font-bold text-green-300 mt-4 border-b border-slate-600 pb-1 mb-2">🐶 펫 시스템 (3마리 모으면 진화!)</h3>
           <ul class="list-disc pl-5 mb-4 text-slate-200">
-            <li><strong class="text-white">강아지 펫:</strong> 주위의 보물상자를 끌어당깁니다. <span class="text-yellow-200">(진화 시 범위/속도 대폭 증가)</span></li>
+            <li><strong class="text-white">강아지 펫:</strong> 주위의 보물상자를 끌어당깁니다. <span class="text-yellow-200">(진화 시 범위/속도 증가)</span></li>
             <li><strong class="text-white">고양이 펫:</strong> 몹 처치 시 추가 코인을 획득합니다. <span class="text-yellow-200">(진화 시 코인량 3배, 확률 대폭 증가)</span></li>
             <li><strong class="text-white">드래곤 펫:</strong> 주기적으로 전방에 강력한 브레스를 쏩니다. <span class="text-yellow-200">(진화 시 범위 2배, 쿨타임 절반, 데미지 극대화)</span></li>
             <li><strong class="text-white">거북이 펫 (희귀):</strong> 죽음에 달하는 피해를 입었을 때 <span class="text-red-400">대신 희생하여 부활</span>시켜 줍니다.</li>
           </ul>
-          
+
           <h3 class="text-lg font-bold text-purple-300 mt-4 border-b border-slate-600 pb-1 mb-2">💀 엘리트 및 보스</h3>
-          <p class="text-slate-200"><strong class="text-red-400">엘리트(😈):</strong> 10000m 이후 등장. 플레이어를 향해 예고 후 레이저를 쏩니다.<br>
-          <strong class="text-red-400">보스(👑):</strong> 주기적으로 5갈래 탄을 쏘며, 처치 시 가끔 '저주받은 유물(💀)'을 떨어뜨립니다.</p>
+          <p class="text-slate-200 mb-4"><strong class="text-red-400">엘리트(😈):</strong> 8000m 이후 등장. 플레이어를 향해 예고 후 레이저를 쏩니다.<br>
+          <strong class="text-red-400">보스(👑):</strong> 주기적으로 5갈래 탄을 쏘며, 처치 시 25% 확률로 '저주받은 유물(💀)'을 떨어뜨립니다.</p>
+
+          <h3 class="text-lg font-bold text-red-300 mt-4 border-b border-slate-600 pb-1 mb-2">💀 저주받은 유물</h3>
+          <p class="text-slate-200">보스가 떨어뜨린 상자에서 얻는 위험한 강화 효과로, 한 번 선택하면 게임이 끝날 때까지 유지됩니다.</p>
+          <ul class="list-disc pl-5 text-slate-200">
+            <li><strong class="text-white">🍷 유리 대포:</strong> 데미지 3배 상승, 대신 피격 시 받는 피해도 5배</li>
+            <li><strong class="text-white">🩸 황금의 피:</strong> 피격 시 인원수 대신 코인이 100씩 깎임</li>
+            <li><strong class="text-white">📜 저주받은 계약:</strong> 적이 2배로 등장하지만 상자가 100% 드롭됨</li>
+          </ul>
         </div>
         <button onclick="document.getElementById('mrHelpModal').classList.add('hidden'); document.getElementById('mrHelpModal').classList.remove('flex');" class="mt-6 bg-slate-600 hover:bg-slate-500 px-8 py-2 rounded-full font-bold">닫기</button>
       </div>
@@ -6257,6 +6327,7 @@ window.mrBuy = function(type) {
 };
 
 window.mrStartGame = function() {
+  mrSoundStart();
   document.getElementById('mrStartScreen').style.display = 'none';
   document.getElementById('mrGameOver').classList.remove('flex');
   document.getElementById('mrGameOver').classList.add('hidden');
@@ -6278,13 +6349,14 @@ window.mrStartGame = function() {
   mrPlayer.weapon = 'default';
   mrPlayer.r = 15;
   mrPlayer.magnet = false;
+  mrPlayer.magnetTimer = 0;
   
   mrPetCounts = { dog: 0, turtle: 0, cat: 0, dragon: 0 };
   mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false };
   let wrap = document.getElementById('mrGameWrapper');
   if(wrap) wrap.style.background = `linear-gradient(to bottom, ${mrBiomes[0].colors[0]}, ${mrBiomes[0].colors[1]})`;
   
-  mrSpeed = 1.8;
+  mrSpeed = 2.25; // 1.8 * 1.25배속
   mrDistance = 0;
   mrScore = 0;
   mrRunCoins = 0;
@@ -6302,6 +6374,7 @@ window.mrStartGame = function() {
   mrChests = [];
   mrLastShot = 0;
   window.mrSpawnCount = 0;
+  mrLastFrameTime = 0;
   
   mrIsPaused = false;
   mrRewardQueue = [];
@@ -6375,7 +6448,7 @@ function mrSpawnGate(y) {
 
 function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
   let diff = mrDistance / 1000;
-  let baseHp = 1 + Math.floor(diff * 3) + Math.floor(diff * diff * 0.5);
+  let baseHp = 1 + Math.floor(diff * 3) + Math.floor(diff * diff * 0.35);
   let power = baseHp + Math.floor(mrPlayer.count * (0.5 + Math.random() * 0.5));
   if(power < 1) power = 1;
   
@@ -6399,7 +6472,7 @@ function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
   
   let enObj;
   if (isBoss) {
-    let bossMult = 5.0 + diff * 3.0;
+    let bossMult = 4.0 + diff * 2.0;
     enObj = {
       ...baseEnemy,
       isBoss: true,
@@ -6421,6 +6494,7 @@ function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
 }
 
 function mrRewardEnemy(en) {
+  mrSoundKill(en.isBoss);
   let dropChance = mrRelics.cursedPact ? 1.0 : 0.8;
   if (!en.isBoss && Math.random() > dropChance) return;
   
@@ -6501,15 +6575,17 @@ window.mrSelectItem = function(type, isBoss) {
   else if(type === 'ice') { mrPlayer.ice += (isBoss ? 3 : 1); toast(`🧊 얼음 속성 강화!`); }
   else if(type === 'fire') { mrPlayer.fire += (isBoss ? 3 : 1); toast(`🔥 불꽃 속성 강화!`); }
   else if(type === 'zap') { mrPlayer.zap += (isBoss ? 3 : 1); toast(`🌩️ 번개 속성 강화!`); }
-  else if(type === 'magnet') { mrPlayer.magnet = true; toast(`🧲 슈퍼 자석 작동!`); }
+  else if(type === 'magnet') { mrPlayer.magnet = true; mrPlayer.magnetTimer = 240; mrSoundMagnet(); toast(`🧲 슈퍼 자석 작동! (4초)`); }
   else if(type === 'bomb') {
     for(let en of mrEnemies) { en.hp = 0; en.active = false; mrScore += 50; }
     mrTraps.length = 0;
     mrEnemyBullets.length = 0;
     mrEnemyLasers.length = 0;
+    mrSoundBomb();
     toast(`💣 화면 싹쓸이!`);
   }
-  else if(type === 'clone') { mrPlayer.clones += 1; toast(`👯 발사 열(Row) 추가!`); }
+  else if(type === 'clone') { mrPlayer.clones += 1; mrSoundSelect(); toast(`👯 발사 열(Row) 추가!`); }
+  else { mrSoundSelect(); }
   
   mrRunCoins += (isBoss ? 30 : 1) * (mrData.upgrades.coinMult || 1);
   
@@ -6571,7 +6647,7 @@ window.mrShowWeaponSelect = function() {
     { type: 'blue', icon: '🔵', name: '블루 블래스터', desc: '연사속도 2배, 데미지 1/2' },
     { type: 'red', icon: '🔴', name: '레드 캐논', desc: '데미지 2배, 연사속도 2/3' },
     { type: 'sword', icon: '🟣', name: '소드 런처', desc: '관통 미니회전검, 데미지 80%' },
-    { type: 'homing', icon: '🚀', name: '유도 미사일', desc: '자동 추적, 데미지 80%' }
+    { type: 'homing', icon: '🚀', name: '유도 미사일', desc: '기본탄 유지 + 유도탄 추가 발사' }
   ];
   
   options.forEach((opt) => {
@@ -6589,6 +6665,7 @@ window.mrShowWeaponSelect = function() {
 
 window.mrSelectWeapon = function(type) {
   mrPlayer.weapon = type;
+  mrSoundWeapon();
   toast(`무기 변경: ${type}!`);
   document.getElementById('mrItemSelect').querySelector('h2').innerText = '보상 선택!';
   document.getElementById('mrItemSelect').classList.add('hidden');
@@ -6612,6 +6689,7 @@ function triggerMrGameOver() {
     mrPetCounts.turtle--;
     mrPlayer.count = 50 + mrData.upgrades.count * 10;
     mrPlayer.invincible = 120;
+    gpsTone(500,0,0.1,'triangle',0.22); gpsTone(750,0.08,0.12,'triangle',0.22); gpsTone(1000,0.16,0.2,'triangle',0.2); // 부활 효과음
     toast('🐢 거북이가 희생하여 부활했습니다!');
     
     // Clear screen for safety
@@ -6622,6 +6700,7 @@ function triggerMrGameOver() {
     return;
   }
 
+  mrSoundGameOver();
   mrGameOver = true;
   mrData.coins += mrRunCoins;
   mrSave();
@@ -6655,12 +6734,23 @@ function mrLoop() {
     return;
   }
   
-  mrDistance += mrSpeed;
-  mrSpeed += 0.0007;
-  if(mrPlayer.invincible > 0) mrPlayer.invincible--;
+  // 화면 주사율(60Hz/120Hz/144Hz 등)에 상관없이 실제 진행 속도가 동일하도록 델타타임 보정
+  // (144Hz 노트북에서 60Hz 데스크탑보다 게임이 2배 이상 빨리 진행되던 문제 수정)
+  const __now = performance.now();
+  let dt = mrLastFrameTime ? (__now - mrLastFrameTime) / (1000/60) : 1;
+  dt = Math.min(Math.max(dt, 0), 3); // 탭 전환 등으로 인한 큰 프레임 점프 방지
+  mrLastFrameTime = __now;
   
-  mrSwordsRot += 0.04;
-  mrTurtlesRot += 0.04;
+  mrDistance += mrSpeed * dt;
+  mrSpeed = Math.min(mrSpeed + 0.0005625 * dt, 13.75); // 가속을 완만하게 + 상한선 추가 (초등학생 대상 난이도 완화) — 전체 1.25배속
+  if(mrPlayer.invincible > 0) mrPlayer.invincible -= dt;
+  if(mrPlayer.magnet) {
+    mrPlayer.magnetTimer = (mrPlayer.magnetTimer === undefined ? 240 : mrPlayer.magnetTimer) - dt;
+    if(mrPlayer.magnetTimer <= 0) { mrPlayer.magnet = false; mrPlayer.magnetTimer = 0; }
+  }
+  
+  mrSwordsRot += 0.04 * dt;
+  mrTurtlesRot += 0.04 * dt;
   const py = c.height - 120;
   
   // Background Biomes logic
@@ -6706,23 +6796,28 @@ function mrLoop() {
   
   for(let i = mrGates.length-1; i>=0; i--) {
     let g = mrGates[i];
-    g.y += mrSpeed;
+    g.y += mrSpeed * dt;
     if (!g.passed && g.y + 40 > py) {
       g.passed = true;
       let side = (mrPlayer.x < c.width/2) ? g.left : g.right;
       
       if (side.type === 'math') {
+        mrSoundGateMath(side.op);
         if (side.op === '+') mrPlayer.count += side.val;
         else if (side.op === '-') mrPlayer.count = Math.max(1, mrPlayer.count - side.val);
         else if (side.op === '×') mrPlayer.count *= side.val;
         else if (side.op === '÷') mrPlayer.count = Math.max(1, Math.floor(mrPlayer.count / side.val));
       } else if (side.type === 'dmg') {
+        mrSoundGateItem();
         mrPlayer.dmg += side.val;
       } else if (side.type === 'rate') {
+        mrSoundGateItem();
         mrPlayer.rate += side.val;
       } else if (side.type === 'sword') {
+        mrSoundGateItem();
         mrPlayer.swords += side.val;
       } else if (side.type.startsWith('pet_')) {
+        mrSoundGateItem();
         let pt = side.type.replace('pet_', '');
         mrPetCounts[pt] += side.val;
       }
@@ -6749,10 +6844,10 @@ function mrLoop() {
     let baseBulletDmg = mrPlayer.dmg + (safeCount / num);
     if(mrRelics.glassCannon) baseBulletDmg *= 3;
     
-    let wDmgMult = (mrPlayer.weapon === 'red') ? 2.0 : (mrPlayer.weapon === 'blue' ? 0.5 : (mrPlayer.weapon === 'sword' ? 0.8 : (mrPlayer.weapon === 'homing' ? 0.8 : 1.0)));
+    let wDmgMult = (mrPlayer.weapon === 'red') ? 2.0 : (mrPlayer.weapon === 'blue' ? 0.5 : (mrPlayer.weapon === 'sword' ? 0.8 : 1.0));
     let bulletDmg = baseBulletDmg * wDmgMult;
-    let bulletColor = (mrPlayer.weapon === 'red') ? '#ef4444' : (mrPlayer.weapon === 'blue' ? '#3b82f6' : (mrPlayer.weapon === 'sword' ? '#94a3b8' : (mrPlayer.weapon === 'homing' ? '#f472b6' : '#f59e0b')));
-    let bulletW = (mrPlayer.weapon === 'red') ? 24 : (mrPlayer.weapon === 'sword' ? 32 : (mrPlayer.weapon === 'homing' ? 16 : 12));
+    let bulletColor = (mrPlayer.weapon === 'red') ? '#ef4444' : (mrPlayer.weapon === 'blue' ? '#3b82f6' : (mrPlayer.weapon === 'sword' ? '#94a3b8' : '#f59e0b'));
+    let bulletW = (mrPlayer.weapon === 'red') ? 24 : (mrPlayer.weapon === 'sword' ? 32 : 12);
     
     if (isChain) bulletColor = '#22d3ee'; // cyan
     if (isMeteor) { bulletColor = '#ea580c'; bulletW = 40; } // orange, huge
@@ -6761,6 +6856,8 @@ function mrLoop() {
     let spread = Math.min(num * 12, 140);
     let rows = mrPlayer.clones + 1;
     
+    let mainWType = (mrPlayer.weapon === 'homing') ? 'default' : mrPlayer.weapon;
+
     for(let r = 0; r < rows; r++) {
       let originX = mrPlayer.x;
       if(rows > 1) {
@@ -6769,7 +6866,11 @@ function mrLoop() {
       for(let i=0; i<num; i++) {
          let bx = originX;
          if (num > 1) bx = originX - spread/2 + (spread / (num-1)) * i;
-         mrBullets.push({ x: bx, y: py - 20, dmg: bulletDmg, color: bulletColor, w: bulletW, wType: mrPlayer.weapon, hitIds: [], isMeteor: isMeteor, isFrost: isFrost, isChain: isChain });
+         mrBullets.push({ x: bx, y: py - 20, dmg: bulletDmg, color: bulletColor, w: bulletW, wType: mainWType, hitIds: [], isMeteor: isMeteor, isFrost: isFrost, isChain: isChain });
+      }
+      if (mrPlayer.weapon === 'homing') {
+        // 유도 미사일: 기존 탄은 그대로 두고, 부가적으로 유도탄을 추가 발사
+        mrBullets.push({ x: originX, y: py - 20, dmg: baseBulletDmg * 0.6, color: '#f472b6', w: 16, wType: 'homing', hitIds: [] });
       }
     }
     
@@ -6796,13 +6897,13 @@ function mrLoop() {
        }
        if (target) {
          let angle = Math.atan2(target.y - b.y, target.x - b.x);
-         b.x += Math.cos(angle) * 12;
-         b.y += Math.sin(angle) * 12;
+         b.x += Math.cos(angle) * 12 * dt;
+         b.y += Math.sin(angle) * 12 * dt;
        } else {
-         b.y -= 14;
+         b.y -= 14 * dt;
        }
      } else {
-       b.y -= 14; 
+       b.y -= 14 * dt; 
      }
      let hit = false;
      for(let en of mrEnemies) {
@@ -6857,17 +6958,17 @@ function mrLoop() {
     
     let slowFactor = 1.0;
     if(en.frozenTimer > 0) {
-      en.frozenTimer--;
+      en.frozenTimer -= dt;
       // max slow capped at 70% (moves at 30% speed) to prevent stopping
       slowFactor = Math.max(0.3, 1.0 - (en.frozenLevel * 0.15));
     }
     
-    en.y += mrSpeed * slowFactor;
+    en.y += mrSpeed * slowFactor * dt;
     
     if(en.burnTimer > 0) {
-      en.burnTimer--;
+      en.burnTimer -= dt;
       // fire damage scales with player dmg and fire level
-      en.hp -= (en.burnLevel * mrPlayer.dmg * 0.4);
+      en.hp -= (en.burnLevel * mrPlayer.dmg * 0.4) * dt;
     }
     
     if(en.active && en.hp <= 0) {
@@ -6897,9 +6998,19 @@ function mrLoop() {
     if (en.active && Math.abs(en.y - py) < en.h/2 + mrPlayer.r) {
       if (Math.abs(en.x - mrPlayer.x) < en.w/2 + mrPlayer.r * 2) {
         if (mrPlayer.invincible > 0) continue;
-        mrPlayer.count = 0;
-        triggerMrGameOver();
-        break;
+        // 몸통 박치기 = 즉사였던 부분을, 총알 피격과 동일한 방식의 '피해량' 시스템으로 변경 (초등학생 대상 난이도 완화)
+        let touchDmg = en.isBoss ? enemyBulletDmg * 4 : (en.isElite ? enemyBulletDmg * 2 : enemyBulletDmg);
+        touchDmg = Math.max(1, Math.round(touchDmg));
+        if (mrRelics.glassCannon) touchDmg *= 5;
+        if (mrRelics.goldenBlood && mrRunCoins >= 10) { mrRunCoins -= 10; } else { mrPlayer.count -= touchDmg; }
+        mrPlayer.invincible = 60; // 연속 피격 방지용 짧은 무적시간
+        mrSoundHurt();
+        if (mrPlayer.count <= 0) {
+          mrPlayer.count = 0;
+          triggerMrGameOver();
+          break;
+        }
+        continue;
       }
     }
 
@@ -6909,8 +7020,8 @@ function mrLoop() {
   for(let i=mrEnemyBullets.length-1; i>=0; i--) {
     let eb = mrEnemyBullets[i];
     
-    eb.x += eb.vx;
-    eb.y += eb.vy;
+    eb.x += eb.vx * dt;
+    eb.y += eb.vy * dt;
     let dx = eb.x - mrPlayer.x;
     let dy = eb.y - py;
     
@@ -6925,6 +7036,7 @@ function mrLoop() {
       } else {
         mrPlayer.count -= dmgTaken;
       }
+      mrSoundHurt();
       mrEnemyBullets.splice(i, 1);
       if (mrPlayer.count <= 0) {
         mrPlayer.count = 0;
@@ -6938,8 +7050,8 @@ function mrLoop() {
   
   for(let i=mrEnemyLasers.length-1; i>=0; i--) {
     let ls = mrEnemyLasers[i];
-    ls.timer--;
-    ls.y += mrSpeed; // move down with map? Or static relative to screen?
+    ls.timer -= dt;
+    ls.y += mrSpeed * dt; // move down with map? Or static relative to screen?
     // Lasers usually are static to the screen, but we'll let it move with camera slightly to feel grounded
     
     if (ls.timer <= 30 && ls.timer > 0) {
@@ -6953,6 +7065,7 @@ function mrLoop() {
         } else {
           mrPlayer.count -= dmgTaken;
         }
+        if(!ls.soundPlayed) { mrSoundHurt(); ls.soundPlayed = true; }
         if (mrPlayer.count <= 0) {
           mrPlayer.count = 0;
           triggerMrGameOver();
@@ -6965,7 +7078,7 @@ function mrLoop() {
   
   for(let i = mrTraps.length-1; i>=0; i--) {
     let t = mrTraps[i];
-    t.y += mrSpeed;
+    t.y += mrSpeed * dt;
     if (t.active && Math.abs(t.y - py) < t.h/2 + mrPlayer.r && Math.abs(t.x - mrPlayer.x) < t.w/2 + mrPlayer.r * 2) {
       if (mrPlayer.invincible > 0) continue;
       mrPlayer.count = 0;
@@ -6978,8 +7091,8 @@ function mrLoop() {
   // Dog / Super Magnet for Chests
   let dogCount = mrPetCounts.dog;
   if(dogCount > 0 || mrPlayer.magnet) {
-    let pullSpeed = mrPlayer.magnet ? 0.15 : ((dogCount >= 3) ? 0.05 : 0.015 * dogCount);
-    let range = mrPlayer.magnet ? 2000 : ((dogCount >= 3) ? 1000 : 300);
+    let pullSpeed = mrPlayer.magnet ? 0.15 : ((dogCount >= 3) ? 0.035 : 0.015 * dogCount);
+    let range = mrPlayer.magnet ? 2000 : ((dogCount >= 3) ? 450 : 300);
     for(let ch of mrChests) {
       if(ch.active && ch.y > 0 && ch.y < c.height) {
         let dist = Math.hypot(mrPlayer.x - ch.x, py - ch.y);
@@ -6993,10 +7106,11 @@ function mrLoop() {
 
   for(let i = mrChests.length-1; i>=0; i--) {
     let ch = mrChests[i];
-    ch.y += mrSpeed;
+    ch.y += mrSpeed * dt;
     if (ch.active && Math.abs(ch.y - py) < ch.h/2 + mrPlayer.r) {
       if (Math.abs(ch.x - mrPlayer.x) < ch.w/2 + mrPlayer.r * 2) {
         ch.active = false;
+        mrSoundChest();
         mrRewardQueue.push({ isBoss: ch.isBoss, isRelic: ch.isRelic });
       }
     }
@@ -7005,7 +7119,7 @@ function mrLoop() {
   
   for(let i = mrAltars.length-1; i>=0; i--) {
     let alt = mrAltars[i];
-    alt.y += mrSpeed;
+    alt.y += mrSpeed * dt;
     if(alt.active && Math.abs(alt.y - py) < alt.h/2 + mrPlayer.r && Math.abs(alt.x - mrPlayer.x) < alt.w/2 + mrPlayer.r * 2) {
       alt.active = false;
       mrShowWeaponSelect();
@@ -7036,25 +7150,26 @@ function mrLoop() {
     }
   }
   
-  if (mrDistance % 3000 < mrSpeed) mrSpawnGate(-100);
-  if (mrDistance > 1000 && mrDistance % 8000 < mrSpeed) mrAltars.push({x: c.width/2, y: -100, w: 60, h: 60, active: true});
+  if (mrDistance % 3000 < mrSpeed * dt) mrSpawnGate(-100);
+  if (mrDistance > 1000 && mrDistance % 8000 < mrSpeed * dt) mrAltars.push({x: c.width/2, y: -100, w: 60, h: 60, active: true});
   
-  let spawnInterval = mrDistance < 4000 ? 2500 : (mrDistance < 8000 ? 1500 : 1000);
-  if (mrDistance > 1500 && mrDistance % spawnInterval < mrSpeed && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
+  let spawnInterval = mrDistance < 6000 ? 3200 : (mrDistance < 12000 ? 2000 : 1300);
+  if (mrDistance > 2000 && mrDistance % spawnInterval < mrSpeed * dt && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
     let spawnLoops = mrRelics.cursedPact ? 2 : 1;
-    if (mrDistance > 10000) spawnLoops += 1;
-    if (mrDistance > 20000) spawnLoops += 1;
+    if (mrDistance > 15000) spawnLoops += 1;
+    if (mrDistance > 28000) spawnLoops += 1;
     for(let sl=0; sl<spawnLoops; sl++) {
-      if (Math.random() < 0.2 && mrDistance > 5000) {
+      if (Math.random() < 0.15 && mrDistance > 8000) {
         mrSpawnEnemy(-100 - sl*80, c.width, true);
+        mrSoundBossSpawn();
       } else {
-        let maxEnemies = (mrDistance < 4000) ? 1 : (mrDistance < 8000 ? 2 : 3);
+        let maxEnemies = (mrDistance < 6000) ? 1 : (mrDistance < 12000 ? 2 : 3);
         let count = 1 + Math.floor(Math.random() * maxEnemies);
         for(let i=0; i<count; i++) {
           let en = mrSpawnEnemy(-100 - i*70 - sl*80, c.width, false);
-          if (mrDistance > 5000 && Math.random() < (mrDistance > 10000 ? 0.4 : 0.2)) {
+          if (mrDistance > 8000 && Math.random() < (mrDistance > 15000 ? 0.35 : 0.18)) {
             en.isElite = true;
-            en.hp *= (mrDistance > 10000 ? 3 : 2); 
+            en.hp *= (mrDistance > 15000 ? 2.5 : 1.8); 
             en.maxHp = en.hp;
             en.w = 100; en.h = 100;
           }
@@ -7062,7 +7177,7 @@ function mrLoop() {
       }
     }
   }
-  if (mrDistance > 3000 && mrDistance % 1200 < mrSpeed) {
+  if (mrDistance > 3000 && mrDistance % 1200 < mrSpeed * dt) {
     mrSpawnTrap(-100, c.width);
   }
   
@@ -7221,7 +7336,7 @@ function mrLoop() {
   
   for(let i=mrZaps.length-1; i>=0; i--) {
     let z = mrZaps[i];
-    z.timer--;
+    z.timer -= dt;
     ctx.strokeStyle = `rgba(250, 204, 21, ${z.timer/5})`;
     ctx.lineWidth = 4;
     ctx.beginPath();
@@ -7380,7 +7495,7 @@ window.tryEscape = function() {
     document.getElementById('escapePlay').classList.remove('flex');
     document.getElementById('escapeSuccess').classList.remove('hidden');
     document.getElementById('escapeSuccess').classList.add('flex');
-    try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=1046.50;g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start(c.currentTime);o.stop(c.currentTime+.5);}catch(e){} // success beep
+    try{if(!gpsMuted){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=1046.50;g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start(c.currentTime);o.stop(c.currentTime+.5);}}catch(e){} // success beep
   } else {
     const inp = document.getElementById('escapeTryInput');
     inp.style.background = '#fca5a5';
@@ -7390,7 +7505,7 @@ window.tryEscape = function() {
     setTimeout(()=>inp.style.background='#f8fafc', 300);
     inp.value = '';
     toast('❌ 비밀번호가 틀렸습니다!');
-    try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=200;g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start(c.currentTime);o.stop(c.currentTime+.3);}catch(e){} // error beep
+    try{if(!gpsMuted){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=200;g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start(c.currentTime);o.stop(c.currentTime+.3);}}catch(e){} // error beep
   }
 }
 </script>
