@@ -601,10 +601,11 @@ body.theme-dark .hover\:bg-orange-100:hover {
         </div>
         <div class="flex gap-2 mb-6 flex-wrap">
           <button class="util-tab" data-free="potjump" onclick="showFreeGame('potjump')">🍯 항아리 점프</button>
+          <button class="util-tab" data-free="math_runner" onclick="showFreeGame('math_runner')">🏃 수학 런너</button>
           <button class="util-tab" data-free="blockblast" onclick="showFreeGame('blockblast')">🧩 블록 블라스트</button>
           <button class="util-tab" data-free="typing" onclick="showFreeGame('typing')">⌨️ 타자 게임</button>
-          <button class="util-tab util-active" data-free="stairs" onclick="showFreeGame('stairs')">🐹 무한의 계단</button>
-          <button class="util-tab" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
+          <button class="util-tab" data-free="stairs" onclick="showFreeGame('stairs')">🐹 무한의 계단</button>
+          <button class="util-tab util-active" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
           <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아게임</button>
           <button class="util-tab" data-free="escape" onclick="showFreeGame('escape')">🔐 방탈출 자물쇠</button>
         </div>
@@ -3043,11 +3044,61 @@ let stAnimFrame = null;
 let stHamsterJumpY = 0;
 let stIsJumping = false;
 
+/* 🔊 무한의 계단 전용 효과음 & BGM (공용 gpsTone/gpsNoiseBurst 사용, 음원 파일 불필요) */
+let stMuted = localStorage.getItem('gps_muted_stairs') === '1';
+let stBgmTimer = null;
+let stBgmStep = 0;
+const stBgmNotes = [392.0, 440.0, 523.25, 440.0, 392.0, 349.23, 440.0, 523.25]; // 경쾌한 8비트 루프 (G4-A4-C5-...)
+function stToggleMute(){
+  stMuted = !stMuted;
+  localStorage.setItem('gps_muted_stairs', stMuted ? '1' : '0');
+  const btn = document.getElementById('stMuteBtn');
+  if(btn) btn.textContent = stMuted ? '🔇' : '🔊';
+  if(stMuted) { stStopBgm(); }
+  else if(stIsPlaying) { stStartBgm(); }
+}
+function stSoundStep(){
+  if(stMuted) return;
+  gpsTone(660, 0, 0.05, 'square', 0.16);
+  gpsTone(880, 0.04, 0.07, 'square', 0.14);
+}
+function stSoundStart(){
+  if(stMuted) return;
+  gpsTone(523.25, 0, 0.08, 'triangle', 0.2);
+  gpsTone(659.25, 0.08, 0.1, 'triangle', 0.2);
+  gpsTone(783.99, 0.16, 0.16, 'triangle', 0.2);
+}
+function stSoundFall(){
+  if(stMuted) return;
+  gpsNoiseBurst(0, 0.15, 0.2, 300);
+  gpsTone(200, 0, 0.2, 'sawtooth', 0.2);
+  gpsTone(120, 0.15, 0.35, 'sawtooth', 0.18);
+}
+function stStartBgm(){
+  if(stMuted || stBgmTimer) return;
+  const playStep = () => {
+    if (window.gpsActiveView && window.gpsActiveView !== 'stairs') { stBgmTimer = null; return; }
+    if (!stIsPlaying) { stBgmTimer = null; return; }
+    if (!stMuted) {
+      gpsTone(stBgmNotes[stBgmStep % stBgmNotes.length], 0, 0.16, 'triangle', 0.07);
+    }
+    stBgmStep++;
+    stBgmTimer = setTimeout(playStep, 230);
+  };
+  playStep();
+}
+function stStopBgm(){
+  if(stBgmTimer) { clearTimeout(stBgmTimer); stBgmTimer = null; }
+  stBgmStep = 0;
+}
+
 function initStairs() {
   const gc = document.getElementById('freeGameContent'); if(!gc) return;
   gc.innerHTML = `
   <div style="position:relative; width:100%; height:70vh; min-height:450px; max-height:850px; background:linear-gradient(180deg, #A0E2FF 0%, #E6F7FF 100%); border-radius:1rem; border:2px solid #87CEEB; overflow:hidden; touch-action:none;">
     <canvas id="stCanvas" style="display:block; width:100%; height:100%;"></canvas>
+    
+    <button id="stMuteBtn" onclick="stToggleMute()" title="무한의 계단 효과음/BGM 켜기끄기" style="position:absolute; top:15px; right:15px; width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,0.9); border:2px solid #FFF; color:#333; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 8px rgba(0,0,0,0.15); z-index:11;">${stMuted ? '🔇' : '🔊'}</button>
     
     <div style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; display:flex; flex-direction:column; justify-content:space-between;">
       
@@ -3099,6 +3150,8 @@ function stStartGame() {
   stUpdateScore();
   stIsPlaying = true;
   stLastTime = performance.now();
+  stSoundStart();
+  stStartBgm();
   if(stAnimFrame) cancelAnimationFrame(stAnimFrame);
   stAnimFrame = requestAnimationFrame(stGameLoop);
 }
@@ -3145,6 +3198,7 @@ function stInput(action) {
     stTimeLeft = Math.min(stMaxTime, stTimeLeft + recovery);
     stAddStair();
     stUpdateScore();
+    stSoundStep();
     stIsJumping = true; stHamsterJumpY = -20; setTimeout(() => { stHamsterJumpY = 0; stIsJumping = false; }, 100);
   } else {
     stGameOver('앗! 떨어졌어요!');
@@ -3153,6 +3207,8 @@ function stInput(action) {
 
 function stGameOver(reason) {
   stIsPlaying = false;
+  stStopBgm();
+  stSoundFall();
   const overlay = document.getElementById('stOverlay');
   if(overlay) {
     overlay.style.display = 'flex';
@@ -3171,6 +3227,7 @@ function stUpdateScore() {
 
 function stGameLoop(timestamp) {
   if(!stIsPlaying) return;
+  if (window.gpsActiveView && window.gpsActiveView !== 'stairs') { stIsPlaying = false; stStopBgm(); return; }
   if(!stLastTime) stLastTime = timestamp;
   const dt = timestamp - stLastTime;
   stLastTime = timestamp;
@@ -5142,7 +5199,9 @@ function exportData(){const blob=new Blob([JSON.stringify({version:'1.0',date:ne
 const origShowFreeGame = window.showFreeGame;
 window.showFreeGame = function(id) {
   window.gpsActiveView = id;
+  const bl = document.getElementById('bungeoLink');
   if (id === 'potjump') {
+    if(bl) bl.style.display = 'none';
     document.querySelectorAll('.util-tab').forEach(b => {
       if(b.dataset.free) b.classList.toggle('util-active', b.dataset.free === id);
     });
@@ -5150,6 +5209,7 @@ window.showFreeGame = function(id) {
     return;
   }
   if (id === 'math_runner') {
+    if(bl) bl.style.display = 'none';
     document.querySelectorAll('.util-tab').forEach(b => {
       if(b.dataset.free) b.classList.toggle('util-active', b.dataset.free === id);
     });
@@ -5157,6 +5217,7 @@ window.showFreeGame = function(id) {
     return;
   }
   if (id === 'escape') {
+    if(bl) bl.style.display = 'none';
     document.querySelectorAll('.util-tab').forEach(b => {
       if(b.dataset.free) b.classList.toggle('util-active', b.dataset.free === id);
     });
@@ -6132,6 +6193,12 @@ let mrEnIdCounter = 0;
 let mrPetCounts = { dog: 0, turtle: 0, cat: 0, dragon: 0 };
 let mrTurtlesRot = 0;
 let mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false };
+let mrParticles = [];
+let mrShakeMag = 0;
+let mrShakeTime = 0;
+let mrHitFlash = 0;
+let mrBgDust = [];
+let mrBgDustBiome = -1;
 let mrBiomes = [
   { dist: 0, colors: ['#dcfce7', '#f0fdf4'] },
   { dist: 10000, colors: ['#e0f2fe', '#f0f9ff'] },
@@ -6159,6 +6226,98 @@ function mrSoundKill(isBoss){
 function mrSoundBossSpawn(){ gpsTone(110,0,0.35,'sawtooth',0.28); gpsTone(140,0.12,0.35,'sawtooth',0.24); }
 function mrSoundHurt(){ gpsNoiseBurst(0,0.09,0.18,300); gpsTone(140,0,0.14,'sawtooth',0.18); }
 function mrSoundGameOver(){ gpsTone(300,0,0.2,'sawtooth',0.25); gpsTone(250,0.15,0.2,'sawtooth',0.25); gpsTone(180,0.3,0.4,'sawtooth',0.25); }
+
+/* ══════════════════════════════════════
+   ✨ 수학 런너 비주얼 이펙트 유틸 (파티클 / 화면 흔들림 / 둥근 사각형)
+══════════════════════════════════════ */
+function mrRoundRect(ctx, x, y, w, h, r) {
+  if (typeof ctx.roundRect === 'function') {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, r);
+    return;
+  }
+  let rr = Math.min(r, Math.abs(w)/2, Math.abs(h)/2);
+  ctx.beginPath();
+  ctx.moveTo(x+rr, y);
+  ctx.arcTo(x+w, y, x+w, y+h, rr);
+  ctx.arcTo(x+w, y+h, x, y+h, rr);
+  ctx.arcTo(x, y+h, x, y, rr);
+  ctx.arcTo(x, y, x+w, y, rr);
+  ctx.closePath();
+}
+function mrShadeColor(hex, percent) {
+  hex = hex.replace('#','');
+  if (hex.length === 3) hex = hex.split('').map(ch=>ch+ch).join('');
+  let num = parseInt(hex, 16);
+  let r = (num >> 16) + Math.round(2.55 * percent);
+  let g = ((num >> 8) & 0x00FF) + Math.round(2.55 * percent);
+  let b = (num & 0x0000FF) + Math.round(2.55 * percent);
+  r = Math.max(0, Math.min(255, r));
+  g = Math.max(0, Math.min(255, g));
+  b = Math.max(0, Math.min(255, b));
+  return '#' + (0x1000000 + r*0x10000 + g*0x100 + b).toString(16).slice(1);
+}
+function mrSpawnBurst(x, y, color, count = 10, big = false) {
+  for (let i = 0; i < count; i++) {
+    let ang = Math.random() * Math.PI * 2;
+    let spd = (big ? 3.2 : 1.6) + Math.random() * (big ? 4.5 : 2.8);
+    mrParticles.push({
+      x, y,
+      vx: Math.cos(ang) * spd,
+      vy: Math.sin(ang) * spd - (big ? 1.5 : 0.5),
+      life: 1,
+      decay: big ? (0.02 + Math.random()*0.01) : (0.035 + Math.random()*0.02),
+      size: (big ? 5 : 2.5) + Math.random() * (big ? 5 : 3),
+      color
+    });
+  }
+  if (mrParticles.length > 260) mrParticles.splice(0, mrParticles.length - 260);
+}
+function mrShake(mag, time) {
+  mrShakeMag = Math.max(mrShakeMag, mag);
+  mrShakeTime = Math.max(mrShakeTime, time);
+}
+function mrUpdateParticles(dt) {
+  for (let i = mrParticles.length - 1; i >= 0; i--) {
+    let p = mrParticles[i];
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.vy += 0.12 * dt;
+    p.vx *= Math.pow(0.96, dt);
+    p.life -= p.decay * dt;
+    if (p.life <= 0) mrParticles.splice(i, 1);
+  }
+  if (mrShakeTime > 0) {
+    mrShakeTime -= dt;
+    if (mrShakeTime <= 0) { mrShakeTime = 0; mrShakeMag = 0; }
+  }
+  if (mrHitFlash > 0) mrHitFlash = Math.max(0, mrHitFlash - 0.06 * dt);
+}
+function mrDrawParticles(ctx) {
+  for (let p of mrParticles) {
+    ctx.globalAlpha = Math.max(0, p.life);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * Math.max(0.15, p.life), 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+function mrEnsureBgDust(biomeIdx, width, height) {
+  if (mrBgDustBiome === biomeIdx && mrBgDust.length) return;
+  mrBgDustBiome = biomeIdx;
+  mrBgDust = [];
+  for (let i = 0; i < 26; i++) {
+    mrBgDust.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: 1 + Math.random() * 2.6,
+      spd: 0.15 + Math.random() * 0.4,
+      drift: (Math.random() - 0.5) * 0.3,
+      a: 0.15 + Math.random() * 0.35
+    });
+  }
+}
 
 function initMathRunner() {
   if (window.gpsActiveView && window.gpsActiveView !== 'math_runner') return;
@@ -6245,7 +6404,7 @@ function initMathRunner() {
 
           <h3 class="text-lg font-bold text-purple-300 mt-4 border-b border-slate-600 pb-1 mb-2">💀 엘리트 및 보스</h3>
           <p class="text-slate-200 mb-4"><strong class="text-red-400">엘리트(😈):</strong> 8000m 이후 등장. 플레이어를 향해 예고 후 레이저를 쏩니다.<br>
-          <strong class="text-red-400">보스(👑):</strong> 주기적으로 5갈래 탄을 쏘며, 처치 시 25% 확률로 '저주받은 유물(💀)'을 떨어뜨립니다.</p>
+          <strong class="text-red-400">보스(👑):</strong> 주기적으로 3갈래 탄을 쏘며, 처치 시 25% 확률로 '저주받은 유물(💀)'을 떨어뜨립니다.</p>
 
           <h3 class="text-lg font-bold text-red-300 mt-4 border-b border-slate-600 pb-1 mb-2">💀 저주받은 유물</h3>
           <p class="text-slate-200">보스가 떨어뜨린 상자에서 얻는 위험한 강화 효과로, 한 번 선택하면 게임이 끝날 때까지 유지됩니다.</p>
@@ -6375,6 +6534,11 @@ window.mrStartGame = function() {
   mrLastShot = 0;
   window.mrSpawnCount = 0;
   mrLastFrameTime = 0;
+  mrParticles = [];
+  mrShakeMag = 0;
+  mrShakeTime = 0;
+  mrHitFlash = 0;
+  mrBgDustBiome = -1;
   
   mrIsPaused = false;
   mrRewardQueue = [];
@@ -6495,6 +6659,9 @@ function mrSpawnEnemy(y, canvasWidth, isBoss = false) {
 
 function mrRewardEnemy(en) {
   mrSoundKill(en.isBoss);
+  let burstColor = en.isBoss ? '#fde047' : (en.isElite ? '#c084fc' : '#fca5a5');
+  mrSpawnBurst(en.x, en.y, burstColor, en.isBoss ? 32 : (en.isElite ? 16 : 9), en.isBoss);
+  if (en.isBoss) mrShake(9, 14);
   let dropChance = mrRelics.cursedPact ? 1.0 : 0.8;
   if (!en.isBoss && Math.random() > dropChance) return;
   
@@ -6740,6 +6907,7 @@ function mrLoop() {
   let dt = mrLastFrameTime ? (__now - mrLastFrameTime) / (1000/60) : 1;
   dt = Math.min(Math.max(dt, 0), 3); // 탭 전환 등으로 인한 큰 프레임 점프 방지
   mrLastFrameTime = __now;
+  mrUpdateParticles(dt);
   
   mrDistance += mrSpeed * dt;
   mrSpeed = Math.min(mrSpeed + 0.0005625 * dt, 13.75); // 가속을 완만하게 + 상한선 추가 (초등학생 대상 난이도 완화) — 전체 1.25배속
@@ -6755,14 +6923,16 @@ function mrLoop() {
   
   // Background Biomes logic
   let currentBiome = mrBiomes[0];
-  for(let b of mrBiomes) {
-    if (mrDistance > b.dist) currentBiome = b;
+  let currentBiomeIdx = 0;
+  for(let bi=0; bi<mrBiomes.length; bi++) {
+    if (mrDistance > mrBiomes[bi].dist) { currentBiome = mrBiomes[bi]; currentBiomeIdx = bi; }
   }
   let wrap = document.getElementById('mrGameWrapper');
   if(wrap && wrap.dataset.biome !== currentBiome.colors[0]) {
     wrap.dataset.biome = currentBiome.colors[0];
     wrap.style.background = `linear-gradient(to bottom, ${currentBiome.colors[0]}, ${currentBiome.colors[1]})`;
   }
+  mrEnsureBgDust(currentBiomeIdx, c.width, c.height);
   
   // Sword damage
   if (mrPlayer.swords > 0) {
@@ -6980,11 +7150,11 @@ function mrLoop() {
     if (en.active && en.y > 0 && en.y < py - 100) {
       let now = Date.now();
       let diff = mrDistance / 1000;
-      let shotDelay = en.isBoss ? Math.max(800, 1500 - diff * 30) : (en.isElite ? Math.max(800, 2000 - diff * 40) : Math.max(1000, 2500 - diff * 50));
+      let shotDelay = en.isBoss ? Math.max(1600, 3000 - diff * 30) : (en.isElite ? Math.max(800, 2000 - diff * 40) : Math.max(1000, 2500 - diff * 50));
       if (now - en.lastShot > shotDelay) {
         en.lastShot = now;
         if(en.isBoss) {
-          for(let ang of [-0.6, -0.3, 0, 0.3, 0.6]) {
+          for(let ang of [-0.5, 0, 0.5]) {
             mrEnemyBullets.push({ x: en.x, y: en.y + en.h/2, vx: Math.sin(ang)*2.5, vy: Math.cos(ang)*2.5, r: 8, dmg: enemyBulletDmg * 2 });
           }
         } else if (en.isElite) {
@@ -7005,6 +7175,7 @@ function mrLoop() {
         if (mrRelics.goldenBlood && mrRunCoins >= 10) { mrRunCoins -= 10; } else { mrPlayer.count -= touchDmg; }
         mrPlayer.invincible = 60; // 연속 피격 방지용 짧은 무적시간
         mrSoundHurt();
+        mrShake(6, 10); mrHitFlash = 1; mrSpawnBurst(mrPlayer.x, py, '#ef4444', 10);
         if (mrPlayer.count <= 0) {
           mrPlayer.count = 0;
           triggerMrGameOver();
@@ -7037,6 +7208,7 @@ function mrLoop() {
         mrPlayer.count -= dmgTaken;
       }
       mrSoundHurt();
+      mrShake(5, 8); mrHitFlash = 0.8; mrSpawnBurst(mrPlayer.x, py, '#ef4444', 8);
       mrEnemyBullets.splice(i, 1);
       if (mrPlayer.count <= 0) {
         mrPlayer.count = 0;
@@ -7065,7 +7237,7 @@ function mrLoop() {
         } else {
           mrPlayer.count -= dmgTaken;
         }
-        if(!ls.soundPlayed) { mrSoundHurt(); ls.soundPlayed = true; }
+        if(!ls.soundPlayed) { mrSoundHurt(); ls.soundPlayed = true; mrShake(7, 12); mrHitFlash = 1; mrSpawnBurst(mrPlayer.x, py, '#ef4444', 10); }
         if (mrPlayer.count <= 0) {
           mrPlayer.count = 0;
           triggerMrGameOver();
@@ -7200,41 +7372,96 @@ function mrLoop() {
   // Render
   ctx.clearRect(0, 0, c.width, c.height);
   
+  // 화면 흔들림 적용
+  ctx.save();
+  if (mrShakeTime > 0 && mrShakeMag > 0) {
+    let sk = mrShakeMag * (mrShakeTime / 14);
+    ctx.translate((Math.random()-0.5) * sk, (Math.random()-0.5) * sk);
+  }
+  
+  // 은은한 배경 먼지 입자 (원근감)
+  for (let d of mrBgDust) {
+    d.y += d.spd * dt;
+    d.x += d.drift * dt;
+    if (d.y > c.height) { d.y = -5; d.x = Math.random() * c.width; }
+    ctx.globalAlpha = d.a;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  
   for(let g of mrGates) {
     if (g.y + 40 > 0 && g.y < c.height) {
-      ctx.fillStyle = g.passed ? 'rgba(59, 130, 246, 0.2)' : (g.left.type==='math'?'rgba(59, 130, 246, 0.7)':'rgba(168, 85, 247, 0.7)');
-      ctx.fillRect(0, g.y, c.width/2, 40);
+      let gPulse = g.passed ? 0 : (Math.sin(Date.now()/260) * 0.08 + 0.92);
+      ctx.save();
+      ctx.shadowColor = g.passed ? 'transparent' : 'rgba(255,255,255,0.45)';
+      ctx.shadowBlur = g.passed ? 0 : 10;
+      ctx.globalAlpha = g.passed ? 0.55 : gPulse;
+      ctx.fillStyle = g.passed ? 'rgba(59, 130, 246, 0.18)' : (g.left.type==='math'?'rgba(37, 99, 235, 0.82)':'rgba(147, 51, 234, 0.82)');
+      mrRoundRect(ctx, 4, g.y, c.width/2 - 8, 40, 10);
+      ctx.fill();
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
       ctx.fillStyle = g.passed ? 'rgba(255,255,255,0.5)' : '#fff';
       ctx.font = 'bold 24px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(g.left.text, c.width/4, g.y + 20);
       
-      ctx.fillStyle = g.passed ? 'rgba(239, 68, 68, 0.2)' : (g.right.type==='math'?'rgba(239, 68, 68, 0.7)':'rgba(168, 85, 247, 0.7)');
-      ctx.fillRect(c.width/2, g.y, c.width/2, 40);
+      ctx.save();
+      ctx.shadowColor = g.passed ? 'transparent' : 'rgba(255,255,255,0.45)';
+      ctx.shadowBlur = g.passed ? 0 : 10;
+      ctx.globalAlpha = g.passed ? 0.55 : gPulse;
+      ctx.fillStyle = g.passed ? 'rgba(239, 68, 68, 0.18)' : (g.right.type==='math'?'rgba(220, 38, 38, 0.82)':'rgba(147, 51, 234, 0.82)');
+      mrRoundRect(ctx, c.width/2 + 4, g.y, c.width/2 - 8, 40, 10);
+      ctx.fill();
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
       ctx.fillStyle = g.passed ? 'rgba(255,255,255,0.5)' : '#fff';
       ctx.fillText(g.right.text, c.width*0.75, g.y + 20);
+      ctx.restore();
       
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(c.width/2 - 2, g.y, 4, 40);
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.fillRect(c.width/2 - 1.5, g.y, 3, 40);
+      ctx.restore();
     }
   }
   
   for(let ch of mrChests) {
     if (ch.active && ch.y + ch.h > 0 && ch.y - ch.h < c.height) {
-      ctx.font = '40px Arial';
+      let bob = Math.sin(Date.now()/220 + ch.x) * 4;
+      let glowColor = ch.isRelic ? 'rgba(239,68,68,0.55)' : (ch.isBoss ? 'rgba(250,204,21,0.6)' : 'rgba(96,165,250,0.45)');
+      ctx.save();
+      ctx.translate(ch.x, ch.y + bob);
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(0, 0, 22, 0, Math.PI*2);
+      ctx.fillStyle = glowColor;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.font = '38px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      if (ch.isRelic) ctx.fillText('💀', ch.x, ch.y);
-      else ctx.fillText(ch.isBoss ? '👑' : '🎁', ch.x, ch.y);
+      ctx.rotate(Math.sin(Date.now()/300 + ch.x) * 0.08);
+      if (ch.isRelic) ctx.fillText('💀', 0, 0);
+      else ctx.fillText(ch.isBoss ? '👑' : '🎁', 0, 0);
+      ctx.restore();
     }
   }
   
   for(let t of mrTraps) {
     if (t.active && t.y + t.h > 0 && t.y - t.h < c.height) {
-      ctx.fillStyle = '#475569';
-      ctx.fillRect(t.x - t.w/2, t.y - t.h/2, t.w, t.h);
-      ctx.fillStyle = '#94a3b8';
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.35)';
+      ctx.shadowBlur = 6;
+      let tg = ctx.createLinearGradient(0, t.y - t.h/2, 0, t.y + t.h/2);
+      tg.addColorStop(0, '#64748b'); tg.addColorStop(1, '#334155');
+      ctx.fillStyle = tg;
+      mrRoundRect(ctx, t.x - t.w/2, t.y - t.h/2, t.w, t.h, 6);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#e2e8f0';
       for(let s=0; s<5; s++) {
         ctx.beginPath();
         let sx = t.x - t.w/2 + (t.w/5)*s + (t.w/10);
@@ -7243,46 +7470,90 @@ function mrLoop() {
         ctx.lineTo(sx, t.y - t.h/2 - 10);
         ctx.fill();
       }
+      ctx.restore();
     }
   }
   
   for(let en of mrEnemies) {
     if (en.active && en.y + en.h > 0 && en.y - en.h < c.height) {
-      if(en.isBoss) {
-        ctx.fillStyle = en.frozenTimer > 0 ? '#60a5fa' : (en.burnTimer > 0 ? '#f97316' : '#eab308');
-        ctx.fillRect(en.x - en.w/2, en.y - en.h/2, en.w, en.h);
-        ctx.fillStyle = '#854d0e';
-        ctx.fillRect(en.x - en.w/2, en.y - 10, en.w, 20);
-      } else if(en.isElite) {
-        ctx.fillStyle = en.frozenTimer > 0 ? '#60a5fa' : (en.burnTimer > 0 ? '#f97316' : '#9333ea');
-        ctx.fillRect(en.x - en.w/2, en.y - en.h/2, en.w, en.h);
-        ctx.fillStyle = '#fff';
-        ctx.font = '30px Arial';
-        ctx.fillText('👿', en.x, en.y - 35);
+      let bob = Math.sin(Date.now()/260 + (en.id || en.x)) * (en.isBoss ? 3 : 2);
+      let baseColor = en.frozenTimer > 0 ? '#60a5fa' : (en.burnTimer > 0 ? '#f97316' : (en.isBoss ? '#eab308' : (en.isElite ? '#9333ea' : '#ef4444')));
+      let ex = en.x, ey = en.y + bob;
+      ctx.save();
+      if (en.isBoss) {
+        let auraR = Math.max(en.w, en.h)/2 + 12 + Math.sin(Date.now()/200)*3;
+        ctx.beginPath();
+        ctx.arc(ex, ey, auraR, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(250, 204, 21, 0.18)';
+        ctx.fill();
+        ctx.shadowColor = 'rgba(250, 204, 21, 0.65)';
+        ctx.shadowBlur = 20;
+      } else if (en.isElite) {
+        ctx.shadowColor = 'rgba(147, 51, 234, 0.6)';
+        ctx.shadowBlur = 14;
       } else {
-        ctx.fillStyle = en.frozenTimer > 0 ? '#60a5fa' : (en.burnTimer > 0 ? '#f97316' : '#ef4444');
-        ctx.fillRect(en.x - en.w/2, en.y - en.h/2, en.w, en.h);
-        ctx.fillStyle = '#fff';
-        ctx.font = '24px Arial';
-        ctx.fillText('😈', en.x, en.y - 30);
+        ctx.shadowColor = 'rgba(239, 68, 68, 0.4)';
+        ctx.shadowBlur = 8;
+      }
+      let eg = ctx.createLinearGradient(ex, ey - en.h/2, ex, ey + en.h/2);
+      eg.addColorStop(0, baseColor);
+      eg.addColorStop(1, mrShadeColor(baseColor, -28));
+      ctx.fillStyle = eg;
+      mrRoundRect(ctx, ex - en.w/2, ey - en.h/2, en.w, en.h, en.isBoss ? 14 : 10);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      if (en.isBoss) {
+        ctx.fillStyle = 'rgba(133, 77, 14, 0.9)';
+        mrRoundRect(ctx, ex - en.w/2, ey - 10, en.w, 20, 6);
+        ctx.fill();
+        ctx.font = '30px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('👑', ex, ey - en.h/2 - 14);
+      } else if (en.isElite) {
+        ctx.font = '30px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('👿', ex, ey - 35);
+      } else {
+        ctx.font = '24px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('😈', ex, ey - 30);
+      }
+      // 체력바 (엘리트/보스만 표시해 가독성 유지)
+      if ((en.isBoss || en.isElite) && en.maxHp > 0) {
+        let hpPct = Math.max(0, en.hp / en.maxHp);
+        let barW = en.w * 0.9, barY = ey - en.h/2 - (en.isBoss ? 32 : 6);
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        mrRoundRect(ctx, ex - barW/2, barY, barW, 6, 3); ctx.fill();
+        ctx.fillStyle = hpPct > 0.5 ? '#4ade80' : (hpPct > 0.2 ? '#facc15' : '#f87171');
+        mrRoundRect(ctx, ex - barW/2, barY, barW * hpPct, 6, 3); ctx.fill();
       }
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 20px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(Math.ceil(en.hp), en.x, en.y + (en.isBoss ? 15 : 0));
+      ctx.strokeStyle = 'rgba(0,0,0,0.45)'; ctx.lineWidth = 3;
+      let hpLabelY = ey + (en.isBoss ? 15 : 0);
+      ctx.strokeText(Math.ceil(en.hp), ex, hpLabelY);
+      ctx.fillText(Math.ceil(en.hp), ex, hpLabelY);
+      ctx.restore();
     }
   }
   
   for(let alt of mrAltars) {
     if (alt.active && alt.y + alt.h > 0 && alt.y - alt.h < c.height) {
-      ctx.fillStyle = '#6366f1';
-      ctx.fillRect(alt.x - alt.w/2, alt.y - alt.h/2, alt.w, alt.h);
+      ctx.save();
+      let pulse = Math.sin(Date.now()/240) * 0.15 + 1;
+      ctx.shadowColor = 'rgba(99, 102, 241, 0.7)';
+      ctx.shadowBlur = 18 * pulse;
+      let ag = ctx.createLinearGradient(0, alt.y - alt.h/2, 0, alt.y + alt.h/2);
+      ag.addColorStop(0, '#818cf8'); ag.addColorStop(1, '#4f46e5');
+      ctx.fillStyle = ag;
+      mrRoundRect(ctx, alt.x - alt.w/2, alt.y - alt.h/2, alt.w, alt.h, 12);
+      ctx.fill();
+      ctx.shadowBlur = 0;
       ctx.fillStyle = '#fff';
       ctx.font = '30px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText('🔮', alt.x, alt.y);
+      ctx.restore();
     }
   }
   
@@ -7291,23 +7562,36 @@ function mrLoop() {
       ctx.save();
       ctx.translate(b.x, b.y);
       ctx.rotate(mrSwordsRot);
+      ctx.shadowColor = b.color;
+      ctx.shadowBlur = 10;
       ctx.fillStyle = b.color;
-      ctx.fillRect(-b.w/2, -b.w/2, b.w, b.w);
+      mrRoundRect(ctx, -b.w/2, -b.w/2, b.w, b.w, 3);
+      ctx.fill();
       ctx.restore();
     } else {
+      ctx.save();
+      ctx.shadowColor = b.color;
+      ctx.shadowBlur = 8;
       ctx.fillStyle = b.color;
-      ctx.fillRect(b.x - b.w/2, b.y - 10, b.w, 20);
+      mrRoundRect(ctx, b.x - b.w/2, b.y - 10, b.w, 20, 5);
+      ctx.fill();
+      ctx.restore();
     }
   }
   
   for(let eb of mrEnemyBullets) {
+    ctx.save();
+    ctx.shadowColor = 'rgba(239,68,68,0.8)';
+    ctx.shadowBlur = 10;
     ctx.fillStyle = '#ef4444';
     ctx.beginPath();
     ctx.arc(eb.x, eb.y, eb.r, 0, Math.PI*2);
     ctx.fill();
+    ctx.shadowBlur = 0;
     ctx.strokeStyle = '#fca5a5';
     ctx.lineWidth = 2;
     ctx.stroke();
+    ctx.restore();
   }
   
   for(let ls of mrEnemyLasers) {
@@ -7327,13 +7611,19 @@ function mrLoop() {
       ctx.setLineDash([]);
     } else {
       // Firing laser
+      ctx.save();
+      ctx.shadowColor = 'rgba(239,68,68,0.9)';
+      ctx.shadowBlur = 16;
       ctx.fillStyle = 'rgba(239, 68, 68, 0.9)';
       ctx.fillRect(ls.x - ls.w/2, ls.y, ls.w, c.height);
+      ctx.shadowBlur = 0;
       ctx.fillStyle = '#fff';
       ctx.fillRect(ls.x - ls.w/4, ls.y, ls.w/2, c.height);
+      ctx.restore();
     }
   }
   
+
   for(let i=mrZaps.length-1; i>=0; i--) {
     let z = mrZaps[i];
     z.timer -= dt;
@@ -7388,15 +7678,21 @@ function mrLoop() {
       ctx.save();
       ctx.translate(sx, sy);
       ctx.rotate(angle + Math.PI/4);
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillRect(-4, -15, 8, 30);
+      ctx.shadowColor = 'rgba(226, 232, 240, 0.6)';
+      ctx.shadowBlur = 6;
+      let bladeG = ctx.createLinearGradient(0, -15, 0, 15);
+      bladeG.addColorStop(0, '#f1f5f9'); bladeG.addColorStop(1, '#94a3b8');
+      ctx.fillStyle = bladeG;
+      mrRoundRect(ctx, -4, -15, 8, 30, 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
       ctx.fillStyle = '#eab308';
-      ctx.fillRect(-8, 5, 16, 6);
+      mrRoundRect(ctx, -8, 5, 16, 6, 2);
+      ctx.fill();
       ctx.restore();
     }
   }
   
-  ctx.fillStyle = '#3b82f6';
   let maxDraw = Math.min(mrPlayer.count, 50);
   let rows = mrPlayer.clones + 1;
   
@@ -7404,19 +7700,32 @@ function mrLoop() {
     let px = mrPlayer.x;
     if(rows > 1) px = mrPlayer.x - (rows-1)*35 + r*70;
     
+    let isMain = (r === Math.floor(rows/2));
     if(mrPlayer.invincible > 0 && Math.floor(mrPlayer.invincible / 5) % 2 === 0) {
       ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.shadowBlur = 0;
     } else {
-      ctx.fillStyle = (r === Math.floor(rows/2)) ? '#3b82f6' : '#60a5fa'; // main player blue, clones light blue
+      ctx.shadowColor = isMain ? 'rgba(59, 130, 246, 0.55)' : 'rgba(96, 165, 250, 0.35)';
+      ctx.shadowBlur = isMain ? 10 : 5;
+      ctx.fillStyle = isMain ? '#3b82f6' : '#60a5fa'; // main player blue, clones light blue
     }
     for(let i=0; i<maxDraw; i++) {
       let angle = i * 2.4;
       let rad = Math.sqrt(i) * 5;
+      let dotX = px + Math.cos(angle)*rad, dotY = py + Math.sin(angle)*rad;
+      let dg = ctx.createRadialGradient(dotX-1, dotY-1, 0.5, dotX, dotY, 4);
+      if (mrPlayer.invincible > 0 && Math.floor(mrPlayer.invincible / 5) % 2 === 0) {
+        dg.addColorStop(0, 'rgba(255,255,255,0.9)'); dg.addColorStop(1, 'rgba(255,255,255,0.4)');
+      } else {
+        dg.addColorStop(0, isMain ? '#93c5fd' : '#bfdbfe'); dg.addColorStop(1, isMain ? '#2563eb' : '#60a5fa');
+      }
+      ctx.fillStyle = dg;
       ctx.beginPath();
-      ctx.arc(px + Math.cos(angle)*rad, py + Math.sin(angle)*rad, 4, 0, Math.PI*2);
+      ctx.arc(dotX, dotY, 4, 0, Math.PI*2);
       ctx.fill();
     }
   }
+  ctx.shadowBlur = 0;
   
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 24px Arial';
@@ -7436,6 +7745,17 @@ function mrLoop() {
     ctx.stroke();
     ctx.fillStyle = 'rgba(239, 68, 68, 0.1)';
     ctx.fill();
+  }
+  
+  // 파티클(피격/처치 이펙트) 그리기
+  mrDrawParticles(ctx);
+  
+  ctx.restore(); // 화면 흔들림 종료
+  
+  // 피격 시 화면 붉은 플래시 오버레이 (흔들림 영향 없이 화면 전체에 고정)
+  if (mrHitFlash > 0) {
+    ctx.fillStyle = `rgba(239, 68, 68, ${mrHitFlash * 0.28})`;
+    ctx.fillRect(0, 0, c.width, c.height);
   }
   
   mrAnim = requestAnimationFrame(mrLoop);
