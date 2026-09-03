@@ -698,6 +698,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
   </div>
 </div>
 <div id="toast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg z-50"></div>
+<div id="mafAlertBox" class="hidden" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:10000;background:linear-gradient(135deg,#1E293B,#0F172A);color:#fff;padding:1.75rem 2.25rem;border-radius:1.5rem;font-size:1.15rem;line-height:1.5;font-weight:800;text-align:center;box-shadow:0 25px 50px -12px rgba(0,0,0,.6);max-width:min(90vw,420px);opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;border:2px solid rgba(255,255,255,.15);"></div>
 
 <script>
 /* ══ 상수 ══ */
@@ -2446,17 +2447,22 @@ function tpGameLoop(timestamp) {
 ══════════════════════════════════════ */
 const BW=34,BH=17,BD=21;
 let sGrid=Array.from({length:5},()=>Array(5).fill(0));
+let sColorMode = 'classic'; // 'classic'(기본 갈색) | 'rainbow'(층별 무지개색) — 시작 시 기본은 classic
 let sPuzzleTarget=null, sPuzzleIdx=0;
 let dragCell=null, dragStartClientY=0, dragStartH=0;
 
 function initStacking(){
   sGrid=Array.from({length:5},()=>Array(5).fill(0));
+  sColorMode = 'classic'; // 게임을 새로 시작할 때는 항상 기본색으로
   document.getElementById('gradeLabel').textContent='🏗️ 쌓기나무 3D';
   document.getElementById('gradeContent').innerHTML=`
   <div class="space-y-4">
     <div class="flex flex-wrap items-center justify-between gap-2">
       <button onclick="showGrade6Launcher()" class="btn btn-ghost text-xs">← 게임 목록</button>
-      <button onclick="sGrid=Array.from({length:5},()=>Array(5).fill(0));drawAll();renderControlPad();" class="btn btn-ghost text-xs">🗑️ 초기화</button>
+      <div class="flex items-center gap-2">
+        <button id="sColorBtn" onclick="sToggleColorMode()" class="btn btn-ghost text-xs">🌈 무지개색으로</button>
+        <button onclick="sGrid=Array.from({length:5},()=>Array(5).fill(0));drawAll();renderControlPad();" class="btn btn-ghost text-xs">🗑️ 초기화</button>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -2515,6 +2521,13 @@ let camPitch = Math.PI / 6;
 let isDragging3D = false;
 let lastMouseX = 0, lastMouseY = 0;
 
+function sToggleColorMode(){
+  sColorMode = sColorMode === 'classic' ? 'rainbow' : 'classic';
+  const btn = document.getElementById('sColorBtn');
+  if(btn) btn.textContent = sColorMode === 'classic' ? '🌈 무지개색으로' : '🟫 기본색으로';
+  drawIso3D();
+}
+
 function attachIsoEvents(){
   const c=document.getElementById('isoCanvas'); if(!c) return;
   c.onmousedown = e => { isDragging3D = true; lastMouseX = e.clientX; lastMouseY = e.clientY; };
@@ -2569,25 +2582,44 @@ function drawIso3D(){
     return { px: cx + px * scale, py: cy + py * scale, depth: depth };
   }
 
+  // 바닥 격자판 (기준선을 그려 입체감과 위치 파악을 돕는다)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(30,64,175,0.15)';
+  ctx.lineWidth = 1;
+  for(let i=0; i<=5; i++){
+    let p1 = project(i-2, -2, 0), p2 = project(i-2, 3, 0);
+    ctx.beginPath(); ctx.moveTo(p1.px,p1.py); ctx.lineTo(p2.px,p2.py); ctx.stroke();
+    let p3 = project(-2, i-2, 0), p4 = project(3, i-2, 0);
+    ctx.beginPath(); ctx.moveTo(p3.px,p3.py); ctx.lineTo(p4.px,p4.py); ctx.stroke();
+  }
+  ctx.restore();
+
   let blocks = [];
   for(let gy=0; gy<5; gy++) {
     for(let gx=0; gx<5; gx++) {
       let h = sGrid[gy][gx];
       if (h === 0) blocks.push({x:gx-2, y:gy-2, z:0, empty:true});
-      else for(let gz=0; gz<h; gz++) blocks.push({x:gx-2, y:gy-2, z:gz, empty:false, top:gz===h-1, h});
+      else for(let gz=0; gz<h; gz++) blocks.push({x:gx-2, y:gy-2, z:gz, empty:false, top:gz===h-1, h, layer:gz});
     }
   }
 
   blocks.forEach(b => b.depth = project(b.x + 0.5, b.y + 0.5, b.z + 0.5).depth);
   blocks.sort((a, b) => a.depth - b.depth); // 깊이가 작을수록(멀수록) 먼저 그림 (Painter's algorithm)
 
-  const faces = [
-    { v:[4,5,6,7], n:[0,0,1],  top:true, c: '#FDE68A' }, // Top
-    { v:[0,3,2,1], n:[0,0,-1], top:false, c: '#78350F' }, // Bottom
-    { v:[1,2,6,5], n:[1,0,0],  top:false, c: '#D97706' }, // Front-Right
-    { v:[2,3,7,6], n:[0,1,0],  top:false, c: '#F59E0B' }, // Front-Left
-    { v:[3,0,4,7], n:[-1,0,0], top:false, c: '#92400E' }, // Back-Left
-    { v:[0,1,5,4], n:[0,-1,0], top:false, c: '#B45309' }  // Back-Right
+  // 층(높이)마다 다른 무지개 색을 입혀서 층 구분이 한눈에 보이도록 하고,
+  // 면의 방향에 따라 실제 조명(빛) 각도를 계산해 자연스러운 명암을 준다 (기존엔 방향별 고정 갈색 6색뿐이었음)
+  // sColorMode: 'rainbow'면 층별 무지개색, 'classic'(기본값)이면 층 구분 없이 단일 갈색 톤
+  const LAYER_HUES = sColorMode === 'rainbow' ? [205, 165, 45, 25, 355] : [30]; // 무지개: 파랑→초록→노랑→주황→빨강 / 기본: 갈색 단색
+  const lightLen = Math.sqrt(0.45*0.45 + 0.6*0.6 + 0.75*0.75);
+  const lightDir = [0.45/lightLen, -0.6/lightLen, 0.75/lightLen];
+
+  const faceDefs = [
+    { v:[4,5,6,7], n:[0,0,1]  }, // Top
+    { v:[0,3,2,1], n:[0,0,-1] }, // Bottom
+    { v:[1,2,6,5], n:[1,0,0]  }, // Front-Right
+    { v:[2,3,7,6], n:[0,1,0]  }, // Front-Left
+    { v:[3,0,4,7], n:[-1,0,0] }, // Back-Left
+    { v:[0,1,5,4], n:[0,-1,0] }  // Back-Right
   ];
 
   ctx.lineJoin = 'round';
@@ -2600,22 +2632,32 @@ function drawIso3D(){
 
     if (b.empty) {
       ctx.beginPath(); ctx.moveTo(V[0].px, V[0].py); ctx.lineTo(V[1].px, V[1].py); ctx.lineTo(V[2].px, V[2].py); ctx.lineTo(V[3].px, V[3].py); ctx.closePath();
-      ctx.fillStyle='rgba(253,230,138,0.15)'; ctx.fill();
-      ctx.strokeStyle='rgba(217,119,6,0.3)'; ctx.lineWidth=1; ctx.stroke();
+      ctx.fillStyle='rgba(59,130,246,0.06)'; ctx.fill();
+      ctx.strokeStyle='rgba(30,64,175,0.15)'; ctx.lineWidth=1; ctx.stroke();
       continue;
     }
 
-    for(let f of faces) {
+    const hue = LAYER_HUES[b.layer % LAYER_HUES.length];
+
+    for(let f of faceDefs) {
       // 수학적 내적(Dot Product)을 이용한 완벽한 은면 제거 (Backface Culling)
       if (f.n[0]*Vx + f.n[1]*Vy + f.n[2]*Vz > 0) {
+        // 면의 방향과 광원 방향의 내적으로 실제 밝기를 계산 (조명 효과)
+        const light = f.n[0]*lightDir[0] + f.n[1]*lightDir[1] + f.n[2]*lightDir[2];
+        const brightness = Math.max(0.35, Math.min(1, 0.55 + light*0.55));
+        const lightness = Math.round(38 + brightness*32);
+        
         ctx.beginPath(); ctx.moveTo(V[f.v[0]].px, V[f.v[0]].py); for(let i=1;i<4;i++) ctx.lineTo(V[f.v[i]].px, V[f.v[i]].py); ctx.closePath();
-        ctx.fillStyle = f.c; ctx.fill();
-        ctx.strokeStyle = '#451A03'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = `hsl(${hue}, 75%, ${lightness}%)`;
+        ctx.fill();
+        ctx.strokeStyle = `hsl(${hue}, 75%, ${Math.max(14, lightness-26)}%)`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-        if(f.top && b.top){
-          ctx.fillStyle='#451A03'; ctx.font='900 14px Pretendard, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-          let cx=(V[4].px+V[5].px+V[6].px+V[7].px)/4, cy=(V[4].py+V[5].py+V[6].py+V[7].py)/4;
-          ctx.fillText(b.h, cx, cy);
+        if(f.n[2]===1 && b.top){
+          ctx.fillStyle='rgba(0,0,0,0.55)'; ctx.font='900 14px Pretendard, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+          let ccx=(V[4].px+V[5].px+V[6].px+V[7].px)/4, ccy=(V[4].py+V[5].py+V[6].py+V[7].py)/4;
+          ctx.fillText(b.h, ccx, ccy);
         }
       }
     }
@@ -2919,7 +2961,6 @@ function showFreeGame(type){
   }
   if(type==='mafia'){
     if(bl)bl.style.display='none';
-    mPhase='setup'; mP=[]; mVotes={};
     renderMafia();
   }
   if(type==='stairs'){
@@ -3666,7 +3707,7 @@ let mafMyState = 'alive';
 let mafPlayers = []; // Host tracking: { id: peerId, name: string, role: string, alive: bool, conn: any }
 let mafPhase = 'menu'; // menu, hostLobby, clientLobby, hostGame, clientGame
 let mafSubPhase = ''; // night, day_announce, day_discuss, vote, final_vote, game_over
-let mafSettings = { mafia: 1, police: 1, doctor: 1, spy: 0, reporter: 0, hoodlum: 0, politician: 0 };
+let mafSettings = { mafia: 1, police: 1, doctor: 1, spy: 0, reporter: 0, hoodlum: 0, politician: 0, soldier: 0, medium: 0 };
 let mafNightActions = {}; 
 let mafVotes = {}; 
 let mafFinalVotes = {}; 
@@ -3675,6 +3716,7 @@ let mafKilled = '';
 let mafSaved = '';
 let mafThreatened = '';
 let mafReported = null;
+let mafPendingReveal = null;
 let mafTimerInt = null;
 let mafTimeLeft = 0;
 
@@ -3686,6 +3728,8 @@ function mafPreset(n) {
   document.getElementById('sReporter').value = n >= 24 ? 1 : n >= 9 ? 1 : 0;
   document.getElementById('sHoodlum').value = n >= 24 ? 1 : 0;
   document.getElementById('sPolitician').value = n >= 24 ? 1 : 0;
+  document.getElementById('sSoldier').value = n >= 9 ? 1 : 0;
+  document.getElementById('sMedium').value = n >= 24 ? 1 : 0;
 }
 
 function renderMafia() {
@@ -3712,11 +3756,13 @@ function renderMafia() {
         <ul class="space-y-3">
           <li><strong class="text-red-600 text-base">🔪 마피아:</strong> <span class="font-bold">마피아 팀.</span> 매일 밤 1명을 지목해 제거합니다. (마피아끼리는 정체를 압니다)</li>
           <li><strong class="text-purple-600 text-base">🕵️ 스파이:</strong> <span class="font-bold">마피아 팀.</span> 매일 밤 1명의 정확한 직업을 알아냅니다. (마피아와 정체를 공유합니다)</li>
-          <li><strong class="text-green-600 text-base">🏥 의사:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 지목해 마피아의 공격으로부터 보호(치료)합니다.</li>
+          <li><strong class="text-green-600 text-base">🏥 의사:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 지목해 마피아의 공격으로부터 보호(치료)합니다. (자기 자신도 치료 가능!)</li>
           <li><strong class="text-yellow-600 text-base">🔍 경찰:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 조사하여 마피아인지 아닌지 알아냅니다. (스파이는 경찰에게 '마피아 아님'으로 나옵니다)</li>
           <li><strong class="text-blue-600 text-base">📸 기자:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 취재하며, 다음날 아침 그 사람의 직업이 모두에게 공개됩니다! (게임 중 1회 취재 성공 시 능력 소멸)</li>
           <li><strong class="text-orange-600 text-base">👊 건달:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 1명을 협박합니다. 협박당한 사람은 다음 날 낮 처형 투표에서 투표권이 박탈됩니다.</li>
           <li><strong class="text-teal-600 text-base">👔 정치인:</strong> <span class="font-bold">시민 팀.</span> 투표로 처형되지 않습니다! 찬성표가 많아 처형될 위기에 처하면 직업이 공개되며 살아남습니다.</li>
+          <li><strong class="text-sky-600 text-base">🛡️ 군인:</strong> <span class="font-bold">시민 팀.</span> 방탄조끼를 입고 있어서, 마피아에게 처음 공격당했을 때 딱 1번 살아남습니다! (이후엔 보호 불가)</li>
+          <li><strong class="text-indigo-600 text-base">👻 영매:</strong> <span class="font-bold">시민 팀.</span> 매일 밤 이미 죽은 사람 1명과 교신하여 정확한 직업을 알아냅니다.</li>
           <li><strong class="text-gray-600 text-base">😊 시민:</strong> <span class="font-bold">시민 팀.</span> 특별한 능력은 없지만, 직감과 추리력으로 마피아를 찾아내세요!</li>
         </ul>
       </div>
@@ -3794,7 +3840,7 @@ function mafHandleClientData(conn, data) {
   }
   if (data.type === 'nightAction') { 
     mafNightActions[conn.peer] = data.target; 
-    const specCnt = mafPlayers.filter(p => p.alive && p.role !== '시민' && p.role !== '정치인').length;
+    const specCnt = mafPlayers.filter(p => p.alive && p.role !== '시민' && p.role !== '정치인' && p.role !== '군인').length;
     if (Object.keys(mafNightActions).length >= specCnt) mafTimeLeft = 0;
     renderMafia(); 
   }
@@ -3843,6 +3889,8 @@ function mafHostLobbyHTML() {
         <div><label class="text-xs font-black text-blue-700 block mb-1">📸 기자</label><input type="number" id="sReporter" value="${mafSettings.reporter}" min="0" class="inp w-full text-center font-bold px-1"></div>
         <div><label class="text-xs font-black text-orange-700 block mb-1">👊 건달</label><input type="number" id="sHoodlum" value="${mafSettings.hoodlum}" min="0" class="inp w-full text-center font-bold px-1"></div>
         <div><label class="text-xs font-black text-teal-700 block mb-1">👔 정치인</label><input type="number" id="sPolitician" value="${mafSettings.politician}" min="0" class="inp w-full text-center font-bold px-1"></div>
+        <div><label class="text-xs font-black text-sky-700 block mb-1">🛡️ 군인</label><input type="number" id="sSoldier" value="${mafSettings.soldier}" min="0" class="inp w-full text-center font-bold px-1"></div>
+        <div><label class="text-xs font-black text-indigo-700 block mb-1">👻 영매</label><input type="number" id="sMedium" value="${mafSettings.medium}" min="0" class="inp w-full text-center font-bold px-1"></div>
       </div>
       <p class="text-xs text-gray-400 font-bold mt-1 text-right">* 나머지 인원은 자동으로 '시민'이 됩니다.</p>
     </div>
@@ -3859,7 +3907,9 @@ function mafHostStartGame() {
   mafSettings.reporter = parseInt(document.getElementById('sReporter').value) || 0;
   mafSettings.hoodlum = parseInt(document.getElementById('sHoodlum').value) || 0;
   mafSettings.politician = parseInt(document.getElementById('sPolitician').value) || 0;
-  const cits = mafPlayers.length - (mafSettings.mafia + mafSettings.spy + mafSettings.police + mafSettings.doctor + mafSettings.reporter + mafSettings.hoodlum + mafSettings.politician);
+  mafSettings.soldier = parseInt(document.getElementById('sSoldier').value) || 0;
+  mafSettings.medium = parseInt(document.getElementById('sMedium').value) || 0;
+  const cits = mafPlayers.length - (mafSettings.mafia + mafSettings.spy + mafSettings.police + mafSettings.doctor + mafSettings.reporter + mafSettings.hoodlum + mafSettings.politician + mafSettings.soldier + mafSettings.medium);
   if (cits < 0) { toast('설정된 직업 수가 전체 인원보다 많습니다!'); return; }
   
   let pool = [];
@@ -3870,14 +3920,17 @@ function mafHostStartGame() {
   for(let i=0; i<mafSettings.reporter; i++) pool.push('기자');
   for(let i=0; i<mafSettings.hoodlum; i++) pool.push('건달');
   for(let i=0; i<mafSettings.politician; i++) pool.push('정치인');
+  for(let i=0; i<mafSettings.soldier; i++) pool.push('군인');
+  for(let i=0; i<mafSettings.medium; i++) pool.push('영매');
   for(let i=0; i<cits; i++) pool.push('시민');
   pool.sort(() => Math.random() - 0.5);
   
   const isMafiaTeam = r => r === '마피아' || r === '스파이';
+  const allNames = mafPlayers.map(p => p.name);
   mafPlayers.forEach((p, i) => {
-    p.role = pool[i]; p.alive = true; p.usedReporter = false;
+    p.role = pool[i]; p.alive = true; p.usedReporter = false; p.usedVest = false;
     const mComrades = isMafiaTeam(p.role) ? mafPlayers.filter((m, mi) => isMafiaTeam(pool[mi]) && m.id !== p.id).map(m => m.name) : [];
-    p.conn.send({ type: 'gameStart', role: p.role, comrades: mComrades });
+    p.conn.send({ type: 'gameStart', role: p.role, comrades: mComrades, allNames });
   });
   
   mafPhase = 'hostGame';
@@ -3921,10 +3974,12 @@ function mafHostNextPhase(phase) {
   }
 
   const aliveList = mafPlayers.filter(p=>p.alive).map(p=>p.name);
+  const deadList = mafPlayers.filter(p=>!p.alive).map(p=>p.name);
   if(phase === 'night') {
     mafThreatened = '';
     mafNightActions = {};
-    mafBroadcast('phase', { phase: 'night', aliveList });
+    mafBroadcast('phase', { phase: 'night', aliveList, deadList, reveal: mafPendingReveal });
+    mafPendingReveal = null;
   } else if(phase === 'day_announce') {
     mafKilled = ''; mafSaved = '';
     let mVotes = {};
@@ -3942,7 +3997,12 @@ function mafHostNextPhase(phase) {
 
     mafPlayers.filter(p => p.alive && p.role === '스파이').forEach(p => {
       let t = mafNightActions[p.id];
-      if(t) { let tgt = mafPlayers.find(x => x.name === t); p.conn.send({ type: 'investResult', name: t, role: tgt ? tgt.role : '알 수 없음' }); }
+      if(t) { let tgt = mafPlayers.find(x => x.name === t); p.conn.send({ type: 'investResult', name: t, role: tgt ? tgt.role : '알 수 없음', by: '스파이' }); }
+    });
+
+    mafPlayers.filter(p => p.alive && p.role === '영매').forEach(p => {
+      let t = mafNightActions[p.id];
+      if(t) { let tgt = mafPlayers.find(x => x.name === t && !x.alive); p.conn.send({ type: 'investResult', name: t, role: tgt ? tgt.role : '알 수 없음', by: '영매' }); }
     });
 
     let reportedObj = null;
@@ -3959,8 +4019,12 @@ function mafHostNextPhase(phase) {
     mafPlayers.filter(p => p.alive && p.role === '건달').forEach(p => { let t = mafNightActions[p.id]; if(t) hTarget = t; });
     mafThreatened = hTarget;
     
-    if(mTarget && mTarget !== dTarget) { mafKilled = mTarget; let tgt = mafPlayers.find(x => x.name === mTarget); if(tgt) tgt.alive = false; }
-    else if (mTarget && mTarget === dTarget) { mafSaved = mTarget; }
+    if(mTarget && mTarget === dTarget) { mafSaved = mTarget; }
+    else if(mTarget) {
+      let tgt = mafPlayers.find(x => x.name === mTarget);
+      if(tgt && tgt.role === '군인' && !tgt.usedVest) { tgt.usedVest = true; mafSaved = mTarget; }
+      else { mafKilled = mTarget; if(tgt) tgt.alive = false; }
+    }
     
     const newAliveList = mafPlayers.filter(p=>p.alive).map(p=>p.name);
     mafBroadcast('phase', { phase: 'day_announce', killed: mafKilled, saved: mafSaved, aliveList: newAliveList, reported: mafReported, threatened: mafThreatened });
@@ -3988,6 +4052,7 @@ function mafHostNextPhase(phase) {
         mafBroadcast('alert', { msg: `📢 ${mafSuspect}님은 '정치인'이므로 처형되지 않습니다!` });
       } else if (tgt) {
         tgt.alive = false;
+        mafPendingReveal = { name: tgt.name, role: tgt.role };
         mafBroadcast('alert', { msg: `📢 ${mafSuspect}님이 처형되었습니다. (직업: ${tgt.role})` });
         if(mafCheckWin()) return;
       }
@@ -4000,8 +4065,13 @@ function mafHostNextPhase(phase) {
 function mafCheckWin() {
   const alive = mafPlayers.filter(p => p.alive);
   const mCount = alive.filter(p => p.role === '마피아' || p.role === '스파이').length;
-  if (mCount === 0) { mafSubPhase = 'game_over'; mafBroadcast('phase', { phase: 'game_over', win: 'citizen' }); renderMafia(); return true; }
-  if (mCount >= alive.length - mCount) { mafSubPhase = 'game_over'; mafBroadcast('phase', { phase: 'game_over', win: 'mafia' }); renderMafia(); return true; }
+  if (mCount === 0 || mCount >= alive.length - mCount) {
+    if (mafTimerInt) { clearInterval(mafTimerInt); mafTimerInt = null; }
+    mafSubPhase = 'game_over';
+    mafBroadcast('phase', { phase: 'game_over', win: mCount === 0 ? 'citizen' : 'mafia' });
+    renderMafia();
+    return true;
+  }
   return false;
 }
 
@@ -4017,12 +4087,12 @@ function mafHostGameHTML() {
   
   if (mafSubPhase === 'night') {
     const actCnt = Object.keys(mafNightActions).length;
-    const specialCnt = mafPlayers.filter(p => p.alive && p.role !== '시민').length;
+    const specialCnt = mafPlayers.filter(p => p.alive && p.role !== '시민' && p.role !== '정치인' && p.role !== '군인').length;
     content = `${timerHTML}<div class="text-center"><div class="text-6xl mb-2">🌙</div><h2 class="text-3xl font-black text-blue-900 mb-2">밤이 되었습니다.</h2><p class="text-sm font-bold text-gray-500">능력자들이 행동을 선택하는 중... (${actCnt}/${specialCnt})</p></div>
     <button onclick="mafTimeLeft=0" class="btn btn-blue w-full mt-6 py-4 shadow-md">⏭️ 아침으로 바로 넘기기</button>`;
   } else if (mafSubPhase === 'day_announce') {
     content = `${timerHTML}<div class="text-center"><div class="text-6xl mb-2">☀️</div><h2 class="text-3xl font-black text-yellow-600 mb-2">아침이 밝았습니다.</h2>
-      ${mafKilled ? `<p class="text-lg text-red-600 font-bold">지난 밤, <strong>${mafKilled}</strong>님이 마피아에게 희생되었습니다.</p>` : `<p class="text-lg text-green-600 font-bold">지난 밤, 의사의 활약으로 아무도 죽지 않았습니다!</p>`}
+      ${mafKilled ? `<p class="text-lg text-red-600 font-bold">지난 밤, <strong>${mafKilled}</strong>님이 마피아에게 희생되었습니다.</p>` : (mafSaved ? `<p class="text-lg text-green-600 font-bold">지난 밤, 의사의 활약으로 아무도 죽지 않았습니다!</p>` : `<p class="text-lg text-green-600 font-bold">지난 밤, 아무도 죽지 않았습니다.</p>`)}
       <p class="text-sm mt-3 font-semibold text-gray-500">학생들은 지금부터 자유롭게 토론을 진행하세요.</p>
     </div>
     <button onclick="mafTimeLeft=0" class="btn btn-blue w-full mt-6 py-4 shadow-md">⏭️ 토론 종료 및 투표 시작</button>`;
@@ -4096,20 +4166,28 @@ function mafHandleHostData(data) {
   if(data.type === 'error') { toast(data.msg); mafPhase='clientLobby'; renderMafia(); }
   else if(data.type === 'joinSuccess') { mafPhase = 'clientGame'; mafSubPhase = 'waiting'; renderMafia(); }
   else if(data.type === 'gameStart') { 
-    mafMyRole = data.role; mafMyState = 'alive'; mafSubPhase = 'role_reveal'; window.mafComrades = data.comrades || []; window.mafShowMyRole = false; renderMafia(); 
+    mafMyRole = data.role; mafMyState = 'alive'; mafSubPhase = 'role_reveal'; window.mafComrades = data.comrades || []; window.mafAllNames = data.allNames || []; window.mafShowMyRole = false; renderMafia(); 
   }
   else if(data.type === 'phase') {
     if(data.aliveList) window.mafAliveList = data.aliveList;
+    if(data.phase === 'night') window.mafDeadList = data.deadList || [];
     if(mafMyState === 'dead' && data.phase !== 'game_over') { mafSubPhase = 'dead'; renderMafia(); return; }
     mafSubPhase = data.phase;
+    if(data.phase === 'night') window.mafLastReveal = data.reveal || null;
+    if(data.phase === 'day_announce') window.mafReported = data.reported || null;
+    window.mafThreatened = data.threatened || '';
     if(data.phase === 'day_announce' && data.killed === mafMyName) { mafMyState = 'dead'; mafSubPhase = 'dead'; toast('당신은 마피아에게 살해당했습니다.'); }
     if(data.phase === 'final_vote') { window.mafSuspect = data.suspect; }
     if(data.phase === 'game_over') { window.mafWin = data.win; }
     window.mafShowMyRole = false;
     renderMafia();
   }
-  else if(data.type === 'investResult') { toast(`🔍 [경찰조사] ${data.name}님은 ${data.isMafia ? '마피아입니다!' : '마피아가 아닙니다.'}`); }
-  else if(data.type === 'alert') { toast(data.msg); }
+  else if(data.type === 'investResult') {
+    if (data.by === '영매') mafAlert(`👻 [영매의 교신]\n${data.name}님의 직업은\n${data.role}이었습니다!`);
+    else if (data.by === '스파이') mafAlert(`🕵️ [스파이조사]\n${data.name}님의 직업은\n${data.role}입니다!`);
+    else mafAlert(`🔍 [경찰조사]\n${data.name}님은\n${data.isMafia ? '마피아입니다!' : '마피아가 아닙니다.'}`);
+  }
+  else if(data.type === 'alert') { mafAlert(data.msg.replace(/^📢\s*/, '')); }
   else if(data.type === 'timer') { 
     window.mafTimeLeft = data.time; 
     const el = document.getElementById('mafClientTimerDisplay');
@@ -4136,11 +4214,13 @@ function mafClientRoleBtn() {
           <p class="opacity-90 font-bold leading-relaxed">
             ${mafMyRole === '마피아' ? '밤마다 1명 제거. (동료: ' + (window.mafComrades.join(', ')||'없음') + ')' : ''}
             ${mafMyRole === '스파이' ? '밤마다 1명의 직업을 알아냄. (동료: ' + (window.mafComrades.join(', ')||'없음') + ')' : ''}
-            ${mafMyRole === '의사' ? '밤마다 1명을 마피아의 공격으로부터 보호.' : ''}
+            ${mafMyRole === '의사' ? '밤마다 1명을 마피아의 공격으로부터 보호. (자기 자신도 가능!)' : ''}
             ${mafMyRole === '경찰' ? '밤마다 1명을 지목해 마피아인지 확인.' : ''}
             ${mafMyRole === '기자' ? '밤에 1명을 취재하여 다음날 아침 전체 공개 (성공시 게임 중 1회만 발동).' : ''}
             ${mafMyRole === '건달' ? '밤에 1명을 협박하여 다음날 투표를 못하게 만듦.' : ''}
             ${mafMyRole === '정치인' ? '투표로 처형되지 않음.' : ''}
+            ${mafMyRole === '군인' ? '방탄조끼 착용! 마피아에게 처음 공격당해도 1번은 살아남음.' : ''}
+            ${mafMyRole === '영매' ? '밤마다 이미 죽은 사람 1명과 교신하여 정확한 직업을 알아냄.' : ''}
             ${mafMyRole === '시민' ? '낮 토론을 통해 마피아를 찾고 투표로 처형.' : ''}
           </p>
         </div>
@@ -4148,6 +4228,17 @@ function mafClientRoleBtn() {
     </div>
   `;
 }
+
+window.mafClientAckRole = function(btn) {
+  // 정의돼 있지 않던 함수라 버튼을 눌러도 반응이 없던 버그를 수정.
+  // 다음 단계 전환은 선생님(호스트) 화면에서만 이루어지므로,
+  // 여기서는 확인했다는 표시만 남기고 대기 상태로 바꿔준다.
+  if (!btn) return;
+  btn.disabled = true;
+  btn.style.opacity = '.6';
+  btn.style.cursor = 'default';
+  btn.innerHTML = '⏳ 선생님을 기다리는 중...';
+};
 
 function mafClientGameHTML() {
   const helpBtn = `<button onclick="document.getElementById('mafHelpModal').classList.remove('hidden')" class="absolute top-4 right-4 btn btn-ghost text-xs bg-gray-200 hover:bg-gray-300 rounded-full z-10 shadow-sm">❓ 도움말</button>`;
@@ -4169,6 +4260,8 @@ function mafClientGameHTML() {
     else if(mafMyRole === '기자') emoji = '📸';
     else if(mafMyRole === '건달') emoji = '👊';
     else if(mafMyRole === '정치인') emoji = '👔';
+    else if(mafMyRole === '군인') emoji = '🛡️';
+    else if(mafMyRole === '영매') emoji = '👻';
     
     content = `<div class="card p-4 sm:p-6 md:p-8 text-center text-white shadow-xl relative" style="background:#1A1A2E;">${helpBtn}
       <h3 class="text-sm text-gray-400 font-bold mb-2">당신의 직업은...</h3>
@@ -4176,22 +4269,38 @@ function mafClientGameHTML() {
       <h1 class="text-5xl font-black mb-4" style="color:${isM?'#FCA5A5':(mafMyRole==='시민'||mafMyRole==='정치인')?'#93C5FD':'#86EFAC'};">${mafMyRole}</h1>
       ${isM ? `<p class="text-sm font-bold text-red-300 bg-red-900/30 p-2 rounded">마피아 팀: ${window.mafComrades.join(', ') || '없음'}</p>` : ''}
       <p class="text-xs text-yellow-400 mt-6 font-bold">절대 화면을 다른 사람에게 보여주지 마세요!</p>
-      <button onclick="mafClientAckRole()" class="btn w-full mt-6 py-4 shadow-md text-lg" style="background:${isM?'#F56565':'#4299E1'}; color:#fff;">확인했습니다</button>
+      <button onclick="mafClientAckRole(this)" class="btn w-full mt-6 py-4 shadow-md text-lg" style="background:${isM?'#F56565':'#4299E1'}; color:#fff;">확인했습니다</button>
     </div>`;
   }
   else if (mafSubPhase === 'dead') {
     content = `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}<h1 class="text-6xl mb-4">👻</h1><h3 class="font-black text-2xl text-gray-300">당신은 사망했습니다.</h3><p class="text-sm mt-3 font-bold">친구들에게 정체를 들키지 않게 조용히 관전하세요.</p></div>`;
   }
   else if (mafSubPhase === 'night') {
-    if (mafMyRole === '시민' || mafMyRole === '정치인') content = `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">🌙</h1><h3 class="font-black text-2xl text-gray-300">밤이 되었습니다.</h3><p class="text-sm mt-3 font-bold">능력자들이 활동 중입니다. 조용히 기다려주세요.</p></div>`;
+    const revealHTML = window.mafLastReveal ? `<div class="mt-4 p-3 bg-purple-100 border-2 border-purple-400 rounded-lg text-purple-900 font-bold shadow-inner">⚖️ <span class="text-purple-700">${window.mafLastReveal.name}</span>님이 처형되었습니다. (직업: <span class="text-red-600">${window.mafLastReveal.role}</span>)</div>` : '';
+    if (mafMyRole === '시민' || mafMyRole === '정치인' || mafMyRole === '군인') content = `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">🌙</h1><h3 class="font-black text-2xl text-gray-300">밤이 되었습니다.</h3><p class="text-sm mt-3 font-bold">능력자들이 활동 중입니다. 조용히 기다려주세요.</p>${revealHTML}</div>`;
+    else if (mafMyRole === '영매') {
+      const dOpts = (window.mafDeadList||[]).map(p=>`<option value="${p}">${p}</option>`).join('');
+      content = `<div class="card p-6 shadow-xl relative" style="background:#1A1A2E;">
+        ${helpBtn}${cTimerHTML}
+        <h3 class="font-black text-2xl text-white mb-2 text-center">🌙 밤 능력 사용</h3>
+        <p class="text-sm text-indigo-300 mb-6 font-bold text-center">교신할 죽은 사람의 이름을 선택하세요.</p>
+        ${revealHTML}
+        <select id="cNightTarget" class="inp mb-4 w-full font-bold text-center text-lg"><option value="">-- 선택 안함 --</option>${dOpts}</select>
+        <button onclick="mafSendNight()" class="btn py-4 w-full font-black text-lg shadow-md" style="background:var(--indigo-500, #6366F1);color:#fff;">확인</button>
+        ${(window.mafDeadList||[]).length === 0 ? '<p class="text-xs text-gray-400 mt-3 text-center">아직 사망자가 없습니다. 대기해주세요.</p>' : ''}
+      </div>`;
+    }
     else {
       const verb = mafMyRole === '마피아' ? '제거할' : mafMyRole === '의사' ? '살릴' : (mafMyRole==='경찰'||mafMyRole==='스파이') ? '조사할' : mafMyRole === '기자' ? '취재할' : mafMyRole === '건달' ? '협박할' : '';
       const color = mafMyRole === '마피아' ? 'red' : mafMyRole === '의사' ? 'green' : mafMyRole==='스파이' ? 'purple' : mafMyRole==='기자'?'blue':mafMyRole==='건달'?'orange':'yellow';
-      const opts = (window.mafAliveList||[]).filter(p=>p!==mafMyName).map(p=>`<option>${p}</option>`).join('');
+      const opts = (window.mafAliveList||[]).filter(p => mafMyRole === '의사' ? true : p !== mafMyName).map(p=>`<option value="${p}">${p}${p===mafMyName?' (나 자신)':''}</option>`).join('');
+      const selfHint = mafMyRole === '의사' ? `<p class="text-xs text-green-400 mb-2 text-center">💡 의사는 자기 자신을 치료할 수도 있어요!</p>` : '';
       content = `<div class="card p-6 shadow-xl relative" style="background:#1A1A2E;">
         ${helpBtn}${cTimerHTML}
         <h3 class="font-black text-2xl text-white mb-2 text-center">🌙 밤 능력 사용</h3>
         <p class="text-sm text-${color}-300 mb-6 font-bold text-center">${verb} 사람의 이름을 선택하세요.</p>
+        ${selfHint}
+        ${revealHTML}
         <select id="cNightTarget" class="inp mb-4 w-full font-bold text-center text-lg"><option value="">-- 선택 안함 --</option>${opts}</select>
         <button onclick="mafSendNight()" class="btn py-4 w-full font-black text-lg shadow-md" style="background:var(--${color}-500, #3B82F6);color:#fff;">확인</button>
       </div>`;
@@ -4251,7 +4360,30 @@ function mafClientGameHTML() {
   if (mafSubPhase !== 'role_reveal' && mafSubPhase !== 'dead' && mafSubPhase !== 'game_over') {
     content = content.replace(/<\/div>$/, mafClientRoleBtn() + '</div>');
   }
+  if (mafSubPhase !== 'role_reveal' && mafSubPhase !== 'game_over') {
+    content += mafClientSurvivalBoardHTML();
+  }
   return content;
+}
+
+// 학생 화면용 생존 현황판 (교사 화면과 달리 직업은 항상 비공개, 자기 이름 옆엔 (본인) 표시)
+function mafClientSurvivalBoardHTML() {
+  const all = window.mafAllNames || [];
+  if(all.length === 0) return '';
+  const aliveSet = new Set(window.mafAliveList || all);
+  return `<div class="card p-4 mt-4">
+    <h3 class="font-black text-sm text-gray-700 mb-3">👥 생존 현황 (직업 비공개)</h3>
+    <div class="grid grid-cols-3 gap-2">
+      ${all.map(name => {
+        const isAlive = aliveSet.has(name);
+        const isMe = name === mafMyName;
+        return `<div class="p-2 border rounded-lg text-center ${isAlive ? 'bg-white border-gray-200' : 'bg-gray-200 border-gray-300 opacity-50'} ${isMe ? 'ring-2 ring-blue-400' : ''}">
+          <p class="font-bold text-xs ${!isAlive ? 'line-through text-gray-400' : 'text-gray-800'}">${name}</p>
+          ${isMe ? '<p class="text-[10px] text-blue-600 font-black">(본인)</p>' : ''}
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
 }
 
 function mafSendNight() {
@@ -8478,6 +8610,23 @@ function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileRe
 
 let _tt;
 function toast(msg,dur=2600){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),dur);}
+
+let _mat;
+function mafAlert(msg){
+  const el=document.getElementById('mafAlertBox');
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  el.style.opacity = '0'; el.style.transform = 'translate(-50%,-50%) scale(.85)';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.opacity = '1'; el.style.transform = 'translate(-50%,-50%) scale(1)';
+  }));
+  clearTimeout(_mat);
+  _mat = setTimeout(() => {
+    el.style.opacity = '0'; el.style.transform = 'translate(-50%,-50%) scale(.85)';
+    setTimeout(() => el.classList.add('hidden'), 250);
+  }, 3800);
+}
 
 function initEscapeRoom() {
   const gc = document.getElementById('freeGameContent');
