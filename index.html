@@ -736,6 +736,9 @@ function switchTab(id){
   if(id!=='freegame') {
     const fgc = document.getElementById('freeGameContent');
     if(fgc && fgc.innerHTML.includes('<iframe')) { fgc.innerHTML = ''; }
+    // 안전장치: 다른 탭으로 넘어갈 때 무한의 계단 배경음이 남아있지 않도록 즉시 정지
+    if(typeof stStopBgm === 'function') stStopBgm();
+    if(typeof stIsPlaying !== 'undefined') stIsPlaying = false;
   }
   if(id==='whiteboard') initWhiteboard();
 }
@@ -927,6 +930,8 @@ async function fetchLunch() {
 
 function switchGrade(gid){
   window.gpsActiveView = gid;
+  if(typeof stStopBgm === 'function') stStopBgm();
+  if(typeof stIsPlaying !== 'undefined') stIsPlaying = false;
   document.querySelectorAll('.grade-btn').forEach(b=>b.classList.toggle('grade-active',b.dataset.grade===gid));
   switchTab('minigame');
   if(gid==='grade6'){showGrade6Launcher();return;}
@@ -962,6 +967,7 @@ function showCommonLauncher(){
 
 /* ══════════ 1~2학년 런처 ══════════ */
 function showGrade12Launcher(){
+  window.gpsActiveView = 'grade12';
   document.getElementById('gradeLabel').textContent='🐥 1~2학년(저학년군) - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -990,6 +996,7 @@ function showGrade12Launcher(){
 
 /* ══════════ 4학년 런처 ══════════ */
 function showGrade4Launcher(){
+  window.gpsActiveView = 'grade4';
   document.getElementById('gradeLabel').textContent='🟧 4학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1008,6 +1015,7 @@ function showGrade4Launcher(){
 
 /* ══════════ 5학년 런처 ══════════ */
 function showGrade5Launcher(){
+  window.gpsActiveView = 'grade5';
   document.getElementById('gradeLabel').textContent='🟨 5학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1031,6 +1039,7 @@ function showGrade5Launcher(){
 
 /* ══════════ 6학년 런처 ══════════ */
 function showGrade6Launcher(){
+  window.gpsActiveView = 'grade6';
   document.getElementById('gradeLabel').textContent='🟩 6학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML=`
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1043,6 +1052,7 @@ function showGrade6Launcher(){
 
 function startGame(id){
   window.gpsActiveView = id;
+  if(id!=='stairs' && typeof stStopBgm === 'function') { stStopBgm(); if(typeof stIsPlaying !== 'undefined') stIsPlaying = false; }
   if(id==='stacking')   initStacking();
   if(id==='proportion') initProportion();
   if(id==='history')    initHistory();
@@ -1438,31 +1448,76 @@ function djLoop() {
    🚂 역사 연표 기차 (5학년) - Replaces History Match
 ══════════════════════════════════════ */
 const HT_EVENTS = [
-  { era: 1, text: "고조선 건국" },
-  { era: 2, text: "삼국 시대 (고구려, 백제, 신라)" },
-  { era: 3, text: "통일 신라와 발해" },
-  { era: 4, text: "고려 건국 (왕건)" },
-  { era: 5, text: "팔만대장경 제작" },
-  { era: 6, text: "조선 건국 (이성계)" },
-  { era: 7, text: "훈민정음 창제 (세종대왕)" },
-  { era: 8, text: "임진왜란 (이순신)" },
-  { era: 9, text: "대한제국 선포" },
-  { era: 10, text: "일제 강점기 시작" },
-  { era: 11, text: "3.1 운동과 임시정부" },
-  { era: 12, text: "8.15 광복" },
-  { era: 13, text: "6.25 전쟁" },
-  { era: 14, text: "민주화 운동 (4.19, 5.18, 6월)" }
+  { era: 1,  text: "구석기 시대 생활 (뗀석기, 사냥과 채집)" },
+  { era: 2,  text: "신석기 시대와 농경·정착 생활의 시작" },
+  { era: 3,  text: "청동기 시대와 고인돌" },
+  { era: 4,  text: "고조선 건국 (단군왕검)" },
+  { era: 5,  text: "철기 문화의 보급과 여러 나라의 성장" },
+  { era: 6,  text: "삼국의 성립 (고구려, 백제, 신라)" },
+  { era: 7,  text: "고구려 소수림왕의 불교 수용과 태학 설립" },
+  { era: 8,  text: "백제 근초고왕의 전성기" },
+  { era: 9,  text: "가야 연맹의 발전 (철기 문화)" },
+  { era: 10, text: "광개토대왕의 영토 확장" },
+  { era: 11, text: "백제 성왕의 사비 천도" },
+  { era: 12, text: "신라 진흥왕의 한강 유역 차지" },
+  { era: 13, text: "첨성대 건립 (신라의 천문 관측)" },
+  { era: 14, text: "삼국의 불교 수용과 문화 발전" },
+  { era: 15, text: "나당 연합과 삼국 통일" },
+  { era: 16, text: "통일 신라의 발전" },
+  { era: 17, text: "장보고와 청해진의 해상 무역" },
+  { era: 18, text: "발해 건국 (대조영)" },
+  { era: 19, text: "신라 말 사회 혼란과 후삼국 시대" },
+  { era: 20, text: "고려 건국 (왕건)" },
+  { era: 21, text: "서희의 외교 담판 (거란의 1차 침입)" },
+  { era: 22, text: "강감찬의 귀주대첩" },
+  { era: 23, text: "벽란도를 통한 국제 무역" },
+  { era: 24, text: "팔만대장경 제작 (몽골 침입에 맞서)" },
+  { era: 25, text: "몽골의 침입과 삼별초의 항쟁" },
+  { era: 26, text: "금속 활자 발명 (직지심체요절)" },
+  { era: 27, text: "조선 건국 (이성계)" },
+  { era: 28, text: "세종대왕과 훈민정음 창제" },
+  { era: 29, text: "세종대왕 시기 과학 기술 발전 (측우기, 앙부일구)" },
+  { era: 30, text: "세종대왕의 4군 6진 개척" },
+  { era: 31, text: "문익점의 목화씨 전래" },
+  { era: 32, text: "임진왜란과 이순신의 활약" },
+  { era: 33, text: "병자호란" },
+  { era: 34, text: "영조·정조의 개혁 정치와 실학의 발전" },
+  { era: 35, text: "정약용의 활약 (거중기, 목민심서)" },
+  { era: 36, text: "서민 문화의 발달 (판소리, 탈춤, 한글 소설)" },
+  { era: 37, text: "흥선대원군의 개혁 정치와 통상 수교 거부" },
+  { era: 38, text: "강화도 조약 체결 (개항)" },
+  { era: 39, text: "갑신정변" },
+  { era: 40, text: "동학 농민 운동" },
+  { era: 41, text: "을미사변과 명성황후 시해" },
+  { era: 42, text: "대한제국 선포" },
+  { era: 43, text: "을사늑약 체결" },
+  { era: 44, text: "헤이그 특사 파견" },
+  { era: 45, text: "국권 피탈 (경술국치)" },
+  { era: 46, text: "3.1 운동과 대한민국 임시정부 수립" },
+  { era: 47, text: "독립군의 무장 투쟁 (봉오동·청산리 전투)" },
+  { era: 48, text: "신흥무관학교의 독립군 양성" },
+  { era: 49, text: "조선어학회 사건 (한글을 지킨 노력)" },
+  { era: 50, text: "8.15 광복" },
+  { era: 51, text: "대한민국 정부 수립" },
+  { era: 52, text: "6.25 전쟁과 정전 협정" },
+  { era: 53, text: "4.19 혁명" },
+  { era: 54, text: "새마을 운동" },
+  { era: 55, text: "5.18 민주화 운동" },
+  { era: 56, text: "6월 민주 항쟁" },
+  { era: 57, text: "서울 올림픽 개최와 경제 성장" },
+  { era: 58, text: "남북 정상 회담" }
 ];
 
 let htRound = 1;
 let htTargetEvents = [];
 let htSelectedIndexes = [];
 let htLives = 3;
+let htRemainingPool = [];
 
 function initHistoryTrain(round = 1) {
   if (window.gpsActiveView && window.gpsActiveView !== 'history_train') return;
   const gc = document.getElementById('gradeContent'); if(!gc) return;
-  if(round === 1) htLives = 3;
+  if(round === 1) { htLives = 3; htRemainingPool = [...HT_EVENTS].sort(() => Math.random() - 0.5); }
   if(round > 5) {
     gc.innerHTML = `
       <div class="flex flex-col items-center gap-4 py-8 text-center">
@@ -1478,11 +1533,13 @@ function initHistoryTrain(round = 1) {
   htRound = round;
   htSelectedIndexes = [];
   
-  let shuffled = [...HT_EVENTS].sort(() => Math.random() - 0.5);
-  htTargetEvents = shuffled.slice(0, 4).sort((a,b) => Math.random() - 0.5);
+  // 한 판(5라운드) 동안은 같은 사건이 다시 나오지 않도록 남은 풀에서만 뽑음
+  if(htRemainingPool.length < 4) htRemainingPool = [...HT_EVENTS].sort(() => Math.random() - 0.5);
+  htTargetEvents = htRemainingPool.splice(0, 4).sort((a,b) => Math.random() - 0.5);
   
   renderHistoryTrain();
 }
+
 
 function renderHistoryTrain() {
   const gc = document.getElementById('gradeContent'); if(!gc) return;
@@ -2461,7 +2518,7 @@ function initStacking(){
       <button onclick="showGrade6Launcher()" class="btn btn-ghost text-xs">← 게임 목록</button>
       <div class="flex items-center gap-2">
         <button id="sColorBtn" onclick="sToggleColorMode()" class="btn btn-ghost text-xs">🌈 무지개색으로</button>
-        <button onclick="sGrid=Array.from({length:5},()=>Array(5).fill(0));drawAll();renderControlPad();" class="btn btn-ghost text-xs">🗑️ 초기화</button>
+        <button onclick="gpsTone(500,0,0.06,'sine',0.15);gpsTone(350,0.05,0.1,'sine',0.12);sGrid=Array.from({length:5},()=>Array(5).fill(0));drawAll();renderControlPad();" class="btn btn-ghost text-xs">🗑️ 초기화</button>
       </div>
     </div>
 
@@ -2523,6 +2580,7 @@ let lastMouseX = 0, lastMouseY = 0;
 
 function sToggleColorMode(){
   sColorMode = sColorMode === 'classic' ? 'rainbow' : 'classic';
+  gpsTone(660,0,0.06,'triangle',0.16); gpsTone(880,0.05,0.09,'triangle',0.14);
   const btn = document.getElementById('sColorBtn');
   if(btn) btn.textContent = sColorMode === 'classic' ? '🌈 무지개색으로' : '🟫 기본색으로';
   drawIso3D();
@@ -2723,20 +2781,47 @@ function renderControlPad(){
   pad.innerHTML=sGrid.map((row,gy)=>
     `<div class="flex gap-1.5">${row.map((h,gx)=>`
       <div class="flex flex-col items-center" style="gap:2px">
-        <button onclick="changeHeight(${gy},${gx},1)" style="width:34px;height:18px;background:#DBEAFE;border-radius:5px;font-size:10px;font-weight:900;color:#1D4ED8;border:none;cursor:pointer;" onmouseover="this.style.background='#BFDBFE'" onmouseout="this.style.background='#DBEAFE'">▲</button>
-        <div onclick="cycleHeight(${gy},${gx})" style="width:34px;height:34px;border-radius:7px;background:${HEIGHTS[h]};color:${h>0?'#fff':'#9CA3AF'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;cursor:pointer;border:2px solid ${h>0?'rgba(30,64,175,0.3)':'#D1D5DB'};transition:transform .1s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${TEXTS[h]}</div>
-        <button onclick="changeHeight(${gy},${gx},-1)" style="width:34px;height:18px;background:#FEE2E2;border-radius:5px;font-size:10px;font-weight:900;color:#B91C1C;border:none;cursor:pointer;" onmouseover="this.style.background='#FECACA'" onmouseout="this.style.background='#FEE2E2'">▼</button>
+        <button onclick="changeHeight(${gy},${gx},1,event)" style="width:34px;height:18px;background:#DBEAFE;border-radius:5px;font-size:10px;font-weight:900;color:#1D4ED8;border:none;cursor:pointer;" onmouseover="this.style.background='#BFDBFE'" onmouseout="this.style.background='#DBEAFE'">▲</button>
+        <div id="sCell_${gy}_${gx}" onclick="cycleHeight(${gy},${gx},event)" style="width:34px;height:34px;border-radius:7px;background:${HEIGHTS[h]};color:${h>0?'#fff':'#9CA3AF'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;cursor:pointer;border:2px solid ${h>0?'rgba(30,64,175,0.3)':'#D1D5DB'};transition:transform .15s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">${TEXTS[h]}</div>
+        <button onclick="changeHeight(${gy},${gx},-1,event)" style="width:34px;height:18px;background:#FEE2E2;border-radius:5px;font-size:10px;font-weight:900;color:#B91C1C;border:none;cursor:pointer;" onmouseover="this.style.background='#FECACA'" onmouseout="this.style.background='#FEE2E2'">▼</button>
       </div>`).join('')}</div>`
   ).join('');
 }
 
-function changeHeight(gy,gx,delta){
+// 층 높이에 따라 음이 올라가는 '블록 놓기/빼기' 효과음
+function sSoundBlock(h, placed){
+  if(placed){
+    gpsTone(320 + h*70, 0, 0.06, 'square', 0.18);
+    gpsTone(480 + h*70, 0.04, 0.08, 'triangle', 0.15);
+  } else {
+    gpsTone(300 + h*60, 0, 0.07, 'sawtooth', 0.14);
+  }
+}
+// 클릭한 칸이 통통 튀는 느낌을 주는 바운스 애니메이션
+function sBounceCell(gy,gx){
+  const el=document.getElementById(`sCell_${gy}_${gx}`);
+  if(!el) return;
+  el.style.transition='transform .12s cubic-bezier(.34,1.56,.64,1)';
+  el.style.transform='scale(1.35)';
+  setTimeout(()=>{ el.style.transform='scale(1)'; }, 130);
+}
+
+function changeHeight(gy,gx,delta,evt){
+  const before = sGrid[gy][gx];
   sGrid[gy][gx]=Math.max(0,Math.min(5,sGrid[gy][gx]+delta));
+  const after = sGrid[gy][gx];
+  if(after !== before){
+    sSoundBlock(after, delta>0);
+    sBounceCell(gy,gx);
+  }
   drawAll();renderControlPad();
 }
 
-function cycleHeight(gy,gx){
+function cycleHeight(gy,gx,evt){
   sGrid[gy][gx]=(sGrid[gy][gx]+1)%6;
+  const after = sGrid[gy][gx];
+  sSoundBlock(after, after > 0); // 0으로 돌아가면(5→0) '치우는' 소리, 그 외엔 '쌓는' 소리
+  sBounceCell(gy,gx);
   drawAll();renderControlPad();
 }
 
@@ -2777,11 +2862,34 @@ function initProportion(){
   pScore=0;pCurrent=0;pQuestions=[];
   document.getElementById('gradeLabel').textContent='📐 비례식 퀴즈';
   while(pQuestions.length<10){
-    const a=rnd(2,9),b=rnd(2,9),c=rnd(2,9),ans=b*c/a;
-    if(!Number.isInteger(ans)||ans<1||ans>40)continue;
-    const s=new Set([ans]);
-    while(s.size<4){const w=ans+rnd(-5,5);if(w>0&&w!==ans)s.add(w);}
-    pQuestions.push({a,b,c,ans,choices:[...s].sort(()=>Math.random()-.5)});
+    // a:b = c:d 를 만족하는 네 수를 생성 (더 큰 수, 앞/뒤 항 모두 확대되어 난이도 상승)
+    const g1=rnd(2,15), g2=rnd(2,15);
+    if(g1===g2) continue; // 1:1 비율은 너무 쉬우니 제외
+    const k=rnd(2,12);
+    let a=g1, b=g2, c=g1*k, d=g2*k;
+    if(Math.random()<0.7){
+      const k2=rnd(2,4);
+      if(Math.random()<0.5){ a*=k2; b*=k2; } // 앞쪽 비율을 확대
+      else { c*=k2; d*=k2; } // 뒤쪽 비율을 확대 (겉보기 크기로 착각하기 쉽게)
+    }
+    if(a>300||b>300||c>300||d>300) continue;
+    const vals=[a,b,c,d];
+    const pos=rnd(0,3); // 어느 자리가 빈칸인지 (0=a,1=b,2=c,3=d) - 매번 다른 위치라 단순 암기가 안 통함
+    const ans=vals[pos];
+    const other=vals.filter((_,i)=>i!==pos);
+
+    // 오답: 흔히 하는 실수를 반영 (곱셈 대신 덧셈, 자리를 착각한 곱셈/나눗셈 등) + 정답과 더 가까운 간격으로 변별력 강화
+    const wrongSet=new Set();
+    const addMistake = other[0]+other[1]-other[2];
+    const swapMistake = Math.round(other[0]*other[2]/Math.max(1,other[1]));
+    if(addMistake>0 && addMistake!==ans) wrongSet.add(addMistake);
+    if(swapMistake>0 && swapMistake!==ans) wrongSet.add(swapMistake);
+    while(wrongSet.size<3){
+      const w=ans+(Math.random()<0.5?-1:1)*rnd(1,Math.max(2,Math.round(ans*0.18)));
+      if(w>0 && w!==ans) wrongSet.add(w);
+    }
+    const choices=[ans,...[...wrongSet].slice(0,3)].sort(()=>Math.random()-.5);
+    pQuestions.push({shown:vals.map((v,i)=>i===pos?'?':v), ans, choices});
   }
   renderProportion();
 }
@@ -2797,13 +2905,15 @@ function renderProportion(){
     </div>`;return;
   }
   const q=pQuestions[pCurrent];
+  const s=q.shown;
+  const fmt=v=>v==='?'?'<span class="text-blue-500">?</span>':v;
   gc.innerHTML=`<div class="space-y-5">
     <div class="flex items-center justify-between"><button onclick="showGrade6Launcher()" class="btn btn-ghost text-xs">← 뒤로</button><span class="text-xs font-black text-gray-500">${pCurrent+1}/10 · 점수: ${pScore}</span></div>
     <div class="h-2 rounded-full bg-gray-200"><div class="h-2 rounded-full" style="width:${pCurrent*10}%;background:linear-gradient(90deg,#4D96FF,#6BCB77);transition:width .4s;"></div></div>
     <div class="card p-8 text-center">
       <p class="text-gray-500 text-sm font-semibold mb-3">? 에 들어갈 알맞은 수를 고르세요</p>
-      <p class="text-4xl font-black text-gray-800 mb-2">${q.a} : ${q.b} = ${q.c} : <span class="text-blue-500">?</span></p>
-      <p class="text-xs text-gray-400">(${q.a} × ? = ${q.b} × ${q.c})</p>
+      <p class="text-4xl font-black text-gray-800 mb-2">${fmt(s[0])} : ${fmt(s[1])} = ${fmt(s[2])} : ${fmt(s[3])}</p>
+      <p class="text-xs text-gray-400">(${fmt(s[0])} × ${fmt(s[3])} = ${fmt(s[1])} × ${fmt(s[2])})</p>
     </div>
     <div class="grid grid-cols-2 gap-3" id="choiceGrid">
       ${q.choices.map(ch=>`<button onclick="ansP(${ch},${q.ans})" data-val="${ch}" class="btn py-5 text-xl font-black text-gray-700 hover:-translate-y-1" style="background:#F3F0E0;border:2.5px solid #E8E4CC;border-radius:1.25rem;">${ch}</button>`).join('')}
@@ -2812,43 +2922,97 @@ function renderProportion(){
 }
 
 function ansP(choice,ans){
+  let correctBtn=null;
   document.querySelectorAll('#choiceGrid button').forEach(b=>{
     const v=parseInt(b.dataset.val);b.disabled=true;
-    if(v===ans) b.style.cssText='background:#6BCB77;color:#fff;border:2.5px solid #38A169;border-radius:1.25rem;padding:1.25rem;font-size:1.25rem;font-weight:800;';
+    if(v===ans){ b.style.cssText='background:#6BCB77;color:#fff;border:2.5px solid #38A169;border-radius:1.25rem;padding:1.25rem;font-size:1.25rem;font-weight:800;'; correctBtn=b; }
     else if(v===choice) b.style.cssText='background:#FF6B6B;color:#fff;border:2.5px solid #E53E3E;border-radius:1.25rem;padding:1.25rem;font-size:1.25rem;font-weight:800;';
   });
-  if(choice===ans)pScore++;
-  setTimeout(()=>{pCurrent++;renderProportion();},850);
+  if(choice===ans){
+    pScore++;
+    gpsSoundCorrect(Math.min(4, 1 + (pScore % 4)));
+    if(correctBtn){ const r=correctBtn.getBoundingClientRect(); gpsConfetti(r.left+r.width/2, r.top+r.height/2); }
+  } else {
+    gpsSoundWrong();
+  }
+  setTimeout(()=>{
+    pCurrent++;
+    if(pCurrent>=10 && pScore>=8) gpsSoundFanfare();
+    renderProportion();
+  },850);
 }
 
 /* ══════════════════════════════════════
    🃏 역사 카드 배틀
 ══════════════════════════════════════ */
 const HISTORY_DB=[
+  {event:'구석기 시대',      desc:'뗀석기를 사용하며 사냥과 채집으로 먹을거리를 구하던 시대'},
+  {event:'신석기 시대',      desc:'간석기와 빗살무늬 토기를 쓰고 농사를 지으며 정착 생활을 시작한 시대'},
   {event:'고조선 건국',      desc:'단군왕검이 아사달을 도읍으로 세운 우리 최초의 국가'},
+  {event:'고조선 8조법',     desc:'사람을 죽인 자는 사형에 처하는 등 백성이 지켜야 할 법을 정한 고조선의 법'},
+  {event:'삼국의 성립',      desc:'고구려·백제·신라가 각각 나라의 기틀을 세우고 성장한 시기'},
+  {event:'가야 연맹',        desc:'낙동강 유역에서 철기 문화를 바탕으로 발전한 작은 나라들의 연맹'},
+  {event:'광개토대왕',       desc:'고구려의 영토를 크게 넓혀 만주와 한반도 북부를 지배한 왕'},
+  {event:'백제 성왕',        desc:'수도를 웅진에서 사비로 옮기고 백제를 다시 일으키려 한 왕'},
+  {event:'신라 진흥왕',      desc:'한강 유역을 차지하고 신라의 영토를 크게 넓힌 왕'},
   {event:'삼국 통일',        desc:'신라가 당나라와 연합해 백제·고구려를 멸망시키고 통일함'},
+  {event:'통일 신라',        desc:'삼국 통일 이후 불교문화가 크게 꽃핀 신라의 전성기'},
+  {event:'발해 건국',        desc:'대조영이 고구려 유민과 함께 동모산 지역에 세운 나라'},
   {event:'고려 건국',        desc:'왕건이 후삼국을 통일하고 개성을 수도로 세운 나라'},
-  {event:'훈민정음 창제',    desc:'세종대왕이 백성을 위해 만든 우리 고유의 28자 문자'},
+  {event:'서희의 담판',      desc:'거란의 1차 침입 때 외교 담판으로 강동 6주를 얻어낸 사건'},
+  {event:'귀주대첩',         desc:'강감찬이 이끄는 고려군이 거란의 침입을 크게 물리친 전투'},
   {event:'고려 팔만대장경',  desc:'몽골 침략을 불교의 힘으로 막고자 만든 8만여 판의 경판'},
+  {event:'삼별초의 항쟁',    desc:'고려 무신 정권의 군대가 몽골에 끝까지 맞서 싸운 사건'},
+  {event:'직지심체요절',     desc:'현재 남아있는 세계에서 가장 오래된 금속 활자 인쇄본'},
+  {event:'고려청자',         desc:'푸른빛과 상감 기법이 특징인 고려 시대의 대표 도자기'},
+  {event:'조선 건국',        desc:'이성계가 고려를 무너뜨리고 한양을 수도로 세운 나라'},
+  {event:'세종대왕',         desc:'집현전 설치, 측우기·앙부일구 발명을 주도한 조선 4대 왕'},
+  {event:'훈민정음 창제',    desc:'세종대왕이 백성을 위해 만든 우리 고유의 28자 문자'},
+  {event:'측우기',           desc:'세종대왕 때 만든, 비가 내린 양을 재는 세계 최초의 기구'},
   {event:'임진왜란',         desc:'일본이 조선을 침략, 이순신 장군이 수군을 이끌어 활약함'},
   {event:'한산도 대첩',      desc:'이순신이 학익진 전법으로 일본 수군을 크게 격파한 해전'},
+  {event:'거북선',           desc:'이순신 장군이 임진왜란에서 사용한 철갑 전투함'},
   {event:'병자호란',         desc:'청나라가 조선을 침략해 인조가 삼전도에서 항복한 사건'},
-  {event:'동학 농민 운동',   desc:'전봉준이 이끈 농민 봉기로 탐관오리 척결을 요구함'},
+  {event:'영조와 정조',      desc:'탕평책을 펼치고 학문과 문화를 크게 발전시킨 조선 후기의 왕들'},
+  {event:'실학의 발전',      desc:'백성의 삶에 실질적으로 도움이 되는 학문을 연구한 조선 후기 학문'},
   {event:'강화도 조약',      desc:'조선이 일본과 맺은 최초의 불평등 근대 조약'},
+  {event:'동학 농민 운동',   desc:'전봉준이 이끈 농민 봉기로 탐관오리 척결을 요구함'},
+  {event:'대한제국 선포',    desc:'고종이 자주독립 국가임을 내세우며 황제로 즉위해 세운 나라'},
+  {event:'을사늑약',         desc:'일본이 대한제국의 외교권을 강제로 빼앗은 조약'},
+  {event:'안중근 의거',      desc:'독립운동가 안중근이 이토 히로부미를 하얼빈에서 저격함'},
   {event:'국권 피탈',        desc:'일본이 강제로 대한제국의 주권을 빼앗아 식민지로 만듦'},
   {event:'3·1 운동',        desc:'일제 강점기 전국에서 독립 만세를 외친 민족 독립운동'},
+  {event:'대한민국 임시정부', desc:'3.1 운동 이후 독립운동을 이끌기 위해 상하이에 세운 정부'},
+  {event:'봉오동·청산리 전투', desc:'독립군이 만주에서 일본군을 크게 무찌른 대표적인 전투'},
+  {event:'윤봉길 의거',      desc:'윤봉길이 상해 홍구공원에서 일본 장교들에게 폭탄을 던짐'},
   {event:'광복',             desc:'일본 패전으로 우리나라가 식민지에서 해방된 날 (8.15)'},
+  {event:'대한민국 정부 수립', desc:'광복 이후 국회의원 선거를 거쳐 세워진 대한민국 정부'},
   {event:'한국전쟁',         desc:'북한의 기습 남침으로 시작된 3년간의 전쟁, 유엔군 참전'},
   {event:'4·19 혁명',       desc:'이승만 독재에 맞서 학생들이 일으킨 민주주의 혁명'},
   {event:'5·18 민주화 운동', desc:'전두환 군사 정권에 저항한 광주 시민들의 민주화 투쟁'},
+  {event:'6월 민주 항쟁',    desc:'대통령 직선제 등을 요구하며 전국에서 일어난 민주화 운동'},
   {event:'서울 올림픽',      desc:'1988년 서울에서 열린 제24회 하계 올림픽 대회'},
-  {event:'안중근 의거',      desc:'독립운동가 안중근이 이토 히로부미를 하얼빈에서 저격함'},
-  {event:'윤봉길 의거',      desc:'윤봉길이 상해 홍구공원에서 일본 장교들에게 폭탄을 던짐'},
-  {event:'거북선',           desc:'이순신 장군이 임진왜란에서 사용한 철갑 전투함'},
-  {event:'조선 건국',        desc:'이성계가 고려를 무너뜨리고 한양을 수도로 세운 나라'},
   {event:'불국사',           desc:'신라 경덕왕 때 김대성이 세운 절, 석가탑·다보탑이 있음'},
-  {event:'광개토대왕',       desc:'고구려의 영토를 크게 넓혀 만주와 한반도 북부를 지배한 왕'},
-  {event:'세종대왕',         desc:'집현전 설치, 측우기·앙부일구 발명을 주도한 조선 4대 왕'},
+  {event:'청동기 시대와 고인돌', desc:'청동으로 도구를 만들고 지배자의 무덤인 고인돌을 세운 시대'},
+  {event:'백제 근초고왕',    desc:'백제의 전성기를 이끌며 남쪽으로 영토를 크게 넓힌 왕'},
+  {event:'고구려 소수림왕',  desc:'불교를 받아들이고 태학을 세워 나라의 기틀을 다진 왕'},
+  {event:'첨성대',           desc:'신라 선덕여왕 때 별의 움직임을 관찰하기 위해 세운 천문 기구'},
+  {event:'장보고와 청해진',  desc:'통일 신라 때 바다를 지키며 활발한 해상 무역을 펼친 인물과 기지'},
+  {event:'벽란도 무역',      desc:'고려의 국제 무역항으로 아라비아 상인까지 드나들던 항구'},
+  {event:'문익점과 목화',    desc:'원나라에서 목화씨를 들여와 백성의 옷감 생활을 바꾼 인물'},
+  {event:'세종대왕의 4군 6진', desc:'김종서·최윤덕을 보내 북쪽 국경을 압록강·두만강까지 넓힌 일'},
+  {event:'앙부일구',         desc:'세종대왕 때 만든, 해의 그림자로 시간을 알려주는 해시계'},
+  {event:'정약용',           desc:'거중기를 설계하고 목민심서를 지은 조선 후기의 대표 실학자'},
+  {event:'서민 문화의 발달', desc:'조선 후기 판소리·탈춤·한글 소설 등 백성들이 즐기던 문화'},
+  {event:'흥선대원군의 개혁', desc:'경복궁을 다시 짓고 서양과의 통상을 거부(척화비)한 정치'},
+  {event:'갑신정변',         desc:'김옥균 등 개화파가 새로운 나라를 만들고자 일으킨 정변'},
+  {event:'헤이그 특사',      desc:'고종이 을사늑약의 부당함을 알리려 특사를 보낸 외교 활동'},
+  {event:'유관순',           desc:'3·1 운동 당시 아우내 장터에서 만세 운동을 이끈 독립운동가'},
+  {event:'신흥무관학교',     desc:'만주에서 독립군을 길러내기 위해 세운 군사 교육 기관'},
+  {event:'조선어학회 사건',  desc:'일제가 한글을 지키려던 학자들을 탄압해 체포한 사건'},
+  {event:'6·25 전쟁 정전협정', desc:'1953년 전쟁을 멈추기로 합의하며 휴전선이 그어진 일'},
+  {event:'새마을 운동',      desc:'1970년대 농촌 환경을 개선하고 잘살기 운동을 펼친 사업'},
+  {event:'남북 정상 회담',   desc:'남과 북의 정상이 만나 평화와 협력을 논의한 만남'},
 ];
 
 let hEvents=[], hDescs=[], hSelEv=null, hSelDesc=null, hMatchCnt=0, hBusy=false;
@@ -2888,6 +3052,7 @@ function renderHistory(){
 
 function selEv(idx){
   if(hBusy||hEvents[idx].matched)return;
+  gpsTone(700,0,0.04,'square',0.12);
   hSelEv=idx;
   hEvents.forEach((_,i)=>{
     const el=document.getElementById(`ev_${i}`);if(!el||hEvents[i].matched)return;
@@ -2898,6 +3063,7 @@ function selEv(idx){
 
 function selDesc(idx){
   if(hBusy||hDescs[idx].matched)return;
+  gpsTone(700,0,0.04,'square',0.12);
   hSelDesc=idx;
   hDescs.forEach((_,i)=>{
     const el=document.getElementById(`desc_${i}`);if(!el||hDescs[i].matched)return;
@@ -2916,12 +3082,15 @@ function tryMatchH(){
   if(ok){
     ev.matched=desc.matched=true;
     hMatchCnt++;
+    gpsSoundCorrect(Math.min(4, hMatchCnt));
+    if(evEl){ const r=evEl.getBoundingClientRect(); gpsConfetti(r.left+r.width/2, r.top+r.height/2); }
     const hm=document.getElementById('hM');if(hm)hm.textContent=hMatchCnt;
     if(evEl){evEl.classList.remove('selected-ev');evEl.classList.add('matched');evEl.textContent='✅ '+ev.event;evEl.onclick=null;}
     if(descEl){descEl.classList.remove('selected-desc');descEl.classList.add('matched');descEl.textContent='✅ '+desc.desc;descEl.onclick=null;}
-    if(hMatchCnt===8) setTimeout(()=>document.getElementById('hWin')?.classList.remove('hidden'),300);
+    if(hMatchCnt===8){ gpsSoundFanfare(); setTimeout(()=>document.getElementById('hWin')?.classList.remove('hidden'),300); }
   } else {
     hBusy=true;
+    gpsSoundWrong();
     if(evEl){evEl.classList.remove('selected-ev');evEl.classList.add('wrong');}
     if(descEl){descEl.classList.remove('selected-desc');descEl.classList.add('wrong');}
     setTimeout(()=>{
@@ -3047,7 +3216,9 @@ function gpsSoundFanfare(){
 ══════════════════════════════════════ */
 let bbState = {
   grid: [], score: 0, best: 0, pieces: [], dragging: null,
-  W: 0, H: 0, cellSize: 0, gX: 0, gY: 0, isGameOver: false, combo: 0
+  W: 0, H: 0, cellSize: 0, gX: 0, gY: 0, isGameOver: false, combo: 0,
+  hammers: 0, lineClearItems: 0, shuffleItems: 0, armedItem: null,
+  _hammerTier: 0, _lineTier: 0, _shuffleTier: 0, _stuckWarned: false
 };
 const bbColors = ['#F87171', '#FBBF24', '#34D399', '#60A5FA', '#A78BFA', '#F472B6'];
 const BB_SHAPES = [
@@ -3084,6 +3255,31 @@ function bbSoundClear(combo){
   const pitchBoost = 1 + Math.min(Math.max(combo-1,0), 5) * 0.03;
   notes.forEach((f, i) => gpsTone(f * pitchBoost, i*0.05, 0.18, 'triangle', 0.20));
 }
+// 아이템을 새로 획득했을 때: 반짝이는 상승음
+function bbSoundItemGet(){
+  if(bbMuted) return;
+  gpsTone(660, 0, 0.08, 'triangle', 0.2);
+  gpsTone(880, 0.07, 0.12, 'triangle', 0.2);
+  gpsTone(1100, 0.14, 0.16, 'triangle', 0.18);
+}
+// 망치로 블록을 깰 때: 둔탁한 타격음
+function bbSoundHammer(){
+  if(bbMuted) return;
+  gpsNoiseBurst(0, 0.15, 0.22, 400);
+  gpsTone(140, 0, 0.15, 'sawtooth', 0.2);
+}
+// 한 줄 삭제 아이템 사용 시: 휙 쓸어내는 사운드
+function bbSoundLineClearItem(){
+  if(bbMuted) return;
+  gpsNoiseBurst(0, 0.2, 0.18, 800);
+  gpsTone(400, 0, 0.1, 'square', 0.18);
+  gpsTone(600, 0.08, 0.14, 'square', 0.16);
+}
+// 셔플 아이템 사용 시: 통통 튀는 짧은 아르페지오
+function bbSoundShuffle(){
+  if(bbMuted) return;
+  [0,0.05,0.1,0.15].forEach((d,i)=> gpsTone(300+i*120, d, 0.08, 'square', 0.14));
+}
 
 function initBlockBlast() {
   const gc = document.getElementById('freeGameContent'); if(!gc) return;
@@ -3096,6 +3292,17 @@ function initBlockBlast() {
       <button id="bbMuteBtn" onclick="bbToggleMute()" title="블록 블라스트 효과음 켜기/끄기" style="width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); color:#F8FAFC; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;">`+(bbMuted?'🔇':'🔊')+`</button>
     </div>
     <div id="bbComboUI" style="position:absolute; top:55px; left:20px; color:#FBBF24; font-size:20px; font-weight:900; text-shadow:0 2px 4px rgba(0,0,0,0.5); opacity:0; transition:opacity 0.2s, transform 0.2s; transform:translateY(10px);"></div>
+    <div id="bbItemBar" style="position:absolute; top:64%; left:0; width:100%; display:flex; justify-content:center; align-items:center; gap:14px; z-index:5; pointer-events:none;">
+      <button id="bbItemHammer" onclick="bbArmItem('hammer')" title="망치: 원하는 블록 1칸을 깨서 없애요 (100점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s, outline .15s;">
+        🔨<span id="bbHammerCount" style="position:absolute; top:-6px; right:-6px; background:#F59E0B; color:#1E293B; font-size:11px; font-weight:900; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 3px;">0</span>
+      </button>
+      <button id="bbItemLine" onclick="bbArmItem('line')" title="한 줄 삭제: 클릭한 칸의 가로 한 줄을 통째로 삭제해요 (300점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s, outline .15s;">
+        💥<span id="bbLineCount" style="position:absolute; top:-6px; right:-6px; background:#F87171; color:#1E293B; font-size:11px; font-weight:900; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 3px;">0</span>
+      </button>
+      <button id="bbItemShuffle" onclick="bbUseShuffle()" title="셔플: 보드에 놓인 블록들을 랜덤으로 뒤섞어요 (500점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s;">
+        🔀<span id="bbShuffleCount" style="position:absolute; top:-6px; right:-6px; background:#34D399; color:#1E293B; font-size:11px; font-weight:900; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 3px;">0</span>
+      </button>
+    </div>
     <div id="bbGameOver" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.8); flex-direction:column; align-items:center; justify-content:center; z-index:10; backdrop-filter:blur(4px);">
       <h2 style="color:#FFF; font-size:40px; font-weight:900; margin-bottom:10px;">게임 오버!</h2>
       <p style="color:#CBD5E1; font-size:20px; margin-bottom:30px;">최종 점수: <span id="bbFinalScore">0</span></p>
@@ -3123,6 +3330,15 @@ function bbStartGame() {
   bbState.combo = 0;
   bbHideCombo();
   bbState.isGameOver = false;
+  bbState.hammers = 0;
+  bbState.lineClearItems = 0;
+  bbState.shuffleItems = 0;
+  bbState.armedItem = null;
+  bbState._hammerTier = 0;
+  bbState._lineTier = 0;
+  bbState._shuffleTier = 0;
+  bbState._stuckWarned = false;
+  bbUpdateItemUI();
   bbUpdateScoreUI();
   bbSpawnPieces();
   if(bbAnimFrame) cancelAnimationFrame(bbAnimFrame);
@@ -3173,12 +3389,27 @@ function bbSpawnPieces() {
   bbCheckGameOver();
 }
 
+function bbGridCellFromPoint(px, py) {
+  const cw = bbState.cellSize;
+  const gx = Math.floor((px - bbState.gX) / cw);
+  const gy = Math.floor((py - bbState.gY) / cw);
+  if(gx<0 || gx>=8 || gy<0 || gy>=8) return null;
+  return {gx, gy};
+}
+
 function bbPointerDown(e) {
   if(bbState.isGameOver) return;
   const cvs = document.getElementById('bbCanvas');
   const rect = cvs.getBoundingClientRect();
   const px = e.clientX - rect.left;
   const py = e.clientY - rect.top;
+  
+  if(bbState.armedItem) {
+    const cell = bbGridCellFromPoint(px, py);
+    if(cell) bbUseArmedItem(cell.gx, cell.gy);
+    else bbCancelArmedItem();
+    return;
+  }
   
   for(let i = 2; i >= 0; i--) {
     const p = bbState.pieces[i];
@@ -3302,6 +3533,7 @@ function bbPlace(shape, gx, gy, color) {
     bbHideCombo();
   }
   bbUpdateScoreUI();
+  bbCheckItemRewards();
 }
 
 function bbShowCombo(combo, lines, bonus) {
@@ -3349,9 +3581,20 @@ function bbCheckGameOver() {
   }
   
   if(!canPlaceAny) {
+    const hasItems = bbState.hammers>0 || bbState.lineClearItems>0 || bbState.shuffleItems>0;
+    if(hasItems) {
+      // 아이템이 남아있으면 게임오버 대신 아이템 사용을 유도
+      if(!bbState._stuckWarned) {
+        bbState._stuckWarned = true;
+        toast('⚠️ 더 이상 놓을 곳이 없어요! 아이템으로 공간을 만들어보세요.');
+      }
+      return;
+    }
     bbState.isGameOver = true;
     document.getElementById('bbGameOver').style.display = 'flex';
     document.getElementById('bbFinalScore').innerText = bbState.score;
+  } else {
+    bbState._stuckWarned = false;
   }
 }
 
@@ -3361,6 +3604,115 @@ function bbUpdateScoreUI() {
   if(bbState.score > bbState.best) bbState.best = bbState.score;
   const bu = document.getElementById('bbBestUI');
   if(bu) bu.innerText = bbState.best;
+}
+
+/* ── 아이템 시스템: 100점마다 망치 / 300점마다 한 줄 삭제 / 500점마다 셔플 ── */
+function bbCheckItemRewards() {
+  let gotAny = false;
+  const tierH = Math.floor(bbState.score / 100);
+  if(tierH > bbState._hammerTier) {
+    bbState.hammers += (tierH - bbState._hammerTier);
+    bbState._hammerTier = tierH;
+    toast(`🔨 망치 아이템 획득! (보유 ${bbState.hammers}개)`);
+    gotAny = true;
+  }
+  const tierL = Math.floor(bbState.score / 300);
+  if(tierL > bbState._lineTier) {
+    bbState.lineClearItems += (tierL - bbState._lineTier);
+    bbState._lineTier = tierL;
+    toast(`💥 한 줄 삭제 아이템 획득! (보유 ${bbState.lineClearItems}개)`);
+    gotAny = true;
+  }
+  const tierS = Math.floor(bbState.score / 500);
+  if(tierS > bbState._shuffleTier) {
+    bbState.shuffleItems += (tierS - bbState._shuffleTier);
+    bbState._shuffleTier = tierS;
+    toast(`🔀 셔플 아이템 획득! (보유 ${bbState.shuffleItems}개)`);
+    gotAny = true;
+  }
+  if(gotAny) bbSoundItemGet();
+  bbUpdateItemUI();
+}
+
+function bbUpdateItemUI() {
+  const hc = document.getElementById('bbHammerCount');
+  const lc = document.getElementById('bbLineCount');
+  const sc = document.getElementById('bbShuffleCount');
+  if(hc) hc.textContent = bbState.hammers;
+  if(lc) lc.textContent = bbState.lineClearItems;
+  if(sc) sc.textContent = bbState.shuffleItems;
+  
+  const hb = document.getElementById('bbItemHammer');
+  const lb = document.getElementById('bbItemLine');
+  const sb = document.getElementById('bbItemShuffle');
+  if(hb) {
+    hb.disabled = bbState.hammers <= 0;
+    hb.style.opacity = bbState.hammers <= 0 ? '0.35' : '1';
+    hb.style.outline = bbState.armedItem === 'hammer' ? '3px solid #FBBF24' : 'none';
+    hb.style.transform = bbState.armedItem === 'hammer' ? 'scale(1.12)' : 'scale(1)';
+  }
+  if(lb) {
+    lb.disabled = bbState.lineClearItems <= 0;
+    lb.style.opacity = bbState.lineClearItems <= 0 ? '0.35' : '1';
+    lb.style.outline = bbState.armedItem === 'line' ? '3px solid #FBBF24' : 'none';
+    lb.style.transform = bbState.armedItem === 'line' ? 'scale(1.12)' : 'scale(1)';
+  }
+  if(sb) {
+    sb.disabled = bbState.shuffleItems <= 0;
+    sb.style.opacity = bbState.shuffleItems <= 0 ? '0.35' : '1';
+  }
+}
+
+function bbArmItem(type) {
+  if(bbState.isGameOver) return;
+  const count = type === 'hammer' ? bbState.hammers : bbState.lineClearItems;
+  if(count <= 0) return;
+  bbState.armedItem = (bbState.armedItem === type) ? null : type;
+  bbUpdateItemUI();
+  if(bbState.armedItem === 'hammer') toast('🔨 없앨 블록 1칸을 클릭하세요!');
+  else if(bbState.armedItem === 'line') toast('💥 삭제할 줄의 블록을 클릭하세요!');
+}
+
+function bbCancelArmedItem() {
+  bbState.armedItem = null;
+  bbUpdateItemUI();
+}
+
+function bbUseArmedItem(gx, gy) {
+  if(bbState.armedItem === 'hammer') {
+    if(bbState.grid[gy][gx] === 0) { toast('⚠️ 블록이 있는 칸을 클릭하세요!'); return; }
+    bbState.grid[gy][gx] = 0;
+    bbState.hammers--;
+    bbState.armedItem = null;
+    bbSoundHammer();
+    toast('🔨 블록을 깨뜨렸어요!');
+    bbUpdateItemUI();
+    bbCheckGameOver();
+  } else if(bbState.armedItem === 'line') {
+    for(let c=0; c<8; c++) bbState.grid[gy][c] = 0;
+    bbState.lineClearItems--;
+    bbState.armedItem = null;
+    bbSoundLineClearItem();
+    toast('💥 한 줄을 삭제했어요!');
+    bbUpdateItemUI();
+    bbCheckGameOver();
+  }
+}
+
+function bbUseShuffle() {
+  if(bbState.isGameOver || bbState.shuffleItems <= 0) return;
+  bbState.shuffleItems--;
+  let colors = [];
+  for(let r=0; r<8; r++) for(let c=0; c<8; c++) if(bbState.grid[r][c] !== 0) colors.push(bbState.grid[r][c]);
+  let positions = [];
+  for(let r=0; r<8; r++) for(let c=0; c<8; c++) positions.push([r,c]);
+  for(let i=positions.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [positions[i],positions[j]]=[positions[j],positions[i]]; }
+  bbState.grid = Array(8).fill(0).map(() => Array(8).fill(0));
+  colors.forEach((col, i) => { const [r,c]=positions[i]; bbState.grid[r][c]=col; });
+  bbSoundShuffle();
+  toast('🔀 보드를 뒤섞었어요!');
+  bbUpdateItemUI();
+  bbCheckGameOver();
 }
 
 function bbLoop() {
@@ -4445,7 +4797,8 @@ function seatHTML(){
 
     <div class="flex flex-wrap items-center gap-1.5 justify-center mt-1">
       ${pinModeBtn}
-      <button onclick="randomizeSeats()" class="btn btn-blue py-1.5 px-3 text-xs">🎲 랜덤 배치</button>
+      <button id="btnRandomFast" onclick="randomizeSeatsInstant()" class="btn btn-blue py-1.5 px-3 text-xs">⚡ 한 번에 배치</button>
+      <button id="btnRandomSlow" onclick="randomizeSeatsSlow()" class="btn btn-blue py-1.5 px-3 text-xs">🎬 천천히 배치</button>
       <button onclick="clearSeatAssign()" class="btn btn-ghost py-1.5 px-3 text-xs">🗑️ 배치 초기화</button>
       ${clearPinsBtn}
       <button id="btnStudentView" onclick="toggleStudentView()" class="btn py-1.5 px-3 text-xs" style="${studentViewBtnStyle()}">${seatStudentView?'👁️ 교사 화면':'🙈 학생 화면'}</button>
@@ -4464,6 +4817,7 @@ function seatHTML(){
 }
 
 function applySeatSetup(){
+  if(seatAnimating){ toast('⏳ 배치 애니메이션이 끝난 후 다시 시도해주세요.'); return; }
   const nInp=document.getElementById('seatCountInp'), cInp=document.getElementById('seatColsInp');
   const n=Math.max(1,Math.min(60,parseInt(nInp?.value)||seatN));
   const c=Math.max(1,Math.min(12,parseInt(cInp?.value)||seatCols));
@@ -4493,6 +4847,7 @@ function togglePinMode(){
 }
 
 function toggleStudentView(){
+  if(seatAnimating){ toast('⏳ 배치 애니메이션이 끝난 후 다시 시도해주세요.'); return; }
   seatStudentView=!seatStudentView;
   if(seatStudentView && seatPinMode) seatPinMode=false;
   renderSeatPanel();
@@ -4579,19 +4934,68 @@ function dropSeat(e, targetIdx) {
   renderSeatGrid();
 }
 
-function randomizeSeats(){
+let seatAnimating = false;
+
+function seatShuffledRemaining(){
   const pinnedNums=new Set([...seatPins].map(i=>seatAssign[i]));
   const remaining=[];
   for(let n=1;n<=seatN;n++) if(!pinnedNums.has(n)) remaining.push(n);
   for(let i=remaining.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [remaining[i],remaining[j]]=[remaining[j],remaining[i]]; }
+  return remaining;
+}
+function seatEmptySlots(){
   const emptyIdx=[];
   for(let i=0;i<seatAssign.length;i++) if(!seatPins.has(i)) emptyIdx.push(i);
+  return emptyIdx;
+}
+function seatSetAnimating(on){
+  seatAnimating=on;
+  const fast=document.getElementById('btnRandomFast'), slow=document.getElementById('btnRandomSlow');
+  [fast,slow].forEach(b=>{ if(!b) return; b.disabled=on; b.style.opacity=on?'0.5':'1'; b.style.pointerEvents=on?'none':''; });
+}
+// 배치되는 학생 수에 따라 음이 살짝 올라가는 '자리 배정' 효과음
+function seatSoundPlace(k, total){
+  const pitch = 420 + Math.min(1, k/Math.max(1,total-1)) * 420;
+  gpsTone(pitch, 0, 0.05, 'square', 0.15);
+  gpsTone(pitch*1.5, 0.03, 0.06, 'triangle', 0.1);
+}
+
+function randomizeSeatsInstant(){
+  if(seatAnimating) return;
+  const remaining=seatShuffledRemaining();
+  const emptyIdx=seatEmptySlots();
   emptyIdx.forEach(i=>seatAssign[i]=null);
   let k=0;
   for(const idx of emptyIdx){ if(k>=remaining.length) break; seatAssign[idx]=remaining[k++]; }
   renderSeatGrid();
+  gpsNoiseBurst(0, 0.18, 0.12, 1200);
+  gpsSoundFanfare();
   if(remaining.length>emptyIdx.length) toast('⚠️ 좌석 수가 부족해요! 좌석을 더 늘려주세요.');
-  else toast('🎲 랜덤 배치 완료! (고정된 좌석은 그대로 유지돼요)');
+  else toast('⚡ 한 번에 배치 완료! (고정된 좌석은 그대로 유지돼요)');
+}
+
+async function randomizeSeatsSlow(){
+  if(seatAnimating) return;
+  const remaining=seatShuffledRemaining();
+  const emptyIdx=seatEmptySlots();
+  emptyIdx.forEach(i=>seatAssign[i]=null);
+  renderSeatGrid();
+  seatSetAnimating(true);
+  const placeCount=Math.min(remaining.length, emptyIdx.length);
+  const delay = placeCount>30 ? 55 : (placeCount>16 ? 80 : 120); // 학생 수가 많으면 한 명당 간격을 살짝 줄여서 전체 연출 시간이 너무 길어지지 않게
+  let k=0;
+  for(const idx of emptyIdx){
+    if(k>=remaining.length) break;
+    seatAssign[idx]=remaining[k];
+    renderSeatGrid();
+    seatSoundPlace(k, placeCount);
+    k++;
+    await new Promise(r=>setTimeout(r, delay));
+  }
+  seatSetAnimating(false);
+  gpsSoundFanfare();
+  if(remaining.length>emptyIdx.length) toast('⚠️ 좌석 수가 부족해요! 좌석을 더 늘려주세요.');
+  else toast('🎬 천천히 배치 완료! (고정된 좌석은 그대로 유지돼요)');
 }
 
 function clearSeatAssign(){
@@ -4813,6 +5217,7 @@ function rSpinWheel() {
   rSpinning = true;
   const btn = document.getElementById('rSpinBtn');
   btn.disabled = true; btn.innerHTML = '🎡 돌아가는 중...';
+  gpsNoiseBurst(0, 0.22, 0.1, 1400); // 룰렛 회전 시작 사운드
   
   const winnerIndex = Math.floor(Math.random() * active.length);
   const winnerRole = active[winnerIndex];
@@ -4829,6 +5234,7 @@ function rSpinWheel() {
   
   let startTime = performance.now();
   let duration = 3000;
+  let lastTick = Math.floor(startAngle / arc);
   
   function step(now) {
     let p = (now - startTime) / duration;
@@ -4836,7 +5242,7 @@ function rSpinWheel() {
       rWheelAngle = startAngle + diff;
       rDrawWheel(rWheelAngle);
       rAssign[rTargetIdx] = winnerRole.id;
-      // beep removed
+      gpsSoundCorrect(2); // 당첨 효과음
       toast(`🎉 ${rTargetIdx+1}번 학생: ${winnerRole.icon} ${winnerRole.name} 당첨!`);
       
       rSpinning = false;
@@ -4846,6 +5252,8 @@ function rSpinWheel() {
     }
     let ease = 1 - Math.pow(1 - p, 3);
     rWheelAngle = startAngle + diff * ease;
+    let curTick = Math.floor(rWheelAngle / arc);
+    if(curTick !== lastTick) { lastTick = curTick; gpsTone(700, 0, 0.035, 'square', Math.min(0.1, 0.03 + (1-p)*0.08)); }
     rDrawWheel(rWheelAngle);
     rSpinAnim = requestAnimationFrame(step);
   }
@@ -4942,6 +5350,7 @@ function rAssignAllFast() {
   
   rTargetIdx = null;
   rRender();
+  gpsSoundFanfare();
   toast('✨ 전원 자동 배정 완료!');
 }
 
@@ -5023,7 +5432,8 @@ function gRender() {
          <input type="number" id="gCountInp" value="${gGroupCount}" onchange="gChangeCount(this.value)" class="inp w-20 text-center font-black">
        </div>
        <div class="flex-1 flex justify-end gap-2">
-         <button onclick="gRandomize()" class="btn btn-blue text-sm">🎲 전원 자동 편성</button>
+         <button id="gBtnFast" onclick="gRandomizeInstant()" class="btn btn-blue text-sm">⚡ 한 번에 편성</button>
+         <button id="gBtnSlow" onclick="gRandomizeSlow()" class="btn btn-blue text-sm">🎬 천천히 편성</button>
          <button onclick="gClear()" class="btn btn-ghost text-sm">🗑️ 초기화</button>
        </div>
     </div>
@@ -5069,6 +5479,7 @@ function gRender() {
 }
 
 function gChangeTotal(val) {
+  if(gAnimating){ toast('⏳ 편성 애니메이션이 끝난 후 다시 시도해주세요.'); gRender(); return; }
   let num = parseInt(val) || 25;
   gStudents = num;
   gUnassigned = Array.from({length: gStudents}, (_, i) => i + 1);
@@ -5079,6 +5490,7 @@ function gChangeTotal(val) {
 }
 
 function gChangeCount(val) {
+  if(gAnimating){ toast('⏳ 편성 애니메이션이 끝난 후 다시 시도해주세요.'); gRender(); return; }
   let num = parseInt(val) || 6;
   if(num < 1) num = 1;
   gGroupCount = num;
@@ -5090,6 +5502,7 @@ function gChangeCount(val) {
 }
 
 function gClear() {
+  if(gAnimating) return;
   if(!confirm('모든 편성을 초기화할까요?')) return;
   gUnassigned = Array.from({length: gStudents}, (_, i) => i + 1);
   gGroups = Array.from({length: gGroupCount}, () => []);
@@ -5098,7 +5511,21 @@ function gClear() {
   toast('모둠 편성이 초기화되었습니다.');
 }
 
-function gRandomize() {
+let gAnimating = false;
+function gSetAnimating(on){
+  gAnimating = on;
+  const fast=document.getElementById('gBtnFast'), slow=document.getElementById('gBtnSlow');
+  [fast,slow].forEach(b=>{ if(!b) return; b.disabled=on; b.style.opacity=on?'0.5':'1'; b.style.pointerEvents=on?'none':''; });
+}
+// 배정되는 학생 수에 따라 음이 살짝 올라가는 '모둠 편성' 효과음
+function gSoundPlace(k, total){
+  const pitch = 420 + Math.min(1, k/Math.max(1,total-1)) * 420;
+  gpsTone(pitch, 0, 0.05, 'square', 0.15);
+  gpsTone(pitch*1.5, 0.03, 0.06, 'triangle', 0.1);
+}
+
+function gRandomizeInstant() {
+  if(gAnimating) return;
   let all = [...gUnassigned];
   gGroups.forEach(g => all.push(...g));
   
@@ -5116,10 +5543,43 @@ function gRandomize() {
   gGroups.forEach(g => g.sort((a,b)=>a-b));
   gSelected = null;
   gRender();
-  toast('✨ 전원 랜덤 편성 완료!');
+  gpsNoiseBurst(0, 0.18, 0.12, 1200);
+  gpsSoundFanfare();
+  toast('⚡ 한 번에 편성 완료!');
+}
+
+async function gRandomizeSlow() {
+  if(gAnimating) return;
+  let all = [...gUnassigned];
+  gGroups.forEach(g => all.push(...g));
+  all.sort(() => Math.random() - 0.5);
+  
+  gGroups = Array.from({length: gGroupCount}, () => []);
+  gUnassigned = [];
+  gSelected = null;
+  gRender();
+  gSetAnimating(true);
+  
+  const total = all.length;
+  const delay = total>30 ? 55 : (total>16 ? 80 : 120); // 인원이 많으면 한 명당 간격을 줄여서 전체 연출이 너무 길어지지 않게
+  let idx = 0;
+  while(all.length > 0) {
+    const num = all.pop();
+    const gi = idx % gGroupCount;
+    gGroups[gi].push(num);
+    gGroups[gi].sort((a,b)=>a-b);
+    gRender();
+    gSoundPlace(idx, total);
+    idx++;
+    await new Promise(r=>setTimeout(r, delay));
+  }
+  gSetAnimating(false);
+  gpsSoundFanfare();
+  toast('🎬 천천히 편성 완료!');
 }
 
 function gClickStudent(type, index, gIndex) {
+  if(gAnimating) return;
   if (!gSelected) {
     gSelected = { type, index, gIndex };
     gRender();
@@ -5144,11 +5604,13 @@ function gClickStudent(type, index, gIndex) {
     
     gSelected = null;
     gRender();
-    // beep removed
+    gpsTone(600, 0, 0.05, 'square', 0.16);
+    gpsTone(760, 0.05, 0.07, 'triangle', 0.14);
   }
 }
 
 function gClickTarget(type, gIndex) {
+  if(gAnimating) return;
   if (!gSelected) return; 
   
   let val;
@@ -5694,6 +6156,7 @@ function exportData(){const blob=new Blob([JSON.stringify({version:'1.0',date:ne
 const origShowFreeGame = window.showFreeGame;
 window.showFreeGame = function(id) {
   window.gpsActiveView = id;
+  if(id!=='stairs' && typeof stStopBgm === 'function') { stStopBgm(); if(typeof stIsPlaying !== 'undefined') stIsPlaying = false; }
   const bl = document.getElementById('bungeoLink');
   if (id === 'potjump') {
     if(bl) bl.style.display = 'none';
@@ -6481,6 +6944,7 @@ function initGuguRace(reset=true) {
     if(bar) bar.style.width = '0%';
   });
   grTimerId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'gugu_race') { grClearTimer(); return; }
     grTimeLeft--;
     if(grTimeLeft <= 0){
       grClearTimer();
@@ -6621,6 +7085,7 @@ function initClockRead(reset=true) {
     if(bar) bar.style.width = '0%';
   });
   crTimerId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'clock_read') { crClearTimer(); return; }
     crTimeLeft--;
     if(crTimeLeft <= 0){
       crClearTimer();
@@ -6696,6 +7161,7 @@ function initMathPop() {
   mpRestartSpawner();
   clearInterval(mpTickId);
   mpTickId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'math_pop') { clearInterval(mpTickId); mpTickId = null; clearInterval(mpInterval); mpActive = false; return; }
     mpTimeLeft--;
     const t = document.getElementById('mpTimeTxt');
     if(t) t.textContent = mpTimeLeft;
@@ -6947,6 +7413,7 @@ function initWordFind(reset=true) {
     if(bar) bar.style.width = '0%';
   });
   wfTimerId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'word_find') { wfClearTimer(); return; }
     wfTimeLeft--;
     if(wfTimeLeft <= 0){
       wfClearTimer();
