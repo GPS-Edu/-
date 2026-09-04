@@ -4761,20 +4761,26 @@ function mafHandleClientData(conn, data) {
     mafBroadcastLobby();
   }
   if (data.type === 'nightAction') { 
+    const p = mafPlayers.find(pl => pl.id === conn.peer);
+    if (!p || !p.alive) return; // 이미 죽은 사람이 보낸 행동은(화면이 안 바뀐 경우 대비) 서버에서도 무시
     mafNightActions[conn.peer] = data.target; 
-    const specCnt = mafPlayers.filter(p => p.alive && p.role !== '시민' && p.role !== '정치인' && p.role !== '군인').length;
+    const specCnt = mafPlayers.filter(pl => pl.alive && pl.role !== '시민' && pl.role !== '정치인' && pl.role !== '군인' && !(pl.role === '기자' && pl.usedReporter)).length;
     if (Object.keys(mafNightActions).length >= specCnt) mafTimeLeft = 0;
     renderMafia(); 
   }
   if (data.type === 'voteAction') { 
+    const p = mafPlayers.find(pl => pl.id === conn.peer);
+    if (!p || !p.alive) return;
     mafVotes[conn.peer] = data.target; 
-    const aliveCnt = mafPlayers.filter(p => p.alive && p.name !== mafThreatened).length;
+    const aliveCnt = mafPlayers.filter(pl => pl.alive && pl.name !== mafThreatened).length;
     if (Object.keys(mafVotes).length >= aliveCnt) mafTimeLeft = 0;
     renderMafia(); 
   }
   if (data.type === 'finalVoteAction') { 
+    const p = mafPlayers.find(pl => pl.id === conn.peer);
+    if (!p || !p.alive) return;
     mafFinalVotes[conn.peer] = data.vote; 
-    const aliveCnt = mafPlayers.filter(p => p.alive && p.name !== mafSuspect && p.name !== mafThreatened).length;
+    const aliveCnt = mafPlayers.filter(pl => pl.alive && pl.name !== mafSuspect && pl.name !== mafThreatened).length;
     if (Object.keys(mafFinalVotes).length >= aliveCnt) mafTimeLeft = 0;
     renderMafia(); 
   }
@@ -4932,7 +4938,7 @@ function mafHostNextPhase(phase) {
       let t = mafNightActions[p.id];
       if(t) { 
         let tgt = mafPlayers.find(x => x.name === t); 
-        if(tgt) { reportedObj = { name: tgt.name, role: tgt.role }; p.usedReporter = true; }
+        if(tgt) { reportedObj = { name: tgt.name, role: tgt.role }; p.usedReporter = true; p.conn.send({ type: 'abilityUsed', role: '기자' }); }
       }
     });
     mafReported = reportedObj;
@@ -5088,10 +5094,17 @@ function mafHandleHostData(data) {
   if(data.type === 'error') { toast(data.msg); mafPhase='clientLobby'; renderMafia(); }
   else if(data.type === 'joinSuccess') { mafPhase = 'clientGame'; mafSubPhase = 'waiting'; renderMafia(); }
   else if(data.type === 'gameStart') { 
-    mafMyRole = data.role; mafMyState = 'alive'; mafSubPhase = 'role_reveal'; window.mafComrades = data.comrades || []; window.mafAllNames = data.allNames || []; window.mafShowMyRole = false; renderMafia(); 
+    mafMyRole = data.role; mafMyState = 'alive'; mafSubPhase = 'role_reveal'; window.mafComrades = data.comrades || []; window.mafAllNames = data.allNames || []; window.mafShowMyRole = false; window.mafReporterUsed = false; renderMafia(); 
   }
   else if(data.type === 'phase') {
-    if(data.aliveList) window.mafAliveList = data.aliveList;
+    if(data.aliveList) {
+      // 밤에 살해당했을 때뿐 아니라, 낮 투표로 처형됐을 때도 확실히 "죽었음"을 인식하도록
+      // (기존엔 처형된 경우를 감지하는 로직이 없어서, 처형된 학생 화면이 계속 살아있는 것처럼 밤 능력/투표 UI를 보여주는 버그가 있었음)
+      if (mafMyState === 'alive' && mafMyName && !data.aliveList.includes(mafMyName)) {
+        mafMyState = 'dead';
+      }
+      window.mafAliveList = data.aliveList;
+    }
     if(data.phase === 'night') window.mafDeadList = data.deadList || [];
     if(mafMyState === 'dead' && data.phase !== 'game_over') { mafSubPhase = 'dead'; renderMafia(); return; }
     mafSubPhase = data.phase;
@@ -5103,6 +5116,11 @@ function mafHandleHostData(data) {
     if(data.phase === 'game_over') { window.mafWin = data.win; }
     window.mafShowMyRole = false;
     renderMafia();
+  }
+  else if(data.type === 'abilityUsed') {
+    // 기자처럼 "게임 중 1회만" 발동하는 능력을 실제로 사용했음을 본인 화면에도 알려서,
+    // 다음 밤부터는 능력 선택 화면 대신 대기 화면이 뜨도록 함
+    if (data.role === '기자') window.mafReporterUsed = true;
   }
   else if(data.type === 'investResult') {
     if (data.by === '영매') mafAlert(`👻 [영매의 교신]\n${data.name}님의 직업은\n${data.role}이었습니다!`);
@@ -5199,7 +5217,7 @@ function mafClientGameHTML() {
   }
   else if (mafSubPhase === 'night') {
     const revealHTML = window.mafLastReveal ? `<div class="mt-4 p-3 bg-purple-100 border-2 border-purple-400 rounded-lg text-purple-900 font-bold shadow-inner">⚖️ <span class="text-purple-700">${window.mafLastReveal.name}</span>님이 처형되었습니다. (직업: <span class="text-red-600">${window.mafLastReveal.role}</span>)</div>` : '';
-    if (mafMyRole === '시민' || mafMyRole === '정치인' || mafMyRole === '군인') content = `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">🌙</h1><h3 class="font-black text-2xl text-gray-300">밤이 되었습니다.</h3><p class="text-sm mt-3 font-bold">능력자들이 활동 중입니다. 조용히 기다려주세요.</p>${revealHTML}</div>`;
+    if (mafMyRole === '시민' || mafMyRole === '정치인' || mafMyRole === '군인' || (mafMyRole === '기자' && window.mafReporterUsed)) content = `<div class="card p-4 sm:p-6 md:p-8 text-center bg-gray-900 text-gray-400 shadow-inner relative">${helpBtn}${cTimerHTML}<h1 class="text-6xl mb-4">🌙</h1><h3 class="font-black text-2xl text-gray-300">밤이 되었습니다.</h3><p class="text-sm mt-3 font-bold">${mafMyRole === '기자' ? '이미 특종 취재 능력을 사용했어요. 조용히 기다려주세요.' : '능력자들이 활동 중입니다. 조용히 기다려주세요.'}</p>${revealHTML}</div>`;
     else if (mafMyRole === '영매') {
       const dOpts = (window.mafDeadList||[]).map(p=>`<option value="${p}">${p}</option>`).join('');
       content = `<div class="card p-6 shadow-xl relative" style="background:#1A1A2E;">
@@ -6792,7 +6810,7 @@ function initPotJump() {
         <span id="pjStarUI">☆☆☆☆☆</span>
       </div>
     </div>
-    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">항아리를 당겼다 놓아 점프하세요! (연속 점프는 1초 대기 필요)<br>독수리(🦅)를 피하고 아이템(🚀 로켓, 🎈 풍선, ⭐ 별, 🛡️ 방패)을 먹어보세요!<br>🚀 로켓을 먹으면 50m 동안 충돌 없이 무적으로 솟구쳐요! 🎈 풍선은 힘차게 한 번 점프해요.<br>⚠️ 붉은 줄이 나타나면 곧 번개⚡가 떨어져요! 재빨리 옆으로 피하세요. (맞으면 2초간 급강하)<br>💨 바람 경고가 뜨면 곧 강풍이 대각선 아래로 비스듬히 불어요! 옆으로 밀리면서 살짝 아래로도 눌리니 균형을 잡으세요. (방패 중엔 안전)<br>🌠 1000m를 넘으면 별똥별이 위에서 포물선을 그리며 떨어져요! 부딪히면 300m 동안 충돌 없이 추락해요.<br>⭐ 별을 5개 모으면 무적 로켓 상승으로 하늘 높이 솟구쳐요!</p>
+    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">항아리를 당겼다 놓아 점프하세요! (연속 점프는 1초 대기 필요)<br>독수리(🦅)를 피하고 아이템(🚀 로켓, 🎈 풍선, ⭐ 별, 🛡️ 방패)을 먹어보세요!<br>🚀 로켓을 먹으면 50m 동안 충돌 없이 무적으로 솟구쳐요! 🎈 풍선은 힘차게 한 번 점프해요.<br>⚠️ 붉은 줄이 나타나면 곧 번개⚡가 떨어져요! 재빨리 옆으로 피하세요. (맞으면 2초간 급강하)<br>💨 바람 경고가 뜨면 곧 강풍이 대각선 아래로 비스듬히 불어요! 옆으로 밀리면서 살짝 아래로도 눌리니 균형을 잡으세요. (방패 중엔 안전)<br>🌠 1000m를 넘으면 별똥별이 나타나요! 위에서 포물선으로 떨어지기도 하고, 화면 좌우에서 빠르게 가로질러 날아오기도 해요! 부딪히면 300m 동안 충돌 없이 추락해요.<br>⭐ 별을 5개 모으면 무적 로켓 상승으로 하늘 높이 솟구쳐요!</p>
   `;
   setTimeout(() => {
     const c = document.getElementById('pjCanvas');
@@ -7162,14 +7180,38 @@ function pjLoop(timestamp) {
   const curHeightEl = document.getElementById('pjCurrentHeight');
   if(curHeightEl) curHeightEl.innerText = Math.floor(heightSc / 10);
   
-  // 🌠 별똥별: 1000m를 넘으면 번개와 같은 빈도로, 위에서 포물선을 그리며 떨어짐
+  // 🌠 별똥별: 1000m를 넘으면 번개와 같은 빈도로 등장. 위에서 포물선으로 떨어지거나,
+  // 항아리가 실제로 있는 높이대를 관통하며 대각선/포물선으로 화면 좌우를 가로질러 날아옴.
+  const PJ_STAR_SPEED_MULT = 1.6; // 기존보다 1.6배 빠르게
   if (heightSc / 10 >= PJ_STAR_MIN_HEIGHT_M) {
     pjShootingStarTimer -= dt;
     if (pjShootingStarTimer <= 0) {
-      const startX = Math.random() * c.width;
-      const dir = Math.random() < 0.5 ? 1 : -1;
-      const drift = (120 + Math.random() * 220) * dir; // 낙하하며 옆으로 휘어지는 정도
-      pjShootingStars.push({ startX, drift, t: 0, duration: 70 + Math.random() * 40, warnTimer: 20, x: startX, y: -40, hit: false });
+      // 항아리는 카메라 기준 화면 세로 70% 지점 근처에서 계속 머무름 (targetCamY 계산 참고) → 그 구간을 반드시 지나가게 함
+      const zoneTop = c.height * 0.45, zoneBot = c.height * 0.92;
+      const roll = Math.random();
+      if (roll < 0.35) {
+        // 위에서 아래로 포물선을 그리며 낙하 (기존)
+        const startX = Math.random() * c.width;
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        const drift = (120 + Math.random() * 220) * dir; // 낙하하며 옆으로 휘어지는 정도
+        pjShootingStars.push({ type: 'down', startX, drift, t: 0, duration: (70 + Math.random() * 40) / PJ_STAR_SPEED_MULT, warnTimer: 20, x: startX, y: -40, hit: false });
+      } else if (roll < 0.68) {
+        // 대각선: 화면 좌/우에서 항아리가 머무는 높이대를 직선으로 관통하며 가로지름
+        const fromLeft = Math.random() < 0.5;
+        const startX = fromLeft ? -40 : c.width + 40;
+        const endX = fromLeft ? c.width + 40 : -40;
+        const startY = zoneTop + Math.random() * (zoneBot - zoneTop);
+        const endY = zoneTop + Math.random() * (zoneBot - zoneTop);
+        pjShootingStars.push({ type: 'side', startX, endX, startY, endY, t: 0, duration: (55 + Math.random() * 30) / PJ_STAR_SPEED_MULT, warnTimer: 20, x: startX, y: startY, hit: false });
+      } else {
+        // 포물선: 화면 위쪽 가장자리에서 시작해 항아리가 있는 구간까지 내려왔다가 반대편 위쪽으로 다시 솟아오르며 가로지름
+        const fromLeft = Math.random() < 0.5;
+        const startX = fromLeft ? -40 : c.width + 40;
+        const endX = fromLeft ? c.width + 40 : -40;
+        const edgeY = c.height * (0.1 + Math.random() * 0.15);
+        const dipY = zoneTop + Math.random() * (zoneBot - zoneTop);
+        pjShootingStars.push({ type: 'arc', startX, endX, edgeY, dipY, t: 0, duration: (75 + Math.random() * 30) / PJ_STAR_SPEED_MULT, warnTimer: 20, x: startX, y: edgeY, hit: false });
+      }
       pjShootingStarTimer = 240 + Math.random() * 180; // 번개와 동일한 빈도: 약 4~7초
     }
     for (let i = pjShootingStars.length - 1; i >= 0; i--) {
@@ -7178,8 +7220,16 @@ function pjLoop(timestamp) {
         ss.warnTimer -= dt;
       } else {
         ss.t += dt / ss.duration;
-        ss.y = -40 + (c.height + 80) * ss.t; // 위 → 아래로 낙하 (일정 속도)
-        ss.x = ss.startX + ss.drift * ss.t * ss.t; // 낙하하며 옆으로 휘어지는 포물선
+        if (ss.type === 'side') {
+          ss.x = ss.startX + (ss.endX - ss.startX) * ss.t; // 좌우로 가로지름 (일정 속도)
+          ss.y = ss.startY + (ss.endY - ss.startY) * ss.t; // 대각선으로 항아리 구간을 관통
+        } else if (ss.type === 'arc') {
+          ss.x = ss.startX + (ss.endX - ss.startX) * ss.t; // 좌우로 가로지름 (일정 속도)
+          ss.y = ss.edgeY + (ss.dipY - ss.edgeY) * 4 * ss.t * (1 - ss.t); // 포물선: 중간에 항아리 구간까지 내려왔다가 다시 솟아오름
+        } else {
+          ss.y = -40 + (c.height + 80) * ss.t; // 위 → 아래로 낙하 (일정 속도)
+          ss.x = ss.startX + ss.drift * ss.t * ss.t; // 낙하하며 옆으로 휘어지는 포물선
+        }
         
         if (!ss.hit && pjPlayer.shieldTimer <= 0 && pjPlayer.stunFallTimer <= 0 && pjPlayer.starRushTimer <= 0 && pjPlayer.starFallRemaining <= 0 && pjPlayer.rocketRushRemaining <= 0) {
           const playerScreenY = pjPlayer.y + pjCamY;
@@ -7427,16 +7477,33 @@ function pjLoop(timestamp) {
       ctx.globalAlpha = tw;
       ctx.font = 'bold 24px Arial';
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-      ctx.fillText('✨', ss.startX, 6);
+      ctx.textBaseline = 'middle';
+      if (ss.type === 'side') {
+        // 화면 좌/우 가장자리에서 들어올 위치를 표시
+        ctx.fillText('✨', ss.startX < 0 ? 14 : c.width - 14, ss.startY);
+      } else if (ss.type === 'arc') {
+        ctx.fillText('✨', ss.startX < 0 ? 14 : c.width - 14, ss.edgeY);
+      } else {
+        ctx.textBaseline = 'top';
+        ctx.fillText('✨', ss.startX, 6);
+      }
       ctx.restore();
     } else {
       // 지나온 궤적에 은은한 꼬리
       ctx.save();
       for (let k = 1; k <= 5; k++) {
         const tt = Math.max(0, ss.t - k * 0.025);
-        const ty = -40 + (c.height + 80) * tt;
-        const tx = ss.startX + ss.drift * tt * tt;
+        let tx, ty;
+        if (ss.type === 'side') {
+          tx = ss.startX + (ss.endX - ss.startX) * tt;
+          ty = ss.startY + (ss.endY - ss.startY) * tt;
+        } else if (ss.type === 'arc') {
+          tx = ss.startX + (ss.endX - ss.startX) * tt;
+          ty = ss.edgeY + (ss.dipY - ss.edgeY) * 4 * tt * (1 - tt);
+        } else {
+          ty = -40 + (c.height + 80) * tt;
+          tx = ss.startX + ss.drift * tt * tt;
+        }
         ctx.globalAlpha = 0.28 * (1 - k/5);
         ctx.fillStyle = '#fff9c4';
         ctx.beginPath();
