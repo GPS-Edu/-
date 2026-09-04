@@ -8659,21 +8659,35 @@ function setupMrInput(c) {
   c.ontouchend = () => { isDown = false; };
 }
 
+function mrGateColor(side){
+  if(side.type !== 'math') return 'rgba(147, 51, 234, 0.82)'; // 아이템/펫 게이트는 기존 보라색 유지
+  const opColors = {
+    '+': 'rgba(22, 163, 74, 0.85)',  // 초록
+    '-': 'rgba(234, 88, 12, 0.85)',  // 주황
+    '×': 'rgba(37, 99, 235, 0.85)',  // 파랑
+    '÷': 'rgba(8, 145, 178, 0.85)'   // 청록 (➕와 확실히 구분되도록)
+  };
+  return opColors[side.op] || 'rgba(37, 99, 235, 0.82)';
+}
+
 function mrSpawnGate(y) {
   const types = ['math', 'math', 'math', 'dmg', 'rate', 'sword', 'pet_dog', 'pet_cat', 'pet_dragon', 'pet_dog', 'pet_cat'];
   
   const getGate = () => {
     let t = types[Math.floor(Math.random() * types.length)];
-    if(Math.random() < 0.05) t = 'pet_turtle'; // 5% chance to override to turtle
+    if(Math.random() < 0.0167) t = 'pet_turtle'; // 거북이 등장 빈도를 1/3로 축소 (레어템화: 기존 5% → 약 1.67%)
     
     if(t === 'math') {
-      const ops = ['+', '+', '+', '-', '×'];
+      const ops = ['+', '+', '+', '-', '×', '÷'];
       let op = ops[Math.floor(Math.random() * ops.length)];
       let val = 0;
       if(op === '+') val = Math.floor(Math.random()*5)+3; // +3 to +7
       if(op === '-') val = Math.floor(Math.random()*3)+1; // -1 to -3
       if(op === '×') val = 2; // only x2
-      return { type: 'math', op, val, text: `${op} ${val}` };
+      if(op === '÷') val = 2; // only ÷2
+      // +와 헷갈리지 않도록 이모지 기호 + 색상으로 확실히 구분 (색상은 렌더링부 mrGateColor에서 처리)
+      const opSymbols = { '+':'➕', '-':'➖', '×':'✖️', '÷':'➗' };
+      return { type: 'math', op, val, text: `${opSymbols[op]} ${val}` };
     }
     if(t === 'dmg') return { type: 'dmg', val: 1, text: `💥 공격력 +1` };
     if(t === 'rate') return { type: 'rate', val: 1, text: `⚡ 속도 UP` };
@@ -8786,7 +8800,7 @@ window.mrShowItemSelect = function(isBoss) {
     { type: 'bomb', icon: '💣', name: '싹쓸이 폭탄', desc: '화면 내 적/함정 전멸' }
   ];
   
-  if (Math.random() < 0.2) {
+  if (Math.random() < 0.0667) { // 거북이 등장 빈도를 1/3로 축소 (기존 20% → 약 6.67%)
     optionsPool.push({ type: 'pet_turtle', icon: '🐢', name: '거북이 펫', desc: isBoss ? '2회 부활' : '1회 부활(희귀)' });
   }
   
@@ -9034,7 +9048,7 @@ function mrLoop() {
         
         // Dot radius is 10
         if (dist < 10 + Math.max(en.w, en.h)/2) {
-          en.hp -= (mrPlayer.swords * mrPlayer.dmg * 3.0); // buffed continuous damage
+          en.hp -= (mrPlayer.swords * mrPlayer.dmg * 2.0); // 약간 너프 (기존 3.0 → 2.0, 여전히 강력한 아이템으로 유지)
           if(en.hp <= 0) {
             en.active = false;
             mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
@@ -9407,8 +9421,8 @@ function mrLoop() {
   if (mrDistance % 3000 < mrSpeed * dt) mrSpawnGate(-100);
   if (mrDistance > 1000 && mrDistance % 8000 < mrSpeed * dt) mrAltars.push({x: c.width/2, y: -100, w: 60, h: 60, active: true});
   
-  let spawnInterval = mrDistance < 6000 ? 3200 : (mrDistance < 12000 ? 2000 : 1300);
-  if (mrDistance > 2000 && mrDistance % spawnInterval < mrSpeed * dt && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
+  let spawnInterval = mrDistance < 1500 ? 800 : (mrDistance < 6000 ? 3200 : (mrDistance < 12000 ? 2000 : 1300));
+  if (mrDistance > 300 && mrDistance % spawnInterval < mrSpeed * dt && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
     let spawnLoops = mrRelics.cursedPact ? 2 : 1;
     if (mrDistance > 15000) spawnLoops += 1;
     if (mrDistance > 28000) spawnLoops += 1;
@@ -9481,7 +9495,7 @@ function mrLoop() {
       ctx.shadowColor = g.passed ? 'transparent' : 'rgba(255,255,255,0.45)';
       ctx.shadowBlur = g.passed ? 0 : 10;
       ctx.globalAlpha = g.passed ? 0.55 : gPulse;
-      ctx.fillStyle = g.passed ? 'rgba(59, 130, 246, 0.18)' : (g.left.type==='math'?'rgba(37, 99, 235, 0.82)':'rgba(147, 51, 234, 0.82)');
+      ctx.fillStyle = g.passed ? 'rgba(59, 130, 246, 0.18)' : mrGateColor(g.left);
       mrRoundRect(ctx, 4, g.y, c.width/2 - 8, 40, 10);
       ctx.fill();
       ctx.globalAlpha = 1; ctx.shadowBlur = 0;
@@ -9495,7 +9509,7 @@ function mrLoop() {
       ctx.shadowColor = g.passed ? 'transparent' : 'rgba(255,255,255,0.45)';
       ctx.shadowBlur = g.passed ? 0 : 10;
       ctx.globalAlpha = g.passed ? 0.55 : gPulse;
-      ctx.fillStyle = g.passed ? 'rgba(239, 68, 68, 0.18)' : (g.right.type==='math'?'rgba(220, 38, 38, 0.82)':'rgba(147, 51, 234, 0.82)');
+      ctx.fillStyle = g.passed ? 'rgba(239, 68, 68, 0.18)' : mrGateColor(g.right);
       mrRoundRect(ctx, c.width/2 + 4, g.y, c.width/2 - 8, 40, 10);
       ctx.fill();
       ctx.globalAlpha = 1; ctx.shadowBlur = 0;
