@@ -6761,7 +6761,7 @@ window.showFreeGame = function(id) {
 
 let pjAnim;
 let pjLastFrameTime = 0; // 화면 주사율에 상관없이 물리 속도를 동일하게 만들기 위한 델타타임 기준값
-let pjPlayer = {x: 200, y: 500, vx: 0, vy: 0, r: 15, shieldTimer: 0, stunFallTimer: 0, starRushTimer: 0, tilt: 0};
+let pjPlayer = {x: 200, y: 500, vx: 0, vy: 0, r: 15, shieldTimer: 0, stunFallTimer: 0, starRushTimer: 0, starFallRemaining: 0, rocketRushRemaining: 0, tilt: 0};
 let pjPlatforms = [];
 let pjCamY = 0;
 let pjDrag = {active: false, sx: 0, sy: 0, ex: 0, ey: 0};
@@ -6774,6 +6774,9 @@ let pjLightningTimer = 300;
 let pjWinds = [];
 let pjWindTimer = 500;
 const PJ_WIND_ANGLE = Math.PI / 6; // 강풍이 부는 각도: 수평 기준 30도 아래로 비스듬히
+let pjShootingStars = [];
+let pjShootingStarTimer = 300;
+const PJ_STAR_MIN_HEIGHT_M = 1000; // 이 높이(m)를 넘어야 별똥별이 등장
 let pjStarCount = 0;
 let pjStarField = [];
 
@@ -6789,13 +6792,13 @@ function initPotJump() {
         <span id="pjStarUI">☆☆☆☆☆</span>
       </div>
     </div>
-    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">항아리를 당겼다 놓아 점프하세요! (연속 점프는 1초 대기 필요)<br>독수리(🦅)를 피하고 아이템(🚀 로켓, 🎈 풍선, ⭐ 별, 🛡️ 방패)을 먹어보세요!<br>⚠️ 붉은 줄이 나타나면 곧 번개⚡가 떨어져요! 재빨리 옆으로 피하세요. (맞으면 2초간 급강하)<br>💨 바람 경고가 뜨면 곧 강풍이 대각선 아래로 비스듬히 불어요! 옆으로 밀리면서 살짝 아래로도 눌리니 균형을 잡으세요. (방패 중엔 안전)<br>⭐ 별을 5개 모으면 무적 로켓 상승으로 하늘 높이 솟구쳐요!</p>
+    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">항아리를 당겼다 놓아 점프하세요! (연속 점프는 1초 대기 필요)<br>독수리(🦅)를 피하고 아이템(🚀 로켓, 🎈 풍선, ⭐ 별, 🛡️ 방패)을 먹어보세요!<br>🚀 로켓을 먹으면 50m 동안 충돌 없이 무적으로 솟구쳐요! 🎈 풍선은 힘차게 한 번 점프해요.<br>⚠️ 붉은 줄이 나타나면 곧 번개⚡가 떨어져요! 재빨리 옆으로 피하세요. (맞으면 2초간 급강하)<br>💨 바람 경고가 뜨면 곧 강풍이 대각선 아래로 비스듬히 불어요! 옆으로 밀리면서 살짝 아래로도 눌리니 균형을 잡으세요. (방패 중엔 안전)<br>🌠 1000m를 넘으면 별똥별이 위에서 포물선을 그리며 떨어져요! 부딪히면 300m 동안 충돌 없이 추락해요.<br>⭐ 별을 5개 모으면 무적 로켓 상승으로 하늘 높이 솟구쳐요!</p>
   `;
   setTimeout(() => {
     const c = document.getElementById('pjCanvas');
     c.width = c.clientWidth;
     c.height = c.clientHeight;
-    pjPlayer = {x: c.width/2, y: c.height - 250, vx: 0, vy: 0, r: 15, shieldTimer: 0, stunFallTimer: 0, starRushTimer: 0, tilt: 0};
+    pjPlayer = {x: c.width/2, y: c.height - 250, vx: 0, vy: 0, r: 15, shieldTimer: 0, stunFallTimer: 0, starRushTimer: 0, starFallRemaining: 0, rocketRushRemaining: 0, tilt: 0};
     pjCamY = 0;
     pMaxHeight = 0;
     pjStarCount = 0;
@@ -6803,6 +6806,8 @@ function initPotJump() {
     pjLightningTimer = 240 + Math.random() * 180;
     pjWinds = [];
     pjWindTimer = 480 + Math.random() * 360; // 강풍은 번개보다 드물게: 약 8~14초 간격
+    pjShootingStars = [];
+    pjShootingStarTimer = 240 + Math.random() * 180; // 번개와 동일한 빈도: 약 4~7초
     pjLastFrameTime = 0;
     pjStarField = Array.from({length: 50}, () => ({
       x: Math.random() * c.width, y: Math.random() * c.height,
@@ -6871,7 +6876,7 @@ function setupPjInput(c) {
   let pjLastJumpTime = 0;
   const down = (x, y) => {
     if(Date.now() - pjLastJumpTime < 1000) return;
-    if(pjPlayer.stunFallTimer > 0 || pjPlayer.starRushTimer > 0) return; // 추락/로켓 상승 중엔 조작 불가
+    if(pjPlayer.stunFallTimer > 0 || pjPlayer.starRushTimer > 0 || pjPlayer.starFallRemaining > 0 || pjPlayer.rocketRushRemaining > 0) return; // 추락/상승 중엔 조작 불가
     pjDrag.active = true;
     pjDrag.sx = x; pjDrag.sy = y;
     pjDrag.ex = x; pjDrag.ey = y;
@@ -6947,6 +6952,17 @@ function pjLoop(timestamp) {
     pjPlayer.starRushTimer -= dt;
     pjPlayer.vy = -56; // 별 5개 완성: 무적 로켓 상승
     pjPlayer.vx *= Math.pow(0.9, dt);
+  } else if (pjPlayer.rocketRushRemaining > 0) {
+    const riseSpeed = 22;
+    pjPlayer.vy = -riseSpeed; // 🚀 아이템: 50m 무적 상승 (충돌 없이)
+    pjPlayer.rocketRushRemaining -= riseSpeed * dt;
+    if (pjPlayer.rocketRushRemaining < 0) pjPlayer.rocketRushRemaining = 0;
+    pjPlayer.vx *= Math.pow(0.9, dt);
+  } else if (pjPlayer.starFallRemaining > 0) {
+    const fallSpeed = 22; // 별똥별에 맞아 충돌 없이 급강하
+    pjPlayer.vy = fallSpeed;
+    pjPlayer.starFallRemaining -= fallSpeed * dt;
+    if (pjPlayer.starFallRemaining < 0) pjPlayer.starFallRemaining = 0;
   } else if (pjPlayer.stunFallTimer > 0) {
     pjPlayer.stunFallTimer -= dt;
     pjPlayer.vy = 15; // 번개에 맞아 빠르게 추락
@@ -6964,8 +6980,8 @@ function pjLoop(timestamp) {
   if(pjPlayer.x < pjPlayer.r) { pjPlayer.x = pjPlayer.r; pjPlayer.vx *= -0.8; }
   if(pjPlayer.x > c.width - pjPlayer.r) { pjPlayer.x = c.width - pjPlayer.r; pjPlayer.vx *= -0.8; }
   
-  // Platform collision (Solid bouncing) - 별 로켓 상승 중에는 모든 블록을 무시하고 통과
-  if (pjPlayer.starRushTimer <= 0) for(let p of pjPlatforms) {
+  // Platform collision (Solid bouncing) - 별 로켓 상승/미니 로켓 상승/별똥별 추락 중에는 모든 블록을 무시하고 통과
+  if (pjPlayer.starRushTimer <= 0 && pjPlayer.starFallRemaining <= 0 && pjPlayer.rocketRushRemaining <= 0) for(let p of pjPlatforms) {
     let testX = pjPlayer.x;
     let testY = pjPlayer.y;
     
@@ -7022,7 +7038,7 @@ function pjLoop(timestamp) {
     let distX = pjPlayer.x - testX;
     let distY = pjPlayer.y - testY;
     if ((distX*distX + distY*distY) <= pjPlayer.r * pjPlayer.r) {
-      if (pjPlayer.shieldTimer > 0 || pjPlayer.starRushTimer > 0) continue; // 방패/로켓 상승 중엔 무시
+      if (pjPlayer.shieldTimer > 0 || pjPlayer.starRushTimer > 0 || pjPlayer.starFallRemaining > 0 || pjPlayer.rocketRushRemaining > 0) continue; // 방패/상승/추락 중엔 무시
       // Hit a bird! Stunned drop
       pjPlayer.vx = (pjPlayer.x > b.x + b.w/2) ? 3 : -3;
       pjPlayer.vy = 2; // drop
@@ -7039,12 +7055,14 @@ function pjLoop(timestamp) {
     if (dx*dx + dy*dy <= (pjPlayer.r + it.w/2)*(pjPlayer.r + it.w/2)) {
       it.active = false;
       if(it.type === '🚀') {
-        pjPlayer.vy = -18; // Massive super jump
+        pjPlayer.rocketRushRemaining = 500; // 50m 무적 상승 (충돌 없이)
+        pjPlayer.stunFallTimer = 0;
+        pjPlayer.starFallRemaining = 0;
         pjPlayer.vx = 0;
         gpsTone(700,0,0.06,'square',0.2); gpsTone(1000,0.05,0.1,'square',0.18);
-        toast('🚀 슈퍼 로켓 점프!');
+        toast('🚀 무적 로켓 발사! 50m 동안 충돌 없이 상승!');
       } else if(it.type === '🎈') {
-        pjPlayer.vy = -6; // Light floaty jump
+        pjPlayer.vy = -18; // 예전 로켓만큼 강하게 솟구치는 점프 (무적은 아님)
         pjPlayer.vx = 0;
         gpsTone(500,0,0.08,'triangle',0.18);
         toast('🎈 두둥실 풍선 점프!');
@@ -7091,7 +7109,7 @@ function pjLoop(timestamp) {
       gpsTone(200, 0, 0.15, 'sawtooth', 0.2);
     }
     if (lt.state === 'strike') {
-      if (pjPlayer.shieldTimer <= 0 && pjPlayer.stunFallTimer <= 0 && pjPlayer.starRushTimer <= 0 &&
+      if (pjPlayer.shieldTimer <= 0 && pjPlayer.stunFallTimer <= 0 && pjPlayer.starRushTimer <= 0 && pjPlayer.starFallRemaining <= 0 && pjPlayer.rocketRushRemaining <= 0 &&
           pjPlayer.x > lt.x - lt.w/2 && pjPlayer.x < lt.x + lt.w/2) {
         pjPlayer.stunFallTimer = 120; // 2초간 급강하 (60fps 기준)
         gpsSoundWrong();
@@ -7120,7 +7138,7 @@ function pjLoop(timestamp) {
         gpsTone(180, 0, 0.4, 'sine', 0.08);
       }
     } else if (wd.state === 'gust') {
-      if (pjPlayer.shieldTimer <= 0 && pjPlayer.starRushTimer <= 0) {
+      if (pjPlayer.shieldTimer <= 0 && pjPlayer.starRushTimer <= 0 && pjPlayer.starFallRemaining <= 0 && pjPlayer.rocketRushRemaining <= 0) {
         let targetVx = wd.dir * wd.target * Math.cos(PJ_WIND_ANGLE);
         pjPlayer.vx += (targetVx - pjPlayer.vx) * Math.min(0.055 * dt, 1);
         pjPlayer.vy += wd.target * Math.sin(PJ_WIND_ANGLE) * 0.055 * dt; // 대각선 아래로도 지속적으로 밀림 (중력과 겹쳐 상승 방해)
@@ -7143,6 +7161,42 @@ function pjLoop(timestamp) {
   document.getElementById('pjScore').innerText = Math.floor(pMaxHeight / 10);
   const curHeightEl = document.getElementById('pjCurrentHeight');
   if(curHeightEl) curHeightEl.innerText = Math.floor(heightSc / 10);
+  
+  // 🌠 별똥별: 1000m를 넘으면 번개와 같은 빈도로, 위에서 포물선을 그리며 떨어짐
+  if (heightSc / 10 >= PJ_STAR_MIN_HEIGHT_M) {
+    pjShootingStarTimer -= dt;
+    if (pjShootingStarTimer <= 0) {
+      const startX = Math.random() * c.width;
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      const drift = (120 + Math.random() * 220) * dir; // 낙하하며 옆으로 휘어지는 정도
+      pjShootingStars.push({ startX, drift, t: 0, duration: 70 + Math.random() * 40, warnTimer: 20, x: startX, y: -40, hit: false });
+      pjShootingStarTimer = 240 + Math.random() * 180; // 번개와 동일한 빈도: 약 4~7초
+    }
+    for (let i = pjShootingStars.length - 1; i >= 0; i--) {
+      let ss = pjShootingStars[i];
+      if (ss.warnTimer > 0) {
+        ss.warnTimer -= dt;
+      } else {
+        ss.t += dt / ss.duration;
+        ss.y = -40 + (c.height + 80) * ss.t; // 위 → 아래로 낙하 (일정 속도)
+        ss.x = ss.startX + ss.drift * ss.t * ss.t; // 낙하하며 옆으로 휘어지는 포물선
+        
+        if (!ss.hit && pjPlayer.shieldTimer <= 0 && pjPlayer.stunFallTimer <= 0 && pjPlayer.starRushTimer <= 0 && pjPlayer.starFallRemaining <= 0 && pjPlayer.rocketRushRemaining <= 0) {
+          const playerScreenY = pjPlayer.y + pjCamY;
+          const ddx = pjPlayer.x - ss.x, ddy = playerScreenY - ss.y;
+          if (Math.sqrt(ddx*ddx + ddy*ddy) < pjPlayer.r + 16) {
+            ss.hit = true;
+            pjPlayer.starFallRemaining = 3000; // 300m 급강하 (충돌 없이)
+            pjPlayer.stunFallTimer = 0;
+            pjPlayer.vx = 0;
+            gpsSoundWrong();
+            toast('🌠 별똥별에 맞았다! 300m 동안 충돌 없이 추락!');
+          }
+        }
+        if (ss.t >= 1) pjShootingStars.splice(i, 1);
+      }
+    }
+  }
   
   // ── 배경: 높이에 따라 하늘색이 낮→노을→노을→우주로 자연스럽게 변함 ──
   const sky = pjSkyColor(heightSc);
@@ -7266,11 +7320,24 @@ function pjLoop(timestamp) {
     }
   }
   
+  // 🚀 무적 로켓(50m) 상승 중 불꽃 궤적
+  if (pjPlayer.rocketRushRemaining > 0) {
+    for (let k = 0; k < 3; k++) {
+      ctx.save();
+      ctx.globalAlpha = 0.55 + Math.random() * 0.4;
+      ctx.font = (12 + Math.random()*8) + 'px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('🔥', pjPlayer.x + (Math.random()-0.5)*20, pjPlayer.y + 20 + Math.random()*20);
+      ctx.restore();
+    }
+  }
+  
   // 방패/로켓 상승 중 보호막 링
-  if (pjPlayer.shieldTimer > 0) {
+  if (pjPlayer.shieldTimer > 0 || pjPlayer.rocketRushRemaining > 0) {
     ctx.beginPath();
     ctx.arc(pjPlayer.x, pjPlayer.y, pjPlayer.r + 8, 0, Math.PI*2);
-    ctx.strokeStyle = pjPlayer.starRushTimer > 0
+    ctx.strokeStyle = (pjPlayer.starRushTimer > 0 || pjPlayer.rocketRushRemaining > 0)
       ? `rgba(255,210,60,${0.55 + 0.3*Math.sin(Date.now()/80)})`
       : `rgba(80,180,255,${0.5 + 0.3*Math.sin(Date.now()/100)})`;
     ctx.lineWidth = 3;
@@ -7349,6 +7416,41 @@ function pjLoop(timestamp) {
       ctx.textBaseline = 'top';
       ctx.fillStyle = 'rgba(255,255,255,0.85)';
       ctx.fillText('💨', c.width/2, 8);
+    }
+  }
+  
+  // 🌠 별똥별 경고/낙하 표시 (화면 고정 위치, 카메라 스크롤과 무관)
+  for (let ss of pjShootingStars) {
+    if (ss.warnTimer > 0) {
+      const tw = 0.5 + 0.5 * Math.sin(Date.now()/60);
+      ctx.save();
+      ctx.globalAlpha = tw;
+      ctx.font = 'bold 24px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText('✨', ss.startX, 6);
+      ctx.restore();
+    } else {
+      // 지나온 궤적에 은은한 꼬리
+      ctx.save();
+      for (let k = 1; k <= 5; k++) {
+        const tt = Math.max(0, ss.t - k * 0.025);
+        const ty = -40 + (c.height + 80) * tt;
+        const tx = ss.startX + ss.drift * tt * tt;
+        ctx.globalAlpha = 0.28 * (1 - k/5);
+        ctx.fillStyle = '#fff9c4';
+        ctx.beginPath();
+        ctx.arc(tx, ty, 10 - k, 0, Math.PI*2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.font = '30px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(255,245,150,0.9)';
+      ctx.shadowBlur = 14;
+      ctx.fillText('🌠', ss.x, ss.y);
+      ctx.restore();
     }
   }
   
