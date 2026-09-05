@@ -202,10 +202,10 @@ body.theme-dark .hover\:bg-orange-100:hover {
 
 <!-- ═══ SIDEBAR ═══ -->
 <aside class="w-64 bg-white flex flex-col shrink-0 border-r border-slate-200 shadow-sm z-20 relative">
-  <div class="sidebar-hd flex items-center gap-3">
-    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-xl shadow-sm border border-indigo-100">🎒</div>
+  <div class="sidebar-hd flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity" onclick="switchTab('about')" title="G.P.S Edu 소개 보기">
+    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-xl shadow-sm border border-indigo-100">🧭</div>
     <div>
-      <p class="text-[10px] font-bold text-slate-500 mb-0.5">교육의</p>
+      <p class="text-[10px] font-bold text-slate-500 mb-0.5">교육의 길잡이</p>
       <h1 class="text-[17px] font-black text-slate-800 tracking-tight leading-tight">G.P.S Edu</h1>
       <p class="text-[10px] font-bold text-slate-500 mt-0.5">Teacher Suite & Arcade</p>
     </div>
@@ -443,8 +443,8 @@ body.theme-dark .hover\:bg-orange-100:hover {
     <section id="whiteboard" class="tab-content max-w-6xl mx-auto space-y-6">
       <div class="card p-6 md:p-8 min-h-[75vh] relative overflow-hidden flex flex-col items-center justify-center transition-all duration-500" id="wbContainer" style="background-color: var(--wb-bg, #ffffff);">
         <div class="absolute top-4 right-4 z-10 flex gap-2">
-          <button onclick="setWbTheme('simple')" id="btnWbSimple" class="px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-transform hover:scale-105 border-2" style="background:#1E293B; color:#FFF; border-color:#0F172A;">단정 모드</button>
-          <button onclick="setWbTheme('cute')" id="btnWbCute" class="px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-transform hover:scale-105 border-2" style="background:#FDF2F8; color:#BE185D; border-color:#FBCFE8;">캐릭터 모드</button>
+          <button onclick="setWbTheme('simple')" id="btnWbSimple" class="px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all hover:scale-105 border-2" style="background:#1E293B; color:#FFF; border-color:#0F172A;">단정 모드</button>
+          <button onclick="setWbTheme('cute')" id="btnWbCute" class="px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all hover:scale-105 border-2" style="background:#FDF2F8; color:#BE185D; border-color:#FBCFE8;">캐릭터 모드</button>
         </div>
         
         <div class="w-full flex flex-col-reverse md:flex-row gap-8 items-center justify-center h-full relative z-0">
@@ -640,6 +640,71 @@ body.theme-dark .hover\:bg-orange-100:hover {
         <div id="utilContent"></div>
       </div>
     </section>
+    <section id="about" class="tab-content max-w-4xl mx-auto space-y-6">
+      <button onclick="switchTab('dashboard')" class="btn btn-ghost text-xs">← 대시보드로</button>
+      <div class="card p-8 md:p-10 text-center" style="background:linear-gradient(135deg,#EEF2FF,#F0FDFA);">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-white flex items-center justify-center text-4xl shadow-md border border-indigo-100 mb-4">🧭</div>
+        <p class="text-sm font-black text-indigo-500 tracking-wide">교육의 길잡이</p>
+        <h1 class="text-4xl font-black text-slate-800 mt-1 mb-3 tracking-tight">G.P.S Edu</h1>
+        <p class="text-slate-500 font-bold leading-relaxed">Gamification Pedagogy Society Education</p>
+        <p class="text-sm text-slate-400 font-medium mt-1">게이미피케이션 교육학 협회</p>
+      </div>
+
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-2xl shadow-sm">💡</div>
+          <h3 class="text-lg font-black text-slate-800">G.P.S Edu는 어떤 이름인가요?</h3>
+        </div>
+        <p class="text-[15px] text-slate-600 leading-relaxed font-medium">
+          <strong class="text-indigo-600">G.P.S Edu</strong>는 <strong>Gamification Pedagogy Society Education</strong>의 줄임말로,
+          '게임처럼 즐겁게 배우는 수업'을 함께 연구하고 나누는 교육 공동체라는 뜻을 담고 있습니다.
+          길을 잃지 않도록 방향을 알려주는 GPS처럼, 바쁜 선생님들의 수업 준비 시간을 아껴주고
+          교실에 게이미피케이션(놀이처럼 학습하는 방식)을 손쉽게 적용할 수 있도록 안내하는 '교육의 길잡이'가 되고자 합니다.
+        </p>
+      </div>
+
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-2xl shadow-sm">🌱</div>
+          <h3 class="text-lg font-black text-slate-800">지금 준비하고 있어요</h3>
+        </div>
+        <p class="text-[15px] text-slate-600 leading-relaxed font-medium">
+          G.P.S Edu는 <strong class="text-rose-500">게이미피케이션 교육을 함께 연구할 선생님들을 모으기 위해 이제 막 구상을 시작한 연구회</strong>입니다.
+          수업에 게임적 요소를 접목해 학생들의 참여와 몰입을 이끌어내는 방법에 관심 있는 선생님이라면 누구나 함께할 수 있어요.
+          이 플랫폼도 그런 고민을 담아 하나씩 만들어가고 있는 도구입니다.
+        </p>
+      </div>
+
+      <div class="card p-6 md:p-8" style="background:linear-gradient(135deg,#FFF7ED,#FEF2F2);">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-2xl shadow-sm">📣</div>
+          <h3 class="text-lg font-black text-slate-800">함께할 선생님을 찾고 있어요</h3>
+        </div>
+        <p class="text-[15px] text-slate-600 leading-relaxed font-medium">
+          아직 첫걸음을 떼기 전, 함께할 동료를 모으는 단계입니다.
+          '수업을 좀 더 재미있게 만들고 싶다', '게이미피케이션이 궁금하다'는 선생님이라면 누구든 환영합니다.
+          이 사이트를 사용해보시고 관심이 생기셨다면, 주변의 다른 선생님들께도 G.P.S Edu를 알려주세요!
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card p-5 text-center">
+          <div class="text-3xl mb-2">🎮</div>
+          <p class="font-black text-slate-800 text-sm">게이미피케이션</p>
+          <p class="text-xs text-slate-500 font-medium mt-1">놀이처럼 즐겁게 배우는 수업 설계</p>
+        </div>
+        <div class="card p-5 text-center">
+          <div class="text-3xl mb-2">🤝</div>
+          <p class="font-black text-slate-800 text-sm">교사 연구 공동체</p>
+          <p class="text-xs text-slate-500 font-medium mt-1">함께할 선생님을 모으는 중</p>
+        </div>
+        <div class="card p-5 text-center">
+          <div class="text-3xl mb-2">🧭</div>
+          <p class="font-black text-slate-800 text-sm">교육의 길잡이</p>
+          <p class="text-xs text-slate-500 font-medium mt-1">현장 선생님을 위한 실용적인 도구</p>
+        </div>
+      </div>
+    </section>
   </div>
 </main>
 
@@ -703,7 +768,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
 <script>
 /* ══ 상수 ══ */
 const K_API='gps_api_v1', K_REC='gps_rec_v1';
-const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},whiteboard:{title:'전자칠판 화면',icon:'🖥️'},education:{title:'교육자료',icon:'📚'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'}};
+const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},whiteboard:{title:'전자칠판 화면',icon:'🖥️'},education:{title:'교육자료',icon:'📚'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'},about:{title:'G.P.S Edu 소개',icon:'🧭'}};
 
 
 
@@ -810,7 +875,7 @@ function toggleSupportMenu(){
 /* ══ 전자칠판 화면 ══ */
 let wbTimerId = null;
 let wbTimetable = ['국어', '수학', '수학', '미술', '미술', '체육'];
-let wbTheme = 'simple';
+let wbTheme = 'cute';
 let wbCharacters = ['🐻', '🐰', '🦁', '🐶', '🐱', '🐣'];
 
 function initWhiteboard() {
@@ -840,6 +905,16 @@ function setWbTheme(theme) {
   const greeting = document.getElementById('wbGreeting');
   const character = document.getElementById('wbCharacter');
   if(!root) return;
+  
+  const btnSimple = document.getElementById('btnWbSimple');
+  const btnCute = document.getElementById('btnWbCute');
+  if(btnSimple && btnCute) {
+    // 현재 선택된 모드 버튼은 진하게, 나머지는 살짝 흐리게 표시해 어떤 모드인지 한눈에 보이도록 함
+    btnSimple.style.opacity = theme === 'simple' ? '1' : '0.45';
+    btnSimple.style.boxShadow = theme === 'simple' ? '0 0 0 3px rgba(30,41,59,0.35)' : '';
+    btnCute.style.opacity = theme === 'cute' ? '1' : '0.45';
+    btnCute.style.boxShadow = theme === 'cute' ? '0 0 0 3px rgba(236,72,153,0.35)' : '';
+  }
   
   if(theme === 'simple') {
     root.style.setProperty('--wb-bg', '#ffffff');
@@ -6778,6 +6853,7 @@ window.showFreeGame = function(id) {
 };
 
 let pjAnim;
+let pjManualPause = false; // 사용자가 직접 누르는 일시정지 버튼
 let pjLastFrameTime = 0; // 화면 주사율에 상관없이 물리 속도를 동일하게 만들기 위한 델타타임 기준값
 let pjPlayer = {x: 200, y: 500, vx: 0, vy: 0, r: 15, shieldTimer: 0, stunFallTimer: 0, starRushTimer: 0, starFallRemaining: 0, rocketRushRemaining: 0, tilt: 0};
 let pjPlatforms = [];
@@ -6809,6 +6885,11 @@ function initPotJump() {
         📏 현재 높이: <span id="pjCurrentHeight">0</span>m<br>
         <span id="pjStarUI">☆☆☆☆☆</span>
       </div>
+      <button onclick="pjTogglePause()" id="pjPauseBtn" style="position:absolute; top:10px; right:10px; background:rgba(20,20,40,0.6); color:white; width:42px; height:42px; border-radius:50%; font-size:18px; z-index:40; box-shadow:0 2px 8px rgba(0,0,0,0.25);">⏸</button>
+      <div id="pjPauseOverlay" class="hidden" style="position:absolute; inset:0; background:rgba(0,0,0,0.8); flex-direction:column; align-items:center; justify-content:center; color:white; z-index:50;">
+        <h2 style="font-size:2rem; font-weight:900; color:#FBBF24; margin-bottom:1.5rem;">⏸ 일시정지</h2>
+        <button onclick="pjTogglePause()" class="btn bg-amber-500 text-slate-900 px-8 py-3 text-lg">▶ 계속하기</button>
+      </div>
     </div>
     <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">항아리를 당겼다 놓아 점프하세요! (연속 점프는 1초 대기 필요)<br>독수리(🦅)를 피하고 아이템(🚀 로켓, 🎈 풍선, ⭐ 별, 🛡️ 방패)을 먹어보세요!<br>🚀 로켓을 먹으면 50m 동안 충돌 없이 무적으로 솟구쳐요! 🎈 풍선은 힘차게 한 번 점프해요.<br>⚠️ 붉은 줄이 나타나면 곧 번개⚡가 떨어져요! 재빨리 옆으로 피하세요. (맞으면 2초간 급강하)<br>💨 바람 경고가 뜨면 곧 강풍이 대각선 아래로 비스듬히 불어요! 옆으로 밀리면서 살짝 아래로도 눌리니 균형을 잡으세요. (방패 중엔 안전)<br>🌠 1000m를 넘으면 별똥별이 나타나요! 위에서 포물선으로 떨어지기도 하고, 화면 좌우에서 빠르게 가로질러 날아오기도 해요! 부딪히면 300m 동안 충돌 없이 추락해요.<br>⭐ 별을 5개 모으면 무적 로켓 상승으로 하늘 높이 솟구쳐요!</p>
   `;
@@ -6827,6 +6908,9 @@ function initPotJump() {
     pjShootingStars = [];
     pjShootingStarTimer = 240 + Math.random() * 180; // 번개와 동일한 빈도: 약 4~7초
     pjLastFrameTime = 0;
+    pjManualPause = false;
+    document.getElementById('pjPauseOverlay')?.classList.add('hidden');
+    const pjpb = document.getElementById('pjPauseBtn'); if(pjpb) pjpb.textContent = '⏸';
     pjStarField = Array.from({length: 50}, () => ({
       x: Math.random() * c.width, y: Math.random() * c.height,
       r: Math.random() * 1.4 + 0.4, tw: Math.random() * 10
@@ -6890,9 +6974,18 @@ function generateMorePj(cw, targetY) {
   }
 }
 
+function pjTogglePause() {
+  pjManualPause = !pjManualPause;
+  const overlay = document.getElementById('pjPauseOverlay');
+  const btn = document.getElementById('pjPauseBtn');
+  if(overlay) overlay.classList.toggle('hidden', !pjManualPause);
+  if(btn) btn.textContent = pjManualPause ? '▶' : '⏸';
+}
+
 function setupPjInput(c) {
   let pjLastJumpTime = 0;
   const down = (x, y) => {
+    if(pjManualPause) return; // 일시정지 중엔 조작 무시
     if(Date.now() - pjLastJumpTime < 1000) return;
     if(pjPlayer.stunFallTimer > 0 || pjPlayer.starRushTimer > 0 || pjPlayer.starFallRemaining > 0 || pjPlayer.rocketRushRemaining > 0) return; // 추락/상승 중엔 조작 불가
     pjDrag.active = true;
@@ -6964,6 +7057,12 @@ function pjLoop(timestamp) {
   let dt = (timestamp - pjLastFrameTime) / (1000/60);
   dt = Math.min(Math.max(dt, 0), 2); // 물리 충돌(터널링) 방지를 위해 상한을 조금 더 보수적으로 설정
   pjLastFrameTime = timestamp;
+  
+  if (pjManualPause) {
+    // 일시정지 중엔 물리 계산을 멈추고, 재개 시 델타타임이 크게 튀지 않도록 시간 기준만 계속 갱신
+    pjAnim = requestAnimationFrame(pjLoop);
+    return;
+  }
   
   // Physics
   if (pjPlayer.starRushTimer > 0) {
@@ -8249,7 +8348,12 @@ let mrScore = 0;
 let mrGameOver = false;
 let mrRunCoins = 0;
 let mrIsPaused = false;
+let mrManualPause = false; // 사용자가 직접 누르는 일시정지 버튼용 (내부 보상 선택 일시정지와는 별개)
 let mrRewardQueue = [];
+let mrEarlySpawn150Done = false; // 초반 지루함 방지용 150m 지점 몬스터 1마리
+let mrEarlySpawn250Done = false; // 초반 지루함 방지용 250m 지점 몬스터 1마리
+let mrFieldItems = []; // 필드에 떨어지는 일반 아이템(👟⏳📯💊🛡️💰)
+let mrBuffs = { speedTimer: 0, dmgTimer: 0, timeStopTimer: 0 }; // 필드 아이템으로 얻는 임시 버프
 let mrChests = [];
 
 let mrData = JSON.parse(localStorage.getItem('gps_mr_data')) || {
@@ -8263,7 +8367,7 @@ if(mrData.upgrades.startSword === undefined) {
 }
 function mrSave() { localStorage.setItem('gps_mr_data', JSON.stringify(mrData)); }
 
-let mrPlayer = { x: 0, count: 1, r: 15, dmg: 1, rate: 0, swords: 0, pets: 0, ice: 0, fire: 0, zap: 0, clones: 0, weapon: 'default' };
+let mrPlayer = { x: 0, targetX: 0, count: 1, r: 15, dmg: 1, rate: 0, swords: 0, pets: 0, ice: 0, fire: 0, zap: 0, clones: 0, pierce: 0, regen: 0, weapon: 'default' };
 let mrEnemyBullets = [];
 let mrEnemyLasers = [];
 let mrZaps = [];
@@ -8274,7 +8378,7 @@ let mrEnIdCounter = 0;
 
 let mrPetCounts = { dog: 0, turtle: 0, cat: 0, dragon: 0 };
 let mrTurtlesRot = 0;
-let mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false };
+let mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false, berserkEngine: false, gamblerDice: false, shadowPact: false, sniperEye: false };
 let mrParticles = [];
 let mrShakeMag = 0;
 let mrShakeTime = 0;
@@ -8465,6 +8569,19 @@ function initMathRunner() {
             <li><strong class="text-white">속성(🧊빙결, 🔥불꽃, 🌩️번개):</strong> 5레벨 달성 시 강력한 시너지 효과 발동!</li>
             <li><strong class="text-white">🧲 슈퍼 자석:</strong> 4초 동안 화면 전체의 상자와 코인을 강하게 끌어당깁니다. (시간제한)</li>
             <li><strong class="text-white">💣 싹쓸이 폭탄:</strong> 획득 즉시 화면 안의 모든 적과 함정을 제거합니다.</li>
+            <li><strong class="text-white">🏹 관통탄:</strong> 총알이 적을 뚫고 지나가 뒤에 있는 적까지 맞힙니다. (회전검처럼 관통, 일반 총알에 적용)</li>
+            <li><strong class="text-white">🩹 재생의 팔찌:</strong> 초당 인원수가 서서히 자동으로 회복됩니다.</li>
+          </ul>
+
+          <h3 class="text-lg font-bold text-cyan-300 mt-4 border-b border-slate-600 pb-1 mb-2">🎒 필드 아이템 (땅에 떨어진 즉시/일시 효과)</h3>
+          <p class="text-slate-200 mb-2">이동 중 필드 위에 떠 있는 아이템은 지나가기만 해도 즉시 효과가 발동해요. (영구 강화가 아닌 짧은 시간 동안의 버프입니다)</p>
+          <ul class="list-disc pl-5 mb-4 text-slate-200">
+            <li><strong class="text-white">👟 신속의 신발:</strong> 8초간 좌우 이동 반응 속도가 빨라집니다.</li>
+            <li><strong class="text-white">⏳ 시간 정지 구슬:</strong> 3초간 모든 적과 적의 총알이 그대로 멈춥니다. (내 공격은 그대로 작동!)</li>
+            <li><strong class="text-white">📯 사기진작 나팔:</strong> 10초간 모든 공격의 데미지가 20% 늘어납니다.</li>
+            <li><strong class="text-white">💊 활력의 캡슐:</strong> 즉시 인원수 +5 회복</li>
+            <li><strong class="text-white">🛡️ 방어막 구슬:</strong> 4초간 무적 상태가 됩니다.</li>
+            <li><strong class="text-white">💰 코인 주머니:</strong> 즉시 코인 15~25개 획득</li>
           </ul>
 
           <h3 class="text-lg font-bold text-indigo-300 mt-4 border-b border-slate-600 pb-1 mb-2">🔮 제단 & 무기 선택</h3>
@@ -8493,7 +8610,11 @@ function initMathRunner() {
           <ul class="list-disc pl-5 text-slate-200">
             <li><strong class="text-white">🍷 유리 대포:</strong> 데미지 3배 상승, 대신 피격 시 받는 피해도 5배</li>
             <li><strong class="text-white">🩸 황금의 피:</strong> 피격 시 인원수 대신 코인이 100씩 깎임</li>
-            <li><strong class="text-white">📜 저주받은 계약:</strong> 적이 2배로 등장하지만 상자가 100% 드롭됨</li>
+            <li><strong class="text-white">📜 저주받은 계약:</strong> 몹이 더 자주 늘어나고 상자가 100% 드롭되지만, 받는 피해가 35% 늘어남</li>
+            <li><strong class="text-white">🔫 폭주 엔진:</strong> 연사속도 +40%, 대신 총알 데미지 -25%</li>
+            <li><strong class="text-white">🎲 도박사의 주사위:</strong> 게이트 효과가 50% 확률로 2배 크게 적용됨</li>
+            <li><strong class="text-white">🌑 그림자 계약:</strong> 정예몹·보스가 더 자주 나오지만, 처치 시 코인 보상 2배</li>
+            <li><strong class="text-white">🎯 저격수의 눈:</strong> 크리티컬(3배 데미지) 확률 +15%, 대신 번개 연쇄·유성 스플래시 효과 사라짐</li>
           </ul>
         </div>
         <button onclick="document.getElementById('mrHelpModal').classList.add('hidden'); document.getElementById('mrHelpModal').classList.remove('flex');" class="mt-6 bg-slate-600 hover:bg-slate-500 px-8 py-2 rounded-full font-bold">닫기</button>
@@ -8506,6 +8627,18 @@ function initMathRunner() {
         거리: <span id="mrDist">0</span>m<br>
         코인: 💰 <span id="mrInGameCoins">0</span>
         <div id="mrTurtleUI" style="display:none; margin-top:4px; font-size:16px;"></div>
+      </div>
+      
+      <div id="mrBuffUI" style="position:absolute; top:10px; left:50%; transform:translateX(-50%); display:flex; gap:6px; pointer-events:none; z-index:35;"></div>
+      
+      <button onclick="mrTogglePause()" id="mrPauseBtn" style="position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.6); color:white; width:42px; height:42px; border-radius:50%; font-size:18px; z-index:40;">⏸</button>
+      
+      <div id="mrPauseOverlay" class="hidden absolute inset-0 bg-black/80 flex-col items-center justify-center text-white z-50">
+        <h2 class="text-4xl font-black text-amber-400 mb-6">⏸ 일시정지</h2>
+        <div class="flex gap-4">
+          <button onclick="mrTogglePause()" class="btn bg-amber-500 text-slate-900 px-8 py-3 text-lg">▶ 계속하기</button>
+          <button onclick="mrQuitToMenu()" class="btn bg-slate-600 px-6 py-3 text-lg">🏠 상점/메뉴</button>
+        </div>
       </div>
       
       <div id="mrGameOver" class="hidden absolute inset-0 bg-black/80 flex-col items-center justify-center text-white z-50">
@@ -8533,6 +8666,28 @@ function initMathRunner() {
     <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">좌우로 드래그하여 이동하세요! 몬스터를 요격하고, 상자를 부숴 보상을 얻으세요!<br>가시 함정을 피하고, 다양한 게이트로 스펙을 올려보세요.</p>
   `;
 }
+
+window.mrTogglePause = function() {
+  if (mrGameOver) return;
+  mrManualPause = !mrManualPause;
+  const overlay = document.getElementById('mrPauseOverlay');
+  const btn = document.getElementById('mrPauseBtn');
+  if(overlay) { overlay.classList.toggle('hidden', !mrManualPause); overlay.classList.toggle('flex', mrManualPause); }
+  if(btn) btn.textContent = mrManualPause ? '▶' : '⏸';
+};
+
+window.mrQuitToMenu = function() {
+  // 판을 확실히 끝내고(루프가 새로 그려진 화면 위에서 계속 도는 일이 없도록) 이번 판 코인을 정식으로 반영한 뒤 메뉴로 이동
+  if (mrAnim) cancelAnimationFrame(mrAnim);
+  mrGameOver = true;
+  mrManualPause = false;
+  mrData.coins += mrRunCoins;
+  mrRunCoins = 0;
+  mrSave();
+  const overlay = document.getElementById('mrPauseOverlay');
+  if(overlay) { overlay.classList.add('hidden'); overlay.classList.remove('flex'); }
+  initMathRunner();
+};
 
 window.mrGetCost = function(level) {
   if (level === 1) return 10;
@@ -8578,6 +8733,7 @@ window.mrStartGame = function() {
   c.height = c.clientHeight;
   
   mrPlayer.x = c.width / 2;
+  mrPlayer.targetX = c.width / 2;
   mrPlayer.count = mrData.upgrades.count;
   mrPlayer.dmg = mrData.upgrades.dmg;
   mrPlayer.rate = mrData.upgrades.rate;
@@ -8587,13 +8743,15 @@ window.mrStartGame = function() {
   mrPlayer.fire = 0;
   mrPlayer.zap = 0;
   mrPlayer.clones = 0;
+  mrPlayer.pierce = 0;
+  mrPlayer.regen = 0;
   mrPlayer.weapon = 'default';
   mrPlayer.r = 15;
   mrPlayer.magnet = false;
   mrPlayer.magnetTimer = 0;
   
   mrPetCounts = { dog: 0, turtle: 0, cat: 0, dragon: 0 };
-  mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false };
+  mrRelics = { glassCannon: false, goldenBlood: false, cursedPact: false, berserkEngine: false, gamblerDice: false, shadowPact: false, sniperEye: false };
   let wrap = document.getElementById('mrGameWrapper');
   if(wrap) wrap.style.background = `linear-gradient(to bottom, ${mrBiomes[0].colors[0]}, ${mrBiomes[0].colors[1]})`;
   
@@ -8602,6 +8760,10 @@ window.mrStartGame = function() {
   mrScore = 0;
   mrRunCoins = 0;
   mrGameOver = false;
+  mrManualPause = false;
+  document.getElementById('mrPauseOverlay')?.classList.add('hidden');
+  document.getElementById('mrPauseOverlay')?.classList.remove('flex');
+  const pb = document.getElementById('mrPauseBtn'); if(pb) pb.textContent = '⏸';
   
   mrGates = [];
   mrEnemies = [];
@@ -8624,6 +8786,10 @@ window.mrStartGame = function() {
   
   mrIsPaused = false;
   mrRewardQueue = [];
+  mrEarlySpawn150Done = false;
+  mrEarlySpawn250Done = false;
+  mrFieldItems = [];
+  mrBuffs = { speedTimer: 0, dmgTimer: 0, timeStopTimer: 0 };
   
   mrSpawnEnemy(-500, c.width, false);
   
@@ -8636,9 +8802,10 @@ function setupMrInput(c) {
   let isDown = false;
   const move = (x) => {
     if(mrGameOver) return;
-    mrPlayer.x = x;
-    if(mrPlayer.x < mrPlayer.r) mrPlayer.x = mrPlayer.r;
-    if(mrPlayer.x > c.width - mrPlayer.r) mrPlayer.x = c.width - mrPlayer.r;
+    let clamped = x;
+    if(clamped < mrPlayer.r) clamped = mrPlayer.r;
+    if(clamped > c.width - mrPlayer.r) clamped = c.width - mrPlayer.r;
+    mrPlayer.targetX = clamped;
   };
   c.onmousedown = (e) => { isDown = true; move(e.offsetX); };
   c.onmousemove = (e) => { if(isDown) move(e.offsetX); };
@@ -8659,35 +8826,21 @@ function setupMrInput(c) {
   c.ontouchend = () => { isDown = false; };
 }
 
-function mrGateColor(side){
-  if(side.type !== 'math') return 'rgba(147, 51, 234, 0.82)'; // 아이템/펫 게이트는 기존 보라색 유지
-  const opColors = {
-    '+': 'rgba(22, 163, 74, 0.85)',  // 초록
-    '-': 'rgba(234, 88, 12, 0.85)',  // 주황
-    '×': 'rgba(37, 99, 235, 0.85)',  // 파랑
-    '÷': 'rgba(8, 145, 178, 0.85)'   // 청록 (➕와 확실히 구분되도록)
-  };
-  return opColors[side.op] || 'rgba(37, 99, 235, 0.82)';
-}
-
 function mrSpawnGate(y) {
   const types = ['math', 'math', 'math', 'dmg', 'rate', 'sword', 'pet_dog', 'pet_cat', 'pet_dragon', 'pet_dog', 'pet_cat'];
   
   const getGate = () => {
     let t = types[Math.floor(Math.random() * types.length)];
-    if(Math.random() < 0.0167) t = 'pet_turtle'; // 거북이 등장 빈도를 1/3로 축소 (레어템화: 기존 5% → 약 1.67%)
+    if(Math.random() < 0.05) t = 'pet_turtle'; // 5% chance to override to turtle
     
     if(t === 'math') {
-      const ops = ['+', '+', '+', '-', '×', '÷'];
+      const ops = ['+', '+', '+', '-', '×'];
       let op = ops[Math.floor(Math.random() * ops.length)];
       let val = 0;
       if(op === '+') val = Math.floor(Math.random()*5)+3; // +3 to +7
       if(op === '-') val = Math.floor(Math.random()*3)+1; // -1 to -3
       if(op === '×') val = 2; // only x2
-      if(op === '÷') val = 2; // only ÷2
-      // +와 헷갈리지 않도록 이모지 기호 + 색상으로 확실히 구분 (색상은 렌더링부 mrGateColor에서 처리)
-      const opSymbols = { '+':'➕', '-':'➖', '×':'✖️', '÷':'➗' };
-      return { type: 'math', op, val, text: `${opSymbols[op]} ${val}` };
+      return { type: 'math', op, val, text: `${op} ${val}` };
     }
     if(t === 'dmg') return { type: 'dmg', val: 1, text: `💥 공격력 +1` };
     if(t === 'rate') return { type: 'rate', val: 1, text: `⚡ 속도 UP` };
@@ -8765,7 +8918,7 @@ function mrRewardEnemy(en) {
     let chance = (mrPetCounts.cat >= 3) ? 0.5 : (0.1 * mrPetCounts.cat);
     let coins = (mrPetCounts.cat >= 3) ? 15 : 5;
     if (Math.random() < chance) {
-      mrRunCoins += coins;
+      mrRunCoins += coins * (mrRelics.shadowPact ? 2 : 1);
     }
   }
   
@@ -8797,10 +8950,12 @@ window.mrShowItemSelect = function(isBoss) {
     { type: 'fire', icon: '🔥', name: '불꽃총알', desc: isBoss ? '화상 딜 증대' : '지속 화상 피해' },
     { type: 'zap', icon: '🌩️', name: '번개총알', desc: isBoss ? '스플래시 증대' : '광역 피해' },
     { type: 'magnet', icon: '🧲', name: '슈퍼 자석', desc: '상자와 코인 끌어당김' },
-    { type: 'bomb', icon: '💣', name: '싹쓸이 폭탄', desc: '화면 내 적/함정 전멸' }
+    { type: 'bomb', icon: '💣', name: '싹쓸이 폭탄', desc: '화면 내 적/함정 전멸' },
+    { type: 'pierce', icon: '🏹', name: '관통탄', desc: isBoss ? '+3관통' : '+1관통' },
+    { type: 'regen', icon: '🩹', name: '재생의 팔찌', desc: isBoss ? '초당 +0.5 회복' : '초당 +0.1 회복' }
   ];
   
-  if (Math.random() < 0.0667) { // 거북이 등장 빈도를 1/3로 축소 (기존 20% → 약 6.67%)
+  if (Math.random() < 0.2) {
     optionsPool.push({ type: 'pet_turtle', icon: '🐢', name: '거북이 펫', desc: isBoss ? '2회 부활' : '1회 부활(희귀)' });
   }
   
@@ -8848,9 +9003,11 @@ window.mrSelectItem = function(type, isBoss) {
     toast(`💣 화면 싹쓸이!`);
   }
   else if(type === 'clone') { mrPlayer.clones += 1; mrSoundSelect(); toast(`👯 발사 열(Row) 추가!`); }
+  else if(type === 'pierce') { mrPlayer.pierce += (isBoss ? 3 : 1); mrSoundSelect(); toast(`🏹 관통탄 강화!`); }
+  else if(type === 'regen') { mrPlayer.regen += (isBoss ? 0.5 : 0.1); mrSoundSelect(); toast(`🩹 재생 능력 강화!`); }
   else { mrSoundSelect(); }
   
-  mrRunCoins += (isBoss ? 30 : 1) * (mrData.upgrades.coinMult || 1);
+  mrRunCoins += (isBoss ? 30 : 1) * (mrData.upgrades.coinMult || 1) * (mrRelics.shadowPact ? 2 : 1);
   
   document.getElementById('mrItemSelect').classList.add('hidden');
   document.getElementById('mrItemSelect').classList.remove('flex');
@@ -8866,7 +9023,11 @@ window.mrShowRelicSelect = function() {
   const relics = [
     { type: 'glassCannon', icon: '🍷', name: '유리 대포', desc: '데미지 3배 상승, 단 피격 시 받는 데미지 5배' },
     { type: 'goldenBlood', icon: '🩸', name: '황금의 피', desc: '피격 시 인원수 대신 코인이 100씩 깎임' },
-    { type: 'cursedPact', icon: '📜', name: '저주받은 계약', desc: '적 2배 등장, 상자 100% 드롭' }
+    { type: 'cursedPact', icon: '📜', name: '저주받은 계약', desc: '몹이 자주 더 많이 나오고 상자 100% 드롭, 대신 받는 피해 +35%' },
+    { type: 'berserkEngine', icon: '🔫', name: '폭주 엔진', desc: '연사속도 +40%, 대신 총알 데미지 -25%' },
+    { type: 'gamblerDice', icon: '🎲', name: '도박사의 주사위', desc: '게이트 효과가 50% 확률로 2배 크게 적용됨 (+7이 +14가 될 수도, -2가 -4가 될 수도)' },
+    { type: 'shadowPact', icon: '🌑', name: '그림자 계약', desc: '정예몹·보스가 더 자주 나오지만, 처치 시 코인 보상 2배' },
+    { type: 'sniperEye', icon: '🎯', name: '저격수의 눈', desc: '크리티컬(3배 데미지) 확률 +15%, 대신 번개 연쇄·유성 스플래시 효과 사라짐' }
   ].filter(r => !mrRelics[r.type]); // only show unobtained
   
   if (relics.length === 0) {
@@ -8947,6 +9108,69 @@ function mrSpawnTrap(y, canvasWidth) {
   });
 }
 
+/* ══════════════════════════════════════
+   🎒 일반 필드 아이템 (획득 즉시/일시적 버프 - 영구 강화인 게이트/유물과는 별개)
+══════════════════════════════════════ */
+const MR_FIELD_ITEM_POOL = [
+  { type: 'boots',  icon: '👟', weight: 2 },
+  { type: 'timestop', icon: '⏳', weight: 1 },
+  { type: 'horn',   icon: '📯', weight: 2 },
+  { type: 'potion', icon: '💊', weight: 3 },
+  { type: 'shield', icon: '🛡️', weight: 1.5 },
+  { type: 'coin',   icon: '💰', weight: 3 },
+];
+function mrPickFieldItemType() {
+  const total = MR_FIELD_ITEM_POOL.reduce((s, it) => s + it.weight, 0);
+  let r = Math.random() * total;
+  for (const it of MR_FIELD_ITEM_POOL) {
+    if (r < it.weight) return it;
+    r -= it.weight;
+  }
+  return MR_FIELD_ITEM_POOL[0];
+}
+function mrSpawnFieldItem(y, canvasWidth) {
+  const picked = mrPickFieldItemType();
+  mrFieldItems.push({
+    x: canvasWidth * 0.15 + Math.random() * (canvasWidth * 0.7),
+    y: y,
+    type: picked.type,
+    icon: picked.icon,
+    r: 22,
+    active: true
+  });
+}
+function mrSoundFieldItem(type) {
+  if (type === 'timestop') { gpsTone(880,0,0.1,'sine',0.2); gpsTone(1320,0.08,0.15,'sine',0.18); gpsTone(1760,0.16,0.2,'sine',0.16); }
+  else if (type === 'shield') { gpsTone(600,0,0.08,'triangle',0.2); gpsTone(900,0.06,0.14,'triangle',0.18); }
+  else if (type === 'horn') { gpsTone(392,0,0.1,'square',0.18); gpsTone(523.25,0.08,0.14,'square',0.18); }
+  else if (type === 'boots') { gpsTone(700,0,0.06,'square',0.18); gpsTone(1000,0.05,0.09,'square',0.16); }
+  else if (type === 'coin') { gpsTone(1046.5,0,0.05,'square',0.16); gpsTone(1318.5,0.05,0.08,'square',0.16); }
+  else { gpsTone(659.25,0,0.08,'triangle',0.2); gpsTone(880,0.07,0.12,'triangle',0.18); }
+}
+function mrApplyFieldItem(type) {
+  mrSoundFieldItem(type);
+  if (type === 'boots') {
+    mrBuffs.speedTimer = 480; // 8초
+    toast('👟 신속의 신발! 8초간 반응 속도 UP!');
+  } else if (type === 'timestop') {
+    mrBuffs.timeStopTimer = 180; // 3초
+    toast('⏳ 시간 정지! 3초간 적과 총알이 멈춰요!');
+  } else if (type === 'horn') {
+    mrBuffs.dmgTimer = 600; // 10초
+    toast('📯 사기진작! 10초간 전체 데미지 +20%!');
+  } else if (type === 'potion') {
+    mrPlayer.count += 5;
+    toast('💊 활력의 캡슐! 인원 +5 회복!');
+  } else if (type === 'shield') {
+    mrPlayer.invincible = Math.max(mrPlayer.invincible, 240); // 4초 무적
+    toast('🛡️ 방어막 구슬! 4초간 무적!');
+  } else if (type === 'coin') {
+    let gained = 15 + Math.floor(Math.random() * 11);
+    mrRunCoins += gained;
+    toast(`💰 코인 주머니! +${gained} 코인!`);
+  }
+}
+
 function triggerMrGameOver() {
   if (mrPetCounts.turtle > 0) {
     mrPetCounts.turtle--;
@@ -8981,6 +9205,11 @@ function mrLoop() {
   
   if (mrGameOver) return;
   
+  if (mrManualPause) {
+    mrAnim = requestAnimationFrame(mrLoop);
+    return;
+  }
+  
   if (mrIsPaused) {
     mrAnim = requestAnimationFrame(mrLoop);
     return;
@@ -9008,10 +9237,24 @@ function mrLoop() {
   mrDistance += mrSpeed * dt;
   mrSpeed = Math.min(mrSpeed + 0.0005625 * dt, 13.75); // 가속을 완만하게 + 상한선 추가 (초등학생 대상 난이도 완화) — 전체 1.25배속
   if(mrPlayer.invincible > 0) mrPlayer.invincible -= dt;
+  // 🩹 재생의 팔찌: 초당 mrPlayer.regen만큼 서서히 회복 (최대치 제한 없음, 위험한 순간엔 여전히 잃을 수 있음)
+  if (mrPlayer.regen > 0 && mrPlayer.count > 0) mrPlayer.count += mrPlayer.regen * (dt / 60);
   if(mrPlayer.magnet) {
     mrPlayer.magnetTimer = (mrPlayer.magnetTimer === undefined ? 240 : mrPlayer.magnetTimer) - dt;
     if(mrPlayer.magnetTimer <= 0) { mrPlayer.magnet = false; mrPlayer.magnetTimer = 0; }
   }
+  
+  // 🎒 일반 필드 아이템 버프 타이머 감소
+  if (mrBuffs.speedTimer > 0) mrBuffs.speedTimer -= dt;
+  if (mrBuffs.dmgTimer > 0) mrBuffs.dmgTimer -= dt;
+  if (mrBuffs.timeStopTimer > 0) mrBuffs.timeStopTimer -= dt;
+  const mrTimeStopped = mrBuffs.timeStopTimer > 0;
+  
+  // 👟 신속의 신발: 좌우 이동 반응속도 증가 (평소엔 부드럽게 따라가다가, 버프 중엔 훨씬 재빠르게 반응)
+  // 👟 신속의 신발: 기존엔 기본 반응속도가 이미 거의 즉시 반응이라 버프 체감이 없었음
+  // → 평소엔 살짝 미끄러지듯 따라가는 느낌으로 낮추고, 신발 버프 시 확실히 스냅되도록 격차를 크게 벌림
+  let mrFollowRate = mrBuffs.speedTimer > 0 ? 0.55 : 0.2;
+  mrPlayer.x += (mrPlayer.targetX - mrPlayer.x) * Math.min(1, mrFollowRate * dt);
   
   mrSwordsRot += 0.04 * dt;
   mrTurtlesRot += 0.04 * dt;
@@ -9048,7 +9291,7 @@ function mrLoop() {
         
         // Dot radius is 10
         if (dist < 10 + Math.max(en.w, en.h)/2) {
-          en.hp -= (mrPlayer.swords * mrPlayer.dmg * 2.0); // 약간 너프 (기존 3.0 → 2.0, 여전히 강력한 아이템으로 유지)
+          en.hp -= (mrPlayer.swords * mrPlayer.dmg * 3.0); // buffed continuous damage
           if(en.hp <= 0) {
             en.active = false;
             mrScore += (en.isBoss ? 500 : 100) + Math.floor(Math.sqrt(en.maxHp) * 10);
@@ -9069,10 +9312,12 @@ function mrLoop() {
       
       if (side.type === 'math') {
         mrSoundGateMath(side.op);
-        if (side.op === '+') mrPlayer.count += side.val;
-        else if (side.op === '-') mrPlayer.count = Math.max(1, mrPlayer.count - side.val);
-        else if (side.op === '×') mrPlayer.count *= side.val;
-        else if (side.op === '÷') mrPlayer.count = Math.max(1, Math.floor(mrPlayer.count / side.val));
+        let effVal = side.val;
+        if (mrRelics.gamblerDice && Math.random() < 0.5) effVal *= 2; // 도박사의 주사위: 50% 확률로 효과 2배
+        if (side.op === '+') mrPlayer.count += effVal;
+        else if (side.op === '-') mrPlayer.count = Math.max(1, mrPlayer.count - effVal);
+        else if (side.op === '×') mrPlayer.count *= effVal;
+        else if (side.op === '÷') mrPlayer.count = Math.max(1, Math.floor(mrPlayer.count / effVal));
       } else if (side.type === 'dmg') {
         mrSoundGateItem();
         mrPlayer.dmg += side.val;
@@ -9102,16 +9347,23 @@ function mrLoop() {
   let fireRateMult = (mrPlayer.weapon === 'blue') ? 0.5 : (mrPlayer.weapon === 'red' ? 1.5 : 1.0);
   if (isChain) fireRateMult = 0.25;
   let shootInterval = baseInterval * fireRateMult;
+  if (mrRelics.berserkEngine) shootInterval /= 1.4; // 연사속도 +40%
+  
+  // 🎺 사기진작 나팔: 10초간 전체 데미지 소폭 상승 (+20%)
+  const dmgBuffMult = (mrBuffs.dmgTimer > 0) ? 1.2 : 1;
   
   if (now - mrLastShot > shootInterval) {
     mrLastShot = now;
     let safeCount = Math.max(1, Math.floor(mrPlayer.count));
     let num = Math.min(safeCount, 30);
-    let baseBulletDmg = mrPlayer.dmg + (safeCount / num);
+    let baseBulletDmg = (mrPlayer.dmg + (safeCount / num)) * dmgBuffMult;
     if(mrRelics.glassCannon) baseBulletDmg *= 3;
+    if(mrRelics.berserkEngine) baseBulletDmg *= 0.75; // 대신 데미지 -25%
     
     let wDmgMult = (mrPlayer.weapon === 'red') ? 2.0 : (mrPlayer.weapon === 'blue' ? 0.5 : (mrPlayer.weapon === 'sword' ? 0.8 : 1.0));
     let bulletDmg = baseBulletDmg * wDmgMult;
+    let isCrit = mrRelics.sniperEye && Math.random() < 0.15;
+    if (isCrit) bulletDmg *= 3; // 저격수의 눈: 크리티컬 3배 데미지
     let bulletColor = (mrPlayer.weapon === 'red') ? '#ef4444' : (mrPlayer.weapon === 'blue' ? '#3b82f6' : (mrPlayer.weapon === 'sword' ? '#94a3b8' : '#f59e0b'));
     let bulletW = (mrPlayer.weapon === 'red') ? 24 : (mrPlayer.weapon === 'sword' ? 32 : 12);
     
@@ -9132,7 +9384,7 @@ function mrLoop() {
       for(let i=0; i<num; i++) {
          let bx = originX;
          if (num > 1) bx = originX - spread/2 + (spread / (num-1)) * i;
-         mrBullets.push({ x: bx, y: py - 20, dmg: bulletDmg, color: bulletColor, w: bulletW, wType: mainWType, hitIds: [], isMeteor: isMeteor, isFrost: isFrost, isChain: isChain });
+         mrBullets.push({ x: bx, y: py - 20, dmg: bulletDmg, color: bulletColor, w: bulletW, wType: mainWType, hitIds: [], pierce: mrPlayer.pierce, isMeteor: isMeteor, isFrost: isFrost, isChain: isChain });
       }
       if (mrPlayer.weapon === 'homing') {
         // 유도 미사일: 기존 탄은 그대로 두고, 부가적으로 유도탄을 추가 발사
@@ -9147,7 +9399,7 @@ function mrLoop() {
     for(let p=0; p<petList.length; p++) {
        let pt = petList[p];
        let px = mrPlayer.x + ((p%2===0)?-1:1) * (40 + Math.floor(p/2)*30);
-       mrBullets.push({ x: px, y: py - 10, dmg: mrPlayer.dmg * 2 * pt.dmg, color: pt.color, w: 6, wType: 'pet', hitIds: [] });
+       mrBullets.push({ x: px, y: py - 10, dmg: mrPlayer.dmg * 2 * pt.dmg * dmgBuffMult, color: pt.color, w: 6, wType: 'pet', hitIds: [] });
     }
   }
   
@@ -9174,12 +9426,13 @@ function mrLoop() {
      let hit = false;
      for(let en of mrEnemies) {
         if (en.active && b.y > en.y - en.h/2 && b.y < en.y + en.h/2 && Math.abs(b.x - en.x) < (en.w/2 + b.w/2)) {
-           if (b.wType === 'sword') {
-             if(b.hitIds.includes(en.id)) continue;
-             b.hitIds.push(en.id);
-           }
+           if (b.hitIds.includes(en.id)) continue; // 이미 맞은 적은 (관통탄/회전검 공통) 다시 맞지 않음
+           b.hitIds.push(en.id);
            en.hp -= b.dmg;
-           if (b.wType !== 'sword' && !b.isMeteor) hit = true;
+           if (b.wType !== 'sword' && !b.isMeteor) {
+             // 🏹 관통탄: 남은 관통 횟수가 있으면 소멸하지 않고 다음 적까지 계속 날아감
+             if ((b.pierce || 0) > 0) { b.pierce--; } else { hit = true; }
+           }
            if (b.isMeteor && b.wType !== 'sword') hit = true; // Meteor dies on hit, but explodes
            
            if (en.hp <= 0) {
@@ -9190,7 +9443,7 @@ function mrLoop() {
              if(mrPlayer.ice > 0 || b.isFrost) { en.frozenTimer = b.isFrost ? 120 : 60; en.frozenLevel = mrPlayer.ice; }
              if(mrPlayer.fire > 0 || b.isMeteor) { en.burnTimer = b.isMeteor ? 180 : 120; en.burnLevel = mrPlayer.fire; }
              
-             let doZap = (mrPlayer.zap > 0);
+             let doZap = (mrPlayer.zap > 0) && !mrRelics.sniperEye; // 저격수의 눈: 번개 연쇄 효과 비활성화
              if (doZap) {
                let zapRadius = b.isChain ? 300 : 150;
                let zapDmg = b.isChain ? b.dmg * mrPlayer.zap : b.dmg * mrPlayer.zap * 0.5;
@@ -9203,7 +9456,7 @@ function mrLoop() {
              }
            }
            
-           if (b.isMeteor) {
+           if (b.isMeteor && !mrRelics.sniperEye) { // 저격수의 눈: 유성 스플래시 효과 비활성화
              // Meteor splash
              for(let e2 of mrEnemies) {
                if(e2.active && e2 !== en && Math.hypot(e2.x-b.x, e2.y-b.y) < 150) {
@@ -9229,7 +9482,7 @@ function mrLoop() {
       slowFactor = Math.max(0.3, 1.0 - (en.frozenLevel * 0.15));
     }
     
-    en.y += mrSpeed * slowFactor * dt;
+    if (!mrTimeStopped) en.y += mrSpeed * slowFactor * dt; // ⏳ 시간 정지 구슬: 정지 중엔 적이 움직이지 않음
     
     if(en.burnTimer > 0) {
       en.burnTimer -= dt;
@@ -9243,7 +9496,7 @@ function mrLoop() {
       mrRewardEnemy(en);
     }
     
-    if (en.active && en.y > 0 && en.y < py - 100) {
+    if (!mrTimeStopped && en.active && en.y > 0 && en.y < py - 100) {
       let now = Date.now();
       let diff = mrDistance / 1000;
       let shotDelay = en.isBoss ? Math.max(1600, 3000 - diff * 30) : (en.isElite ? Math.max(800, 2000 - diff * 40) : Math.max(1000, 2500 - diff * 50));
@@ -9268,7 +9521,8 @@ function mrLoop() {
         let touchDmg = en.isBoss ? enemyBulletDmg * 4 : (en.isElite ? enemyBulletDmg * 2 : enemyBulletDmg);
         touchDmg = Math.max(1, Math.round(touchDmg));
         if (mrRelics.glassCannon) touchDmg *= 5;
-        if (mrRelics.goldenBlood && mrRunCoins >= 10) { mrRunCoins -= 10; } else { mrPlayer.count -= touchDmg; }
+        if (mrRelics.cursedPact) touchDmg *= 1.35;
+        if (mrRelics.goldenBlood && mrRunCoins >= 100) { mrRunCoins -= 100; } else { mrPlayer.count -= touchDmg; }
         mrPlayer.invincible = 60; // 연속 피격 방지용 짧은 무적시간
         mrSoundHurt();
         mrShake(6, 10); mrHitFlash = 1; mrSpawnBurst(mrPlayer.x, py, '#ef4444', 10);
@@ -9287,6 +9541,7 @@ function mrLoop() {
   for(let i=mrEnemyBullets.length-1; i>=0; i--) {
     let eb = mrEnemyBullets[i];
     
+    if (mrTimeStopped) continue; // ⏳ 시간 정지 구슬: 적의 총알도 정지
     eb.x += eb.vx * dt;
     eb.y += eb.vy * dt;
     let dx = eb.x - mrPlayer.x;
@@ -9296,9 +9551,9 @@ function mrLoop() {
     
     if (Math.hypot(dx, dy) < mrPlayer.r + eb.r) {
       if (mrPlayer.invincible > 0) continue;
-      let dmgTaken = eb.dmg * (mrRelics.glassCannon ? 5 : 1);
+      let dmgTaken = eb.dmg * (mrRelics.glassCannon ? 5 : 1) * (mrRelics.cursedPact ? 1.35 : 1);
       if(mrRelics.goldenBlood) {
-        if(mrRunCoins >= 10) mrRunCoins -= 10;
+        if(mrRunCoins >= 100) mrRunCoins -= 100;
         else mrPlayer.count -= dmgTaken;
       } else {
         mrPlayer.count -= dmgTaken;
@@ -9318,6 +9573,7 @@ function mrLoop() {
   
   for(let i=mrEnemyLasers.length-1; i>=0; i--) {
     let ls = mrEnemyLasers[i];
+    if (mrTimeStopped) continue; // ⏳ 시간 정지 구슬: 레이저도 정지 (타이머/피해 모두 멈춤)
     ls.timer -= dt;
     ls.y += mrSpeed * dt; // move down with map? Or static relative to screen?
     // Lasers usually are static to the screen, but we'll let it move with camera slightly to feel grounded
@@ -9326,9 +9582,9 @@ function mrLoop() {
       // Firing phase
       if (Math.abs(mrPlayer.x - ls.x) < ls.w/2 + mrPlayer.r) {
         if (mrPlayer.invincible > 0) continue;
-        let dmgTaken = ls.dmg * (mrRelics.glassCannon ? 5 : 1);
+        let dmgTaken = ls.dmg * (mrRelics.glassCannon ? 5 : 1) * (mrRelics.cursedPact ? 1.35 : 1);
         if(mrRelics.goldenBlood) {
-          if(mrRunCoins >= 10) mrRunCoins -= 10;
+          if(mrRunCoins >= 100) mrRunCoins -= 100;
           else mrPlayer.count -= dmgTaken;
         } else {
           mrPlayer.count -= dmgTaken;
@@ -9354,6 +9610,18 @@ function mrLoop() {
       break;
     }
     if (t.y > c.height + 100) mrTraps.splice(i, 1);
+  }
+  
+  for(let i = mrFieldItems.length-1; i>=0; i--) {
+    let fi = mrFieldItems[i];
+    fi.y += mrSpeed * dt;
+    if (fi.active && Math.abs(fi.y - py) < fi.r + mrPlayer.r && Math.abs(fi.x - mrPlayer.x) < fi.r + mrPlayer.r * 2) {
+      fi.active = false;
+      mrApplyFieldItem(fi.type);
+      mrFieldItems.splice(i, 1);
+      continue;
+    }
+    if (fi.y > c.height + 100) mrFieldItems.splice(i, 1);
   }
   
   // Dog / Super Magnet for Chests
@@ -9421,13 +9689,21 @@ function mrLoop() {
   if (mrDistance % 3000 < mrSpeed * dt) mrSpawnGate(-100);
   if (mrDistance > 1000 && mrDistance % 8000 < mrSpeed * dt) mrAltars.push({x: c.width/2, y: -100, w: 60, h: 60, active: true});
   
-  let spawnInterval = mrDistance < 1500 ? 800 : (mrDistance < 6000 ? 3200 : (mrDistance < 12000 ? 2000 : 1300));
-  if (mrDistance > 300 && mrDistance % spawnInterval < mrSpeed * dt && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
-    let spawnLoops = mrRelics.cursedPact ? 2 : 1;
+  // 초반(100~300m 구간)이 너무 밋밋해서, 150m/250m 지점에 몬스터를 한 마리씩 미리 배치
+  if (!mrEarlySpawn150Done && mrDistance >= 1500) { mrEarlySpawn150Done = true; mrSpawnEnemy(-100, c.width, false); }
+  if (!mrEarlySpawn250Done && mrDistance >= 2500) { mrEarlySpawn250Done = true; mrSpawnEnemy(-100, c.width, false); }
+  
+  let spawnInterval = mrDistance < 6000 ? 3200 : (mrDistance < 12000 ? 2000 : 1300);
+  if (mrDistance > 2000 && mrDistance % spawnInterval < mrSpeed * dt && (mrDistance % 3000 > 200) && (mrDistance % 8000 > 200)) {
+    // 저주받은 계약: 기존엔 몹이 무조건 2배로 나오기만 하고 실질적인 대가가 없어 사실상 순수 버프였음.
+    // → 몹 증가를 확정이 아닌 확률(60%)로 완화하고, 대신 받는 피해가 늘어나는 진짜 "저주"를 추가함 (아래 mrRelics.cursedPact 피해 배율 참고)
+    let spawnLoops = 1;
+    if (mrRelics.cursedPact && Math.random() < 0.6) spawnLoops += 1;
     if (mrDistance > 15000) spawnLoops += 1;
     if (mrDistance > 28000) spawnLoops += 1;
     for(let sl=0; sl<spawnLoops; sl++) {
-      if (Math.random() < 0.15 && mrDistance > 8000) {
+      let bossChance = 0.15 * (mrRelics.shadowPact ? 1.8 : 1); // 그림자 계약: 보스 등장 빈도 증가
+      if (Math.random() < bossChance && mrDistance > 8000) {
         mrSpawnEnemy(-100 - sl*80, c.width, true);
         mrSoundBossSpawn();
       } else {
@@ -9435,7 +9711,8 @@ function mrLoop() {
         let count = 1 + Math.floor(Math.random() * maxEnemies);
         for(let i=0; i<count; i++) {
           let en = mrSpawnEnemy(-100 - i*70 - sl*80, c.width, false);
-          if (mrDistance > 8000 && Math.random() < (mrDistance > 15000 ? 0.35 : 0.18)) {
+          let eliteChance = (mrDistance > 15000 ? 0.35 : 0.18) * (mrRelics.shadowPact ? 1.8 : 1); // 그림자 계약: 정예몹 등장 빈도 증가
+          if (mrDistance > 8000 && Math.random() < eliteChance) {
             en.isElite = true;
             en.hp *= (mrDistance > 15000 ? 2.5 : 1.8); 
             en.maxHp = en.hp;
@@ -9447,6 +9724,10 @@ function mrLoop() {
   }
   if (mrDistance > 3000 && mrDistance % 1200 < mrSpeed * dt) {
     mrSpawnTrap(-100, c.width);
+  }
+  // 🎒 일반 필드 아이템 (신속의 신발/시간 정지 구슬/사기진작 나팔/활력의 캡슐/방어막 구슬/코인 주머니)
+  if (mrDistance > 400 && mrDistance % 2000 < mrSpeed * dt && (mrDistance % 3000 > 250) && (mrDistance % 8000 > 250)) {
+    mrSpawnFieldItem(-100, c.width);
   }
   
   const sc = document.getElementById('mrScore');
@@ -9463,6 +9744,17 @@ function mrLoop() {
     } else {
       tu.style.display = 'none';
     }
+  }
+  
+  // 🎒 활성 버프 HUD 표시 (남은 시간을 초 단위로)
+  const bu = document.getElementById('mrBuffUI');
+  if (bu) {
+    let buffHtml = '';
+    const buffBadge = (icon, secs, color) => `<div style="background:rgba(0,0,0,0.65); border:1.5px solid ${color}; color:#fff; padding:3px 9px; border-radius:20px; font-size:13px; font-weight:bold; display:flex; align-items:center; gap:3px;">${icon} ${secs.toFixed(1)}s</div>`;
+    if (mrBuffs.speedTimer > 0) buffHtml += buffBadge('👟', mrBuffs.speedTimer/60, '#38bdf8');
+    if (mrBuffs.dmgTimer > 0) buffHtml += buffBadge('📯', mrBuffs.dmgTimer/60, '#fbbf24');
+    if (mrBuffs.timeStopTimer > 0) buffHtml += buffBadge('⏳', mrBuffs.timeStopTimer/60, '#c4b5fd');
+    bu.innerHTML = buffHtml;
   }
   
   // Render
@@ -9495,7 +9787,7 @@ function mrLoop() {
       ctx.shadowColor = g.passed ? 'transparent' : 'rgba(255,255,255,0.45)';
       ctx.shadowBlur = g.passed ? 0 : 10;
       ctx.globalAlpha = g.passed ? 0.55 : gPulse;
-      ctx.fillStyle = g.passed ? 'rgba(59, 130, 246, 0.18)' : mrGateColor(g.left);
+      ctx.fillStyle = g.passed ? 'rgba(59, 130, 246, 0.18)' : (g.left.type==='math'?'rgba(37, 99, 235, 0.82)':'rgba(147, 51, 234, 0.82)');
       mrRoundRect(ctx, 4, g.y, c.width/2 - 8, 40, 10);
       ctx.fill();
       ctx.globalAlpha = 1; ctx.shadowBlur = 0;
@@ -9509,7 +9801,7 @@ function mrLoop() {
       ctx.shadowColor = g.passed ? 'transparent' : 'rgba(255,255,255,0.45)';
       ctx.shadowBlur = g.passed ? 0 : 10;
       ctx.globalAlpha = g.passed ? 0.55 : gPulse;
-      ctx.fillStyle = g.passed ? 'rgba(239, 68, 68, 0.18)' : mrGateColor(g.right);
+      ctx.fillStyle = g.passed ? 'rgba(239, 68, 68, 0.18)' : (g.right.type==='math'?'rgba(220, 38, 38, 0.82)':'rgba(147, 51, 234, 0.82)');
       mrRoundRect(ctx, c.width/2 + 4, g.y, c.width/2 - 8, 40, 10);
       ctx.fill();
       ctx.globalAlpha = 1; ctx.shadowBlur = 0;
@@ -9570,6 +9862,29 @@ function mrLoop() {
     }
   }
   
+  const MR_FIELD_ITEM_GLOW = { boots:'rgba(56,189,248,0.5)', timestop:'rgba(196,181,253,0.55)', horn:'rgba(251,191,36,0.5)', potion:'rgba(74,222,128,0.5)', shield:'rgba(147,197,253,0.55)', coin:'rgba(250,204,21,0.55)' };
+  for(let fi of mrFieldItems) {
+    if (fi.active && fi.y + fi.r > 0 && fi.y - fi.r < c.height) {
+      let bob = Math.sin(Date.now()/220 + fi.x) * 4;
+      ctx.save();
+      ctx.translate(fi.x, fi.y + bob);
+      ctx.shadowColor = MR_FIELD_ITEM_GLOW[fi.type] || 'rgba(255,255,255,0.5)';
+      ctx.shadowBlur = 16;
+      ctx.beginPath();
+      ctx.arc(0, 0, fi.r, 0, Math.PI*2);
+      ctx.fillStyle = MR_FIELD_ITEM_GLOW[fi.type] || 'rgba(255,255,255,0.5)';
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.font = '26px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.rotate(Math.sin(Date.now()/300 + fi.x) * 0.1);
+      ctx.fillText(fi.icon, 0, 0);
+      ctx.restore();
+    }
+  }
+  
+
   for(let en of mrEnemies) {
     if (en.active && en.y + en.h > 0 && en.y - en.h < c.height) {
       let bob = Math.sin(Date.now()/260 + (en.id || en.x)) * (en.isBoss ? 3 : 2);
