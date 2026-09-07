@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>G.P.S 에듀 플랫폼 🎒</title>
+<meta name="description" content="G.P.S Edu 플랫폼 — 게이미피케이션 수업 도구, 미니게임, 수업 유틸리티를 제공하는 초등교사용 무료 서비스입니다. 서버 없이 브라우저에서만 동작하며 학생 개인정보를 수집·저장하지 않습니다.">
 <link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
@@ -92,6 +93,7 @@ body.theme-cute .sidebar-hd h1 { color: #fff !important; text-shadow: 0 2px 4px 
 body.theme-cute .sidebar-hd p { color: var(--c-surface-alt) !important; }
 body.theme-cute .sidebar-hd div.bg-indigo-50 { background-color: rgba(255,255,255,0.4) !important; border-color: rgba(255,255,255,0.6) !important; color: var(--c-text-accent) !important; }
 body.theme-cute header { background-color: var(--c-bg) !important; border-bottom: 3px solid var(--c-border) !important; box-shadow: 0 4px 0 var(--c-surface-alt) !important; }
+body.theme-cute footer { background-color: var(--c-bg) !important; border-top: 3px solid var(--c-border) !important; }
 body.theme-cute .card { background-color: #FFFFFF !important; border: 3px solid var(--c-border) !important; border-radius: 1.5rem !important; box-shadow: 0 4px 0 var(--c-border) !important; }
 body.theme-cute .btn-blue { background: #E0F2FE !important; border-color: var(--c-blue-border) !important; box-shadow: 0 4px 0 var(--c-blue-border) !important; color: #0284C7 !important; border-radius: 1rem !important; }
 body.theme-cute .btn-blue:active { transform: translateY(4px) !important; box-shadow: none !important; }
@@ -140,6 +142,7 @@ body.theme-dark .sidebar-hd h1 { color: var(--d-text) !important; text-shadow: n
 body.theme-dark .sidebar-hd p { color: var(--d-text-muted) !important; }
 body.theme-dark .sidebar-hd div.bg-indigo-50 { background-color: var(--d-border) !important; border-color: var(--d-border2) !important; color: var(--d-text-muted) !important; }
 body.theme-dark header { background-color: var(--d-surface) !important; border-bottom: 1px solid var(--d-border) !important; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5) !important; }
+body.theme-dark footer { background-color: var(--d-surface) !important; border-top: 1px solid var(--d-border) !important; color: var(--d-text-muted) !important; }
 body.theme-dark .card { background-color: var(--d-surface) !important; border: 1px solid var(--d-border) !important; border-radius: 1.5rem !important; box-shadow: none !important; }
 body.theme-dark .btn-blue, body.theme-dark .btn-green { background: var(--d-accent2) !important; border-color: var(--d-accent-hover) !important; box-shadow: none !important; color: white !important; }
 body.theme-dark .btn:not(.btn-blue):not(.btn-green):not(.btn-red), body.theme-dark .h-card { background-color: var(--d-surface) !important; border-color: var(--d-border) !important; color: var(--d-text) !important; }
@@ -318,6 +321,12 @@ body.theme-dark .hover\:bg-orange-100:hover {
     </div>
   </nav>
   
+  <div class="px-4 pt-2 pb-1">
+    <a href="https://open.kakao.com/o/sDojksMi" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-sm font-black text-white shadow-sm transition-all hover:-translate-y-0.5" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);box-shadow:0 4px 10px rgba(245,158,11,0.35);">
+      🙌 함께해요!
+    </a>
+  </div>
+
   <div class="p-4 border-t border-slate-200 bg-slate-50">
     <div class="flex items-center justify-between mb-3">
       <span class="text-[11px] text-slate-500 font-bold">AI 연결 상태</span>
@@ -692,6 +701,26 @@ body.theme-dark .hover\:bg-orange-100:hover {
           '수업을 좀 더 재미있게 만들고 싶다', '게이미피케이션이 궁금하다'는 인천 선생님이라면 언제든 환영합니다.
           이 플랫폼을 사용해보시고 마음에 드셨다면, 전국의 다른 선생님들께도 G.P.S Edu를 소개해 주세요!
         </p>
+        <div class="flex flex-wrap items-center gap-3 mt-4">
+          <a href="https://open.kakao.com/o/sDojksMi" target="_blank" rel="noopener noreferrer" class="btn mt-0 inline-flex text-base px-6 py-3" style="background:#F59E0B;color:#fff;box-shadow:0 4px 10px rgba(245,158,11,0.35);">🙌 함께하고 싶어요!</a>
+          <a href="https://open.kakao.com/o/sDojksMi" target="_blank" rel="noopener noreferrer" class="btn btn-blue mt-0 inline-flex">💬 궁금한 점이 있어요!(문의)</a>
+        </div>
+      </div>
+
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-2xl shadow-sm">📄</div>
+          <h3 class="text-lg font-black text-slate-800">운영 안내</h3>
+        </div>
+        <p class="text-[15px] text-slate-600 leading-relaxed font-medium">
+          G.P.S Edu는 게이미피케이션 교육을 연구·실천하는 <strong class="text-indigo-600">교사 모임이 비영리로 운영</strong>하는 무료 서비스입니다.
+          별도 서버 없이 브라우저에서만 동작하며, 입력하신 정보는 외부로 전송되지 않고 이용자의 기기에만 저장됩니다.
+          서비스 이용, 오류 신고, 협업 제안 등 문의는 위 카카오톡 오픈채팅으로 받고 있습니다.
+        </p>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-xs font-bold text-slate-500">
+          <button onclick="openLegal('terms')" class="hover:text-indigo-600 hover:underline">이용약관 보기</button>
+          <button onclick="openLegal('privacy')" class="hover:text-indigo-600 hover:underline">개인정보처리방침 보기</button>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -713,6 +742,15 @@ body.theme-dark .hover\:bg-orange-100:hover {
       </div>
     </section>
   </div>
+
+  <footer class="shrink-0 border-t border-slate-200 bg-white px-4 md:px-8 py-2.5 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 font-semibold">
+    <span>G.P.S Edu · 교사 연구모임이 비영리로 제공하는 무료 도구입니다. 서버 저장 없이 브라우저에만 데이터가 보관되며, 이용에 따른 책임은 이용자 본인에게 있습니다.</span>
+    <span class="flex items-center gap-3 shrink-0">
+      <button onclick="openLegal('terms')" class="hover:text-slate-600 hover:underline">이용약관</button>
+      <button onclick="openLegal('privacy')" class="hover:text-slate-600 hover:underline">개인정보처리방침</button>
+      <a href="https://open.kakao.com/o/sDojksMi" target="_blank" rel="noopener noreferrer" class="hover:text-slate-600 hover:underline">문의</a>
+    </span>
+  </footer>
 </main>
 
 <!-- 모달 -->
@@ -745,7 +783,8 @@ body.theme-dark .hover\:bg-orange-100:hover {
         <button onclick="saveKey()" class="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-md">💾 저장 및 적용</button>
       </div>
       <p class="text-[10px] text-slate-400 font-medium leading-relaxed pt-1 border-t border-slate-100">
-        ⚠️ 이 앱은 서버 없이 브라우저에서만 동작하며, 입력하신 정보는 개발자에게 전송·저장되지 않습니다. 학생 이름 대신 번호나 이니셜 사용을 권장하며, 소속 학교·기관의 개인정보 지침을 우선 따라주세요. 본 소프트웨어는 무보증으로 제공되며 사용에 따른 책임은 사용자 본인에게 있습니다.
+        ⚠️ 이 앱은 서버 없이 브라우저에서만 동작하며, 입력하신 정보는 개발자에게 전송·저장되지 않고 이 브라우저에만 암호화되어 보관됩니다. Gemini API 키 사용에 따른 요금·사용량은 Google API 약관에 따라 발급받으신 선생님 본인 책임입니다. 학생 이름 대신 번호나 이니셜 사용을 권장하며, 소속 학교·기관의 개인정보 지침을 우선 따라주세요. 본 소프트웨어는 무보증으로 제공되며 사용에 따른 책임은 사용자 본인에게 있습니다.
+        <button onclick="closeModal();openLegal('terms')" class="text-indigo-500 font-bold hover:underline">이용약관·개인정보처리방침 자세히 보기</button>
       </p>
     </div>
   </div>
@@ -777,12 +816,57 @@ body.theme-dark .hover\:bg-orange-100:hover {
     <button onclick="gpsSubmitStudentPrompt()" class="btn btn-blue w-full">시작하기</button>
   </div>
 </div>
+<!-- 이용약관 / 개인정보처리방침 모달 -->
+<div id="legalModal" class="overlay">
+  <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200">
+    <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/50">
+      <div class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-lg">📄</span>
+        <h3 class="text-base font-black text-slate-800">이용약관 · 개인정보처리방침</h3>
+      </div>
+      <button onclick="closeLegal()" class="w-8 h-8 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full flex items-center justify-center font-black text-xl transition-colors">×</button>
+    </div>
+    <div class="flex gap-2 px-5 pt-4">
+      <button id="legalTabBtnTerms" onclick="showLegalTab('terms')" class="util-tab util-active">이용약관</button>
+      <button id="legalTabBtnPrivacy" onclick="showLegalTab('privacy')" class="util-tab">개인정보처리방침</button>
+    </div>
+    <div class="p-5 max-h-[60vh] overflow-y-auto custom-scrollbar text-[13px] text-slate-600 leading-relaxed font-medium">
+      <div id="legalTermsBody">
+        <p class="font-black text-slate-800 mb-2">이용약관</p>
+        <ol class="list-decimal pl-4 space-y-1.5">
+          <li>G.P.S Edu(이하 '본 서비스')는 게이미피케이션 교육을 연구·실천하는 교사 모임이 <strong>비영리로 무료 제공</strong>하는 교육용 도구입니다.</li>
+          <li>본 서비스는 <strong>"있는 그대로(AS-IS)"</strong> 제공되며, 기능의 정확성·연속성·오류 없음을 보증하지 않습니다.</li>
+          <li>이용 중 발생하는 데이터 손실, 오작동, 기타 손해에 대해 이용자 스스로 책임지며, 운영자는 고의 또는 중대한 과실이 없는 한 이에 대한 책임을 지지 않습니다.</li>
+          <li>이용자는 관련 법령과 소속 학교·기관의 내부 지침(특히 학생 개인정보 관련 지침)을 우선하여 준수해야 합니다.</li>
+          <li>서비스 내용, 제공되는 미니게임/AI 기능 등은 사전 고지 없이 변경되거나 중단될 수 있습니다.</li>
+          <li>서비스 내 일부 기능(미니게임, 급식 정보, AI 응답 등)은 제3자 서비스(외부 사이트 embed, 공공 API, Google API 등)를 이용하며, 해당 제3자 서비스의 별도 약관이 함께 적용될 수 있습니다.</li>
+          <li>본 서비스는 Tailwind CSS(MIT), Pretendard 폰트(OFL-1.1), PeerJS(MIT) 등 오픈소스 라이브러리를 사용하며, 각 라이선스 조건을 준수합니다.</li>
+        </ol>
+      </div>
+      <div id="legalPrivacyBody" class="hidden">
+        <p class="font-black text-slate-800 mb-2">개인정보처리방침</p>
+        <ol class="list-decimal pl-4 space-y-1.5">
+          <li>본 서비스는 별도 회원가입 없이 이용할 수 있으며, <strong>입력하신 정보를 별도 서버로 전송·수집하지 않습니다.</strong></li>
+          <li>AI API Key, 평가기록, 학생 이름/번호 등 이용자가 입력한 정보는 <strong>이용자의 브라우저(localStorage)에만 저장</strong>되며, 브라우저 데이터를 삭제하면 함께 삭제됩니다.</li>
+          <li>학생 개인정보(이름 등)를 입력하시는 경우, 소속 학교·기관의 개인정보 보호 지침을 우선 준수해 주시고, 가능하면 번호·이니셜 등 비식별 정보 사용을 권장합니다.</li>
+          <li>카카오톡 오픈채팅 등 외부 채널을 통해 문의하시는 경우, 해당 채널(카카오)의 개인정보처리방침이 별도로 적용됩니다.</li>
+          <li>문의: <a href="https://open.kakao.com/o/sDojksMi" target="_blank" rel="noopener noreferrer" class="text-indigo-600 font-bold hover:underline">카카오톡 오픈채팅</a></li>
+          <li>본 방침은 사전 고지 없이 변경될 수 있으며, 최종 수정일은 하단에 표기됩니다.</li>
+        </ol>
+      </div>
+      <p class="text-[11px] text-slate-400 font-bold mt-4 pt-3 border-t border-slate-100">최종 수정일: 2026-09-07</p>
+    </div>
+  </div>
+</div>
 <div id="toast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg z-50"></div>
 <div id="mafAlertBox" class="hidden" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:10000;background:linear-gradient(135deg,#1E293B,#0F172A);color:#fff;padding:1.75rem 2.25rem;border-radius:1.5rem;font-size:1.15rem;line-height:1.5;font-weight:800;text-align:center;box-shadow:0 25px 50px -12px rgba(0,0,0,.6);max-width:min(90vw,420px);opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;border:2px solid rgba(255,255,255,.15);"></div>
 
 <script>
 /* ══ 상수 ══ */
 const K_API='gps_api_v1', K_REC='gps_rec_v1';
+// NAIS(교육정보 개방포털) Open API 인증키. https://open.neis.go.kr 에서 무료 발급받아 아래에 채워 넣으면
+// 무인증 호출보다 안정적으로(트래픽 제한 완화) 급식/학교검색 기능이 동작합니다. 비워두면 기존처럼 무인증으로 호출됩니다.
+const NEIS_KEY='';
 const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},whiteboard:{title:'전자칠판 화면',icon:'🖥️'},education:{title:'교육자료',icon:'📚'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'},about:{title:'G.P.S Edu 소개',icon:'🧭'}};
 
 /* ══════════════════════════════════════
@@ -884,6 +968,19 @@ function gpsToggleSharedModeUI(){
   if(lbl) lbl.textContent = now?'OFF':'ON';
   if(!now && !sessionStorage.getItem(GPS_ACTIVE_STUDENT_KEY)) gpsOpenStudentPrompt();
   gpsRenderFreeGameStudentBar();
+}
+
+function openLegal(tab){
+  document.getElementById('legalModal')?.classList.add('open');
+  showLegalTab(tab||'terms');
+}
+function closeLegal(){ document.getElementById('legalModal')?.classList.remove('open'); }
+function showLegalTab(tab){
+  const isTerms = tab==='terms';
+  document.getElementById('legalTermsBody')?.classList.toggle('hidden', !isTerms);
+  document.getElementById('legalPrivacyBody')?.classList.toggle('hidden', isTerms);
+  document.getElementById('legalTabBtnTerms')?.classList.toggle('util-active', isTerms);
+  document.getElementById('legalTabBtnPrivacy')?.classList.toggle('util-active', !isTerms);
 }
 
 function gpsInitSharedModeUI(){
@@ -1097,7 +1194,7 @@ async function searchSchool() {
   if(!q) return;
   resDiv.innerHTML = '<div class="text-center p-4"><div class="spin mx-auto w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div></div>';
   try {
-    const url = `https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=50&SCHUL_NM=${encodeURIComponent(q)}`;
+    const url = `https://open.neis.go.kr/hub/schoolInfo?Type=json&pIndex=1&pSize=50&SCHUL_NM=${encodeURIComponent(q)}${NEIS_KEY?`&KEY=${NEIS_KEY}`:''}`;
     const req = await fetch(url);
     const data = await req.json();
     if(data.schoolInfo && data.schoolInfo[1].row) {
@@ -1139,7 +1236,7 @@ async function fetchLunch() {
   try {
     const now = new Date();
     const ymd = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
-    const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&ATPT_OFCDC_SC_CODE=${atpt}&SD_SCHUL_CODE=${sd}&MLSV_YMD=${ymd}`;
+    const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&ATPT_OFCDC_SC_CODE=${atpt}&SD_SCHUL_CODE=${sd}&MLSV_YMD=${ymd}${NEIS_KEY?`&KEY=${NEIS_KEY}`:''}`;
     const req = await fetch(url);
     const data = await req.json();
     
