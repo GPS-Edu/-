@@ -411,17 +411,22 @@ body.theme-dark .hover\:bg-orange-100:hover {
           <h3 class="font-black text-slate-800 text-lg flex items-center gap-2 pl-1">📊 현황 요약</h3>
           
           <!-- 데이터 백업 -->
-          <div class="p-6 rounded-3xl bg-slate-800 text-white shadow-lg relative overflow-hidden flex flex-col justify-between group h-[120px]">
+          <div class="p-6 rounded-3xl bg-slate-800 text-white shadow-lg relative overflow-hidden flex flex-col justify-between group h-[150px]">
             <div class="relative z-10 flex items-start justify-between">
               <div>
-                <p class="text-slate-300 font-bold text-xs mb-1">안전 보관중인 평가 기록</p>
+                <p class="text-slate-300 font-bold text-xs mb-1">안전 보관중인 학급 데이터</p>
                 <p class="text-3xl font-black tabular-nums tracking-tight"><span id="recCount">0</span><span class="text-sm text-slate-400 font-medium ml-1">건</span></p>
               </div>
               <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-lg">💾</div>
             </div>
-            <button onclick="exportData()" class="relative z-10 mt-auto w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-xs font-bold flex items-center justify-center gap-1 opacity-90 hover:opacity-100">
-              📥 전체 데이터 백업하기
-            </button>
+            <div class="relative z-10 mt-auto grid grid-cols-2 gap-2">
+              <button onclick="exportData()" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-[11px] leading-tight font-bold flex items-center justify-center gap-1 opacity-90 hover:opacity-100 text-center">
+                📥 전체 데이터<br>백업하기
+              </button>
+              <label class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-colors text-[11px] leading-tight font-bold flex items-center justify-center gap-1 opacity-90 hover:opacity-100 cursor-pointer text-center">
+                📤 가져오기<input type="file" accept=".json" onchange="importData(event)" class="hidden">
+              </label>
+            </div>
             <div class="absolute -bottom-8 -right-8 text-9xl opacity-5 group-hover:scale-105 transition-transform duration-500">📝</div>
           </div>
 
@@ -777,6 +782,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
           <button onclick="exportData()" class="py-2 rounded-xl text-xs font-bold bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors shadow-sm">📥 백업 다운로드</button>
           <label class="py-2 rounded-xl text-xs font-bold bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition-colors shadow-sm text-center cursor-pointer flex items-center justify-center">📤 복원하기<input type="file" accept=".json" onchange="importData(event)" class="hidden"></label>
         </div>
+        <p class="text-[11px] text-emerald-700/70 font-medium leading-relaxed">• 평가 기록, 학생별 게임 기록, 학교 설정 등 이 기기의 데이터를 파일 하나로 내려받아 다른 기기에서 복원할 수 있어요.<br>• 보안을 위해 Gemini API 키는 백업에 포함되지 않으니, 새 기기에서는 위 API 키를 다시 입력해 주세요.</p>
       </div>
       <div class="flex gap-3 pt-2">
         <button onclick="closeModal()" class="w-1/3 py-2.5 rounded-xl text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors">취소</button>
@@ -7048,8 +7054,22 @@ async function generateEval(){
 }
 function saveRecord(){const c=document.getElementById('evalResult').value.trim();if(!c){toast('⚠️ 저장할 내용이 없어요.');return;}const raw=document.getElementById('studentName').value.trim();const label=raw?(raw.match(/^\d+$/)?raw+'번':raw):'';const r=JSON.parse(localStorage.getItem(K_REC)||'[]');r.push({id:Date.now(),date:new Date().toLocaleDateString('ko-KR'),name:label||'(번호 없음)',subject:document.getElementById('evalSubject').value,content:c});localStorage.setItem(K_REC,JSON.stringify(r));refreshRecCount();toast('💾 '+(label?'['+label+'] ':'')+'로컬에 저장됐어요!');}
 function copyResult(){const t=document.getElementById('evalResult').value;if(!t){toast('📋 복사할 내용이 없어요.');return;}navigator.clipboard.writeText(t).then(()=>toast('📋 복사됐어요!'));}
-function refreshRecCount(){const n=JSON.parse(localStorage.getItem(K_REC)||'[]').length;const el=document.getElementById('recCount');if(el)el.textContent=n;}
-function exportData(){const blob=new Blob([JSON.stringify({version:'1.0',date:new Date().toISOString(),records:JSON.parse(localStorage.getItem(K_REC)||'[]')},null,2)],{type:'application/json'});const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`GPS_Edu_백업_${new Date().toISOString().slice(0,10)}.json`});a.click();URL.revokeObjectURL(a.href);toast('📥 백업 파일 다운로드됐어요!');}
+function refreshRecCount(){const evalCount=JSON.parse(localStorage.getItem(K_REC)||'[]').length;let profileCount=0;try{profileCount=Object.keys(JSON.parse(localStorage.getItem(GPS_PROFILES_KEY)||'{}')).length;}catch(e){}const el=document.getElementById('recCount');if(el)el.textContent=evalCount+profileCount;}
+// 이 브라우저(기기)에 저장된 모든 데이터를 백업 파일로 내보냄.
+// 단, Gemini API 키(K_API)는 기기 전용 암호화 키로 잠겨 있어 다른 기기에서 복원해도 못 쓰므로 보안상 제외하고,
+// 각 기기에서 API 키는 선생님이 직접 한 번씩 입력하도록 안내함.
+function exportData(){
+  const data={};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k===K_API) continue;
+    data[k]=localStorage.getItem(k);
+  }
+  const blob=new Blob([JSON.stringify({version:'2.0',date:new Date().toISOString(),data},null,2)],{type:'application/json'});
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(blob),download:`GPS_Edu_백업_${new Date().toISOString().slice(0,10)}.json`});
+  a.click();URL.revokeObjectURL(a.href);
+  toast('📥 전체 데이터가 백업됐어요! (API 키는 제외)');
+}
 const origShowFreeGame = window.showFreeGame;
 window.showFreeGame = function(id) {
   window.gpsActiveView = id;
@@ -10481,7 +10501,32 @@ function mrLoop() {
   mrAnim = requestAnimationFrame(mrLoop);
 }
 
-function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d.records))throw 0;localStorage.setItem(K_REC,JSON.stringify(d.records));refreshRecCount();closeModal();toast(`✅ ${d.records.length}건 복원됐어요!`);}catch{toast('❌ 올바른 백업 파일이 아니에요.');}};r.readAsText(f);}
+// 백업 파일을 읽어 이 브라우저(기기)의 데이터를 되살림.
+// v2.0(전체 데이터) 형식과, 예전 버전에서 받은 v1.0(평가 기록만) 형식을 모두 지원함.
+function importData(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      if(d.data && typeof d.data==='object' && !Array.isArray(d.data)){
+        if(!confirm('이 기기에 저장된 평가 기록·학생별 게임 기록·학교 설정 등 모든 데이터가 백업 파일 내용으로 덮어써집니다.\n계속할까요?')) return;
+        let restored=0;
+        Object.keys(d.data).forEach(k=>{ if(k===K_API) return; localStorage.setItem(k, d.data[k]); restored++; });
+        closeModal();
+        toast(`✅ 데이터 ${restored}건 복원됐어요! 잠시 후 새로고침돼요.`);
+        setTimeout(()=>location.reload(), 1000);
+      } else if(Array.isArray(d.records)){
+        if(!confirm('예전 버전 백업 파일이에요. 평가 기록만 복원됩니다.\n계속할까요?')) return;
+        localStorage.setItem(K_REC, JSON.stringify(d.records));
+        refreshRecCount();
+        closeModal();
+        toast(`✅ 평가 기록 ${d.records.length}건 복원됐어요!`);
+      } else throw 0;
+    }catch(err){ toast('❌ 올바른 백업 파일이 아니에요.'); }
+  };
+  r.readAsText(f);
+}
 
 let _tt;
 function toast(msg,dur=2600){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),dur);}
