@@ -268,6 +268,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
         <button onclick="switchTab('freegame'); showFreeGame('typing')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⌨️ 타자 게임</button>
         <button onclick="switchTab('freegame'); showFreeGame('stairs')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐹 무한의 계단</button>
         <button onclick="switchTab('freegame'); showFreeGame('bungeo')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🐟 붕어빵 타이쿤</button>
+        <button onclick="switchTab('freegame'); showFreeGame('school_survival')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🏫 학교 서바이벌</button>
         <button onclick="switchTab('freegame'); showFreeGame('mafia')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🕵️ 마피아게임</button>
         <button onclick="switchTab('freegame'); showFreeGame('escape')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🔐 교실 방탈출 자물쇠</button>
       </div>
@@ -599,6 +600,9 @@ body.theme-dark .hover\:bg-orange-100:hover {
           </div>
           <a id="bungeoLink" href="https://gps-edu.github.io/Bungeo-ppang/" target="_blank" class="btn btn-ghost text-xs">⛶ 새 탭에서 열기</a>
         </div>
+        <div class="flex items-center justify-between gap-2 mb-3 flex-wrap">
+          <button id="gpsSharedModeToggleBtn" onclick="gpsToggleSharedModeUI()" class="btn btn-ghost text-xs" title="한 컴퓨터/태블릿을 여러 학생이 돌아가며 쓰는 경우에만 켜주세요.">🧑‍🤝‍🧑 학생별 저장 분리: <span id="gpsSharedModeLabel">OFF</span></button>
+        </div>
         <div class="flex gap-2 mb-6 flex-wrap">
           <button class="util-tab" data-free="potjump" onclick="showFreeGame('potjump')">🍯 항아리 점프</button>
           <button class="util-tab" data-free="math_runner" onclick="showFreeGame('math_runner')">🏃 수학 런너</button>
@@ -606,10 +610,12 @@ body.theme-dark .hover\:bg-orange-100:hover {
           <button class="util-tab" data-free="typing" onclick="showFreeGame('typing')">⌨️ 타자 게임</button>
           <button class="util-tab" data-free="stairs" onclick="showFreeGame('stairs')">🐹 무한의 계단</button>
           <button class="util-tab util-active" data-free="bungeo" onclick="showFreeGame('bungeo')">🐟 붕어빵 타이쿤</button>
+          <button class="util-tab" data-free="school_survival" onclick="showFreeGame('school_survival')">🏫 학교 서바이벌</button>
           <button class="util-tab" data-free="mafia" onclick="showFreeGame('mafia')">🕵️ 마피아게임</button>
           <button class="util-tab" data-free="escape" onclick="showFreeGame('escape')">🔐 방탈출 자물쇠</button>
         </div>
         <div id="freeGameContent">
+          <div id="gpsStudentBar" class="hidden"></div>
           <div class="rounded-2xl overflow-hidden border border-slate-200 shadow-sm" style="height:70vh;min-height:450px;max-height:850px;">
             <iframe src="https://gps-edu.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe>
           </div>
@@ -763,6 +769,14 @@ body.theme-dark .hover\:bg-orange-100:hover {
     </div>
   </div>
 </div>
+<div id="gpsStudentModal" class="overlay">
+  <div class="card p-6 max-w-sm w-full text-center">
+    <h3 class="text-lg font-black text-slate-800 mb-1">🙋 누구인가요?</h3>
+    <p class="text-xs text-slate-500 mb-4">이름이나 번호를 입력하면, 그 학생의 게임 저장 데이터(골드·상장 등)를 불러와요.</p>
+    <input type="text" id="gpsStudentInput" class="inp text-center font-bold mb-3" placeholder="예: 1번 / 홍길동" onkeydown="if(event.key==='Enter') gpsSubmitStudentPrompt()">
+    <button onclick="gpsSubmitStudentPrompt()" class="btn btn-blue w-full">시작하기</button>
+  </div>
+</div>
 <div id="toast" class="hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-lg z-50"></div>
 <div id="mafAlertBox" class="hidden" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);z-index:10000;background:linear-gradient(135deg,#1E293B,#0F172A);color:#fff;padding:1.75rem 2.25rem;border-radius:1.5rem;font-size:1.15rem;line-height:1.5;font-weight:800;text-align:center;box-shadow:0 25px 50px -12px rgba(0,0,0,.6);max-width:min(90vw,420px);opacity:0;transition:opacity .25s ease, transform .25s ease;pointer-events:none;border:2px solid rgba(255,255,255,.15);"></div>
 
@@ -771,9 +785,118 @@ body.theme-dark .hover\:bg-orange-100:hover {
 const K_API='gps_api_v1', K_REC='gps_rec_v1';
 const PAGE={dashboard:{title:'대시보드',icon:'🏠'},evaluation:{title:'평가 AI 자동화',icon:'📝'},management:{title:'학급 경영 도구',icon:'📋'},whiteboard:{title:'전자칠판 화면',icon:'🖥️'},education:{title:'교육자료',icon:'📚'},minigame:{title:'교과 미니게임',icon:'🎮'},freegame:{title:'미니게임',icon:'🕹️'},utility:{title:'수업 유틸리티',icon:'⏱️'},about:{title:'G.P.S Edu 소개',icon:'🧭'}};
 
+/* ══════════════════════════════════════
+   🧑‍🤝‍🧑 공용기기 모드 (학생별 저장 데이터 분리)
+   - 기본은 꺼져 있음: 학생이 각자 자기 기기로 접속하는 반은 지금처럼 아무 설정 없이 그대로 사용.
+   - 켜면: 미니게임(학교 서바이벌·붕어빵 타이쿤 등)의 골드/상장 같은 로컬 저장 데이터를
+     "지금 이 기기에서 로그인한 학생"별로 나눠서 보관함(gps_stu_profiles)에 저장했다가,
+     학생이 바뀔 때마다 그 학생 것만 불러와서 게임에 적용해줌.
+   - 게임/플랫폼이 실제로 쓰는 localStorage 키 이름을 몰라도 되도록, "플랫폼이 원래부터 쓰던
+     설정용 키(GPS_RESERVED_KEYS)"만 제외하고 나머지 전부를 "게임 진행 데이터"로 간주해 통째로 스냅샷.
+══════════════════════════════════════ */
+const GPS_SHARED_MODE_KEY='gps_shared_device_mode', GPS_ACTIVE_STUDENT_KEY='gps_active_student', GPS_PROFILES_KEY='gps_stu_profiles';
+const GPS_RESERVED_KEYS=new Set(['gps_theme','gps_muted','gps_muted_blockblast','gps_muted_stairs','gps_sch_atpt','gps_sch_sd','gps_sch_name',GPS_SHARED_MODE_KEY,GPS_PROFILES_KEY,K_API,K_REC]);
 
+function gpsSharedModeOn(){ return localStorage.getItem(GPS_SHARED_MODE_KEY)==='1'; }
 
-window.addEventListener('DOMContentLoaded',()=>{refreshStatus();refreshRecCount();showUtil('timer');initManagementSeat();showMgmt('seat');loadTheme();initWhiteboard();});
+function gpsCollectGameState(){
+  const state={};
+  for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(!GPS_RESERVED_KEYS.has(k)) state[k]=localStorage.getItem(k); }
+  return state;
+}
+function gpsClearGameState(){
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(!GPS_RESERVED_KEYS.has(k)) keys.push(k); }
+  keys.forEach(k=>localStorage.removeItem(k));
+}
+function gpsLoadProfiles(){ try{ return JSON.parse(localStorage.getItem(GPS_PROFILES_KEY)||'{}'); }catch(e){ return {}; } }
+function gpsSaveProfiles(p){ localStorage.setItem(GPS_PROFILES_KEY, JSON.stringify(p)); }
+
+// 지금 활성화된 학생의 "현재 게임 진행 상황"을 그 학생 보관함에 저장(다른 학생으로 넘어가기 직전에 호출)
+function gpsSaveActiveStudentSnapshot(){
+  if(!gpsSharedModeOn()) return;
+  const activeId=sessionStorage.getItem(GPS_ACTIVE_STUDENT_KEY);
+  if(!activeId) return;
+  const profiles=gpsLoadProfiles();
+  profiles[activeId]={data:gpsCollectGameState(), updatedAt:Date.now()};
+  gpsSaveProfiles(profiles);
+}
+
+// 학생 전환: 이전 학생 진행상황을 먼저 저장 → 아무도 소유하지 않은 채 남아있던 데이터는 유실 없이 백업 → 새 학생 데이터 적용
+function gpsSwitchStudent(studentId){
+  studentId=(studentId||'').trim();
+  if(!studentId) return;
+  gpsSaveActiveStudentSnapshot();
+  if(!sessionStorage.getItem(GPS_ACTIVE_STUDENT_KEY)){
+    const leftover=gpsCollectGameState();
+    if(Object.keys(leftover).length){
+      const profiles=gpsLoadProfiles();
+      profiles['(확인필요_'+new Date().toLocaleString('ko-KR')+')']={data:leftover, updatedAt:Date.now()};
+      gpsSaveProfiles(profiles);
+    }
+  }
+  gpsClearGameState();
+  const profiles=gpsLoadProfiles();
+  const slot=profiles[studentId];
+  if(slot&&slot.data) Object.keys(slot.data).forEach(k=>localStorage.setItem(k, slot.data[k]));
+  sessionStorage.setItem(GPS_ACTIVE_STUDENT_KEY, studentId);
+  gpsRenderFreeGameStudentBar();
+  toast('👋 '+studentId+' 학생의 저장 데이터를 불러왔어요!');
+  const cur=document.querySelector('[data-free].util-active');
+  if(cur) showFreeGame(cur.dataset.free); // 게임을 다시 그려서(iframe 새로 로드) 방금 불러온 데이터로 시작하게 함
+}
+
+function gpsOpenStudentPrompt(){
+  const box=document.getElementById('gpsStudentModal');
+  if(box){ box.classList.add('open'); setTimeout(()=>document.getElementById('gpsStudentInput')?.focus(),100); }
+}
+function gpsCloseStudentPrompt(){ document.getElementById('gpsStudentModal')?.classList.remove('open'); }
+function gpsSubmitStudentPrompt(){
+  const inp=document.getElementById('gpsStudentInput');
+  const v=inp.value.trim();
+  if(!v){ toast('⚠️ 이름이나 번호를 입력해주세요.'); return; }
+  gpsCloseStudentPrompt();
+  inp.value='';
+  gpsSwitchStudent(v);
+}
+
+// 미니게임 화면 상단에 "현재 학생 / 전환" 표시줄
+function gpsRenderFreeGameStudentBar(){
+  const bar=document.getElementById('gpsStudentBar');
+  if(!bar) return;
+  if(!gpsSharedModeOn()){ bar.innerHTML=''; bar.classList.add('hidden'); return; }
+  bar.classList.remove('hidden');
+  const activeId=sessionStorage.getItem(GPS_ACTIVE_STUDENT_KEY);
+  bar.innerHTML=`<div class="flex items-center justify-between gap-2 bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-2 mb-3 text-sm">
+    <span class="font-bold text-indigo-700">👤 ${activeId?('현재 학생: '+activeId):'학생을 선택해주세요'}</span>
+    <button onclick="gpsOpenStudentPrompt()" class="px-3 py-1 rounded-lg bg-indigo-600 text-white font-bold text-xs hover:bg-indigo-700">🔁 학생 전환</button>
+  </div>`;
+}
+
+// 사이드바/게임 화면 상단의 "학생별 저장 분리" ON/OFF 스위치
+function gpsToggleSharedModeUI(){
+  const now=gpsSharedModeOn();
+  if(!now){
+    if(!confirm('한 기기를 여러 학생이 돌아가며 사용하나요?\n켜면 학생이 바뀔 때마다 이름/번호를 입력받아 게임 저장 데이터(골드·상장 등)를 학생별로 분리해드려요.\n(학생이 각자 자기 기기를 쓰는 반이라면 켜지 않아도 지금처럼 잘 작동해요)')) return;
+  }
+  localStorage.setItem(GPS_SHARED_MODE_KEY, now?'0':'1');
+  const lbl=document.getElementById('gpsSharedModeLabel');
+  if(lbl) lbl.textContent = now?'OFF':'ON';
+  if(!now && !sessionStorage.getItem(GPS_ACTIVE_STUDENT_KEY)) gpsOpenStudentPrompt();
+  gpsRenderFreeGameStudentBar();
+}
+
+function gpsInitSharedModeUI(){
+  const lbl=document.getElementById('gpsSharedModeLabel');
+  if(lbl) lbl.textContent = gpsSharedModeOn()?'ON':'OFF';
+  gpsRenderFreeGameStudentBar();
+  if(gpsSharedModeOn() && !sessionStorage.getItem(GPS_ACTIVE_STUDENT_KEY)) gpsOpenStudentPrompt();
+  setInterval(gpsSaveActiveStudentSnapshot, 15000); // 전환 버튼을 깜빡 잊어도 주기적으로 자동 저장
+  window.addEventListener('beforeunload', gpsSaveActiveStudentSnapshot);
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden) gpsSaveActiveStudentSnapshot(); });
+}
+
+window.addEventListener('DOMContentLoaded',()=>{refreshStatus();refreshRecCount();showUtil('timer');initManagementSeat();showMgmt('seat');loadTheme();initWhiteboard();gpsInitSharedModeUI();});
 
 /* ══ 테마 관리 ══ */
 function changeTheme(theme) {
@@ -829,6 +952,7 @@ function switchTab(id){
     if(gc) gc.innerHTML = '<div class="dashed-zone py-20"><span class="text-5xl opacity-80 mb-2">👈</span><p class="font-black text-lg text-slate-600">학년을 선택해주세요</p></div>';
   }
   if(id!=='freegame') {
+    gpsSaveActiveStudentSnapshot(); // 미니게임 탭을 벗어나기 전에, 지금 학생의 진행상황을 보관함에 저장
     const fgc = document.getElementById('freeGameContent');
     // 자유게임 탭을 벗어날 때는 항상 내용을 비워서(캔버스 포함) 백그라운드에 남아있던 게임 루프가
     // "화면(캔버스)이 사라졌는지" 체크에서 확실히 멈추도록 함 (기존엔 iframe일 때만 비워서, 캔버스 게임들은
@@ -3772,7 +3896,15 @@ function showFreeGame(type){
   }
   if(type==='bungeo'){
     if(bl)bl.style.display='';
-    gc.innerHTML=`<div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:70vh;min-height:450px;max-height:850px;"><iframe src="https://gps-edu.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>`;
+    gc.innerHTML=`<div id="gpsStudentBar" class="hidden"></div><div class="rounded-2xl overflow-hidden border-2 border-pink-200" style="height:70vh;min-height:450px;max-height:850px;"><iframe src="https://gps-edu.github.io/Bungeo-ppang/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="붕어빵 타이쿤"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🐟 붕어빵을 굽고 팔아서 타이쿤 왕이 되어봐요!</p>`;
+    gpsRenderFreeGameStudentBar();
+    if(gpsSharedModeOn() && !sessionStorage.getItem(GPS_ACTIVE_STUDENT_KEY)) gpsOpenStudentPrompt();
+  }
+  if(type==='school_survival'){
+    if(bl)bl.style.display='none';
+    gc.innerHTML=`<div id="gpsStudentBar" class="hidden"></div><div class="rounded-2xl overflow-hidden border-2 border-indigo-200" style="height:70vh;min-height:450px;max-height:850px;"><iframe src="https://gps-edu.github.io/school-suvival/" width="100%" height="100%" style="border:none;display:block;" allow="autoplay" title="학교 서바이벌"></iframe></div><p class="text-xs text-gray-400 font-semibold mt-2 text-center">🏫 방해꾼을 물리치고 30분 생존해보세요! 진행 상황(골드·상장)은 자동으로 저장돼요.</p>`;
+    gpsRenderFreeGameStudentBar();
+    if(gpsSharedModeOn() && !sessionStorage.getItem(GPS_ACTIVE_STUDENT_KEY)) gpsOpenStudentPrompt();
   }
   if(type==='mafia'){
     if(bl)bl.style.display='none';
