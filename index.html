@@ -70,6 +70,13 @@ body{font-family:'Pretendard',sans-serif;background:#F8FAFC;}
 .cap-slot{width:100%;max-width:230px;min-height:76px;border-radius:1rem;background:#F8FAFC;border:2px dashed #CBD5E1;display:flex;align-items:center;justify-content:center;margin:0 auto;padding:.5rem;}
 @keyframes capPop{0%{transform:scale(.4) rotate(-10deg);opacity:0;}60%{transform:scale(1.15) rotate(4deg);opacity:1;}100%{transform:scale(1) rotate(0deg);opacity:1;}}
 .cap-pop{animation:capPop .5s cubic-bezier(.34,1.56,.64,1);}
+/* 랜덤 뽑기 유틸 - 모드 탭 & 패널 */
+.cap-mode-tabs{background:#F1F5F9;padding:.3rem;border-radius:.9rem;display:inline-flex;gap:.25rem;}
+.cap-mode-btn{padding:.55rem 1.15rem;border-radius:.65rem;font-weight:800;font-size:.8rem;color:#64748B;cursor:pointer;transition:all .15s;border:none;background:transparent;}
+.cap-mode-btn.cap-mode-active{background:#fff;color:#4F46E5;box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.cap-panel-card{background:#fff;border:1px solid #E2E8F0;border-radius:1.1rem;padding:1.15rem;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+.cap-pick-badge{display:inline-flex;align-items:center;padding:.2rem .6rem;border-radius:999px;background:#EEF2FF;color:#4F46E5;font-size:.72rem;font-weight:800;}
+.cap-slot-placeholder{color:#CBD5E1;font-weight:900;font-size:1.6rem;}
 
 /* ══ 솜사탕 테마 (Cute/Cotton Candy Theme) ══ */
 body.theme-cute {
@@ -160,9 +167,6 @@ body.theme-dark #modal > div { background-color: var(--d-surface) !important; bo
 body.theme-dark #modal .border-b { background: var(--d-bg) !important; border-color: var(--d-border) !important; }
 body.theme-dark #modal .border-b h3, body.theme-dark #modal .border-b button { color: var(--d-text) !important; }
 body.theme-dark #modal .bg-indigo-100 { background: var(--d-border) !important; color: var(--d-text) !important; }
-body.theme-dark #dashboard .bg-gradient-to-br { background: var(--d-surface) !important; border: 1px solid var(--d-border) !important; box-shadow: none !important; }
-body.theme-dark #dashboard .bg-gradient-to-br h3, body.theme-dark #dashboard .bg-gradient-to-br p { color: var(--d-text) !important; }
-body.theme-dark #dashboard .bg-gradient-to-br .bg-white\/20 { background-color: var(--d-border) !important; border-color: var(--d-border2) !important; color: #CBD5E1 !important; }
 body.theme-dark .bg-slate-50, body.theme-dark .bg-white { background-color: var(--d-surface) !important; border-color: var(--d-border) !important; }
 body.theme-dark .text-slate-800, body.theme-dark .text-slate-700 { color: var(--d-text) !important; }
 body.theme-dark .text-slate-600, body.theme-dark .text-slate-500 { color: var(--d-text-muted) !important; }
@@ -187,6 +191,28 @@ body.theme-dark .hover\:bg-orange-100:hover {
   background-color: var(--d-border) !important;
   color: var(--d-text) !important;
 }
+/* 게임 선택 카드(파스텔 배경 고정)는 다크테마에서도 글자가 항상 보이도록 어두운 글자색 강제 */
+body.theme-dark .game-pick-card p.font-black { color:#1E293B !important; }
+body.theme-dark .game-pick-card p.text-xs { color:#475569 !important; }
+/* 첫 화면 웰컴 배너 & 소개 페이지의 밝은 배경 카드도 다크테마에서 배경은 밝은 톤 그대로, 글자만 항상 잘 보이도록 고정 */
+body.theme-dark .hero-banner h2 { color:#1E293B !important; text-shadow:none !important; }
+body.theme-dark .hero-banner p { color:#475569 !important; }
+body.theme-dark .light-bg-card h1,
+body.theme-dark .light-bg-card h3 { color:#1E293B !important; }
+body.theme-dark .light-bg-card p.text-slate-600,
+body.theme-dark .light-bg-card p.text-slate-500,
+body.theme-dark .light-bg-card p.text-slate-400 { color:#475569 !important; }
+/* 타이머 직접입력(분/초) 인풋은 배경이 항상 흰색이라 다크테마에서도 글자색을 어둡게 고정 */
+#tInpMin, #tInpSec { color:#1E293B !important; background:#fff !important; }
+/* 랜덤 뽑기 유틸 다크테마 보정 */
+body.theme-dark .cap-mode-tabs { background: var(--d-bg) !important; }
+body.theme-dark .cap-mode-btn { color: #94A3B8 !important; }
+body.theme-dark .cap-mode-btn.cap-mode-active { background: var(--d-surface) !important; color: var(--d-accent) !important; box-shadow:none !important; }
+body.theme-dark .cap-panel-card { background: var(--d-surface) !important; border-color: var(--d-border) !important; }
+body.theme-dark .cap-pick-badge { background: var(--d-border) !important; color: var(--d-accent) !important; }
+body.theme-dark .cap-globe { background: radial-gradient(circle at 30% 25%,#334155,#1E293B 40%,#0F172A 100%) !important; border-color: var(--d-border2) !important; box-shadow:none !important; }
+body.theme-dark .cap-slot { background: var(--d-bg) !important; border-color: var(--d-border2) !important; }
+body.theme-dark .cap-chute { background: linear-gradient(180deg,var(--d-border2),var(--d-border)) !important; }
 @keyframes wbFloat {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   50% { transform: translateY(-15px) rotate(3deg); }
@@ -287,7 +313,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
         <button onclick="switchTab('utility'); showUtil('timer')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⏳ 타이머</button>
         <button onclick="switchTab('utility'); showUtil('stopwatch')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">⏱️ 스톱워치</button>
         <button onclick="switchTab('utility'); showUtil('noise')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🔊 소음 신호등</button>
-        <button onclick="switchTab('utility'); showUtil('picker')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🎯 랜덤 발표자</button>
+        <button onclick="switchTab('utility'); showUtil('picker')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🎯 랜덤 뽑기</button>
         <button onclick="switchTab('utility'); showUtil('notice')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">📝 AI 스마트 알림장</button>
         <button onclick="switchTab('utility'); showUtil('qrcode')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">📱 QR코드 생성기</button>
         <button onclick="switchTab('utility'); showUtil('whitenoise')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors">🎧 명상/백색소음</button>
@@ -358,7 +384,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
     <!-- 대시보드 -->
     <section id="dashboard" class="tab-content active max-w-6xl mx-auto space-y-8 pb-10">
       <!-- 웰컴 배너 (Hero Section) -->
-      <div class="relative rounded-[2rem] p-8 md:p-10 overflow-hidden shadow-sm border border-indigo-50" style="background: linear-gradient(120deg, #EEF2FF 0%, #F5F3FF 50%, #FDF2F8 100%);">
+      <div class="hero-banner relative rounded-[2rem] p-8 md:p-10 overflow-hidden shadow-sm border border-indigo-50" style="background: linear-gradient(120deg, #EEF2FF 0%, #F5F3FF 50%, #FDF2F8 100%);">
         <div class="relative z-10">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-md text-indigo-700 font-bold text-xs mb-4 shadow-sm border border-white/50">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> G.P.S 스마트 에듀 플랫폼
@@ -379,8 +405,8 @@ body.theme-dark .hover\:bg-orange-100:hover {
           </div>
         </div>
         <!-- Decorative Blobs -->
-        <div class="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
-        <div class="absolute -bottom-8 right-32 w-72 h-72 bg-gradient-to-br from-pink-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
+        <div class="hero-blob absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-indigo-200 to-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob"></div>
+        <div class="hero-blob absolute -bottom-8 right-32 w-72 h-72 bg-gradient-to-br from-pink-200 to-orange-200 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-blob animation-delay-2000"></div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -645,14 +671,14 @@ body.theme-dark .hover\:bg-orange-100:hover {
           <div class="w-14 h-14 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center text-3xl shadow-sm">⏱️</div>
           <div>
             <h3 class="text-xl font-black text-slate-800">수업 진행 유틸리티</h3>
-            <p class="text-[13px] text-slate-500 font-medium mt-1">타이머 · 스톱워치 · 소음 신호등 · 랜덤 발표자</p>
+            <p class="text-[13px] text-slate-500 font-medium mt-1">타이머 · 스톱워치 · 소음 신호등 · 랜덤 뽑기</p>
           </div>
         </div>
         <div class="flex gap-2 mb-6 flex-wrap">
           <button class="util-tab util-active" data-util="timer" onclick="showUtil('timer')">⏳ 타이머</button>
           <button class="util-tab" data-util="stopwatch" onclick="showUtil('stopwatch')">⏱️ 스톱워치</button>
           <button class="util-tab" data-util="noise" onclick="showUtil('noise')">🔊 소음 신호등</button>
-          <button class="util-tab" data-util="picker" onclick="showUtil('picker')">🎯 랜덤 발표자</button>
+          <button class="util-tab" data-util="picker" onclick="showUtil('picker')">🎯 랜덤 뽑기</button>
           <button class="util-tab" data-util="notice" onclick="showUtil('notice')">📝 AI 스마트 알림장</button>
           <button class="util-tab" data-util="qrcode" onclick="showUtil('qrcode')">📱 QR코드 생성기</button>
           <button class="util-tab" data-util="whitenoise" onclick="showUtil('whitenoise')">🎧 명상/백색소음</button>
@@ -662,7 +688,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
     </section>
     <section id="about" class="tab-content max-w-4xl mx-auto space-y-6 break-keep">
       <button onclick="switchTab('dashboard')" class="btn btn-ghost text-xs">← 대시보드로</button>
-      <div class="card p-8 md:p-10 text-center" style="background:linear-gradient(135deg,#EEF2FF,#F0FDFA);">
+      <div class="light-bg-card card p-8 md:p-10 text-center" style="background:linear-gradient(135deg,#EEF2FF,#F0FDFA);">
         <div class="w-16 h-16 mx-auto rounded-2xl bg-white flex items-center justify-center text-4xl shadow-md border border-indigo-100 mb-4">🧭</div>
         <p class="text-sm font-black text-indigo-500 tracking-wide">교육의 길잡이</p>
         <h1 class="text-4xl font-black text-slate-800 mt-1 mb-3 tracking-tight">G.P.S Edu</h1>
@@ -696,7 +722,7 @@ body.theme-dark .hover\:bg-orange-100:hover {
         </p>
       </div>
 
-      <div class="card p-6 md:p-8" style="background:linear-gradient(135deg,#FFF7ED,#FEF2F2);">
+      <div class="light-bg-card card p-6 md:p-8" style="background:linear-gradient(135deg,#FFF7ED,#FEF2F2);">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-11 h-11 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-2xl shadow-sm">📣</div>
           <h3 class="text-lg font-black text-slate-800">함께할 선생님을 찾고 있어요</h3>
@@ -1285,17 +1311,17 @@ function showGrade3Launcher(){
   document.getElementById('gradeLabel').textContent='🟥 3학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <button onclick="startGame('fraction_pizza')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFEDD5;border:2.5px solid #FDBA74;">
+    <button onclick="startGame('fraction_pizza')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFEDD5;border:2.5px solid #FDBA74;">
       <div class="text-5xl">🍕</div>
       <p class="font-black text-gray-800">분수 피자 만들기</p>
       <p class="text-xs text-gray-500">분수만큼 색칠된 피자를 찾아보세요! (3학년 수학 - 분수)</p>
     </button>
-    <button onclick="startGame('shape_match')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FEE2E2;border:2.5px solid #FCA5A5;">
+    <button onclick="startGame('shape_match')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FEE2E2;border:2.5px solid #FCA5A5;">
       <div class="text-5xl">🔺</div>
       <p class="font-black text-gray-800">도형 맞추기</p>
       <p class="text-xs text-gray-500">도형의 이름과 변·꼭짓점을 알아맞혀요! (3학년 수학 - 평면도형)</p>
     </button>
-    <button onclick="startGame('multi_battle')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EDE9FE;border:2.5px solid #C4B5FD;">
+    <button onclick="startGame('multi_battle')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EDE9FE;border:2.5px solid #C4B5FD;">
       <div class="text-5xl">⚔️</div>
       <p class="font-black text-gray-800">곱셈 배틀</p>
       <p class="text-xs text-gray-500">곱셈으로 몬스터를 물리쳐요! (3학년 수학 - 곱셈)</p>
@@ -1308,12 +1334,12 @@ function showCommonLauncher(){
   document.getElementById('gradeLabel').textContent='🌈 공통학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML=`
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <button onclick="startGame('typing_short')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F0F9FF;border:2.5px solid #BAE6FD;">
+    <button onclick="startGame('typing_short')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F0F9FF;border:2.5px solid #BAE6FD;">
       <div class="text-5xl">📝</div>
       <p class="font-black text-gray-800">짧은 글 타자연습</p>
       <p class="text-xs text-gray-500">속담, 명언 등을 빠르고 정확하게!</p>
     </button>
-    <button onclick="startGame('typing_long')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF9C4;border:2.5px solid #FFF59D;">
+    <button onclick="startGame('typing_long')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF9C4;border:2.5px solid #FFF59D;">
       <div class="text-5xl">📜</div>
       <p class="font-black text-gray-800">긴 글 타자연습</p>
       <p class="text-xs text-gray-500">이야기를 한 줄씩 따라 쳐보세요!</p>
@@ -1327,22 +1353,22 @@ function showGrade12Launcher(){
   document.getElementById('gradeLabel').textContent='🐥 1~2학년(저학년군) - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <button onclick="startGame('gugu_race')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FEF3C7;border:2.5px solid #FCD34D;">
+    <button onclick="startGame('gugu_race')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FEF3C7;border:2.5px solid #FCD34D;">
       <div class="text-5xl">🏎️</div>
       <p class="font-black text-gray-800">구구단 레이스</p>
       <p class="text-xs text-gray-500">구구단을 맞춰 자동차를 전진시켜요! (2학년 수학)</p>
     </button>
-    <button onclick="startGame('clock_read')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#E0E7FF;border:2.5px solid #A5B4FC;">
+    <button onclick="startGame('clock_read')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#E0E7FF;border:2.5px solid #A5B4FC;">
       <div class="text-5xl">⏰</div>
       <p class="font-black text-gray-800">시계 보기 퀴즈</p>
       <p class="text-xs text-gray-500">시곗바늘을 보고 시간을 맞춰요! (1~2학년 수학)</p>
     </button>
-    <button onclick="startGame('math_pop')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FCE7F3;border:2.5px solid #F9A8D4;">
+    <button onclick="startGame('math_pop')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FCE7F3;border:2.5px solid #F9A8D4;">
       <div class="text-5xl">🎈</div>
       <p class="font-black text-gray-800">덧셈 뺄셈 팡팡</p>
       <p class="text-xs text-gray-500">정답이 같은 풍선을 터뜨려요! (1~2학년 수학)</p>
     </button>
-    <button onclick="startGame('word_find')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#DCFCE7;border:2.5px solid #86EFAC;">
+    <button onclick="startGame('word_find')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#DCFCE7;border:2.5px solid #86EFAC;">
       <div class="text-5xl">👀</div>
       <p class="font-black text-gray-800">올바른 글자 찾기</p>
       <p class="text-xs text-gray-500">그림에 맞는 올바른 낱말을 찾아요! (1~2학년 국어)</p>
@@ -1356,12 +1382,12 @@ function showGrade4Launcher(){
   document.getElementById('gradeLabel').textContent='🟧 4학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <button onclick="startGame('fossil_dig')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF5F0;border:2.5px solid #FED7AA;">
+    <button onclick="startGame('fossil_dig')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF5F0;border:2.5px solid #FED7AA;">
       <div class="text-5xl">🦕</div>
       <p class="font-black text-gray-800">화석 발굴단</p>
       <p class="text-xs text-gray-500">지층을 깨고 공룡 화석을 찾아요! (과학)</p>
     </button>
-    <button onclick="startGame('decimal_jump')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F0FDF4;border:2.5px solid #86EFAC;">
+    <button onclick="startGame('decimal_jump')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F0FDF4;border:2.5px solid #86EFAC;">
       <div class="text-5xl">🐸</div>
       <p class="font-black text-gray-800">소수 점프</p>
       <p class="text-xs text-gray-500">알맞은 소수를 찾아 점프해요! (수학)</p>
@@ -1375,17 +1401,17 @@ function showGrade5Launcher(){
   document.getElementById('gradeLabel').textContent='🟨 5학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-    <button onclick="startGame('history_train')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF8E7;border:2.5px solid #FDE68A;">
+    <button onclick="startGame('history_train')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF8E7;border:2.5px solid #FDE68A;">
       <div class="text-5xl">🚂</div>
       <p class="font-black text-gray-800">역사 연표 기차</p>
       <p class="text-xs text-gray-500">과거부터 순서대로 기차를 연결해요!</p>
     </button>
-    <button onclick="startGame('math_multiple')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EFF6FF;border:2.5px solid #BFDBFE;">
+    <button onclick="startGame('math_multiple')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EFF6FF;border:2.5px solid #BFDBFE;">
       <div class="text-5xl">🎈</div>
       <p class="font-black text-gray-800">배수 팡팡!</p>
       <p class="text-xs text-gray-500">목표 숫자의 배수를 빠르게 터뜨려요!</p>
     </button>
-    <button onclick="startGame('planet_order')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EEF2FF;border:2.5px solid #C7D2FE;">
+    <button onclick="startGame('planet_order')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EEF2FF;border:2.5px solid #C7D2FE;">
       <div class="text-5xl">🪐</div>
       <p class="font-black text-gray-800">태양계 탐사대</p>
       <p class="text-xs text-gray-500">태양과 가까운 순서로 행성을 찾아요!</p>
@@ -1402,7 +1428,7 @@ function showGrade6Launcher(){
     ${[{id:'stacking',icon:'🏗️',name:'쌓기나무 3D',desc:'드래그로 블록을 쌓아봐요!',bg:'#E8F5FF',bd:'#BEE3F8'},
        {id:'proportion',icon:'📐',name:'비례식 퀴즈',desc:'a:b=c:? 비율을 맞혀봐요!',bg:'#F0FFF4',bd:'#9AE6B4'},
        {id:'history',icon:'🃏',name:'역사 카드 배틀',desc:'사건과 설명을 짝지어요!',bg:'#FFF5F0',bd:'#FEB2B2'}]
-    .map(g=>`<button onclick="startGame('${g.id}')" class="p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:${g.bg};border:2.5px solid ${g.bd};"><div class="text-5xl">${g.icon}</div><p class="font-black text-gray-800">${g.name}</p><p class="text-xs text-gray-500">${g.desc}</p></button>`).join('')}
+    .map(g=>`<button onclick="startGame('${g.id}')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:${g.bg};border:2.5px solid ${g.bd};"><div class="text-5xl">${g.icon}</div><p class="font-black text-gray-800">${g.name}</p><p class="text-xs text-gray-500">${g.desc}</p></button>`).join('')}
   </div>`;
 }
 
@@ -6537,31 +6563,72 @@ function gClickTarget(type, gIndex) {
 }
 
 /* ══════════════════════════════════════
-   🎰 랜덤 발표 - 캡슐 뽑기 머신
+   🎰 랜덤 뽑기 - 이름 뽑기 / 번호 뽑기 캡슐 머신
 ══════════════════════════════════════ */
 const CAP_COLORS=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#C77DFF','#FF8C42','#38BDF8','#F472B6'];
-let capPicked=[], capExcludePicked=true, capBusy=false;
+let capMode='name';
+let capNamePicked=[], capNumPicked=[];
+let capExcludeName=true, capExcludeNumber=true;
+let capNameListVal='';
+let capNumberN=25;
+let capBusy=false;
 
 function capsuleHTML(){
   return `
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-    <div class="space-y-2">
-      <label class="text-xs font-black text-gray-700">학생 이름 목록 (한 줄에 한 명)</label>
-      <textarea id="capNameList" class="inp" rows="10" placeholder="김민수&#10;이지은&#10;박서준&#10;최유나&#10;정하준&#10;..."></textarea>
-      <label class="flex items-center gap-2 text-xs font-bold text-gray-600 pt-1 cursor-pointer">
-        <input type="checkbox" id="capExclude" ${capExcludePicked?'checked':''} onchange="capExcludePicked=this.checked">
-        이미 뽑힌 사람은 제외하고 뽑기
-      </label>
-      <button onclick="resetCapsulePicks()" class="btn btn-ghost text-xs">🔄 뽑힌 기록 초기화</button>
-      <div id="capPickedList" class="text-xs text-gray-500 font-semibold pt-1 leading-6"></div>
+  <div class="space-y-4">
+    <div class="cap-mode-tabs">
+      <button class="cap-mode-btn ${capMode==='name'?'cap-mode-active':''}" onclick="setCapMode('name')">🙋 이름 뽑기</button>
+      <button class="cap-mode-btn ${capMode==='number'?'cap-mode-active':''}" onclick="setCapMode('number')">🔢 번호 뽑기</button>
     </div>
-    <div class="flex flex-col items-center gap-4">
-      <div id="capGlobe" class="cap-globe"></div>
-      <div class="cap-chute"></div>
-      <div id="capSlot" class="cap-slot"><span class="text-gray-300 font-black text-2xl">?</span></div>
-      <button id="btnCapsule" onclick="startCapsulePick()" class="btn btn-blue w-full text-base py-4">🎰 뽑기 시작!</button>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div id="capLeftPanel">${capMode==='number'?capNumberPanelHTML():capNamePanelHTML()}</div>
+      <div class="flex flex-col items-center gap-4">
+        <div id="capGlobe" class="cap-globe"></div>
+        <div class="cap-chute"></div>
+        <div id="capSlot" class="cap-slot"><span class="cap-slot-placeholder">?</span></div>
+        <button id="btnCapsule" onclick="startCapsulePick()" class="btn btn-blue w-full text-base py-4">🎰 뽑기 시작!</button>
+      </div>
     </div>
   </div>`;
+}
+
+function capNamePanelHTML(){
+  return `
+  <div class="cap-panel-card space-y-2">
+    <label class="text-xs font-black text-gray-700">🙋 학생 이름 목록 (한 줄에 한 명)</label>
+    <textarea id="capNameList" class="inp" rows="9" placeholder="김민수&#10;이지은&#10;박서준&#10;최유나&#10;정하준&#10;..." oninput="capNameListVal=this.value">${capNameListVal}</textarea>
+    <label class="flex items-center gap-2 text-xs font-bold text-gray-600 pt-1 cursor-pointer">
+      <input type="checkbox" id="capExcludeNameChk" ${capExcludeName?'checked':''} onchange="capExcludeName=this.checked">
+      이미 뽑힌 사람은 제외하고 뽑기
+    </label>
+    <button onclick="resetCapsulePicks()" class="btn btn-ghost text-xs">🔄 뽑힌 기록 초기화</button>
+    <div id="capPickedList" class="pt-1"></div>
+  </div>`;
+}
+
+function capNumberPanelHTML(){
+  return `
+  <div class="cap-panel-card space-y-2">
+    <label class="text-xs font-black text-gray-700">🔢 학생 수 (몇 번까지 중에서 뽑을까요?)</label>
+    <div class="flex items-center gap-2">
+      <input id="capNumberInp" type="number" min="1" max="99" value="${capNumberN}" class="inp text-center text-lg font-black" style="max-width:110px;" oninput="capNumberN=Math.max(1,Math.min(99,parseInt(this.value)||1))">
+      <span class="text-xs font-bold text-gray-500 whitespace-nowrap">명 (1 ~ N번 중 랜덤 추첨)</span>
+    </div>
+    <label class="flex items-center gap-2 text-xs font-bold text-gray-600 pt-1 cursor-pointer">
+      <input type="checkbox" id="capExcludeNumberChk" ${capExcludeNumber?'checked':''} onchange="capExcludeNumber=this.checked">
+      이미 뽑힌 번호는 제외하고 뽑기
+    </label>
+    <button onclick="resetCapsulePicks()" class="btn btn-ghost text-xs">🔄 뽑힌 기록 초기화</button>
+    <div id="capPickedList" class="pt-1"></div>
+  </div>`;
+}
+
+function setCapMode(m){
+  if(capBusy) return;
+  capMode=m;
+  const gc=document.getElementById('utilContent'); if(!gc) return;
+  gc.innerHTML=capsuleHTML();
+  setTimeout(()=>{renderCapGlobe(); renderCapPickedList();},10);
 }
 
 function renderCapGlobe(){
@@ -6582,39 +6649,57 @@ function renderCapGlobe(){
 
 function getCapNames(){return(document.getElementById('capNameList')?.value||'').split('\n').map(s=>s.trim()).filter(Boolean);}
 
+function getCapPool(){
+  if(capMode==='number'){
+    const arr=[]; for(let i=1;i<=capNumberN;i++) arr.push(String(i));
+    return arr;
+  }
+  return getCapNames();
+}
+
+function getCapPickedArr(){ return capMode==='number' ? capNumPicked : capNamePicked; }
+function getCapExclude(){ return capMode==='number' ? capExcludeNumber : capExcludeName; }
+
 function renderCapPickedList(){
   const el=document.getElementById('capPickedList'); if(!el) return;
-  el.textContent = capPicked.length ? ('✅ 뽑힌 사람: '+capPicked.join(', ')) : '';
+  const picked=getCapPickedArr();
+  if(!picked.length){ el.innerHTML='<span class="text-[11px] text-gray-400 font-semibold">아직 뽑힌 기록이 없어요.</span>'; return; }
+  const unit=capMode==='number'?'번':'';
+  el.innerHTML=`<span class="text-[11px] font-bold text-gray-500">✅ 뽑힌 기록 (${picked.length}명)</span>
+  <div class="flex flex-wrap gap-1.5 mt-1.5">${picked.map(p=>`<span class="cap-pick-badge">${p}${unit}</span>`).join('')}</div>`;
 }
 
 function resetCapsulePicks(){
-  capPicked=[];
+  if(capMode==='number'){ capNumPicked=[]; } else { capNamePicked=[]; }
   renderCapPickedList();
   toast('🔄 뽑힌 기록이 초기화됐어요.');
 }
 
 function startCapsulePick(){
   if(capBusy) return;
-  const names=getCapNames();
-  if(!names.length){toast('✏️ 이름을 먼저 입력해주세요!');return;}
+  const names=getCapPool();
+  if(!names.length){toast(capMode==='number'?'✏️ 학생 수를 먼저 입력해주세요!':'✏️ 이름을 먼저 입력해주세요!');return;}
+  const picked=getCapPickedArr();
   let pool=names;
-  if(capExcludePicked){
-    pool=names.filter(n=>!capPicked.includes(n));
+  if(getCapExclude()){
+    pool=names.filter(n=>!picked.includes(n));
     if(!pool.length){toast('🎉 모두 한 번씩 뽑혔어요! 기록을 초기화해주세요.');return;}
   }
   capBusy=true;
   const btn=document.getElementById('btnCapsule'); btn.disabled=true; btn.innerHTML='<div class="spin"></div><span>돌아가는 중...</span>';
   const globe=document.getElementById('capGlobe');
   const slot=document.getElementById('capSlot');
-  slot.innerHTML='<span class="text-gray-300 font-black text-2xl">?</span>';
+  slot.innerHTML='<span class="cap-slot-placeholder">?</span>';
   globe.querySelectorAll('.cap-ball').forEach(b=>{b.classList.remove('floaty');b.classList.add('shaky');});
 
   let flickerCount=0;
   const totalFlickers=18+Math.floor(Math.random()*6);
   let delay=65;
+  const unit=capMode==='number'?'번':'';
   function flicker(){
     const randPick=pool[Math.floor(Math.random()*pool.length)];
-    slot.innerHTML=`<span class="text-gray-400 font-black text-xl">${randPick}</span>`;
+    slot.innerHTML=`<span class="text-gray-400 font-black text-xl">${randPick}${unit}</span>`;
+    capsuleTick(flickerCount/totalFlickers);
     flickerCount++;
     if(flickerCount<totalFlickers){
       if(flickerCount>totalFlickers-6) delay=Math.round(delay*1.4);
@@ -6632,13 +6717,14 @@ function finalizeCapsulePick(pool){
   const winner=pool[Math.floor(Math.random()*pool.length)];
   const slot=document.getElementById('capSlot');
   slot.innerHTML='';
+  const unit=capMode==='number'?'번':'';
   const card=document.createElement('div');
   card.className='cap-pop flex flex-col items-center gap-1';
-  card.innerHTML=`<span class="text-3xl">🎉</span><span class="font-black text-2xl text-gray-800">${winner}</span>`;
+  card.innerHTML=`<span class="text-3xl">🎉</span><span class="font-black text-2xl text-gray-800">${winner}${unit}</span>`;
   slot.appendChild(card);
-  capPicked.push(winner);
+  getCapPickedArr().push(winner);
   renderCapPickedList();
-  beep();
+  capsuleWinFanfare();
   const btn=document.getElementById('btnCapsule'); if(btn){btn.disabled=false;btn.innerHTML='🎰 다시 뽑기!';}
   capBusy=false;
 }
@@ -6863,7 +6949,7 @@ function toggleTimer(){
   else{
     if(tLeft<=0)resetTimer();
     tRunning=true;const b=document.getElementById('tBtnStart');if(b)b.textContent='⏸ 일시정지';
-    tInterval=setInterval(()=>{tLeft--;updateTimerUI();if(tLeft<=0){clearInterval(tInterval);tRunning=false;const b=document.getElementById('tBtnStart');if(b)b.textContent='▶ 시작';document.getElementById('tMsg')?.classList.remove('hidden');beep();}},1000);
+    tInterval=setInterval(()=>{tLeft--;updateTimerUI();if(tLeft<=0){clearInterval(tInterval);tRunning=false;const b=document.getElementById('tBtnStart');if(b)b.textContent='▶ 시작';document.getElementById('tMsg')?.classList.remove('hidden');timerAlarm();}},1000);
   }
 }
 function resetTimer(){clearInterval(tInterval);tRunning=false;tLeft=tTotal;updateTimerUI();document.getElementById('tMsg')?.classList.add('hidden');const b=document.getElementById('tBtnStart');if(b)b.textContent='▶ 시작';}
@@ -6873,6 +6959,60 @@ function updateTimerUI(){
   if(circ){circ.style.strokeDashoffset=String(TCIRC*(1-tTotal?tLeft/tTotal:1));circ.setAttribute('stroke',tLeft<=10?'#FF6B6B':tLeft<=30?'#FFD93D':'#4D96FF');}
 }
 function beep(){if(gpsMuted)return;try{const c=new(window.AudioContext||window.webkitAudioContext)();[0,300,600].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.5,c.currentTime+t/1000);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t/1000+.4);o.start(c.currentTime+t/1000);o.stop(c.currentTime+t/1000+.4);});}catch(e){}}
+
+/* 타이머 종료 알람: 또렷하게 구분되는 '딩동'을 3번 반복 */
+function timerAlarm(){
+  if(gpsMuted) return;
+  try{
+    const c=new(window.AudioContext||window.webkitAudioContext)();
+    const ring=(start)=>{
+      [{f:987.77,o:0},{f:1318.51,o:0.18}].forEach(n=>{
+        const o=c.createOscillator(),g=c.createGain();
+        o.connect(g);g.connect(c.destination);
+        o.type='sine';o.frequency.value=n.f;
+        const t0=c.currentTime+start+n.o;
+        g.gain.setValueAtTime(.001,t0);
+        g.gain.linearRampToValueAtTime(.6,t0+.02);
+        g.gain.exponentialRampToValueAtTime(.001,t0+.38);
+        o.start(t0);o.stop(t0+.4);
+      });
+    };
+    ring(0); ring(0.8); ring(1.6);
+  }catch(e){}
+}
+
+/* 랜덤 뽑기 - 돌아가는 중 긴장감을 주는 짧은 틱 소리 (뽑히는 속도에 맞춰 음이 살짝 높아짐) */
+function capsuleTick(progress){
+  if(gpsMuted) return;
+  try{
+    const c=new(window.AudioContext||window.webkitAudioContext)();
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    o.type='square';
+    o.frequency.value=420+Math.min(1,Math.max(0,progress||0))*260;
+    g.gain.setValueAtTime(.16,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.07);
+    o.start(c.currentTime);o.stop(c.currentTime+.08);
+  }catch(e){}
+}
+
+/* 랜덤 뽑기 - 당첨 순간의 신나는 팡파레 */
+function capsuleWinFanfare(){
+  if(gpsMuted) return;
+  try{
+    const c=new(window.AudioContext||window.webkitAudioContext)();
+    [523.25,659.25,783.99,1046.50].forEach((f,i)=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.connect(g);g.connect(c.destination);
+      o.type='triangle';o.frequency.value=f;
+      const t0=c.currentTime+i*0.11;
+      g.gain.setValueAtTime(.001,t0);
+      g.gain.linearRampToValueAtTime(.5,t0+.02);
+      g.gain.exponentialRampToValueAtTime(.001,t0+.4);
+      o.start(t0);o.stop(t0+.42);
+    });
+  }catch(e){}
+}
 
 /* 소음신호등 */
 let noiseStream=null,noiseCtx=null,noiseAnalyser=null,noiseRaf=null;
