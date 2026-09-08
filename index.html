@@ -1381,7 +1381,7 @@ function showGrade4Launcher(){
   window.gpsActiveView = 'grade4';
   document.getElementById('gradeLabel').textContent='🟧 4학년 - 게임을 골라요!';
   document.getElementById('gradeContent').innerHTML = `
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     <button onclick="startGame('fossil_dig')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#FFF5F0;border:2.5px solid #FED7AA;">
       <div class="text-5xl">🦕</div>
       <p class="font-black text-gray-800">화석 발굴단</p>
@@ -1391,6 +1391,21 @@ function showGrade4Launcher(){
       <div class="text-5xl">🐸</div>
       <p class="font-black text-gray-800">소수 점프</p>
       <p class="text-xs text-gray-500">알맞은 소수를 찾아 점프해요! (수학)</p>
+    </button>
+    <button onclick="startGame('synonym_quiz')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F7FEE7;border:2.5px solid #D9F99D;">
+      <div class="text-5xl">🔤</div>
+      <p class="font-black text-gray-800">비슷한말·반대말 미션</p>
+      <p class="text-xs text-gray-500">낱말의 관계를 맞혀요! (국어)</p>
+    </button>
+    <button onclick="startGame('region_quiz')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#ECFEFF;border:2.5px solid #A5F3FC;">
+      <div class="text-5xl">🗺️</div>
+      <p class="font-black text-gray-800">우리 지역 탐험대</p>
+      <p class="text-xs text-gray-500">특징으로 우리 국토를 알아봐요! (사회)</p>
+    </button>
+    <button onclick="startGame('word_pop')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F0F9FF;border:2.5px solid #BAE6FD;">
+      <div class="text-5xl">🎈</div>
+      <p class="font-black text-gray-800">영단어 팡팡</p>
+      <p class="text-xs text-gray-500">뜻에 맞는 영단어 풍선을 터뜨려요! (영어)</p>
     </button>
   </div>`;
 }
@@ -1414,7 +1429,17 @@ function showGrade5Launcher(){
     <button onclick="startGame('planet_order')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EEF2FF;border:2.5px solid #C7D2FE;">
       <div class="text-5xl">🪐</div>
       <p class="font-black text-gray-800">태양계 탐사대</p>
-      <p class="text-xs text-gray-500">태양과 가까운 순서로 행성을 찾아요!</p>
+      <p class="text-xs text-gray-500">특징 힌트로 행성을 맞히며 탐사해요!</p>
+    </button>
+    <button onclick="startGame('idiom_quiz')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#F0FDFA;border:2.5px solid #99F6E4;">
+      <div class="text-5xl">📖</div>
+      <p class="font-black text-gray-800">속담·관용구 미션</p>
+      <p class="text-xs text-gray-500">뜻을 골라 속담·관용구를 익혀요! (국어)</p>
+    </button>
+    <button onclick="startGame('english_memory')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:#EFF6FF;border:2.5px solid #BAE6FD;">
+      <div class="text-5xl">🃏</div>
+      <p class="font-black text-gray-800">영단어 짝 맞추기</p>
+      <p class="text-xs text-gray-500">카드를 뒤집어 영단어와 뜻을 찾아요! (영어)</p>
     </button>
   </div>`;
 }
@@ -1427,7 +1452,9 @@ function showGrade6Launcher(){
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
     ${[{id:'stacking',icon:'🏗️',name:'쌓기나무 3D',desc:'드래그로 블록을 쌓아봐요!',bg:'#E8F5FF',bd:'#BEE3F8'},
        {id:'proportion',icon:'📐',name:'비례식 퀴즈',desc:'a:b=c:? 비율을 맞혀봐요!',bg:'#F0FFF4',bd:'#9AE6B4'},
-       {id:'history',icon:'🃏',name:'역사 카드 배틀',desc:'사건과 설명을 짝지어요!',bg:'#FFF5F0',bd:'#FEB2B2'}]
+       {id:'history',icon:'🃏',name:'역사 카드 배틀',desc:'사건과 설명을 짝지어요!',bg:'#FFF5F0',bd:'#FEB2B2'},
+       {id:'spell_hunter',icon:'🎯',name:'맞춤법 사냥꾼',desc:'맞는 낱말만 골라 터뜨려요! (국어)',bg:'#FFF1F2',bd:'#FECDD3'},
+       {id:'english_battle',icon:'🤖',name:'영어 문장 완성 배틀',desc:'빈칸에 알맞은 말로 몬스터를 물리쳐요! (영어)',bg:'#FAF5FF',bd:'#E9D5FF'}]
     .map(g=>`<button onclick="startGame('${g.id}')" class="game-pick-card p-5 rounded-2xl text-center cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 flex flex-col items-center gap-2" style="background:${g.bg};border:2.5px solid ${g.bd};"><div class="text-5xl">${g.icon}</div><p class="font-black text-gray-800">${g.name}</p><p class="text-xs text-gray-500">${g.desc}</p></button>`).join('')}
   </div>`;
 }
@@ -1452,6 +1479,13 @@ function startGame(id){
   if(id==='fraction_pizza') initFractionPizza();
   if(id==='shape_match') initShapeMatch();
   if(id==='multi_battle') initMultiBattle();
+  if(id==='idiom_quiz') initIdiomQuiz();
+  if(id==='english_memory') initEnglishMemory();
+  if(id==='spell_hunter') initSpellHunter();
+  if(id==='english_battle') initEnglishBattle();
+  if(id==='synonym_quiz') initSynonymQuiz();
+  if(id==='region_quiz') initRegionQuiz();
+  if(id==='word_pop') initWordPop();
 }
 
 /* ══════════════════════════════════════
@@ -2344,6 +2378,513 @@ function djLoop(timestamp) {
 }
 
 /* ══════════════════════════════════════
+   🔤 비슷한말·반대말 미션 (4학년 국어 - 낱말의 관계)
+══════════════════════════════════════ */
+const SA_DATA = [
+  { word:'기쁘다', type:'반대말', answer:'슬프다' },
+  { word:'크다', type:'반대말', answer:'작다' },
+  { word:'빠르다', type:'반대말', answer:'느리다' },
+  { word:'덥다', type:'반대말', answer:'춥다' },
+  { word:'무겁다', type:'반대말', answer:'가볍다' },
+  { word:'예쁘다', type:'비슷한말', answer:'아름답다' },
+  { word:'화나다', type:'비슷한말', answer:'성나다' },
+  { word:'훌륭하다', type:'비슷한말', answer:'뛰어나다' },
+  { word:'어렵다', type:'반대말', answer:'쉽다' },
+  { word:'넓다', type:'반대말', answer:'좁다' },
+  { word:'밝다', type:'반대말', answer:'어둡다' },
+  { word:'조용하다', type:'반대말', answer:'시끄럽다' },
+  { word:'시작하다', type:'반대말', answer:'끝내다' },
+  { word:'벗다', type:'반대말', answer:'입다' },
+  { word:'사다', type:'반대말', answer:'팔다' },
+  { word:'웃다', type:'반대말', answer:'울다' },
+  { word:'튼튼하다', type:'비슷한말', answer:'건강하다' },
+  { word:'재빠르다', type:'비슷한말', answer:'날쌔다' },
+  { word:'검소하다', type:'비슷한말', answer:'소박하다' },
+  { word:'낯설다', type:'반대말', answer:'익숙하다' },
+  { word:'힘들다', type:'비슷한말', answer:'고되다' },
+  { word:'게으르다', type:'반대말', answer:'부지런하다' },
+  { word:'차갑다', type:'반대말', answer:'따뜻하다' },
+  { word:'얇다', type:'반대말', answer:'두껍다' },
+  { word:'짧다', type:'반대말', answer:'길다' },
+  { word:'높다', type:'반대말', answer:'낮다' },
+  { word:'늦다', type:'반대말', answer:'이르다' },
+  { word:'착하다', type:'비슷한말', answer:'얌전하다' },
+  { word:'슬기롭다', type:'비슷한말', answer:'지혜롭다' },
+  { word:'아프다', type:'비슷한말', answer:'편찮다' },
+  { word:'검다', type:'반대말', answer:'희다' },
+  { word:'진짜', type:'반대말', answer:'가짜' },
+  { word:'안전하다', type:'반대말', answer:'위험하다' },
+  { word:'넉넉하다', type:'비슷한말', answer:'풍족하다' },
+  { word:'깨끗하다', type:'반대말', answer:'더럽다' },
+  { word:'단단하다', type:'비슷한말', answer:'견고하다' }
+];
+
+let saOrder = [];
+let saRoundIdx = 0;
+let saScore = 0;
+let saCombo = 0;
+let saMaxCombo = 0;
+let saTimeLeft = 0;
+let saTimerId = null;
+const SA_TOTAL = 10;
+const SA_Q_TIME = 15;
+
+function saClearTimer(){ if(saTimerId){ clearInterval(saTimerId); saTimerId = null; } }
+
+function initSynonymQuiz(reset=true){
+  if (window.gpsActiveView && window.gpsActiveView !== 'synonym_quiz') return;
+  saClearTimer();
+  if(reset){
+    saRoundIdx = 0; saScore = 0; saCombo = 0; saMaxCombo = 0;
+    saOrder = shuffleArr(SA_DATA.map((_, i) => i)).slice(0, SA_TOTAL);
+  }
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+
+  if(saRoundIdx >= SA_TOTAL){
+    const {best, isNew} = gpsSetBest('synonym_quiz', saScore);
+    gpsSoundFanfare();
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
+        <span class="text-6xl">🔤</span>
+        <h4 class="text-2xl font-black text-lime-700">낱말 관계 마스터!</h4>
+        <p class="text-gray-500 font-bold">비슷한말과 반대말을 모두 알아맞혔어요!</p>
+        <div class="flex gap-6 mt-2">
+          <div class="text-center"><p class="text-3xl font-black text-lime-600">${saScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-indigo-500">${saMaxCombo}</p><p class="text-xs text-gray-400 font-bold">최고 콤보</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+        </div>
+        ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+        <div class="flex gap-3 mt-4">
+          <button onclick="initSynonymQuiz(true)" class="btn btn-blue px-8 py-3 text-lg">🔄 다시 하기</button>
+          <button onclick="showGrade4Launcher()" class="btn btn-ghost px-6 py-3 text-lg">← 메뉴로</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const idx = saOrder[saRoundIdx];
+  const item = SA_DATA[idx];
+  const wrongPool = SA_DATA.map((_, i) => i).filter(i => i !== idx && SA_DATA[i].answer !== item.answer);
+  const wrongs = shuffleArr(wrongPool).slice(0, 3).map(i => SA_DATA[i].answer);
+  const options = shuffleArr([{ text: item.answer, correct: true }, ...wrongs.map(w => ({ text: w, correct: false }))]);
+  saTimeLeft = SA_Q_TIME;
+  const progress = (saRoundIdx / SA_TOTAL) * 100;
+
+  gc.innerHTML = `
+    <div class="space-y-5">
+      <div class="flex items-center justify-between">
+        <button onclick="saClearTimer();showGrade4Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <span class="text-sm font-black text-lime-800">🔤 비슷한말·반대말 미션 (${saRoundIdx+1}/${SA_TOTAL})</span>
+        <span class="text-sm font-black text-pink-500">${saScore}점 ${saCombo>=2?`· 🔥${saCombo}`:''}</span>
+      </div>
+
+      <div class="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+        <div class="absolute top-0 bottom-0 left-0 bg-lime-400" style="width:${progress}%"></div>
+      </div>
+
+      <div class="w-full h-2.5 bg-lime-100 rounded-full overflow-hidden">
+        <div id="saTimerBar" class="h-full bg-lime-400" style="width:100%;transition:width ${SA_Q_TIME}s linear;"></div>
+      </div>
+
+      <div class="text-center py-6 bg-white rounded-3xl shadow-sm border-2 border-lime-100">
+        <p class="text-sm text-gray-500 font-bold mb-2">'${item.word}'의 <b class="text-lime-700">${item.type}</b>은(는) 무엇일까요?</p>
+        <p class="text-2xl font-black text-lime-700 break-keep px-2">"${item.word}"</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5 px-2" id="saOptions">
+        ${options.map(o => `
+          <button onclick="saClick(${o.correct}, this)" class="p-3.5 rounded-2xl bg-lime-50 border-b-4 border-lime-200 text-sm font-bold text-lime-900 shadow-sm active:border-b-0 active:translate-y-1 transition-all break-keep">
+            ${o.text}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('saTimerBar');
+    if(bar) bar.style.width = '0%';
+  });
+  saTimerId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'synonym_quiz') { saClearTimer(); return; }
+    saTimeLeft--;
+    if(saTimeLeft <= 0){
+      saClearTimer();
+      saCombo = 0;
+      saRoundIdx++;
+      const opts = document.getElementById('saOptions');
+      if(opts) opts.style.pointerEvents = 'none';
+      gpsSoundTimeout();
+      toast(`⏰ 시간 초과! 정답은 "${item.answer}"였어요`, 2200);
+      setTimeout(() => initSynonymQuiz(false), 900);
+    }
+  }, 1000);
+}
+
+function saClick(isCorrect, btn){
+  if(isCorrect){
+    saClearTimer();
+    btn.classList.replace('bg-lime-50', 'bg-green-200');
+    btn.classList.replace('border-lime-200', 'border-green-500');
+    saCombo++; saMaxCombo = Math.max(saMaxCombo, saCombo);
+    saScore += 10 + Math.max(0, saTimeLeft) + (saCombo>=2 ? (saCombo-1)*5 : 0);
+    saRoundIdx++;
+    document.getElementById('saOptions').style.pointerEvents = 'none';
+    const rect = btn.getBoundingClientRect();
+    gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+    gpsComboPopup(btn, saCombo);
+    gpsSoundCorrect(saCombo);
+    setTimeout(() => initSynonymQuiz(false), 700);
+  } else {
+    btn.classList.add('animate-bounce');
+    btn.style.outline = '4px solid #EF4444';
+    btn.style.outlineOffset = '-2px';
+    saCombo = 0;
+    gpsSoundWrong();
+    setTimeout(() => {
+      btn.classList.remove('animate-bounce');
+      btn.style.outline = '';
+    }, 500);
+  }
+}
+
+/* ══════════════════════════════════════
+   🗺️ 우리 지역 탐험대 (4학년 사회 - 지역의 문화유산과 특징)
+══════════════════════════════════════ */
+const RG_DATA = [
+  { region:'제주도', clue:'화산 활동으로 만들어진 섬으로, 한라산과 돌하르방이 유명해요.' },
+  { region:'경주', clue:'신라의 천 년 수도로, 불국사와 석굴암 같은 문화유산이 많아요.' },
+  { region:'안동', clue:'하회마을과 탈춤으로 유명한 전통이 살아있는 고장이에요.' },
+  { region:'전주', clue:'한옥마을과 비빔밥으로 유명한 도시예요.' },
+  { region:'부산', clue:'우리나라에서 두 번째로 큰 도시로, 해운대 해수욕장이 있어요.' },
+  { region:'강릉', clue:'커피거리와 경포대 바다로 유명한 강원도의 도시예요.' },
+  { region:'여수', clue:'아름다운 밤바다와 돌산대교로 유명한 항구 도시예요.' },
+  { region:'보성', clue:'넓게 펼쳐진 초록빛 녹차밭으로 유명한 고장이에요.' },
+  { region:'담양', clue:'대나무 숲(죽녹원)이 아름답기로 유명한 고장이에요.' },
+  { region:'울릉도', clue:'독도와 가까운, 우리나라 동쪽 바다에 있는 화산섬이에요.' },
+  { region:'설악산', clue:'가을 단풍이 아름다운, 강원도의 대표적인 국립공원이에요.' },
+  { region:'남해', clue:'계단처럼 생긴 다랑이논과 아름다운 바다로 유명한 섬이에요.' },
+  { region:'순천', clue:'넓은 갈대밭이 펼쳐진 순천만 습지로 유명해요.' },
+  { region:'인천', clue:'우리나라를 대표하는 국제공항이 있는 도시예요.' },
+  { region:'대구', clue:'예로부터 사과 산지로 유명했던, 여름이 무더운 도시예요.' },
+  { region:'서울', clue:'우리나라의 수도로, 경복궁이 자리한 도시예요.' },
+  { region:'광주', clue:'예술이 발달한 도시로, 무등산이 유명해요.' },
+  { region:'대전', clue:'과학의 도시로 불리며, 대덕연구단지가 있어요.' },
+  { region:'울산', clue:'자동차와 조선업이 크게 발달한 공업 도시예요.' },
+  { region:'평창', clue:'2018년 겨울 올림픽이 열린 강원도의 고장이에요.' },
+  { region:'통영', clue:'아름다운 한려수도와 이순신 장군 유적지로 유명해요.' },
+  { region:'청주', clue:'세계에서 가장 오래된 금속 활자본, 직지심체요절이 만들어진 곳이에요.' },
+  { region:'목포', clue:'유달산과 아름다운 노을로 유명한 항구 도시예요.' },
+  { region:'춘천', clue:'호수와 닭갈비로 유명한 강원도의 도시예요.' },
+  { region:'포항', clue:'제철 산업이 크게 발달한 동해안의 도시예요.' },
+  { region:'창녕', clue:'우포늪이라는 우리나라에서 가장 큰 자연 늪이 있는 고장이에요.' },
+  { region:'거제', clue:'조선소와 아름다운 해안으로 유명한 남해의 섬이에요.' }
+];
+
+let rgOrder = [];
+let rgRoundIdx = 0;
+let rgScore = 0;
+let rgCombo = 0;
+let rgMaxCombo = 0;
+let rgTimeLeft = 0;
+let rgTimerId = null;
+const RG_TOTAL = 10;
+const RG_Q_TIME = 15;
+
+function rgClearTimer(){ if(rgTimerId){ clearInterval(rgTimerId); rgTimerId = null; } }
+
+function initRegionQuiz(reset=true){
+  if (window.gpsActiveView && window.gpsActiveView !== 'region_quiz') return;
+  rgClearTimer();
+  if(reset){
+    rgRoundIdx = 0; rgScore = 0; rgCombo = 0; rgMaxCombo = 0;
+    rgOrder = shuffleArr(RG_DATA.map((_, i) => i)).slice(0, RG_TOTAL);
+  }
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+
+  if(rgRoundIdx >= RG_TOTAL){
+    const {best, isNew} = gpsSetBest('region_quiz', rgScore);
+    gpsSoundFanfare();
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
+        <span class="text-6xl">🗺️</span>
+        <h4 class="text-2xl font-black text-cyan-700">우리 지역 탐험 완료!</h4>
+        <p class="text-gray-500 font-bold">우리 국토 곳곳을 잘 알고 있네요!</p>
+        <div class="flex gap-6 mt-2">
+          <div class="text-center"><p class="text-3xl font-black text-cyan-600">${rgScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-indigo-500">${rgMaxCombo}</p><p class="text-xs text-gray-400 font-bold">최고 콤보</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+        </div>
+        ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+        <div class="flex gap-3 mt-4">
+          <button onclick="initRegionQuiz(true)" class="btn btn-blue px-8 py-3 text-lg">🔄 다시 하기</button>
+          <button onclick="showGrade4Launcher()" class="btn btn-ghost px-6 py-3 text-lg">← 메뉴로</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const idx = rgOrder[rgRoundIdx];
+  const item = RG_DATA[idx];
+  const wrongPool = RG_DATA.map((_, i) => i).filter(i => i !== idx);
+  const wrongs = shuffleArr(wrongPool).slice(0, 3).map(i => RG_DATA[i].region);
+  const options = shuffleArr([{ text: item.region, correct: true }, ...wrongs.map(w => ({ text: w, correct: false }))]);
+  rgTimeLeft = RG_Q_TIME;
+  const progress = (rgRoundIdx / RG_TOTAL) * 100;
+
+  gc.innerHTML = `
+    <div class="space-y-5">
+      <div class="flex items-center justify-between">
+        <button onclick="rgClearTimer();showGrade4Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <span class="text-sm font-black text-cyan-800">🗺️ 우리 지역 탐험대 (${rgRoundIdx+1}/${RG_TOTAL})</span>
+        <span class="text-sm font-black text-pink-500">${rgScore}점 ${rgCombo>=2?`· 🔥${rgCombo}`:''}</span>
+      </div>
+
+      <div class="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+        <div class="absolute top-0 bottom-0 left-0 bg-cyan-400" style="width:${progress}%"></div>
+      </div>
+
+      <div class="w-full h-2.5 bg-cyan-100 rounded-full overflow-hidden">
+        <div id="rgTimerBar" class="h-full bg-cyan-400" style="width:100%;transition:width ${RG_Q_TIME}s linear;"></div>
+      </div>
+
+      <div class="text-center py-6 bg-white rounded-3xl shadow-sm border-2 border-cyan-100">
+        <p class="text-sm text-gray-500 font-bold mb-2">🧭 이 설명에 해당하는 지역은 어디일까요?</p>
+        <p class="text-lg font-black text-cyan-700 break-keep px-2">"${item.clue}"</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5 px-2" id="rgOptions">
+        ${options.map(o => `
+          <button onclick="rgClick(${o.correct}, this)" class="p-3.5 rounded-2xl bg-cyan-50 border-b-4 border-cyan-200 text-sm font-bold text-cyan-900 shadow-sm active:border-b-0 active:translate-y-1 transition-all break-keep">
+            ${o.text}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('rgTimerBar');
+    if(bar) bar.style.width = '0%';
+  });
+  rgTimerId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'region_quiz') { rgClearTimer(); return; }
+    rgTimeLeft--;
+    if(rgTimeLeft <= 0){
+      rgClearTimer();
+      rgCombo = 0;
+      rgRoundIdx++;
+      const opts = document.getElementById('rgOptions');
+      if(opts) opts.style.pointerEvents = 'none';
+      gpsSoundTimeout();
+      toast(`⏰ 시간 초과! 정답은 "${item.region}"이었어요`, 2200);
+      setTimeout(() => initRegionQuiz(false), 900);
+    }
+  }, 1000);
+}
+
+function rgClick(isCorrect, btn){
+  if(isCorrect){
+    rgClearTimer();
+    btn.classList.replace('bg-cyan-50', 'bg-green-200');
+    btn.classList.replace('border-cyan-200', 'border-green-500');
+    rgCombo++; rgMaxCombo = Math.max(rgMaxCombo, rgCombo);
+    rgScore += 10 + Math.max(0, rgTimeLeft) + (rgCombo>=2 ? (rgCombo-1)*5 : 0);
+    rgRoundIdx++;
+    document.getElementById('rgOptions').style.pointerEvents = 'none';
+    const rect = btn.getBoundingClientRect();
+    gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+    gpsComboPopup(btn, rgCombo);
+    gpsSoundCorrect(rgCombo);
+    setTimeout(() => initRegionQuiz(false), 700);
+  } else {
+    btn.classList.add('animate-bounce');
+    btn.style.outline = '4px solid #EF4444';
+    btn.style.outlineOffset = '-2px';
+    rgCombo = 0;
+    gpsSoundWrong();
+    setTimeout(() => {
+      btn.classList.remove('animate-bounce');
+      btn.style.outline = '';
+    }, 500);
+  }
+}
+
+/* ══════════════════════════════════════
+   🎈 영단어 팡팡 (4학년 영어 - 기초 어휘)
+══════════════════════════════════════ */
+const WP_WORDS = [
+  { ko:'사과', en:'apple' }, { ko:'빨간색', en:'red' }, { ko:'파란색', en:'blue' }, { ko:'노란색', en:'yellow' },
+  { ko:'초록색', en:'green' }, { ko:'하나', en:'one' }, { ko:'둘', en:'two' }, { ko:'셋', en:'three' },
+  { ko:'강아지', en:'dog' }, { ko:'고양이', en:'cat' }, { ko:'새', en:'bird' }, { ko:'물고기', en:'fish' },
+  { ko:'연필', en:'pencil' }, { ko:'지우개', en:'eraser' }, { ko:'자', en:'ruler' }, { ko:'가방', en:'bag' },
+  { ko:'월요일', en:'Monday' }, { ko:'금요일', en:'Friday' }, { ko:'맑은', en:'sunny' }, { ko:'비 오는', en:'rainy' },
+  { ko:'의자', en:'chair' }, { ko:'책상', en:'desk' }, { ko:'모자', en:'hat' }, { ko:'우유', en:'milk' },
+  { ko:'보라색', en:'purple' }, { ko:'주황색', en:'orange' }, { ko:'넷', en:'four' }, { ko:'다섯', en:'five' },
+  { ko:'토끼', en:'rabbit' }, { ko:'곰', en:'bear' }, { ko:'사자', en:'lion' }, { ko:'공', en:'ball' },
+  { ko:'시계', en:'clock' }, { ko:'창문', en:'window' }, { ko:'문', en:'door' }, { ko:'컵', en:'cup' },
+  { ko:'화요일', en:'Tuesday' }, { ko:'수요일', en:'Wednesday' }, { ko:'눈 오는', en:'snowy' }, { ko:'바람 부는', en:'windy' }
+];
+
+let wpTarget = null;
+let wpScore = 0;
+let wpCombo = 0;
+let wpMaxCombo = 0;
+let wpInterval = null;
+let wpTickId = null;
+let wpActive = false;
+let wpTimeLeft = 60;
+const WP_GAME_TIME = 60;
+
+function wpSpawnDelay(){
+  return Math.max(1200, 2200 - wpScore * 3);
+}
+function wpRestartSpawner(){
+  clearInterval(wpInterval);
+  wpInterval = setInterval(spawnWpBalloon, wpSpawnDelay());
+}
+
+function initWordPop(){
+  if (window.gpsActiveView && window.gpsActiveView !== 'word_pop') return;
+  wpScore = 0; wpCombo = 0; wpMaxCombo = 0; wpTimeLeft = WP_GAME_TIME;
+  wpActive = true;
+  genWpTarget();
+  renderWordPop();
+  wpRestartSpawner();
+  clearInterval(wpTickId);
+  wpTickId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'word_pop') { clearInterval(wpTickId); wpTickId = null; clearInterval(wpInterval); wpActive = false; return; }
+    wpTimeLeft--;
+    const t = document.getElementById('wpTimeTxt');
+    if(t) t.textContent = wpTimeLeft;
+    if(wpTimeLeft <= 0) wpEndGame();
+  }, 1000);
+}
+
+function wpEndGame(){
+  wpActive = false;
+  clearInterval(wpInterval);
+  clearInterval(wpTickId);
+  const area = document.getElementById('wpArea');
+  if(area) area.innerHTML = '';
+  const {best, isNew} = gpsSetBest('word_pop', wpScore);
+  gpsSoundFanfare();
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+    <div class="flex flex-col items-center gap-3 py-8 text-center">
+      <span class="text-6xl">⏰</span>
+      <h4 class="text-2xl font-black text-sky-600">시간 종료!</h4>
+      <div class="flex gap-6 mt-2">
+        <div class="text-center"><p class="text-3xl font-black text-sky-500">${wpScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+        <div class="text-center"><p class="text-3xl font-black text-indigo-500">${wpMaxCombo}</p><p class="text-xs text-gray-400 font-bold">최고 콤보</p></div>
+        <div class="text-center"><p class="text-3xl font-black text-amber-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+      </div>
+      ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+      <div class="flex gap-3 mt-4">
+        <button onclick="showGrade4Launcher()" class="btn btn-ghost px-6 py-3">← 메뉴로</button>
+        <button onclick="initWordPop()" class="btn btn-blue px-8 py-3 text-lg">🔄 다시 하기</button>
+      </div>
+    </div>`;
+}
+
+function genWpTarget() {
+  wpTarget = WP_WORDS[Math.floor(Math.random() * WP_WORDS.length)];
+  const el = document.getElementById('wpTargetTxt');
+  if(el) el.textContent = wpTarget.ko;
+}
+
+function renderWordPop() {
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+    <div class="relative w-full h-[65vh] bg-sky-50 rounded-2xl border-4 border-sky-200 overflow-hidden flex flex-col">
+      <div class="absolute top-2 left-2 z-20 flex items-center gap-2">
+        <button onclick="wpActive=false;clearInterval(wpInterval);clearInterval(wpTickId);showGrade4Launcher()" class="btn btn-ghost bg-white/50 text-xs shadow-sm">← 나가기</button>
+        <span class="bg-white/90 px-3 py-1 rounded-full text-xs font-black text-slate-500 shadow-sm">⏱️ <span id="wpTimeTxt">${wpTimeLeft}</span>초</span>
+      </div>
+      <div class="absolute top-2 right-4 z-20 text-lg font-black text-sky-600 bg-white/90 px-4 py-1 rounded-full shadow-sm">
+        점수: <span id="wpScoreTxt">${wpScore}</span>점 <span id="wpComboTxt" class="text-orange-500 text-sm">${wpCombo>=2?`🔥${wpCombo}`:''}</span>
+      </div>
+
+      <div class="w-full text-center py-4 z-10 mt-10">
+        <p class="text-sm font-bold text-slate-500 mb-2">다음 우리말 뜻에 맞는 영어 풍선을 터뜨리세요!</p>
+        <div class="inline-block bg-white border-4 border-sky-300 rounded-3xl px-10 py-3 shadow-md">
+          <span class="text-4xl font-black text-sky-500" id="wpTargetTxt">${wpTarget ? wpTarget.ko : ''}</span>
+        </div>
+      </div>
+
+      <div id="wpArea" class="flex-1 relative w-full overflow-hidden"></div>
+    </div>
+  `;
+}
+
+function spawnWpBalloon() {
+  if(!wpActive) return;
+  const area = document.getElementById('wpArea');
+  if(!area) return;
+
+  let isCorrect = Math.random() < 0.35;
+  let text;
+  if(isCorrect){
+    text = wpTarget.en;
+  } else {
+    const others = WP_WORDS.filter(w => w.en !== wpTarget.en);
+    text = others[Math.floor(Math.random()*others.length)].en;
+  }
+
+  const bEl = document.createElement('div');
+  bEl.className = 'absolute flex items-center justify-center cursor-pointer transition-transform active:scale-90 select-none';
+  bEl.style.left = (Math.random()*70 + 10) + '%';
+  bEl.style.bottom = '-80px';
+  bEl.style.width = '90px';
+  bEl.style.height = '90px';
+  bEl.style.transition = 'bottom 6s linear, opacity 0.2s';
+
+  let hue = Math.floor(Math.random()*360);
+  bEl.innerHTML = `
+    <span class="absolute text-[80px] leading-none" style="filter: hue-rotate(${hue}deg) drop-shadow(0 4px 6px rgba(0,0,0,0.1)); z-index:-1; top: -10px;">🎈</span>
+    <span class="font-black text-slate-900 text-base z-10 bg-white/70 px-2 py-0.5 rounded-xl shadow-sm mt-[-25px] whitespace-nowrap">${text}</span>
+  `;
+
+  bEl.onclick = () => {
+    if(!wpActive) return;
+    if(text === wpTarget.en) {
+      wpCombo++; wpMaxCombo = Math.max(wpMaxCombo, wpCombo);
+      wpScore += 10 + (wpCombo>=2 ? (wpCombo-1)*2 : 0);
+      document.getElementById('wpScoreTxt').textContent = wpScore;
+      const comboEl = document.getElementById('wpComboTxt');
+      if(comboEl) comboEl.textContent = wpCombo>=2 ? `🔥${wpCombo}` : '';
+      bEl.innerHTML = '<span class="text-6xl">💥</span>';
+      const rect = bEl.getBoundingClientRect();
+      gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+      gpsNoiseBurst(0, 0.06, 0.14, 600);
+      gpsSoundCorrect(wpCombo);
+      setTimeout(()=>bEl.remove(), 200);
+      genWpTarget();
+      wpRestartSpawner();
+    } else {
+      bEl.innerHTML = '<span class="text-6xl">❌</span>';
+      setTimeout(()=>bEl.remove(), 300);
+      wpCombo = 0;
+      const comboEl = document.getElementById('wpComboTxt');
+      if(comboEl) comboEl.textContent = '';
+      wpScore = Math.max(0, wpScore - 5);
+      document.getElementById('wpScoreTxt').textContent = wpScore;
+      gpsSoundWrong();
+    }
+  };
+
+  area.appendChild(bEl);
+
+  setTimeout(() => {
+    if(bEl.parentNode) bEl.style.bottom = '120%';
+  }, 50);
+
+  setTimeout(() => {
+    if(bEl.parentNode) bEl.remove();
+  }, 6050);
+}
+
+/* ══════════════════════════════════════
    🚂 역사 연표 기차 (5학년) - Replaces History Match
 ══════════════════════════════════════ */
 const HT_EVENTS = [
@@ -2716,22 +3257,92 @@ function mmClick(idx) {
 
 /* ══════════════════════════════════════
    🪐 태양계 탐사대 (5학년 과학 - 태양계와 별)
+   우주선 컴퓨터가 알려주는 "특징 힌트"를 읽고 행성을 맞히며,
+   태양에서 가까운 순서로 탐사를 이어가는 퀴즈형 게임.
 ══════════════════════════════════════ */
 const PO_PLANETS = [
-  { order:1, icon:'☿️', text:'수성', fact:'태양에서 가장 가까운 행성으로, 낮과 밤의 온도 차이가 아주 커요.' },
-  { order:2, icon:'♀️', text:'금성', fact:'태양계 행성 중 밤하늘에서 가장 밝게 보여요.' },
-  { order:3, icon:'🌍', text:'지구', fact:'생명체가 살고 있는 것으로 알려진 유일한 행성이에요.' },
-  { order:4, icon:'♂️', text:'화성', fact:'표면이 붉은 흙으로 덮여 있어 "붉은 행성"이라고 불려요.' },
-  { order:5, icon:'🪐', text:'목성', fact:'태양계에서 가장 큰 행성으로, 커다란 붉은 폭풍이 있어요.' },
-  { order:6, icon:'🪐', text:'토성', fact:'아름다운 고리를 가진 행성으로 유명해요.' },
-  { order:7, icon:'🔵', text:'천왕성', fact:'옆으로 거의 누운 채 자전하는 특이한 행성이에요.' },
-  { order:8, icon:'🔷', text:'해왕성', fact:'태양에서 가장 멀리 떨어진 행성이에요.' }
+  { order:1, icon:'☿️', text:'수성', size:'지구의 38% 크기', moons:'위성 없음',
+    clues:[
+      '태양에서 가장 가까운 행성이에요.',
+      '대기가 거의 없어서 낮과 밤의 온도 차이가 무려 600℃ 가까이 나요.',
+      '이 행성에서는 하루(자전 주기)가 1년(공전 주기)보다 더 길어요.',
+      '태양계 행성 중 크기가 가장 작은 행성이에요.',
+      '표면이 달처럼 크고 작은 운석 구덩이로 가득해요.'
+    ],
+    fact:'태양에서 가장 가까운 행성이에요. 대기가 거의 없어서 낮과 밤의 온도 차이가 600℃ 가까이 나요.' },
+  { order:2, icon:'♀️', text:'금성', size:'지구와 거의 같은 크기', moons:'위성 없음',
+    clues:[
+      '태양계 행성 중 밤하늘에서 가장 밝게 보여요.',
+      '두꺼운 이산화탄소 대기 때문에 표면 온도가 470℃까지 올라가, 수성보다 더 뜨거워요.',
+      '다른 행성들과 반대 방향으로 자전하는 특이한 행성이에요.',
+      '크기와 질량이 지구와 비슷해 "지구의 쌍둥이"라고도 불려요.',
+      '샛별 또는 개밥바라기라는 이름으로도 불리는 행성이에요.'
+    ],
+    fact:'밤하늘에서 가장 밝게 보이는 행성이지만, 두꺼운 대기 때문에 태양과 가장 가까운 수성보다도 표면이 더 뜨거워요.' },
+  { order:3, icon:'🌍', text:'지구', size:'태양계에서 다섯 번째로 큰 행성', moons:'위성 1개(달)',
+    clues:[
+      '생명체가 살고 있는 것으로 알려진 유일한 행성이에요.',
+      '표면의 약 70%가 물로 덮여 있어 우주에서 보면 파랗게 보여요.',
+      '달이라는 위성을 하나 거느리고 있어요.',
+      '태양으로부터 세 번째로 가까운 행성이에요.',
+      '대기 중 산소가 있어 생명체가 숨 쉬며 살 수 있는 행성이에요.'
+    ],
+    fact:'생명체가 사는 것으로 알려진 유일한 행성이에요. 표면의 70%가 물로 덮여 있어 파랗게 보여요.' },
+  { order:4, icon:'♂️', text:'화성', size:'지구의 약 절반 크기', moons:'위성 2개',
+    clues:[
+      '표면이 산화철(녹슨 흙)로 덮여 있어 "붉은 행성"이라고 불려요.',
+      '태양계에서 가장 높은 화산인 올림푸스 몬스가 있는 행성이에요.',
+      '포보스와 데이모스, 두 개의 작은 위성을 가지고 있어요.',
+      '먼 미래에 사람이 이주해 살 수도 있다고 연구되는 행성이에요.',
+      '태양계에서 가장 큰 협곡인 매리너 협곡이 있는 행성이에요.'
+    ],
+    fact:'표면이 붉은 흙으로 덮여 있어 "붉은 행성"이라 불리고, 태양계에서 가장 큰 화산도 이곳에 있어요.' },
+  { order:5, icon:'🪐', text:'목성', size:'태양계에서 가장 큰 행성', moons:'위성 90개 이상',
+    clues:[
+      '태양계에서 가장 큰 행성이에요.',
+      '수백 년 넘게 이어지고 있는 대적점이라는 거대한 붉은 폭풍이 있어요.',
+      '90개가 넘는 위성을 가진, 태양계에서 위성이 가장 많은 행성 중 하나예요.',
+      '수소와 헬륨 기체로 이루어진 거대한 가스 행성이에요.',
+      '태양계 행성 중 자전 속도가 가장 빨라 하루가 10시간 정도밖에 안 돼요.'
+    ],
+    fact:'태양계에서 가장 큰 행성으로, 수백 년째 이어지는 거대한 붉은 폭풍인 대적점이 있어요.' },
+  { order:6, icon:'🪐', text:'토성', size:'태양계에서 두 번째로 큰 행성', moons:'위성 140개 이상',
+    clues:[
+      '얼음과 암석 조각으로 이루어진 아름다운 고리를 가진 행성이에요.',
+      '밀도가 물보다 낮아서, 담글 수 있는 큰 욕조가 있다면 물 위에 뜰 수 있어요.',
+      '목성 다음으로 태양계에서 두 번째로 큰 행성이에요.',
+      '목성처럼 수소와 헬륨으로 이루어진 가스 행성이에요.',
+      '위성 타이탄은 태양계에서 두꺼운 대기를 가진 유일한 위성이에요.'
+    ],
+    fact:'얼음과 암석으로 된 아름다운 고리로 유명해요. 밀도가 낮아서 물에 뜰 수도 있는 행성이에요.' },
+  { order:7, icon:'🔵', text:'천왕성', size:'지구의 약 4배 크기', moons:'위성 27개',
+    clues:[
+      '팽이가 옆으로 누운 것처럼 자전축이 거의 눕혀진 채 자전해요.',
+      '대기 중 메테인 가스 때문에 청록색으로 보이는 행성이에요.',
+      '태양계 행성 중 표면 온도가 가장 낮은 행성이에요.',
+      '천체 망원경으로 처음 발견된 행성이에요.',
+      '얼음과 암석으로 이루어진 "거대 얼음 행성"으로 분류돼요.'
+    ],
+    fact:'옆으로 거의 누운 채 자전하는 독특한 행성이에요. 메테인 가스 때문에 청록색을 띠어요.' },
+  { order:8, icon:'🔷', text:'해왕성', size:'지구의 약 4배 크기', moons:'위성 14개',
+    clues:[
+      '태양에서 가장 멀리 떨어진 행성이에요.',
+      '태양계에서 바람이 가장 강한 행성으로, 초속 2000m가 넘는 폭풍이 불어요.',
+      '천왕성처럼 메테인 가스 때문에 파란빛을 띠는 행성이에요.',
+      '태양을 한 바퀴 도는 데 165년이나 걸리는 행성이에요.',
+      '실제 관측이 아니라 수학 계산으로 위치를 먼저 예측해서 발견한 행성이에요.'
+    ],
+    fact:'태양에서 가장 멀리 떨어진 행성이자, 태양계에서 바람이 가장 강하게 부는 행성이에요.' }
 ];
 
-let poSelectedIndexes = [];
+let poRoundIdx = 0;
 let poLives = 3;
 let poStartTime = 0;
 let poTimerInterval = null;
+let poFirstTryCount = 0;
+let poWrongThisRound = false;
+let poCurrentClueIdx = 0;
+let poCurrentOptions = [];
 
 function initPlanetOrder() {
   if (window.gpsActiveView && window.gpsActiveView !== 'planet_order') return;
@@ -2741,9 +3352,10 @@ function initPlanetOrder() {
       <span class="text-6xl">🪐</span>
       <h4 class="text-xl font-black text-indigo-800">태양계 탐사대</h4>
       <div class="text-left text-sm text-gray-700 font-bold bg-indigo-50 border border-indigo-200 rounded-xl p-4 space-y-2 max-w-sm break-keep">
-        <p>🚀 태양에서 <b>가까운 순서</b>대로 8개 행성 카드를 순서대로 클릭하세요.</p>
-        <p>✅ 맞게 고르면 우주선이 다음 행성으로 이동하며 재미있는 우주 상식을 알려줘요.</p>
-        <p>❤️ 순서를 틀리면 목숨이 하나 줄어요. 목숨은 3개!</p>
+        <p>🔍 우주선 컴퓨터가 행성의 <b>특징 힌트</b>를 알려줘요. 힌트를 읽고 어떤 행성인지 맞혀보세요!</p>
+        <p>🚀 태양에서 <b>가까운 순서</b>대로 한 행성씩 등장해요. 맞히면 다음 행성으로 이동해요.</p>
+        <p>❤️ 틀리면 목숨이 하나 줄어요. 목숨은 3개! 맞힐 때까지 같은 행성에 다시 도전할 수 있어요.</p>
+        <p>🏅 한 번에 맞힌 개수로 탐사 등급이 매겨져요. 8개 모두 한 번에 맞혀서 '태양계 박사'가 되어보세요!</p>
       </div>
       <button onclick="startPlanetOrderRound()" class="btn btn-blue mt-2 px-8">🚀 탐사 출발!</button>
     </div>`;
@@ -2751,14 +3363,24 @@ function initPlanetOrder() {
 
 function startPlanetOrderRound() {
   const gc = document.getElementById('gradeContent'); if(!gc) return;
-  poSelectedIndexes = [];
+  poRoundIdx = 0;
   poLives = 3;
+  poFirstTryCount = 0;
   poStartTime = performance.now();
   if(poTimerInterval) clearInterval(poTimerInterval);
   poTimerInterval = setInterval(() => {
     const el = document.getElementById('poTimerDisplay');
     if(el) el.innerText = ((performance.now() - poStartTime) / 1000).toFixed(1);
   }, 100);
+  poNewRound();
+}
+
+function poNewRound() {
+  const planet = PO_PLANETS[poRoundIdx];
+  poCurrentClueIdx = Math.floor(Math.random() * planet.clues.length);
+  poWrongThisRound = false;
+  const others = PO_PLANETS.map((_, i) => i).filter(i => i !== poRoundIdx).sort(() => Math.random() - 0.5).slice(0, 3);
+  poCurrentOptions = [poRoundIdx, ...others].sort(() => Math.random() - 0.5);
   renderPlanetOrder();
 }
 
@@ -2770,11 +3392,13 @@ function renderPlanetOrder() {
   let railHtml = `<div class="flex items-center gap-1.5 mb-4 overflow-x-auto py-2">
     <div class="text-3xl">☀️</div>`;
   for(let i=0; i<8; i++) {
-    if(i < poSelectedIndexes.length) {
-      const p = PO_PLANETS[poSelectedIndexes[i]];
-      railHtml += `<div class="bg-indigo-500 text-white font-bold text-[11px] p-1.5 rounded-lg whitespace-nowrap shadow-sm border-2 border-indigo-600 flex flex-col items-center animate-bounce">
+    if(i < poRoundIdx) {
+      const p = PO_PLANETS[i];
+      railHtml += `<div class="bg-indigo-500 text-white font-bold text-[11px] p-1.5 rounded-lg whitespace-nowrap shadow-sm border-2 border-indigo-600 flex flex-col items-center">
         <span class="text-lg">${p.icon}</span>${p.text}
       </div>`;
+    } else if (i === poRoundIdx) {
+      railHtml += `<div class="bg-amber-100 border-2 border-dashed border-amber-400 text-amber-500 font-bold text-[10px] p-1.5 rounded-lg w-12 text-center animate-pulse">?</div>`;
     } else {
       railHtml += `<div class="bg-gray-200 border-2 border-dashed border-gray-400 text-gray-400 font-bold text-[10px] p-1.5 rounded-lg w-12 text-center">?</div>`;
     }
@@ -2782,15 +3406,12 @@ function renderPlanetOrder() {
   }
   railHtml += `</div>`;
 
-  const shuffledOrder = poSelectedIndexes.length === 0 ? poDisplayOrder() : window._poDisplayOrder;
+  const planet = PO_PLANETS[poRoundIdx];
+  const clueText = planet.clues[poCurrentClueIdx];
 
-  const cardsHtml = shuffledOrder.map((i) => {
+  const cardsHtml = poCurrentOptions.map((i) => {
     const p = PO_PLANETS[i];
-    const isSelected = poSelectedIndexes.includes(i);
-    if(isSelected) {
-      return `<div class="p-3 rounded-xl border-2 border-gray-200 bg-gray-100 text-gray-400 text-center font-bold text-xs cursor-default opacity-50 flex flex-col items-center gap-1"><span class="text-2xl">${p.icon}</span>선택됨</div>`;
-    }
-    return `<div onclick="poPickCard(${i})" class="p-3 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-900 text-center font-bold text-xs cursor-pointer hover:bg-indigo-100 hover:-translate-y-1 transition-transform shadow-sm flex flex-col items-center gap-1">
+    return `<div onclick="poPickAnswer(${i})" class="p-3 rounded-xl border-2 border-indigo-300 bg-indigo-50 text-indigo-900 text-center font-bold text-xs cursor-pointer hover:bg-indigo-100 hover:-translate-y-1 transition-transform shadow-sm flex flex-col items-center gap-1">
       <span class="text-3xl">${p.icon}</span>${p.text}
     </div>`;
   }).join('');
@@ -2805,83 +3426,428 @@ function renderPlanetOrder() {
           <span class="text-sm font-bold text-slate-700 bg-slate-200 px-2 py-1 rounded-md">⏱️ <span id="poTimerDisplay">0.0</span>초</span>
         </div>
       </div>
-      <div class="text-center mb-2">
-        <h3 class="text-lg font-black text-slate-800">태양과 가까운 순서로 행성을 클릭하세요!</h3>
-      </div>
       ${railHtml}
-      <div class="grid grid-cols-4 gap-2.5 min-h-[160px]">
+      <div class="bg-slate-800 text-white rounded-2xl p-4 text-center shadow-inner">
+        <p class="text-[11px] font-bold text-amber-300 mb-1">🛰️ ${poRoundIdx + 1}번째로 태양에 가까운 행성 · 특징 힌트</p>
+        <p class="text-base font-black leading-snug break-keep">"${clueText}"</p>
+      </div>
+      <p class="text-center text-xs text-gray-500 font-bold">힌트에 맞는 행성을 골라보세요!</p>
+      <div class="grid grid-cols-4 gap-2.5 min-h-[100px]">
         ${cardsHtml}
       </div>
     </div>
   `;
 }
 
-function poDisplayOrder() {
-  window._poDisplayOrder = PO_PLANETS.map((_, i) => i).sort(() => Math.random() - 0.5);
-  return window._poDisplayOrder;
-}
-
-function poPickCard(idx) {
-  if(poSelectedIndexes.includes(idx)) return;
-  const picked = PO_PLANETS[idx];
-  const nextOrder = poSelectedIndexes.length + 1;
-
-  if(picked.order === nextOrder) {
-    poSelectedIndexes.push(idx);
-    gpsSoundCorrect(poSelectedIndexes.length);
-    toast(`${picked.icon} ${picked.text}: ${picked.fact}`, 2600);
-    if(poSelectedIndexes.length === 8) {
+function poPickAnswer(idx) {
+  if (idx === poRoundIdx) {
+    if (!poWrongThisRound) poFirstTryCount++;
+    gpsSoundCorrect(poRoundIdx + 1);
+    const p = PO_PLANETS[poRoundIdx];
+    toast(`${p.icon} ${p.text} 정답! ${p.fact}`, 3000);
+    poRoundIdx++;
+    if (poRoundIdx === 8) {
       clearInterval(poTimerInterval);
-      renderPlanetOrder();
       gpsSoundFanfare();
       const finalSec = ((performance.now() - poStartTime) / 1000).toFixed(1);
       const elapsedMs = performance.now() - poStartTime;
       const poBestKey = 'gps_best_planet_order_ms';
       const prevBestMs = Number(localStorage.getItem(poBestKey) || 0);
-      const isNew = prevBestMs === 0 || elapsedMs < prevBestMs;
-      if(isNew) localStorage.setItem(poBestKey, String(Math.round(elapsedMs)));
-      const bestSec = (isNew ? elapsedMs : prevBestMs) / 1000;
+      const isNewTime = prevBestMs === 0 || elapsedMs < prevBestMs;
+      if (isNewTime) localStorage.setItem(poBestKey, String(Math.round(elapsedMs)));
+      const bestSec = (isNewTime ? elapsedMs : prevBestMs) / 1000;
+      const poBestScoreKey = 'gps_best_planet_order_score';
+      const prevBestScore = Number(localStorage.getItem(poBestScoreKey) || 0);
+      const isNewScore = poFirstTryCount > prevBestScore;
+      if (isNewScore) localStorage.setItem(poBestScoreKey, String(poFirstTryCount));
+      const bestScore = isNewScore ? poFirstTryCount : prevBestScore;
+      const rank = poFirstTryCount === 8 ? '🏆 태양계 박사'
+        : poFirstTryCount >= 6 ? '🌟 우주 탐험가'
+        : poFirstTryCount >= 4 ? '🚀 견습 우주인'
+        : '🔭 초보 관측자';
+      const recapHtml = PO_PLANETS.map(p => `
+        <div class="flex items-start gap-2 bg-white border border-indigo-100 rounded-xl p-2.5 text-left">
+          <span class="text-2xl">${p.icon}</span>
+          <div>
+            <p class="font-black text-indigo-900 text-xs">${p.order}. ${p.text} <span class="text-[10px] font-bold text-slate-400">(${p.size})</span></p>
+            <p class="text-[11px] text-slate-600 font-semibold leading-snug">${p.fact}</p>
+          </div>
+        </div>`).join('');
       setTimeout(() => {
         const gc = document.getElementById('gradeContent');
         gc.innerHTML = `
-          <div class="flex flex-col items-center gap-3 py-8 text-center">
+          <div class="flex flex-col items-center gap-3 py-6 text-center">
             <span class="text-6xl">🪐</span>
             <h4 class="text-2xl font-black text-indigo-800">태양계 탐사 완료!</h4>
-            <p class="text-gray-500 text-sm font-bold">8개 행성을 모두 순서대로 찾았어요!</p>
-            <p class="text-xl font-bold text-indigo-600 mt-2">⏱️ 기록: ${finalSec}초</p>
-            <p class="text-sm font-bold text-slate-400">🏅 최고 기록: ${bestSec.toFixed(1)}초</p>
-            ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
-            <div class="flex gap-3 mt-4">
+            <p class="text-xl font-black text-amber-500">${rank}</p>
+            <div class="flex gap-4 text-sm font-bold">
+              <p class="text-indigo-600">⏱️ ${finalSec}초 ${isNewTime ? '🎉 최고 기록!' : `(최고 ${bestSec.toFixed(1)}초)`}</p>
+              <p class="text-emerald-600">✅ 한 번에 맞힘 ${poFirstTryCount}/8 ${isNewScore ? '🎉 최고 기록!' : `(최고 ${bestScore}/8)`}</p>
+            </div>
+            <div class="w-full max-w-md space-y-2 mt-2 max-h-64 overflow-y-auto pr-1">
+              ${recapHtml}
+            </div>
+            <div class="flex gap-3 mt-2">
               <button onclick="showGrade5Launcher()" class="btn btn-ghost">← 목록</button>
               <button onclick="startPlanetOrderRound()" class="btn btn-blue">🔄 다시 도전</button>
             </div>
           </div>`;
       }, 1200);
     } else {
-      renderPlanetOrder();
+      poNewRound();
     }
   } else {
     poLives--;
+    poWrongThisRound = true;
     gpsSoundWrong();
-    if(poLives <= 0) {
+    if (poLives <= 0) {
       clearInterval(poTimerInterval);
-      renderPlanetOrder();
       setTimeout(() => {
         const gc = document.getElementById('gradeContent');
         gc.innerHTML = `
           <div class="flex flex-col items-center gap-4 py-8 text-center">
             <span class="text-6xl">☄️</span>
             <h4 class="text-2xl font-black text-red-600">우주선이 궤도를 이탈했어요!</h4>
-            <p class="text-gray-500 text-sm">행성 순서를 다시 확인해보세요.</p>
+            <p class="text-gray-500 text-sm break-keep max-w-xs">힌트: "${PO_PLANETS[poRoundIdx].clues[poCurrentClueIdx]}"</p>
+            <p class="text-gray-500 text-sm">정답은 <b>${PO_PLANETS[poRoundIdx].icon} ${PO_PLANETS[poRoundIdx].text}</b>였어요!</p>
             <button onclick="initPlanetOrder()" class="btn btn-blue mt-4">🔄 다시 도전하기</button>
           </div>
         `;
       }, 500);
     } else {
-      toast('❌ 아직 순서가 아니에요! 태양과 더 가까운 행성을 찾아보세요.', 1800);
+      toast(`❌ ${PO_PLANETS[idx].text}은(는) 아니에요! 힌트를 다시 읽어보세요.`, 1800);
       renderPlanetOrder();
     }
   }
+}
+
+/* ══════════════════════════════════════
+   📖 속담·관용구 미션 (5학년 국어 - 관용 표현과 속담)
+══════════════════════════════════════ */
+const IQ_DATA = [
+  { idiom:'손이 크다', meaning:'씀씀이가 후하고 커서 무엇이든 넉넉하게 마련한다' },
+  { idiom:'발이 넓다', meaning:'아는 사람이 많아 활동하는 범위가 넓다' },
+  { idiom:'귀가 얇다', meaning:'남의 말을 쉽게 믿고 잘 따른다' },
+  { idiom:'눈이 높다', meaning:'안목이 높아서 좋은 것만 찾는다' },
+  { idiom:'얼굴이 두껍다', meaning:'부끄러움을 모르고 뻔뻔하다' },
+  { idiom:'손발이 맞다', meaning:'함께 일할 때 서로 마음이나 행동이 잘 맞는다' },
+  { idiom:'간이 크다', meaning:'겁이 없고 매우 대담하다' },
+  { idiom:'코가 납작해지다', meaning:'몹시 무안을 당하거나 기가 죽다' },
+  { idiom:'발 벗고 나서다', meaning:'어떤 일에 적극적으로 나서서 돕는다' },
+  { idiom:'가는 날이 장날', meaning:'어떤 일을 하려는데 우연히 다른 일이 겹쳐 공교롭게 되다' },
+  { idiom:'티끌 모아 태산', meaning:'아무리 작은 것이라도 모이면 큰 것이 된다' },
+  { idiom:'우물 안 개구리', meaning:'넓은 세상을 알지 못하고 자기 생각만 옳다고 여기는 사람' },
+  { idiom:'가는 말이 고와야 오는 말이 곱다', meaning:'내가 남에게 좋게 말해야 남도 나에게 좋게 말한다' },
+  { idiom:'발 없는 말이 천 리 간다', meaning:'말은 순식간에 아주 멀리까지 퍼져 나간다' },
+  { idiom:'백지장도 맞들면 낫다', meaning:'아무리 쉬운 일이라도 서로 힘을 합치면 훨씬 쉬워진다' },
+  { idiom:'소 잃고 외양간 고친다', meaning:'일이 이미 잘못된 뒤에야 손을 써 봐야 소용이 없다' },
+  { idiom:'낮말은 새가 듣고 밤말은 쥐가 듣는다', meaning:'아무리 조심해서 한 말이라도 다른 사람의 귀에 들어갈 수 있다' },
+  { idiom:'돌다리도 두들겨 보고 건너라', meaning:'잘 아는 일이라도 다시 한번 확인하고 신중하게 행동해야 한다' },
+  { idiom:'입이 무겁다', meaning:'말이 적고 비밀을 잘 지킨다' },
+  { idiom:'미역국을 먹다', meaning:'시험에서 떨어지다' },
+  { idiom:'바가지를 쓰다', meaning:'물건 값을 실제보다 비싸게 치르다' },
+  { idiom:'손을 씻다', meaning:'나쁜 일이나 관계를 그만두다' },
+  { idiom:'발이 묶이다', meaning:'몸을 움직일 수 없게 되다' },
+  { idiom:'기가 막히다', meaning:'너무 놀라거나 어이가 없다' },
+  { idiom:'파김치가 되다', meaning:'몹시 지쳐서 기운이 없다' },
+  { idiom:'꼬리를 물다', meaning:'어떤 일이 계속 이어지다' },
+  { idiom:'하늘의 별 따기', meaning:'무엇을 이루기가 매우 어렵다' },
+  { idiom:'식은 죽 먹기', meaning:'어떤 일을 하기가 매우 쉽다' },
+  { idiom:'꿩 먹고 알 먹기', meaning:'한 가지 일로 두 가지 이익을 얻다' },
+  { idiom:'수박 겉 핥기', meaning:'속 내용은 모르고 겉만 대충 보고 넘어가다' },
+  { idiom:'등잔 밑이 어둡다', meaning:'가까이 있는 것을 오히려 잘 알아차리지 못한다' },
+  { idiom:'같은 값이면 다홍치마', meaning:'값이 같다면 더 좋은 것을 고른다' },
+  { idiom:'서당 개 삼 년이면 풍월을 읊는다', meaning:'그 분야를 오래 보고 들으면 자연히 조금은 알게 된다' },
+  { idiom:'원숭이도 나무에서 떨어진다', meaning:'아무리 잘하는 사람도 가끔 실수할 수 있다' },
+  { idiom:'배보다 배꼽이 더 크다', meaning:'중심이 되는 것보다 딸린 것이 더 크거나 많다' },
+  { idiom:'열 길 물속은 알아도 한 길 사람 속은 모른다', meaning:'사람의 속마음은 짐작하기가 매우 어렵다' }
+];
+
+let iqOrder = [];
+let iqRoundIdx = 0;
+let iqScore = 0;
+let iqCombo = 0;
+let iqMaxCombo = 0;
+let iqTimeLeft = 0;
+let iqTimerId = null;
+const IQ_TOTAL = 10;
+const IQ_Q_TIME = 15;
+
+function iqClearTimer(){ if(iqTimerId){ clearInterval(iqTimerId); iqTimerId = null; } }
+
+function initIdiomQuiz(reset=true){
+  if (window.gpsActiveView && window.gpsActiveView !== 'idiom_quiz') return;
+  iqClearTimer();
+  if(reset){
+    iqRoundIdx = 0; iqScore = 0; iqCombo = 0; iqMaxCombo = 0;
+    iqOrder = shuffleArr(IQ_DATA.map((_, i) => i)).slice(0, IQ_TOTAL);
+  }
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+
+  if(iqRoundIdx >= IQ_TOTAL){
+    const {best, isNew} = gpsSetBest('idiom_quiz', iqScore);
+    gpsSoundFanfare();
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
+        <span class="text-6xl">📖</span>
+        <h4 class="text-2xl font-black text-teal-700">속담·관용구 마스터!</h4>
+        <p class="text-gray-500 font-bold">뜻을 모두 알아맞혔어요!</p>
+        <div class="flex gap-6 mt-2">
+          <div class="text-center"><p class="text-3xl font-black text-teal-600">${iqScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-indigo-500">${iqMaxCombo}</p><p class="text-xs text-gray-400 font-bold">최고 콤보</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+        </div>
+        ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+        <div class="flex gap-3 mt-4">
+          <button onclick="initIdiomQuiz(true)" class="btn btn-blue px-8 py-3 text-lg">🔄 다시 하기</button>
+          <button onclick="showGrade5Launcher()" class="btn btn-ghost px-6 py-3 text-lg">← 메뉴로</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const idx = iqOrder[iqRoundIdx];
+  const item = IQ_DATA[idx];
+  const wrongPool = IQ_DATA.map((_, i) => i).filter(i => i !== idx);
+  const wrongs = shuffleArr(wrongPool).slice(0, 3).map(i => IQ_DATA[i].meaning);
+  const options = shuffleArr([{ text: item.meaning, correct: true }, ...wrongs.map(w => ({ text: w, correct: false }))]);
+  iqTimeLeft = IQ_Q_TIME;
+  const progress = (iqRoundIdx / IQ_TOTAL) * 100;
+
+  gc.innerHTML = `
+    <div class="space-y-5">
+      <div class="flex items-center justify-between">
+        <button onclick="iqClearTimer();showGrade5Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <span class="text-sm font-black text-teal-800">📖 속담·관용구 미션 (${iqRoundIdx+1}/${IQ_TOTAL})</span>
+        <span class="text-sm font-black text-pink-500">${iqScore}점 ${iqCombo>=2?`· 🔥${iqCombo}`:''}</span>
+      </div>
+
+      <div class="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+        <div class="absolute top-0 bottom-0 left-0 bg-teal-400" style="width:${progress}%"></div>
+      </div>
+
+      <div class="w-full h-2.5 bg-teal-100 rounded-full overflow-hidden">
+        <div id="iqTimerBar" class="h-full bg-teal-400" style="width:100%;transition:width ${IQ_Q_TIME}s linear;"></div>
+      </div>
+
+      <div class="text-center py-6 bg-white rounded-3xl shadow-sm border-2 border-teal-100">
+        <p class="text-sm text-gray-500 font-bold mb-2">이 표현의 뜻은 무엇일까요?</p>
+        <p class="text-2xl font-black text-teal-700 break-keep px-2">"${item.idiom}"</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-2.5 px-2" id="iqOptions">
+        ${options.map(o => `
+          <button onclick="iqClick(${o.correct}, this)" class="text-left p-3.5 rounded-2xl bg-teal-50 border-b-4 border-teal-200 text-sm font-bold text-teal-900 shadow-sm active:border-b-0 active:translate-y-1 transition-all break-keep">
+            ${o.text}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  `;
+
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('iqTimerBar');
+    if(bar) bar.style.width = '0%';
+  });
+  iqTimerId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'idiom_quiz') { iqClearTimer(); return; }
+    iqTimeLeft--;
+    if(iqTimeLeft <= 0){
+      iqClearTimer();
+      iqCombo = 0;
+      iqRoundIdx++;
+      const opts = document.getElementById('iqOptions');
+      if(opts) opts.style.pointerEvents = 'none';
+      gpsSoundTimeout();
+      toast(`⏰ 시간 초과! 정답은 "${item.meaning}"이었어요`, 2200);
+      setTimeout(() => initIdiomQuiz(false), 900);
+    }
+  }, 1000);
+}
+
+function iqClick(isCorrect, btn){
+  if(isCorrect){
+    iqClearTimer();
+    btn.classList.replace('bg-teal-50', 'bg-green-200');
+    btn.classList.replace('border-teal-200', 'border-green-500');
+    iqCombo++; iqMaxCombo = Math.max(iqMaxCombo, iqCombo);
+    iqScore += 10 + Math.max(0, iqTimeLeft) + (iqCombo>=2 ? (iqCombo-1)*5 : 0);
+    iqRoundIdx++;
+    document.getElementById('iqOptions').style.pointerEvents = 'none';
+    const rect = btn.getBoundingClientRect();
+    gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+    gpsComboPopup(btn, iqCombo);
+    gpsSoundCorrect(iqCombo);
+    setTimeout(() => initIdiomQuiz(false), 700);
+  } else {
+    btn.classList.add('animate-bounce');
+    btn.style.outline = '4px solid #EF4444';
+    btn.style.outlineOffset = '-2px';
+    iqCombo = 0;
+    gpsSoundWrong();
+    setTimeout(() => {
+      btn.classList.remove('animate-bounce');
+      btn.style.outline = '';
+    }, 500);
+  }
+}
+
+/* ══════════════════════════════════════
+   🃏 영단어 짝 맞추기 (5학년 영어 - 기본 어휘)
+══════════════════════════════════════ */
+const EM_WORDS = [
+  { en:'apple', ko:'사과', icon:'🍎' },
+  { en:'banana', ko:'바나나', icon:'🍌' },
+  { en:'school', ko:'학교', icon:'🏫' },
+  { en:'friend', ko:'친구', icon:'🧑' },
+  { en:'happy', ko:'행복한', icon:'😊' },
+  { en:'rain', ko:'비', icon:'🌧️' },
+  { en:'book', ko:'책', icon:'📖' },
+  { en:'soccer', ko:'축구', icon:'⚽' },
+  { en:'weekend', ko:'주말', icon:'📅' },
+  { en:'family', ko:'가족', icon:'👨‍👩‍👧' },
+  { en:'birthday', ko:'생일', icon:'🎂' },
+  { en:'library', ko:'도서관', icon:'📚' },
+  { en:'elephant', ko:'코끼리', icon:'🐘' },
+  { en:'umbrella', ko:'우산', icon:'☂️' },
+  { en:'kitchen', ko:'부엌', icon:'🍳' },
+  { en:'doctor', ko:'의사', icon:'🩺' },
+  { en:'mountain', ko:'산', icon:'⛰️' },
+  { en:'sing', ko:'노래하다', icon:'🎤' },
+  { en:'swim', ko:'수영하다', icon:'🏊' },
+  { en:'cloudy', ko:'흐린', icon:'☁️' },
+  { en:'kind', ko:'친절한', icon:'🤝' },
+  { en:'hospital', ko:'병원', icon:'🏥' },
+  { en:'vacation', ko:'방학', icon:'🏖️' },
+  { en:'dictionary', ko:'사전', icon:'📔' }
+];
+
+let emCards = [];
+let emFlippedIdx = [];
+let emLock = false;
+let emMoves = 0;
+let emMatches = 0;
+let emStartTime = 0;
+let emTimerInterval = null;
+let emPreview = false;
+
+function initEnglishMemory(){
+  if (window.gpsActiveView && window.gpsActiveView !== 'english_memory') return;
+  const picks = shuffleArr(EM_WORDS.map((_, i) => i)).slice(0, 6);
+  let cards = [];
+  picks.forEach((wIdx, pairId) => {
+    const w = EM_WORDS[wIdx];
+    cards.push({ pairId, type:'en', label: w.en, matched:false });
+    cards.push({ pairId, type:'ko', label: `${w.icon} ${w.ko}`, matched:false });
+  });
+  emCards = shuffleArr(cards).map((c, i) => ({ ...c, id: i }));
+  emFlippedIdx = [];
+  emLock = true;
+  emPreview = true;
+  emMoves = 0;
+  emMatches = 0;
+  clearInterval(emTimerInterval);
+  renderEnglishMemory();
+  setTimeout(() => {
+    if (window.gpsActiveView && window.gpsActiveView !== 'english_memory') return;
+    emPreview = false;
+    emLock = false;
+    emStartTime = performance.now();
+    clearInterval(emTimerInterval);
+    emTimerInterval = setInterval(() => {
+      if (window.gpsActiveView && window.gpsActiveView !== 'english_memory') { clearInterval(emTimerInterval); return; }
+      const el = document.getElementById('emTimerDisplay');
+      if(el) el.innerText = ((performance.now() - emStartTime) / 1000).toFixed(1);
+    }, 100);
+    renderEnglishMemory();
+  }, 2000);
+}
+
+function renderEnglishMemory(){
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  const cardsHtml = emCards.map(c => {
+    const revealed = emPreview || c.matched || emFlippedIdx.includes(c.id);
+    if(revealed){
+      const styleCls = c.matched ? 'bg-emerald-100 border-emerald-400 text-emerald-700 opacity-70' : (c.type==='en' ? 'bg-sky-100 border-sky-400 text-sky-800' : 'bg-amber-100 border-amber-400 text-amber-800');
+      return `<div class="h-20 rounded-xl border-2 flex items-center justify-center text-center font-black text-sm p-1 break-keep ${styleCls}">${c.label}</div>`;
+    }
+    return `<div onclick="emFlip(${c.id})" class="h-20 rounded-xl border-2 border-indigo-300 bg-indigo-500 flex items-center justify-center cursor-pointer hover:brightness-110 transition-all shadow-sm">
+      <span class="text-white text-2xl font-black">?</span>
+    </div>`;
+  }).join('');
+
+  gc.innerHTML = `
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <button onclick="clearInterval(emTimerInterval);showGrade5Launcher()" class="btn btn-ghost text-xs">← 5학년 목록</button>
+        <span class="text-sm font-black text-gray-600">🃏 영단어 짝 맞추기</span>
+        <div class="flex items-center gap-3">
+          <span class="text-sm font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">🔄 <span id="emMovesDisplay">${emMoves}</span>번</span>
+          <span class="text-sm font-bold text-slate-700 bg-slate-200 px-2 py-1 rounded-md">⏱️ <span id="emTimerDisplay">0.0</span>초</span>
+        </div>
+      </div>
+      <p class="text-center text-xs ${emPreview ? 'text-pink-500 animate-pulse' : 'text-gray-500'} font-bold">${emPreview ? '👀 카드 위치를 잘 기억하세요! 곧 뒤집혀요...' : `영어 단어와 뜻이 적힌 카드를 뒤집어 짝을 찾아보세요! (${emMatches}/6쌍)`}</p>
+      <div class="grid grid-cols-4 gap-2.5">
+        ${cardsHtml}
+      </div>
+    </div>
+  `;
+}
+
+function emFlip(id){
+  if(emLock || emPreview) return;
+  const card = emCards.find(c => c.id === id);
+  if(!card || card.matched || emFlippedIdx.includes(id)) return;
+  emFlippedIdx.push(id);
+  if(emFlippedIdx.length === 2){ emMoves++; emLock = true; }
+  renderEnglishMemory();
+  if(emFlippedIdx.length < 2) return;
+
+  const [id1, id2] = emFlippedIdx;
+  const c1 = emCards.find(c => c.id === id1), c2 = emCards.find(c => c.id === id2);
+  const isMatch = c1.pairId === c2.pairId && c1.type !== c2.type;
+  setTimeout(() => {
+    if(isMatch){
+      c1.matched = true; c2.matched = true;
+      emMatches++;
+      gpsSoundCorrect(emMatches);
+    } else {
+      gpsSoundWrong();
+    }
+    emFlippedIdx = [];
+    emLock = false;
+    renderEnglishMemory();
+    if(emMatches === 6){ emFinish(); }
+  }, isMatch ? 500 : 900);
+}
+
+function emFinish(){
+  clearInterval(emTimerInterval);
+  gpsSoundFanfare();
+  const elapsedMs = performance.now() - emStartTime;
+  const finalSec = (elapsedMs / 1000).toFixed(1);
+  const key = 'gps_best_english_memory_moves';
+  const prevBest = Number(localStorage.getItem(key) || 0);
+  const isNew = prevBest === 0 || emMoves < prevBest;
+  if(isNew) localStorage.setItem(key, String(emMoves));
+  const bestMoves = isNew ? emMoves : prevBest;
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+    <div class="flex flex-col items-center gap-3 py-8 text-center">
+      <span class="text-6xl">🃏</span>
+      <h4 class="text-2xl font-black text-indigo-800">영단어 짝 맞추기 완료!</h4>
+      <p class="text-gray-500 text-sm font-bold">6쌍의 단어를 모두 찾았어요!</p>
+      <div class="flex gap-6 mt-2">
+        <div class="text-center"><p class="text-3xl font-black text-indigo-600">${emMoves}번</p><p class="text-xs text-gray-400 font-bold">시도 횟수</p></div>
+        <div class="text-center"><p class="text-3xl font-black text-slate-500">${finalSec}초</p><p class="text-xs text-gray-400 font-bold">걸린 시간</p></div>
+        <div class="text-center"><p class="text-3xl font-black text-pink-500">${bestMoves}번</p><p class="text-xs text-gray-400 font-bold">최소 시도 기록</p></div>
+      </div>
+      ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최소 시도 기록 경신!</p>' : ''}
+      <div class="flex gap-3 mt-4">
+        <button onclick="showGrade5Launcher()" class="btn btn-ghost">← 목록</button>
+        <button onclick="initEnglishMemory()" class="btn btn-blue">🔄 다시 도전</button>
+      </div>
+    </div>`;
 }
 
 /* ══════════════════════════════════════
@@ -4001,6 +4967,359 @@ function tryMatchH(){
 }
 
 /* ══════════════════════════════════════
+   🎯 맞춤법 사냥꾼 (6학년 국어 - 어문 규범)
+══════════════════════════════════════ */
+const SH_DATA = [
+  { correct:'며칠', wrong:'몇일' },
+  { correct:'왠지', wrong:'웬지' },
+  { correct:'웬만하면', wrong:'왠만하면' },
+  { correct:'설레다', wrong:'설레이다' },
+  { correct:'오랜만에', wrong:'오랫만에' },
+  { correct:'희한하다', wrong:'희안하다' },
+  { correct:'어이없다', wrong:'어의없다' },
+  { correct:'봬요', wrong:'뵈요' },
+  { correct:'안 돼요', wrong:'안 되요' },
+  { correct:'담가', wrong:'담궈' },
+  { correct:'아니에요', wrong:'아니예요' },
+  { correct:'김치찌개', wrong:'김치찌게' },
+  { correct:'개수', wrong:'갯수' },
+  { correct:'낚시꾼', wrong:'낙시꾼' },
+  { correct:'사귀다', wrong:'사기다' },
+  { correct:'맞히다', wrong:'맞추다' },
+  { correct:'금세', wrong:'금새' },
+  { correct:'구레나룻', wrong:'구렛나루' },
+  { correct:'뒤치다꺼리', wrong:'뒤치닥거리' },
+  { correct:'통틀어', wrong:'통털어' },
+  { correct:'삼가다', wrong:'삼가하다' },
+  { correct:'널찍하다', wrong:'넓직하다' },
+  { correct:'우스꽝스럽다', wrong:'우스광스럽다' },
+  { correct:'느지막이', wrong:'느즈막이' },
+  { correct:'설거지', wrong:'설겆이' },
+  { correct:'오뚝이', wrong:'오뚜기' }
+];
+let shScore = 0;
+let shCombo = 0;
+let shMaxCombo = 0;
+let shInterval = null;
+let shTickId = null;
+let shActive = false;
+let shTimeLeft = 60;
+const SH_GAME_TIME = 60;
+
+function shSpawnDelay(){
+  return Math.max(1000, 2000 - shScore * 3);
+}
+function shRestartSpawner(){
+  clearInterval(shInterval);
+  shInterval = setInterval(spawnShWord, shSpawnDelay());
+}
+
+function initSpellHunter(){
+  if (window.gpsActiveView && window.gpsActiveView !== 'spell_hunter') return;
+  shScore = 0; shCombo = 0; shMaxCombo = 0; shTimeLeft = SH_GAME_TIME;
+  shActive = true;
+  renderSpellHunter();
+  shRestartSpawner();
+  clearInterval(shTickId);
+  shTickId = setInterval(() => {
+    if (window.gpsActiveView && window.gpsActiveView !== 'spell_hunter') { clearInterval(shTickId); shTickId = null; clearInterval(shInterval); shActive = false; return; }
+    shTimeLeft--;
+    const t = document.getElementById('shTimeTxt');
+    if(t) t.textContent = shTimeLeft;
+    if(shTimeLeft <= 0) shEndGame();
+  }, 1000);
+}
+
+function shEndGame(){
+  shActive = false;
+  clearInterval(shInterval);
+  clearInterval(shTickId);
+  const area = document.getElementById('shArea');
+  if(area) area.innerHTML = '';
+  const {best, isNew} = gpsSetBest('spell_hunter', shScore);
+  gpsSoundFanfare();
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+    <div class="flex flex-col items-center gap-3 py-8 text-center">
+      <span class="text-6xl">⏰</span>
+      <h4 class="text-2xl font-black text-rose-600">시간 종료!</h4>
+      <div class="flex gap-6 mt-2">
+        <div class="text-center"><p class="text-3xl font-black text-rose-500">${shScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+        <div class="text-center"><p class="text-3xl font-black text-indigo-500">${shMaxCombo}</p><p class="text-xs text-gray-400 font-bold">최고 콤보</p></div>
+        <div class="text-center"><p class="text-3xl font-black text-amber-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+      </div>
+      ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+      <div class="flex gap-3 mt-4">
+        <button onclick="showGrade6Launcher()" class="btn btn-ghost px-6 py-3">← 메뉴로</button>
+        <button onclick="initSpellHunter()" class="btn btn-blue px-8 py-3 text-lg">🔄 다시 하기</button>
+      </div>
+    </div>`;
+}
+
+function renderSpellHunter(){
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+  gc.innerHTML = `
+    <div class="relative w-full h-[65vh] bg-rose-50 rounded-2xl border-4 border-rose-200 overflow-hidden flex flex-col">
+      <div class="absolute top-2 left-2 z-20 flex items-center gap-2">
+        <button onclick="shActive=false;clearInterval(shInterval);clearInterval(shTickId);showGrade6Launcher()" class="btn btn-ghost bg-white/50 text-xs shadow-sm">← 나가기</button>
+        <span class="bg-white/90 px-3 py-1 rounded-full text-xs font-black text-slate-500 shadow-sm">⏱️ <span id="shTimeTxt">${shTimeLeft}</span>초</span>
+      </div>
+      <div class="absolute top-2 right-4 z-20 text-lg font-black text-rose-600 bg-white/90 px-4 py-1 rounded-full shadow-sm">
+        점수: <span id="shScoreTxt">${shScore}</span>점 <span id="shComboTxt" class="text-orange-500 text-sm">${shCombo>=2?`🔥${shCombo}`:''}</span>
+      </div>
+
+      <div class="w-full text-center py-4 z-10 mt-10">
+        <p class="text-sm font-bold text-slate-500 mb-1">🎯 맞춤법이 <b class="text-rose-600">올바른</b> 낱말만 터뜨리세요!</p>
+        <p class="text-xs text-slate-400 font-bold">틀린 표기를 터뜨리면 점수가 깎여요</p>
+      </div>
+
+      <div id="shArea" class="flex-1 relative w-full overflow-hidden"></div>
+    </div>
+  `;
+}
+
+function spawnShWord(){
+  if(!shActive) return;
+  const area = document.getElementById('shArea');
+  if(!area) return;
+
+  const item = SH_DATA[Math.floor(Math.random() * SH_DATA.length)];
+  const showCorrect = Math.random() < 0.45;
+  const text = showCorrect ? item.correct : item.wrong;
+
+  const bEl = document.createElement('div');
+  bEl.className = 'absolute flex items-center justify-center cursor-pointer select-none transition-transform active:scale-90 whitespace-nowrap';
+  bEl.style.left = (Math.random()*60 + 8) + '%';
+  bEl.style.bottom = '-60px';
+  bEl.style.transition = 'bottom 6.5s linear, opacity 0.2s';
+  bEl.innerHTML = `<span class="bg-white border-4 border-rose-300 rounded-full px-5 py-2.5 font-black text-rose-700 text-lg shadow-md">${text}</span>`;
+
+  bEl.onclick = () => {
+    if(!shActive) return;
+    if(text === item.correct){
+      shCombo++; shMaxCombo = Math.max(shMaxCombo, shCombo);
+      shScore += 10 + (shCombo>=2 ? (shCombo-1)*2 : 0);
+      const st = document.getElementById('shScoreTxt'); if(st) st.textContent = shScore;
+      const ct = document.getElementById('shComboTxt'); if(ct) ct.textContent = shCombo>=2 ? `🔥${shCombo}` : '';
+      bEl.innerHTML = '<span class="text-5xl">✨</span>';
+      const rect = bEl.getBoundingClientRect();
+      gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+      gpsSoundCorrect(shCombo);
+      setTimeout(()=>bEl.remove(), 200);
+      shRestartSpawner();
+    } else {
+      bEl.innerHTML = '<span class="text-5xl">💢</span>';
+      setTimeout(()=>bEl.remove(), 300);
+      shCombo = 0;
+      const ct = document.getElementById('shComboTxt'); if(ct) ct.textContent = '';
+      shScore = Math.max(0, shScore - 5);
+      const st = document.getElementById('shScoreTxt'); if(st) st.textContent = shScore;
+      gpsSoundWrong();
+      toast(`❌ 바른 표기는 "${item.correct}"예요!`, 1500);
+    }
+  };
+
+  area.appendChild(bEl);
+
+  setTimeout(() => {
+    if(bEl.parentNode) bEl.style.bottom = '120%';
+  }, 50);
+
+  setTimeout(() => {
+    if(bEl.parentNode) bEl.remove();
+  }, 6550);
+}
+
+/* ══════════════════════════════════════
+   🤖 영어 문장 완성 배틀 (6학년 영어 - 문장 구조)
+══════════════════════════════════════ */
+const EB_ENEMIES = [
+  { icon:'👾', name:'외계 로봇', hp:2 },
+  { icon:'🤖', name:'문법 로봇', hp:2 },
+  { icon:'🐙', name:'혼동 문어', hp:3 },
+  { icon:'🦑', name:'슬쩍 오징어', hp:3 },
+  { icon:'👑', name:'문법 여왕', hp:4, boss:true }
+];
+const EB_QUESTIONS = [
+  { sentence:'What ___ you doing now?', answer:'are', choices:['are','is','do','was'] },
+  { sentence:'She ___ to school every day.', answer:'goes', choices:['goes','go','going','gone'] },
+  { sentence:'I ___ my homework yesterday.', answer:'did', choices:['did','do','does','doing'] },
+  { sentence:'There ___ many books on the desk.', answer:'are', choices:['are','is','was','be'] },
+  { sentence:'He is ___ than his brother.', answer:'taller', choices:['taller','tall','tallest','more tall'] },
+  { sentence:'___ you like pizza?', answer:'Do', choices:['Do','Does','Are','Is'] },
+  { sentence:'They ___ playing soccer now.', answer:'are', choices:['are','is','am','was'] },
+  { sentence:'I ___ to the park last weekend.', answer:'went', choices:['went','go','goes','going'] },
+  { sentence:"This is the ___ movie I've ever seen.", answer:'best', choices:['best','good','better','goodest'] },
+  { sentence:'She ___ a good singer.', answer:'is', choices:['is','are','am','be'] },
+  { sentence:'We ___ at the museum yesterday.', answer:'were', choices:['were','was','are','is'] },
+  { sentence:'Can you tell me ___ the station is?', answer:'where', choices:['where','what','who','when'] },
+  { sentence:'My sister is ___ than me.', answer:'younger', choices:['younger','young','youngest','more young'] },
+  { sentence:"He doesn't ___ coffee.", answer:'like', choices:['like','likes','liked','liking'] },
+  { sentence:'___ is your birthday?', answer:'When', choices:['When','Where','Why','Who'] },
+  { sentence:'___ are you from?', answer:'Where', choices:['Where','When','Who','What'] },
+  { sentence:'I have ___ finished my lunch.', answer:'already', choices:['already','yet','still','ever'] },
+  { sentence:'She can ___ the piano very well.', answer:'play', choices:['play','plays','playing','played'] },
+  { sentence:'It is the ___ day of my life.', answer:'happiest', choices:['happiest','happy','happier','more happy'] },
+  { sentence:'Look! It ___ raining outside.', answer:'is', choices:['is','was','does','be'] },
+  { sentence:'My mom ___ dinner right now.', answer:'is cooking', choices:['is cooking','cooks','cooked','cook'] },
+  { sentence:'How ___ apples do you want?', answer:'many', choices:['many','much','a lot','any'] },
+  { sentence:'We ___ to the zoo next Sunday.', answer:'will go', choices:['will go','went','goes','going'] },
+  { sentence:'This bag is ___ than that one.', answer:'heavier', choices:['heavier','heavy','heaviest','more heavy'] },
+  { sentence:'___ you finished your homework yet?', answer:'Have', choices:['Have','Has','Did','Do'] }
+];
+const EB_Q_TIME = 15;
+let ebStageIdx=0, ebEnemyHp=0, ebEnemyMaxHp=0, ebPlayerHp=4, ebPlayerMaxHp=4;
+let ebScore=0, ebCombo=0, ebMaxCombo=0, ebTimeLeft=EB_Q_TIME, ebTimerId=null, ebQuestion=null, ebUsedIdx=[];
+
+function ebClearTimer(){ if(ebTimerId){ clearInterval(ebTimerId); ebTimerId=null; } }
+
+function ebGenProblem(){
+  if(ebUsedIdx.length >= EB_QUESTIONS.length) ebUsedIdx = [];
+  const remaining = EB_QUESTIONS.map((_,i)=>i).filter(i=>!ebUsedIdx.includes(i));
+  const idx = remaining[Math.floor(Math.random()*remaining.length)];
+  ebUsedIdx.push(idx);
+  const q = EB_QUESTIONS[idx];
+  return { sentence:q.sentence, answer:q.answer, choices: shuffleArr(q.choices) };
+}
+
+function initEnglishBattle(reset=true){
+  if (window.gpsActiveView && window.gpsActiveView !== 'english_battle') return;
+  ebClearTimer();
+  if(reset){ ebStageIdx=0; ebPlayerHp=ebPlayerMaxHp; ebScore=0; ebCombo=0; ebMaxCombo=0; ebEnemyHp=EB_ENEMIES[0].hp; ebEnemyMaxHp=EB_ENEMIES[0].hp; ebUsedIdx=[]; }
+  const gc = document.getElementById('gradeContent'); if(!gc) return;
+
+  if(ebPlayerHp <= 0){
+    const {best, isNew} = gpsSetBest('english_battle', ebScore);
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
+        <span class="text-6xl">💦</span>
+        <h4 class="text-2xl font-black text-slate-600">아쉬워요, 다음에 다시 도전!</h4>
+        <p class="text-gray-500 text-sm font-bold">체력을 모두 잃었어요.</p>
+        <div class="flex gap-6 mt-2">
+          <div class="text-center"><p class="text-3xl font-black text-indigo-600">${ebScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+        </div>
+        ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+        <button onclick="initEnglishBattle(true)" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 도전하기</button>
+      </div>`;
+    return;
+  }
+  if(ebStageIdx >= EB_ENEMIES.length){
+    const {best, isNew} = gpsSetBest('english_battle', ebScore);
+    gpsSoundFanfare();
+    gc.innerHTML = `
+      <div class="flex flex-col items-center gap-3 py-8 text-center">
+        <span class="text-6xl">🏆</span>
+        <h4 class="text-2xl font-black text-amber-600">영어 배틀 챔피언!</h4>
+        <p class="text-gray-500 text-sm font-bold">모든 로봇을 영어 문장으로 물리쳤어요!</p>
+        <div class="flex gap-6 mt-2">
+          <div class="text-center"><p class="text-3xl font-black text-amber-600">${ebScore}점</p><p class="text-xs text-gray-400 font-bold">이번 점수</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-indigo-500">${ebMaxCombo}</p><p class="text-xs text-gray-400 font-bold">최고 콤보</p></div>
+          <div class="text-center"><p class="text-3xl font-black text-pink-500">${best}점</p><p class="text-xs text-gray-400 font-bold">최고 기록</p></div>
+        </div>
+        ${isNew ? '<p class="font-black text-pink-600 animate-bounce mt-1">🎉 최고 기록 경신!</p>' : ''}
+        <button onclick="initEnglishBattle(true)" class="btn btn-blue mt-4 px-8 py-3 text-lg">🔄 다시 하기</button>
+      </div>`;
+    return;
+  }
+
+  ebQuestion = ebGenProblem();
+  ebTimeLeft = EB_Q_TIME;
+  const enemy = EB_ENEMIES[ebStageIdx];
+
+  gc.innerHTML = `
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <button onclick="ebClearTimer();showGrade6Launcher()" class="btn btn-ghost text-xs">← 메뉴로</button>
+        <span class="text-sm font-black text-purple-800">🤖 영어 문장 완성 배틀 (${ebStageIdx+1}/${EB_ENEMIES.length})</span>
+        <span class="text-sm font-black text-pink-500">${ebCombo>=2?`🔥${ebCombo}`:''}</span>
+      </div>
+      <div class="w-full h-2.5 bg-purple-100 rounded-full overflow-hidden">
+        <div id="ebTimerBar" class="h-full bg-purple-400" style="width:100%;transition:width ${EB_Q_TIME}s linear;"></div>
+      </div>
+      <div class="flex items-center justify-between px-2">
+        <div class="flex items-center gap-1">
+          ${Array.from({length:ebPlayerMaxHp}).map((_,i)=>`<span class="text-xl">${i<ebPlayerHp?'❤️':'🖤'}</span>`).join('')}
+        </div>
+        <div class="flex items-center gap-1">
+          ${Array.from({length:ebEnemyMaxHp}).map((_,i)=>`<span class="text-xl">${i<ebEnemyHp?'💥':'⚪'}</span>`).join('')}
+        </div>
+      </div>
+      <div id="ebEnemyBox" class="flex flex-col items-center py-4 bg-purple-50 rounded-2xl border-2 border-purple-100">
+        <span id="ebEnemyIcon" class="text-7xl transition-transform">${enemy.icon}</span>
+        <p class="font-black text-slate-700 mt-1">${enemy.name}${enemy.boss ? ' (보스)' : ''}</p>
+      </div>
+      <div class="text-center py-5 bg-white rounded-3xl shadow-sm border-2 border-purple-100 px-4">
+        <p class="text-xl font-black text-slate-800 break-keep">${ebQuestion.sentence.replace('___', '<span class="text-purple-500">_____</span>')}</p>
+      </div>
+      <div class="grid grid-cols-2 gap-3 px-2" id="ebOptions">
+        ${ebQuestion.choices.map(ch => `
+          <button onclick="ebClick('${ch.replace(/'/g,"\\'")}','${ebQuestion.answer.replace(/'/g,"\\'")}',this)" class="py-4 rounded-2xl bg-purple-500 border-b-4 border-purple-700 text-lg font-black text-white shadow-sm active:border-b-0 active:translate-y-1 transition-all">
+            ${ch}
+          </button>
+        `).join('')}
+      </div>
+    </div>`;
+
+  requestAnimationFrame(()=>{
+    const bar = document.getElementById('ebTimerBar');
+    if(bar) bar.style.width = '0%';
+  });
+  ebTimerId = setInterval(()=>{
+    if (window.gpsActiveView && window.gpsActiveView !== 'english_battle') { ebClearTimer(); return; }
+    ebTimeLeft--;
+    if(ebTimeLeft <= 0){
+      ebClearTimer();
+      ebCombo = 0;
+      ebPlayerHp--;
+      const opts = document.getElementById('ebOptions');
+      if(opts) opts.style.pointerEvents = 'none';
+      gpsSoundTimeout();
+      toast(`⏰ 시간 초과! 정답은 "${ebQuestion.answer}"였어요`, 2000);
+      setTimeout(() => initEnglishBattle(false), 900);
+    }
+  }, 1000);
+}
+
+function ebClick(selected, answer, btn){
+  ebClearTimer();
+  const enemy = EB_ENEMIES[ebStageIdx];
+  if(selected === answer){
+    btn.classList.replace('bg-purple-500', 'bg-green-500');
+    btn.classList.replace('border-purple-700', 'border-green-700');
+    ebCombo++; ebMaxCombo = Math.max(ebMaxCombo, ebCombo);
+    ebScore += 10 + Math.max(0, ebTimeLeft) + (ebCombo>=2 ? (ebCombo-1)*5 : 0);
+    ebEnemyHp--;
+    document.getElementById('ebOptions').style.pointerEvents = 'none';
+    const rect = btn.getBoundingClientRect();
+    gpsConfetti(rect.left+rect.width/2, rect.top+rect.height/2);
+    gpsComboPopup(btn, ebCombo);
+    gpsSoundCorrect(ebCombo);
+    const icon = document.getElementById('ebEnemyIcon');
+    if(icon) icon.style.transform = 'scale(0.8) rotate(10deg)';
+    if(ebEnemyHp <= 0){
+      toast(`🎉 ${enemy.name}을(를) 물리쳤어요!`);
+      ebStageIdx++;
+      if(ebStageIdx < EB_ENEMIES.length){ ebEnemyHp = EB_ENEMIES[ebStageIdx].hp; ebEnemyMaxHp = EB_ENEMIES[ebStageIdx].hp; }
+    }
+    setTimeout(() => initEnglishBattle(false), 700);
+  } else {
+    btn.classList.replace('bg-purple-500', 'bg-red-500');
+    btn.classList.replace('border-purple-700', 'border-red-700');
+    btn.classList.add('animate-bounce');
+    ebCombo = 0;
+    ebPlayerHp--;
+    gpsSoundWrong();
+    const box = document.getElementById('ebEnemyBox');
+    if(box) { box.style.transition='transform .1s'; box.style.transform='translateX(-8px)'; setTimeout(()=>{ if(box){box.style.transform='translateX(8px)'; setTimeout(()=>{if(box)box.style.transform='';},100);} },100); }
+    setTimeout(() => {
+      document.getElementById('ebOptions')?.querySelectorAll('button').forEach(b=>b.style.pointerEvents='none');
+      initEnglishBattle(false);
+    }, 700);
+  }
+}
+
+/* ══════════════════════════════════════
    📋 학급 경영 도구 - 탭 전환
 ══════════════════════════════════════ */
 function showMgmt(type){
@@ -4200,13 +5519,13 @@ function initBlockBlast() {
     </div>
     <div id="bbComboUI" style="position:absolute; top:55px; left:20px; color:#FBBF24; font-size:20px; font-weight:900; text-shadow:0 2px 4px rgba(0,0,0,0.5); opacity:0; transition:opacity 0.2s, transform 0.2s; transform:translateY(10px);"></div>
     <div id="bbItemBar" style="position:absolute; top:64%; left:0; width:100%; display:flex; justify-content:center; align-items:center; gap:14px; z-index:5; pointer-events:none;">
-      <button id="bbItemHammer" onclick="bbArmItem('hammer')" title="망치: 원하는 블록 1칸을 깨서 없애요 (100점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s, outline .15s;">
+      <button id="bbItemHammer" onclick="bbArmItem('hammer')" title="망치: 원하는 블록 1칸을 깨서 없애요 (250점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s, outline .15s;">
         🔨<span id="bbHammerCount" style="position:absolute; top:-6px; right:-6px; background:#F59E0B; color:#1E293B; font-size:11px; font-weight:900; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 3px;">0</span>
       </button>
-      <button id="bbItemLine" onclick="bbArmItem('line')" title="한 줄 삭제: 클릭한 칸의 가로 한 줄을 통째로 삭제해요 (300점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s, outline .15s;">
+      <button id="bbItemLine" onclick="bbArmItem('line')" title="한 줄 삭제: 클릭한 칸의 가로 한 줄을 통째로 삭제해요 (600점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s, outline .15s;">
         💥<span id="bbLineCount" style="position:absolute; top:-6px; right:-6px; background:#F87171; color:#1E293B; font-size:11px; font-weight:900; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 3px;">0</span>
       </button>
-      <button id="bbItemShuffle" onclick="bbUseShuffle()" title="셔플: 보드에 놓인 블록들을 랜덤으로 뒤섞어요 (500점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s;">
+      <button id="bbItemShuffle" onclick="bbUseShuffle()" title="싹쓸이: 보드 위 블록을 전부 없애요 (1500점마다 획득)" style="pointer-events:auto; position:relative; width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.15); font-size:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s;">
         🔀<span id="bbShuffleCount" style="position:absolute; top:-6px; right:-6px; background:#34D399; color:#1E293B; font-size:11px; font-weight:900; min-width:18px; height:18px; border-radius:9px; display:flex; align-items:center; justify-content:center; padding:0 3px;">0</span>
       </button>
     </div>
@@ -4513,24 +5832,24 @@ function bbUpdateScoreUI() {
   if(bu) bu.innerText = bbState.best;
 }
 
-/* ── 아이템 시스템: 100점마다 망치 / 300점마다 한 줄 삭제 / 500점마다 셔플 ── */
+/* ── 아이템 시스템: 250점마다 망치 / 600점마다 한 줄 삭제 / 1500점마다 싹쓸이 ── */
 function bbCheckItemRewards() {
   let gotAny = false;
-  const tierH = Math.floor(bbState.score / 100);
+  const tierH = Math.floor(bbState.score / 250);
   if(tierH > bbState._hammerTier) {
     bbState.hammers += (tierH - bbState._hammerTier);
     bbState._hammerTier = tierH;
     toast(`🔨 망치 아이템 획득! (보유 ${bbState.hammers}개)`);
     gotAny = true;
   }
-  const tierL = Math.floor(bbState.score / 300);
+  const tierL = Math.floor(bbState.score / 600);
   if(tierL > bbState._lineTier) {
     bbState.lineClearItems += (tierL - bbState._lineTier);
     bbState._lineTier = tierL;
     toast(`💥 한 줄 삭제 아이템 획득! (보유 ${bbState.lineClearItems}개)`);
     gotAny = true;
   }
-  const tierS = Math.floor(bbState.score / 500);
+  const tierS = Math.floor(bbState.score / 1500);
   if(tierS > bbState._shuffleTier) {
     bbState.shuffleItems += (tierS - bbState._shuffleTier);
     bbState._shuffleTier = tierS;
@@ -4609,16 +5928,13 @@ function bbUseArmedItem(gx, gy) {
 function bbUseShuffle() {
   if(bbState.isGameOver || bbState.shuffleItems <= 0) return;
   bbState.shuffleItems--;
-  let colors = [];
-  for(let r=0; r<8; r++) for(let c=0; c<8; c++) if(bbState.grid[r][c] !== 0) colors.push(bbState.grid[r][c]);
-  let positions = [];
-  for(let r=0; r<8; r++) for(let c=0; c<8; c++) positions.push([r,c]);
-  for(let i=positions.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [positions[i],positions[j]]=[positions[j],positions[i]]; }
+
+  // 싹쓸이: 보드 위에 놓인 블록을 전부 지워서 완전히 새로 시작할 공간을 만들어줍니다.
   bbState.grid = Array(8).fill(0).map(() => Array(8).fill(0));
-  colors.forEach((col, i) => { const [r,c]=positions[i]; bbState.grid[r][c]=col; });
   bbSoundShuffle();
-  toast('🔀 보드를 뒤섞었어요!');
+  toast('🔀 보드를 싹 비웠어요!');
   bbUpdateItemUI();
+  bbState._stuckWarned = false;
   bbCheckGameOver();
 }
 
