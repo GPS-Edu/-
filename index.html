@@ -7684,7 +7684,7 @@ function pjLoop(timestamp) {
     const targetH = pjNextBlackHoleHeight;
     const bx = 70 + Math.random() * (c.width - 140);
     const by = c.height - 50 - targetH * 10;
-    pjBlackHoles.push({ x: bx, y: by, r: 26, pullRadius: 770, rot: 0 });
+    pjBlackHoles.push({ x: bx, y: by, r: 26, pullRadius: 385, rot: 0 });
     pjNextBlackHoleHeight += 1000;
   }
   
@@ -7713,8 +7713,8 @@ function pjLoop(timestamp) {
   
   // 🌠 별똥별: 1000m를 넘으면 번개와 같은 빈도로 등장. 위에서 포물선으로 떨어지거나,
   // 항아리가 실제로 있는 높이대를 관통하며 대각선/포물선으로 화면 좌우를 가로질러 날아옴.
-  const PJ_STAR_SPEED_MULT = 1.6; // 기존보다 1.6배 빠르게
-  const PJ_STAR_SPEED_MULT_SIDE = 1.35; // 옆에서 오는 것들(side/arc)은 너무 잘 맞아서 살짝 더 느리게
+  const PJ_STAR_SPEED_MULT = 1.12; // 기존(1.6)의 70% 속도로 느리게
+  const PJ_STAR_SPEED_MULT_SIDE = 0.945; // 옆에서 오는 것들(side/arc)도 기존(1.35)의 70% 속도로 느리게
   if (heightSc / 10 >= PJ_STAR_MIN_HEIGHT_M) {
     pjShootingStarTimer -= dt;
     if (pjShootingStarTimer <= 0) {
