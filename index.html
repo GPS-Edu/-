@@ -6352,6 +6352,13 @@ let mafReported = null;
 let mafPendingReveal = null;
 let mafTimerInt = null;
 let mafTimeLeft = 0;
+let mafHeartbeatInt = null;      // 호스트: 학생 연결이 끊겼는데도 안 끊긴 것처럼 보이는 문제(하트비트로 감지)
+let mafClientHeartbeatWatch = null; // 학생: 호스트와의 연결이 조용히 끊겼는지 감시
+let mafLastPhasePayload = null;  // 마지막으로 보낸 진행 상황 - 재접속한 학생에게 그대로 다시 보내 화면을 동기화
+let mafReconnecting = false;     // 학생: 재연결 시도 중 여부 (중복 시도 방지)
+let mafJoinedCode = '';          // 학생: 접속했던 방 코드 (재연결 시 재사용)
+let mafLastPingFromHost = 0;     // 학생: 호스트로부터 마지막 핑을 받은 시각 (하트비트 감시용)
+let mafWasKicked = false;        // 학생: 선생님이 강퇴한 경우, 연결이 끊겨도 자동 재접속을 시도하지 않도록 하는 플래그
 
 function mafPreset(n) {
   document.getElementById('sMafia').value = n >= 24 ? 4 : n >= 9 ? 2 : 1;
@@ -6405,11 +6412,18 @@ function renderMafia() {
   gc.innerHTML = html + helpModal;
 }
 
-function loadPeer(callback) {
+function loadPeer(callback, onError) {
   if (window.Peer) { callback(); return; }
   const script = document.createElement('script');
   script.src = 'https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js';
   script.onload = callback;
+  // ⚠️ 기존엔 onerror가 없어서, 학교 네트워크가 이 스크립트(unpkg.com)를 막으면
+  // 버튼이 로딩 상태로 영원히 멈춰버리고 아무 안내도 뜨지 않았음 (원인 불명 "방 생성 안 됨"의 주범)
+  script.onerror = () => {
+    script.remove();
+    if (onError) onError();
+    else toast('❌ 멀티플레이 기능을 불러오지 못했어요. 네트워크를 확인해주세요.');
+  };
   document.head.appendChild(script);
 }
 
@@ -6431,25 +6445,62 @@ function mafMenuHTML() {
 // ---------------- HOST LOGIC ----------------
 function mafStartHost() {
   const btn = document.querySelector('.btn'); if(btn) btn.innerHTML = '<div class="spin mx-auto"></div>';
-  loadPeer(() => {
-    mafRoomId = Math.floor(1000 + Math.random() * 9000).toString();
-    mafPeer = new Peer('gps-maf-' + mafRoomId);
-    
-    mafPeer.on('open', (id) => {
-      mafIsHost = true; mafPhase = 'hostLobby'; mafPlayers = []; mafConns = []; renderMafia();
+  const fail = (msg) => { toast(msg); renderMafia(); };
+  loadPeer(
+    () => attemptHostPeer(2, fail),
+    () => fail('❌ 방을 만들지 못했어요. 학교 와이파이가 멀티플레이 기능을 막고 있을 수 있어요. 와이파이 대신 휴대폰 데이터(핫스팟)로 다시 시도해보세요.')
+  );
+}
+
+// 방 생성을 실제로 시도하는 부분을 별도 함수로 분리 (방 코드 충돌 시 새 코드로 재시도하기 위함)
+function attemptHostPeer(retriesLeft, fail) {
+  mafRoomId = Math.floor(1000 + Math.random() * 9000).toString();
+  if (mafPeer) { try { mafPeer.destroy(); } catch(e) {} }
+  mafPeer = new Peer('gps-maf-' + mafRoomId);
+  let settled = false;
+
+  // ⚠️ 학교 와이파이가 실시간 통신(WebRTC) 자체를 막으면 에러조차 뜨지 않고 그냥 멈춰있는 경우가 많아서,
+  // 일정 시간 안에 연결이 안 되면 타임아웃으로 판단해 명확한 안내를 띄움
+  const timeoutId = setTimeout(() => {
+    if (settled) return;
+    settled = true;
+    try { mafPeer.destroy(); } catch(e) {}
+    fail('❌ 방 생성이 너무 오래 걸려요. 학교 와이파이가 멀티플레이 기능을 막고 있을 가능성이 높아요. 와이파이 대신 휴대폰 데이터(핫스팟)로 다시 시도해보세요.');
+  }, 10000);
+
+  mafPeer.on('open', (id) => {
+    if (settled) return;
+    settled = true; clearTimeout(timeoutId);
+    mafIsHost = true; mafPhase = 'hostLobby'; mafPlayers = []; mafConns = []; renderMafia();
+
+    // 💓 하트비트: 학생 연결이 close/error 이벤트 없이 조용히 죽어버리는 경우가 있어서
+    // (특히 화면이 꺼지거나 와이파이가 잠깐 끊겼을 때), 주기적으로 핑을 보내 응답이 없으면
+    // "연결된 것처럼 보이지만 사실 끊긴" 유령 접속을 확실히 정리함
+    if (mafHeartbeatInt) clearInterval(mafHeartbeatInt);
+    mafHeartbeatInt = setInterval(() => {
+      const now = Date.now();
+      mafConns.forEach(c => { try { c.send({ type: 'ping' }); } catch(e) {} });
+      mafConns.filter(c => now - (c.lastPong || now) > 16000).forEach(c => mafHandleConnLost(c));
+    }, 5000);
+  });
+
+  mafPeer.on('connection', (conn) => {
+    conn.lastPong = Date.now();
+    conn.on('data', (data) => {
+      if (data.type === 'pong') { conn.lastPong = Date.now(); return; }
+      mafHandleClientData(conn, data);
     });
-    
-    mafPeer.on('connection', (conn) => {
-      conn.on('data', (data) => mafHandleClientData(conn, data));
-      conn.on('close', () => {
-        mafPlayers = mafPlayers.filter(p => p.id !== conn.peer);
-        mafConns = mafConns.filter(c => c.peer !== conn.peer);
-        if(mafPhase === 'hostLobby') mafBroadcastLobby();
-        else if(mafPhase === 'hostGame') renderMafia();
-      });
-      mafConns.push(conn);
-    });
-    mafPeer.on('error', (err) => { toast('통신 에러: ' + err.type); renderMafia(); });
+    conn.on('close', () => mafHandleConnLost(conn));
+    conn.on('error', () => mafHandleConnLost(conn));
+    mafConns.push(conn);
+  });
+
+  mafPeer.on('error', (err) => {
+    if (settled) return;
+    settled = true; clearTimeout(timeoutId);
+    // 방 코드(4자리)가 우연히 이미 사용 중이었던 드문 경우엔, 사용자가 다시 누를 필요 없이 새 코드로 자동 재시도
+    if (err.type === 'unavailable-id' && retriesLeft > 0) { attemptHostPeer(retriesLeft - 1, fail); return; }
+    fail('❌ 방을 만들지 못했어요 (오류: ' + err.type + '). 학교 와이파이가 멀티플레이 기능을 막고 있을 수 있어요. 와이파이 대신 휴대폰 데이터(핫스팟)로 다시 시도해보세요.');
   });
 }
 
@@ -6462,10 +6513,69 @@ function mafBroadcastLobby() {
 
 function mafBroadcast(type, payload) { mafConns.forEach(c => c.send({ type, ...payload })); }
 
+// 🔄 재접속한 학생에게 마지막 진행 상황을 그대로 다시 보내 화면을 맞춰주기 위해, 매번 보낸 phase를 기억해둠
+function mafBroadcastPhase(payload) { mafLastPhasePayload = payload; mafBroadcast('phase', payload); }
+
+// 👻 연결이 끊긴 학생이 명단에 계속 남아있는(유령 접속) 문제를 막기 위한 공통 정리 함수
+// close/error 이벤트, 하트비트 타임아웃 등 어떤 경로로 감지되든 여기서 한 번에 처리함
+function mafHandleConnLost(conn) {
+  if (!mafConns.includes(conn)) return; // 이미 정리된 연결이면 중복 처리하지 않음
+  mafConns = mafConns.filter(c => c !== conn);
+  const lostPlayer = mafPlayers.find(p => p.conn === conn);
+  mafPlayers = mafPlayers.filter(p => p.conn !== conn);
+  try { conn.close(); } catch(e) {}
+  if (!lostPlayer) return; // 아직 이름도 등록 안 한 연결이면 알릴 필요 없음
+  if (mafPhase === 'hostLobby') mafBroadcastLobby();
+  else if (mafPhase === 'hostGame') { toast('⚠️ ' + lostPlayer.name + '님의 연결이 끊겼습니다. (재접속하면 자동으로 이어집니다)'); renderMafia(); }
+}
+
+// 👑 선생님이 대기실 명단에서 직접 강퇴: 하트비트(최대 16초)를 기다리지 않고도
+// 유령 접속이나 잘못 들어온 학생을 즉시 정리할 수 있게 함
+function mafKickPlayer(idx) {
+  const p = mafPlayers[idx];
+  if (!p) return;
+  if (!confirm(p.name + '님을 강퇴할까요?')) return;
+  try { p.conn && p.conn.send({ type: 'kicked' }); } catch(e) {}
+  mafConns = mafConns.filter(c => c !== p.conn);
+  mafPlayers = mafPlayers.filter((pl, i) => i !== idx);
+  try { p.conn && p.conn.close(); } catch(e) {}
+  toast('👢 ' + p.name + '님을 강퇴했습니다.');
+  mafBroadcastLobby();
+}
+
 function mafHandleClientData(conn, data) {
   if (data.type === 'join') {
-    if (mafPlayers.some(p => p.name === data.name)) {
-      conn.send({ type: 'error', msg: '이미 존재하는 이름입니다.' }); return;
+    const existing = mafPlayers.find(p => p.name === data.name);
+    if (existing) {
+      if (mafPhase === 'hostLobby') {
+        // 🔄 대기실 단계에서도 재접속으로 처리함. 예전엔 "이름 중복"으로 무조건 막았는데,
+        // 학생이 대기실에서 끊겼다가 하트비트가 감지하기도 전(수 초 내)에 같은 이름으로 재접속하면
+        // 유령 접속이 아직 안 지워진 상태라 억울하게 튕겨나가는 문제가 있었음.
+        // 게임 중 재접속 로직과 동일하게 기존 자리를 새 연결로 이어받게 하면 이 틈이 사라짐.
+        const oldConn = existing.conn;
+        if (oldConn && oldConn !== conn) { mafConns = mafConns.filter(c => c !== oldConn); try { oldConn.close(); } catch(e) {} }
+        existing.id = conn.peer; existing.conn = conn;
+        if (!mafConns.includes(conn)) mafConns.push(conn);
+        conn.send({ type: 'joinSuccess' });
+        mafBroadcastLobby();
+        return;
+      }
+      // 🔄 게임이 이미 진행 중인데 같은 이름으로 다시 들어왔다면 "재접속"으로 간주해서,
+      // 기존 플레이어 자리(역할·생존 여부 포함)에 새 연결을 이어붙여 그대로 이어서 플레이하게 함
+      const oldConn = existing.conn;
+      if (oldConn && oldConn !== conn) { mafConns = mafConns.filter(c => c !== oldConn); try { oldConn.close(); } catch(e) {} }
+      existing.id = conn.peer; existing.conn = conn;
+      if (!mafConns.includes(conn)) mafConns.push(conn);
+      const mComrades = (existing.role === '마피아' || existing.role === '스파이')
+        ? mafPlayers.filter(p => (p.role === '마피아' || p.role === '스파이') && p.name !== existing.name).map(p => p.name)
+        : [];
+      conn.send({ type: 'gameStart', role: existing.role, comrades: mComrades, allNames: mafPlayers.map(p => p.name) });
+      if (mafLastPhasePayload) conn.send({ type: 'phase', ...mafLastPhasePayload });
+      toast('🔄 ' + existing.name + '님이 다시 접속했습니다.');
+      // 📢 선생님 화면뿐 아니라 다른 학생들 화면에도 알려서 다 같이 상황을 파악할 수 있게 함
+      mafConns.filter(c => c !== conn).forEach(c => { try { c.send({ type: 'toast', msg: '🔄 ' + existing.name + '님이 다시 접속했습니다.' }); } catch(e) {} });
+      renderMafia();
+      return;
     }
     mafPlayers.push({ id: conn.peer, name: data.name, role: '', alive: true, conn: conn });
     conn.send({ type: 'joinSuccess' });
@@ -6505,9 +6615,9 @@ function mafHostLobbyHTML() {
       <h4 class="font-black text-6xl mt-2 tracking-widest text-yellow-400 drop-shadow-md">${mafRoomId}</h4>
     </div>
     <div class="card p-4 bg-gray-50 border border-gray-200">
-      <h3 class="font-black text-gray-700 mb-2">접속한 학생 (${mafPlayers.length}명)</h3>
+      <h3 class="font-black text-gray-700 mb-2">접속한 학생 (${mafPlayers.length}명) <span class="font-normal text-gray-400">· 이름 옆 ×로 강퇴</span></h3>
       <div class="flex flex-wrap gap-2 min-h-[50px]">
-        ${mafPlayers.map(p => `<span class="badge bg-blue-100 text-blue-800 px-3 py-1 text-sm font-bold shadow-sm">${p.name}</span>`).join('')}
+        ${mafPlayers.map((p, i) => `<span class="badge bg-blue-100 text-blue-800 pl-3 pr-1 py-1 text-sm font-bold shadow-sm inline-flex items-center gap-1">${p.name}<button onclick="mafKickPlayer(${i})" title="강퇴" class="w-5 h-5 flex items-center justify-center rounded-full bg-blue-200 hover:bg-red-500 hover:text-white text-blue-700 font-black text-xs leading-none">×</button></span>`).join('')}
         ${mafPlayers.length === 0 ? '<span class="text-gray-400 text-sm font-semibold m-auto">학생들이 접속하기를 기다리는 중입니다...</span>' : ''}
       </div>
     </div>
@@ -6617,7 +6727,7 @@ function mafHostNextPhase(phase) {
   if(phase === 'night') {
     mafThreatened = '';
     mafNightActions = {};
-    mafBroadcast('phase', { phase: 'night', aliveList, deadList, reveal: mafPendingReveal });
+    mafBroadcastPhase({ phase: 'night', aliveList, deadList, reveal: mafPendingReveal });
     mafPendingReveal = null;
   } else if(phase === 'day_announce') {
     mafKilled = ''; mafSaved = '';
@@ -6666,10 +6776,10 @@ function mafHostNextPhase(phase) {
     }
     
     const newAliveList = mafPlayers.filter(p=>p.alive).map(p=>p.name);
-    mafBroadcast('phase', { phase: 'day_announce', killed: mafKilled, saved: mafSaved, aliveList: newAliveList, reported: mafReported, threatened: mafThreatened });
+    mafBroadcastPhase({ phase: 'day_announce', killed: mafKilled, saved: mafSaved, aliveList: newAliveList, reported: mafReported, threatened: mafThreatened });
     if(mafCheckWin()) return;
   } else if (phase === 'vote') {
-    mafVotes = {}; mafBroadcast('phase', { phase: 'vote', aliveList, threatened: mafThreatened });
+    mafVotes = {}; mafBroadcastPhase({ phase: 'vote', aliveList, threatened: mafThreatened });
   } else if (phase === 'vote_result') {
     let counts = {};
     mafPlayers.filter(p => p.alive && p.name !== mafThreatened).forEach(p => { let t = mafVotes[p.id]; if(t && t !== 'skip') counts[t] = (counts[t] || 0) + 1; });
@@ -6678,10 +6788,10 @@ function mafHostNextPhase(phase) {
     if(topTgt.length === 1) {
       mafSuspect = topTgt[0]; mafFinalVotes = {}; mafHostNextPhase('final_vote'); return;
     } else {
-      mafBroadcast('phase', { phase: 'day_discuss', aliveList }); toast('동률이거나 기권이 많아 아무도 처형대에 오르지 않았습니다.'); mafHostNextPhase('night'); return;
+      mafBroadcastPhase({ phase: 'day_discuss', aliveList }); toast('동률이거나 기권이 많아 아무도 처형대에 오르지 않았습니다.'); mafHostNextPhase('night'); return;
     }
   } else if (phase === 'final_vote') {
-    mafBroadcast('phase', { phase: 'final_vote', suspect: mafSuspect, aliveList, threatened: mafThreatened });
+    mafBroadcastPhase({ phase: 'final_vote', suspect: mafSuspect, aliveList, threatened: mafThreatened });
   } else if (phase === 'final_result') {
     let kills = 0, saves = 0;
     mafPlayers.filter(p => p.alive && p.name !== mafSuspect && p.name !== mafThreatened).forEach(p => { if(mafFinalVotes[p.id] === 'kill') kills++; if(mafFinalVotes[p.id] === 'save') saves++; });
@@ -6707,7 +6817,7 @@ function mafCheckWin() {
   if (mCount === 0 || mCount >= alive.length - mCount) {
     if (mafTimerInt) { clearInterval(mafTimerInt); mafTimerInt = null; }
     mafSubPhase = 'game_over';
-    mafBroadcast('phase', { phase: 'game_over', win: mCount === 0 ? 'citizen' : 'mafia' });
+    mafBroadcastPhase({ phase: 'game_over', win: mCount === 0 ? 'citizen' : 'mafia' });
     renderMafia();
     return true;
   }
@@ -6723,7 +6833,10 @@ function mafHostGameHTML() {
   let content = '';
   const timerHTML = mafTimeLeft > 0 ? `<div id="mafHostTimerDisplay" class="text-5xl font-black font-mono text-red-500 mb-6 drop-shadow-md animate-pulse">⏳ ${Math.floor(mafTimeLeft/60)}:${(mafTimeLeft%60).toString().padStart(2,'0')}</div>` : '<div id="mafHostTimerDisplay"></div>';
   const helpBtn = `<button onclick="document.getElementById('mafHelpModal').classList.remove('hidden')" class="absolute top-4 right-4 btn btn-ghost text-xs bg-gray-200 hover:bg-gray-300 rounded-full shadow-sm">❓ 도움말</button>`;
-  
+  // 🔑 게임 시작 후엔 방 코드가 화면에서 사라져서, 뒤늦게 합류하는 학생이 있어도 코드를 다시 알려줄 방법이 없었음.
+  // 항상 눈에 띄는 작은 배지로 띄워 두면 필요할 때 바로 알려줄 수 있음
+  const codeBadge = `<span class="absolute top-4 left-4 bg-yellow-100 text-yellow-800 border border-yellow-300 px-2 py-1 rounded-full text-xs font-black tracking-wider shadow-sm">🔑 ${mafRoomId}</span>`;
+
   if (mafSubPhase === 'night') {
     const actCnt = Object.keys(mafNightActions).length;
     const specialCnt = mafPlayers.filter(p => p.alive && p.role !== '시민' && p.role !== '정치인' && p.role !== '군인').length;
@@ -6750,11 +6863,11 @@ function mafHostGameHTML() {
   } else if (mafSubPhase === 'game_over') {
     const mWin = mafPlayers.filter(p=>p.alive&&p.role==='마피아').length > 0;
     content = `<div class="text-center"><div class="text-6xl mb-2">${mWin?'😈':'🎉'}</div><h2 class="text-4xl font-black mb-4 ${mWin?'text-red-700':'text-blue-700'}">${mWin?'마피아 승리!':'시민 승리!'}</h2></div>
-    <button onclick="if(mafTimerInt)clearInterval(mafTimerInt);mafPhase='menu'; renderMafia();" class="btn btn-ghost w-full mt-6 py-4 border-2 border-gray-200">🔄 처음으로 돌아가기</button>`;
+    <button onclick="if(mafTimerInt)clearInterval(mafTimerInt); if(mafHeartbeatInt)clearInterval(mafHeartbeatInt); if(mafPeer){try{mafPeer.destroy();}catch(e){}} mafPhase='menu'; renderMafia();" class="btn btn-ghost w-full mt-6 py-4 border-2 border-gray-200">🔄 처음으로 돌아가기</button>`;
   }
 
   return `<div class="space-y-4">
-    <div class="card p-4 sm:p-6 md:p-8 bg-gray-50 border-2 border-gray-200 shadow-sm relative">${helpBtn}${content}</div>
+    <div class="card p-4 sm:p-6 md:p-8 bg-gray-50 border-2 border-gray-200 shadow-sm relative">${codeBadge}${helpBtn}${content}</div>
     <div class="card p-4 relative">
       <button onclick="mafToggleRoles()" class="absolute top-3 right-3 btn btn-ghost text-xs bg-gray-100 hover:bg-gray-200">${mafShowRoles ? '🙈 직업 숨기기' : '👀 직업 훔쳐보기 (선생님 전용)'}</button>
       <h3 class="font-black text-sm text-gray-700 mb-3">👥 플레이어 생존 상태</h3>
@@ -6789,19 +6902,135 @@ function mafClientJoin() {
   const code = document.getElementById('cCode').value.trim();
   mafMyName = document.getElementById('cName').value.trim();
   if(!code || !mafMyName) { toast('코드와 이름을 모두 입력하세요!'); return; }
+  mafJoinedCode = code; // 재연결 시도 시 재사용
   toast('방에 접속 중입니다...'); const btn = document.querySelector('.btn-blue'); if(btn) btn.innerHTML = '<div class="spin mx-auto"></div>';
+
+  const fail = (msg) => { toast(msg); mafPhase = 'clientLobby'; renderMafia(); };
+
   loadPeer(() => {
+    if (mafPeer) { try { mafPeer.destroy(); } catch(e) {} }
     mafPeer = new Peer();
+    let settled = false;
+
+    // ⚠️ 기존엔 이 부분에 에러 처리와 타임아웃이 전혀 없어서, 학생 기기의 네트워크가
+    // 실시간 통신(WebRTC)을 막으면 "입장하기" 버튼이 로딩 상태로 영원히 멈춰버렸음
+    // (같은 반에서도 되는 학생/안 되는 학생이 갈렸던 주된 원인으로 보임)
+    const timeoutId = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      try { mafPeer.destroy(); } catch(e) {}
+      fail('❌ 접속이 너무 오래 걸려요. 이 기기의 와이파이가 멀티플레이 기능을 막고 있을 수 있어요. 와이파이 대신 데이터(핫스팟)로 다시 시도해보세요.');
+    }, 10000);
+
     mafPeer.on('open', (id) => {
+      if (settled) return;
+      settled = true; clearTimeout(timeoutId);
       mafConn = mafPeer.connect('gps-maf-' + code);
-      mafConn.on('open', () => { mafConn.send({ type: 'join', name: mafMyName }); });
+
+      const connTimeoutId = setTimeout(() => {
+        fail('❌ 방을 찾지 못했어요. 방 코드가 정확한지 선생님께 다시 확인해보세요.');
+      }, 8000);
+
+      mafConn.on('open', () => { clearTimeout(connTimeoutId); mafConn.send({ type: 'join', name: mafMyName }); mafStartClientHeartbeatWatch(); });
       mafConn.on('data', (data) => mafHandleHostData(data));
-      mafConn.on('close', () => { toast('서버와 연결이 끊어졌습니다.'); mafPhase = 'menu'; renderMafia(); });
+      // 🔄 끊기면 바로 메인 화면으로 쫓아내는 대신, 게임이 진행 중이었다면 자동으로 재접속을 시도함
+      mafConn.on('close', () => mafHandleDisconnect());
+      mafConn.on('error', () => { clearTimeout(connTimeoutId); mafHandleDisconnect(); });
     });
-  });
+
+    mafPeer.on('error', (err) => {
+      if (settled) return;
+      settled = true; clearTimeout(timeoutId);
+      fail('❌ 접속하지 못했어요 (오류: ' + err.type + '). 이 기기의 와이파이가 멀티플레이 기능을 막고 있을 수 있어요. 와이파이 대신 데이터(핫스팟)로 다시 시도해보세요.');
+    });
+  }, () => fail('❌ 접속하지 못했어요. 이 기기의 와이파이가 멀티플레이 기능을 막고 있을 수 있어요. 와이파이 대신 데이터(핫스팟)로 다시 시도해보세요.'));
+}
+
+// 💓 호스트가 주기적으로 보내는 핑이 일정 시간 안 오면, close/error 이벤트가 안 뜨더라도
+// 연결이 죽은 것으로 보고 재접속을 시도함 (와이파이가 조용히 끊기는 경우 대비)
+function mafStartClientHeartbeatWatch() {
+  mafLastPingFromHost = Date.now();
+  if (mafClientHeartbeatWatch) clearInterval(mafClientHeartbeatWatch);
+  mafClientHeartbeatWatch = setInterval(() => {
+    if (Date.now() - mafLastPingFromHost > 20000) mafHandleDisconnect();
+  }, 4000);
+}
+
+// 🔄 연결이 끊겼을 때: 이미 한창 게임 중이었다면 화면을 벗어나지 않고 조용히 재접속을 시도하고,
+// 아직 정식으로 입장도 못한 상태였다면(코드가 틀렸거나 방이 없거나) 바로 실패로 안내함
+function mafHandleDisconnect() {
+  if (mafWasKicked) { mafWasKicked = false; return; } // 강퇴로 인한 종료는 이미 처리했으므로 재접속 시도하지 않음
+  if (mafReconnecting) return;
+  if (mafClientHeartbeatWatch) { clearInterval(mafClientHeartbeatWatch); mafClientHeartbeatWatch = null; }
+  if (mafPhase === 'clientGame') {
+    mafAttemptReconnect(3);
+  } else {
+    toast('❌ 방을 찾지 못했어요. 방 코드가 정확한지 선생님께 다시 확인해보세요.');
+    mafPhase = 'clientLobby'; renderMafia();
+  }
+}
+
+function mafAttemptReconnect(maxAttempts) {
+  if (mafReconnecting) return;
+  mafReconnecting = true;
+
+  const giveUp = () => {
+    mafReconnecting = false;
+    toast('❌ 재접속에 실패했어요. 선생님께 말씀드려서 다시 접속해보세요.');
+    mafPhase = 'menu'; renderMafia();
+  };
+
+  const tryOnce = (attemptsLeft) => {
+    toast('⚠️ 연결이 끊겨서 다시 접속 중입니다... (' + (maxAttempts - attemptsLeft + 1) + '/' + maxAttempts + ')');
+    if (mafPeer) { try { mafPeer.destroy(); } catch(e) {} }
+    mafPeer = new Peer();
+    let settled = false;
+
+    const retryOrGiveUp = () => {
+      if (settled) return;
+      settled = true;
+      if (attemptsLeft > 1) setTimeout(() => tryOnce(attemptsLeft - 1), 2000);
+      else giveUp();
+    };
+
+    const openTimeout = setTimeout(retryOrGiveUp, 8000);
+
+    mafPeer.on('open', () => {
+      if (settled) return;
+      mafConn = mafPeer.connect('gps-maf-' + mafJoinedCode);
+      const connTimeout = setTimeout(retryOrGiveUp, 6000);
+
+      mafConn.on('open', () => {
+        if (settled) return;
+        settled = true; clearTimeout(openTimeout); clearTimeout(connTimeout);
+        mafConn.send({ type: 'join', name: mafMyName });
+        mafConn.on('data', (data) => mafHandleHostData(data));
+        mafConn.on('close', () => mafHandleDisconnect());
+        mafConn.on('error', () => mafHandleDisconnect());
+        mafReconnecting = false;
+        mafStartClientHeartbeatWatch();
+        toast('✅ 다시 접속되었습니다!');
+      });
+      mafConn.on('error', () => { clearTimeout(connTimeout); retryOrGiveUp(); });
+    });
+    mafPeer.on('error', () => { clearTimeout(openTimeout); retryOrGiveUp(); });
+  };
+
+  tryOnce(maxAttempts);
 }
 
 function mafHandleHostData(data) {
+  if (data.type === 'ping') { mafLastPingFromHost = Date.now(); if (mafConn) { try { mafConn.send({ type: 'pong' }); } catch(e) {} } return; }
+  if (data.type === 'kicked') {
+    // 👑 선생님이 명단에서 직접 강퇴한 경우: 연결이 끊겨도 자동 재접속을 시도하지 않고 바로 메인으로 안내함
+    mafWasKicked = true;
+    if (mafClientHeartbeatWatch) { clearInterval(mafClientHeartbeatWatch); mafClientHeartbeatWatch = null; }
+    if (mafPeer) { try { mafPeer.destroy(); } catch(e) {} }
+    toast('🚪 선생님이 연결을 종료했습니다. 다시 접속하려면 선생님께 문의하세요.');
+    mafPhase = 'menu'; renderMafia();
+    return;
+  }
+  if (data.type === 'toast') { toast(data.msg); return; }
   if(data.type === 'error') { toast(data.msg); mafPhase='clientLobby'; renderMafia(); }
   else if(data.type === 'joinSuccess') { mafPhase = 'clientGame'; mafSubPhase = 'waiting'; renderMafia(); }
   else if(data.type === 'gameStart') { 
