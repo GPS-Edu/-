@@ -225,6 +225,50 @@ body.theme-dark .cap-chute { background: linear-gradient(180deg,var(--d-border2)
 }
 .animate-blob { animation: blob 7s infinite; }
 .animation-delay-2000 { animation-delay: 2s; }
+
+/* ══════════════════════════════════════
+   🔐 교실 방탈출 자물쇠
+══════════════════════════════════════ */
+.esc-wrap{background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);border-radius:1.25rem;border:4px solid #334155;overflow:hidden;color:#fff;position:relative;}
+.esc-topbar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;background:rgba(0,0,0,.25);border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap;gap:.5rem;}
+.esc-locks{display:flex;gap:.35rem;}
+.esc-lock-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);transition:all .3s;}
+.esc-lock-dot.done{background:#22C55E;border-color:#4ADE80;box-shadow:0 0 10px rgba(34,197,94,.6);}
+.esc-lock-dot.active{border-color:#FBBF24;box-shadow:0 0 8px rgba(251,191,36,.5);animation:escPulse 1.4s infinite;}
+@keyframes escPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+.esc-timer{font-family:'Courier New',monospace;font-weight:900;font-size:1rem;background:rgba(0,0,0,.35);padding:.35rem .8rem;border-radius:.6rem;letter-spacing:.05em;}
+.esc-body{padding:1.5rem 1.25rem 2rem;min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.esc-stage-card{width:100%;max-width:560px;margin:0 auto;}
+.esc-obj{border-radius:1.25rem;padding:1.6rem;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+.esc-obj-board{background:linear-gradient(160deg,#164e3a,#0f3d2e);border:10px solid #5c4630;box-shadow:0 10px 30px rgba(0,0,0,.5), inset 0 0 30px rgba(0,0,0,.4);}
+.esc-obj-locker{background:linear-gradient(160deg,#64748b,#475569);border:6px solid #334155;}
+.esc-obj-desk{background:linear-gradient(160deg,#a97c50,#8a6238);border:6px solid #5c4630;}
+.esc-obj-clock{background:radial-gradient(circle at 50% 40%,#fefce8,#fef3c7);border:6px solid #78350f;color:#1E293B;}
+.esc-obj-note{background:linear-gradient(160deg,#fef3c7,#fde68a);border:6px solid #b45309;color:#1E293B;}
+.esc-obj-door{background:linear-gradient(160deg,#7c2d12,#451a03);border:8px solid #292524;}
+.esc-chalk{font-family:'Comic Sans MS','Pretendard',cursive,sans-serif;color:#fef9c3;}
+.esc-timetable{width:100%;border-collapse:collapse;margin-top:.8rem;}
+.esc-timetable td,.esc-timetable th{border:1px dashed rgba(255,251,235,.4);padding:.5rem .6rem;text-align:center;font-size:.85rem;}
+.esc-emoji-map{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:.9rem 0;}
+.esc-emoji-map span{background:rgba(255,255,255,.12);border-radius:.6rem;padding:.4rem .6rem;font-size:1.1rem;display:flex;align-items:center;gap:.3rem;}
+.esc-emoji-map b{font-size:.85rem;font-weight:900;color:#FDE68A;}
+.esc-code-seq{font-size:2.4rem;text-align:center;margin:.6rem 0 1rem;letter-spacing:.3rem;}
+.esc-ans-inp{width:100%;text-align:center;font-size:1.6rem;font-weight:900;padding:.8rem;border-radius:.9rem;border:4px solid #94a3b8;outline:none;background:#f8fafc;color:#1E293B;letter-spacing:.15em;}
+.esc-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
+.esc-choice-btn{background:#f8fafc;color:#1E293B;border:3px solid #94a3b8;border-radius:.9rem;padding:.85rem .6rem;font-weight:900;font-size:1rem;cursor:pointer;transition:all .15s;}
+.esc-choice-btn:hover{background:#FEF3C7;border-color:#F59E0B;transform:translateY(-2px);}
+.esc-choice-btn:active{transform:translateY(0);}
+.esc-ans-inp:focus{border-color:#F59E0B;box-shadow:0 0 0 4px rgba(245,158,11,.25);}
+.esc-hint-box{background:rgba(251,191,36,.12);border:1px dashed rgba(251,191,36,.5);color:#FDE68A;font-size:.82rem;font-weight:700;border-radius:.7rem;padding:.7rem .9rem;margin-top:.8rem;line-height:1.5;}
+.esc-clue-note{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:1rem;padding:.9rem 1.1rem;margin-top:1rem;width:100%;max-width:560px;}
+.esc-clue-note h4{font-size:.8rem;font-weight:900;color:#FDE68A;margin-bottom:.5rem;}
+.esc-clue-row{display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;color:#E2E8F0;padding:.25rem 0;border-bottom:1px dashed rgba(255,255,255,.08);}
+.esc-clue-row:last-child{border-bottom:none;}
+.esc-clue-row .v{color:#FBBF24;font-weight:900;letter-spacing:.1em;}
+@keyframes escWrong{0%,100%{transform:translateX(0);}20%{transform:translateX(-10px);}40%{transform:translateX(10px);}60%{transform:translateX(-6px);}80%{transform:translateX(6px);}}
+.esc-wrong-shake{animation:escWrong .45s;}
+@keyframes escDoorOpen{0%{transform:perspective(800px) rotateY(0);}100%{transform:perspective(800px) rotateY(-92deg);opacity:.15;}}
+.esc-door-open{animation:escDoorOpen .9s forwards;}
 </style>
 </head>
 <body class="flex h-screen overflow-hidden text-gray-800 bg-slate-50">
@@ -520,11 +564,24 @@ body.theme-dark .cap-chute { background: linear-gradient(180deg,var(--d-border2)
 
     <!-- 교육자료 -->
     <section id="education" class="tab-content max-w-5xl mx-auto space-y-6">
-      <div class="card p-6 md:p-8 flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
-        <span class="text-6xl drop-shadow-md">📚</span>
-        <h3 class="text-2xl font-black text-slate-800">교육자료 아카이브</h3>
-        <p class="text-slate-500 font-medium leading-relaxed">선생님만의 유용한 교육 자료를 이곳에 모아둘 수 있습니다.<br>추후 업데이트를 통해 수업 자료 및 링크 관리 기능이 지원될 예정입니다.</p>
-        <button onclick="switchTab('dashboard')" class="mt-4 px-6 py-2.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors">대시보드로 돌아가기</button>
+      <div class="card p-6 md:p-8">
+        <div class="flex items-center gap-4 mb-6 border-b border-slate-100 pb-4">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl shadow-sm">📚</div>
+          <div>
+            <h3 class="text-xl font-black text-slate-800">교육자료 아카이브</h3>
+            <p class="text-[13px] text-slate-500 font-medium mt-1">다른 선생님들이 만든 유용한 사이트를 모아둔 링크 모음입니다.</p>
+          </div>
+        </div>
+        <div id="eduArchiveGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <a href="https://m00n-ssaem.github.io/site/" target="_blank" rel="noopener noreferrer" class="card group flex items-center gap-4 p-4">
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-2xl flex-shrink-0">🌙</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-black text-slate-800 truncate">m00n선생님의 교육자료</p>
+              <p class="text-[11px] text-slate-500 font-medium mt-0.5 truncate">m00n-ssaem.github.io</p>
+            </div>
+            <span class="text-slate-300 group-hover:text-indigo-500 transition-colors text-lg flex-shrink-0">↗</span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -1064,6 +1121,7 @@ function gpsStopAllBackgroundLoops(){
   try{ if(typeof bbAnimFrame !== 'undefined' && bbAnimFrame) { cancelAnimationFrame(bbAnimFrame); bbAnimFrame = null; } }catch(e){}
   try{ if(typeof stAnimFrame !== 'undefined' && stAnimFrame) { cancelAnimationFrame(stAnimFrame); stAnimFrame = null; } }catch(e){}
   try{ if(typeof pjAnim !== 'undefined' && pjAnim) { cancelAnimationFrame(pjAnim); pjAnim = null; } }catch(e){}
+  try{ if(typeof escState !== 'undefined' && escState && escState.timerHandle) { clearInterval(escState.timerHandle); escState.timerHandle = null; } }catch(e){}
 }
 
 function switchTab(id){
@@ -12004,67 +12062,426 @@ function mafAlert(msg){
   }, 3800);
 }
 
+/* ══════════════════════════════════════
+   🔐 교실 방탈출 자물쇠
+   "문제적 남자" · "더 지니어스" 스타일의 성인용 고난도 추리 퀴즈 10종 풀
+   → 게임을 시작할 때마다 이 중 5개를 무작위로 뽑아 순서도 섞어서 진행
+   (마스터마인드 암호, 논리 퍼즐, 확률 트릭, 저울 추론, 자기참조 역설 등
+    실제로 10분 이상 고민해야 풀리는 수준의 사고력 문제로 구성)
+══════════════════════════════════════ */
+const ESC_STAGE_POOL = [
+  {
+    key:'mastermind', icon:'🔐', title:'서랍 속 자물쇠 쪽지', objClass:'esc-obj-board',
+    type:'input', inputMode:'numeric', answer:'042', codeDigit:'2',
+    hint:'738에는 맞는 숫자가 하나도 없어요. 즉 7, 3, 8은 답에 아예 없는 숫자예요. 이 사실을 다른 힌트에 하나씩 대입하면서 좁혀보세요.',
+    render(){
+      return `
+        <p class="esc-chalk text-sm mb-2">🔐 서랍 속에서 낡은 3자리 자물쇠 쪽지를 발견했어요. (누군가 추리한 흔적)</p>
+        <div class="bg-white/10 rounded-xl p-4 esc-chalk text-sm leading-loose">
+          <p>682 → 숫자 하나는 맞고, 자리도 맞음</p>
+          <p>614 → 숫자 하나는 맞지만, 자리는 틀림</p>
+          <p>206 → 숫자 두 개는 맞지만, 자리는 모두 틀림</p>
+          <p>738 → 맞는 숫자가 하나도 없음</p>
+          <p>780 → 숫자 하나는 맞지만, 자리는 틀림</p>
+        </div>
+        <p class="esc-chalk text-sm mt-3 font-bold text-center">❓ 진짜 3자리 자물쇠 코드는 무엇일까요?</p>`;
+    }
+  },
+  {
+    key:'gatekeepers', icon:'🚪', title:'낡은 그림책 속 두 문지기', objClass:'esc-obj-locker',
+    type:'choice', correctIndex:4,
+    options:['이 문 뒤에 보물이 있나요?','당신은 진실만 말하나요?','당신이라면 어떤 문을 고르시겠어요?','다른 문지기에게 "이 문 뒤에 보물이 있냐"고 물으면 뭐라고 답할까요?'],
+    codeDigit:'7',
+    hint:'직접 물으면 거짓말쟁이에게 걸릴 수 있어요. 상대방이 아니라 "상대방의 예상 답"을 물으면, 둘 중 누구에게 물어도 항상 같은 (틀린) 답이 돌아옵니다. 그 답의 반대를 선택하세요.',
+    render(){
+      return `
+        <p class="text-sm mb-2 text-slate-100 text-center">🚪 그림책 속에 오래된 논리 퀴즈가 그려져 있어요.</p>
+        <div class="bg-white/10 rounded-xl p-4 text-sm leading-loose text-center">
+          <p>문 A와 문 B가 있다. 하나의 문 뒤에는 보물이, 다른 문 뒤에는 함정이 있다.</p>
+          <p class="mt-1">문 앞에는 문지기가 한 명씩 있는데, 한 명은 항상 진실만, 다른 한 명은 항상 거짓말만 한다.</p>
+          <p class="mt-1">단, 누가 진실지기이고 누가 거짓말쟁이인지는 알 수 없다.</p>
+        </div>
+        <p class="text-sm font-bold text-amber-200 text-center mt-3">❓ 딱 한 번, 문지기 한 명에게만 질문해서 반드시 보물 문을 찾아내려면 무엇을 물어야 할까?</p>`;
+    }
+  },
+  {
+    key:'scale12', icon:'⚖️', title:'책상 서랍 속 저울 문제', objClass:'esc-obj-desk',
+    type:'choice', correctIndex:2, codeDigit:'9',
+    options:['2번','3번','4번','5번'],
+    hint:'9개짜리 문제보다 훨씬 까다로워요. 12개를 4개씩 3묶음(A, B, C)으로 나눠 A와 B를 먼저 재보면, 한 번의 결과만으로도 정보를 최대한 얻을 수 있어요.',
+    render(){
+      return `
+        <p class="text-sm mb-2 text-slate-50 text-center">⚖️ 서랍 속에서 영재교육원 기출문제 같은 쪽지가 나왔어요.</p>
+        <div class="bg-white/10 rounded-xl p-4 text-center">
+          <p class="font-bold text-amber-100 leading-relaxed">"겉보기엔 똑같은 구슬 12개가 있는데,<br>그중 1개만 무게가 다르다(더 무거운지 가벼운지는 모름).<br>양팔저울만으로 그 구슬이 무엇인지,<br>그리고 더 무거운지 가벼운지까지 확실히 알아내려면<br>저울질을 최소 몇 번 해야 할까?"</p>
+        </div>
+        <p class="text-sm font-bold text-amber-200 text-center mt-3">❓ 최소 몇 번인지 고르세요.</p>`;
+    }
+  },
+  {
+    key:'clockangle', icon:'🕰️', title:'벽시계 밑에 붙은 쪽지', objClass:'esc-obj-clock',
+    type:'choice', correctIndex:2, codeDigit:'8',
+    options:['0°','7.5°','90°','97.5°'],
+    hint:'분침은 15분이면 정확히 90°를 가리켜요. 하지만 시침은 3시에서 멈춰있지 않고, 한 시간(60분)에 30°씩 움직이니 15분 동안에도 조금 더 움직입니다. 그 차이를 계산해보세요.',
+    render(){
+      return `
+        <p class="text-sm mb-2 text-center font-bold">🕰️ 교실 벽시계 밑에 쪽지가 붙어 있어요.</p>
+        <p class="text-xs mb-3 text-center bg-black/10 rounded-lg py-2 px-2 font-bold leading-relaxed">"벽시계가 3시 15분을 가리키고 있다.<br>이 순간 시침과 분침 사이의 각도는 몇 도일까?<br>(시침도 조금씩 움직인다는 걸 잊지 마세요!)"</p>
+        <p class="text-sm font-bold text-amber-800 text-center mt-3">❓ 알맞은 각도를 고르세요.</p>`;
+    }
+  },
+  {
+    key:'montyhall', icon:'🚗', title:'게시판의 세 개의 문 그림', objClass:'esc-obj-note',
+    type:'choice', correctIndex:3, codeDigit:'6',
+    options:['1/3','1/2','2/3','1'],
+    hint:'처음 고른 문이 정답일 확률은 그대로 1/3이에요. 진행자가 "오답인 문"을 골라서 열어 보여준 것은 우연이 아니라 확실한 정보예요. 그 정보 덕분에 "바꾸는 선택"의 확률이 올라갑니다.',
+    render(){
+      return `
+        <p class="text-sm mb-2 text-center font-bold">🚗 게시판에 퀴즈쇼 그림과 함께 문제가 붙어 있어요.</p>
+        <div class="bg-white/10 rounded-xl p-4 text-sm leading-loose text-center">
+          <p>세 개의 문 중 하나에만 자동차가, 나머지 두 개엔 염소가 있다.</p>
+          <p class="mt-1">참가자가 문 하나를 고른 뒤, 정답을 아는 진행자가 나머지 두 문 중 "염소가 있는 문" 하나를 열어 보여준다.</p>
+          <p class="mt-1">참가자는 처음 고른 문을 유지할 수도, 남은 다른 문으로 바꿀 수도 있다.</p>
+        </div>
+        <p class="text-sm font-bold text-amber-900 text-center mt-3">❓ 문을 "바꿨을 때" 자동차를 받을 확률은?</p>`;
+    }
+  },
+  {
+    key:'cipher', icon:'🧮', title:'칠판에 적힌 이상한 계산식', objClass:'esc-obj-board',
+    type:'input', inputMode:'numeric', answer:'117', codeDigit:'4',
+    hint:'각 결과를 앞부분과 뒷부분으로 나눠 보세요. 뒷부분은 두 수를 더한 값이고, 앞부분은 두 수를 뺀 값이에요.',
+    render(){
+      return `
+        <p class="esc-chalk text-sm mb-2">🧮 칠판에 이런 이상한 계산식이 적혀 있어요.</p>
+        <div class="bg-white/10 rounded-xl p-5 esc-chalk text-center">
+          <p class="text-xl font-black leading-relaxed tracking-wider">6 + 4 = 210<br>9 + 2 = 711<br>8 + 5 = 313<br>5 + 2 = 37<br>9 + 8 = ?</p>
+        </div>
+        <p class="esc-chalk text-sm mt-3 font-bold text-center">❓ 이 계산 규칙을 찾아 물음표에 들어갈 숫자를 입력하세요.</p>`;
+    }
+  },
+  {
+    key:'bridge', icon:'🔦', title:'사물함 속 캠핑 사진 쪽지', objClass:'esc-obj-locker',
+    type:'choice', correctIndex:2, codeDigit:'1',
+    options:['15분','17분','19분','21분'],
+    hint:'가장 빠른 두 사람(1분, 2분)을 "셔틀"로 활용하는 게 핵심이에요. 가장 느린 두 사람(5분, 10분)을 한 번에 같이 건너게 할 방법을 찾아보세요.',
+    render(){
+      return `
+        <p class="text-sm mb-2 text-slate-100 text-center">🔦 사물함 속 캠핑 사진 아래 쪽지가 붙어있어요.</p>
+        <div class="bg-white/10 rounded-xl p-4 text-sm leading-loose text-center">
+          <p>캄캄한 밤, 네 사람이 흔들다리를 건너야 한다. 손전등은 1개뿐이다.</p>
+          <p class="mt-1">다리는 한 번에 최대 2명까지만 건널 수 있고, 건널 때는 반드시 손전등이 있어야 한다.</p>
+          <p class="mt-1">네 사람이 다리를 건너는 데 걸리는 시간은 각각 1분, 2분, 5분, 10분이며,<br>둘이 함께 건널 땐 느린 사람 기준으로 시간이 걸린다.</p>
+        </div>
+        <p class="text-sm font-bold text-amber-200 text-center mt-3">❓ 네 사람 모두 건너는 데 걸리는 최소 시간은?</p>`;
+    }
+  },
+  {
+    key:'agepuzzle', icon:'👨‍👦', title:'책상 위 가족사진 아래 쪽지', objClass:'esc-obj-desk',
+    type:'choice', correctIndex:3, codeDigit:'0',
+    options:['10살','12살','15살','18살'],
+    hint:'아들의 나이를 x라 하면 아버지는 3x예요. 5년 후 조건을 식으로 쓰면 "3x + 5 = 2.5 × (x + 5)"가 돼요. 이 식을 풀어보세요.',
+    render(){
+      return `
+        <p class="text-sm mb-2 text-center font-bold">👨‍👦 책상 위 가족사진 아래 쪽지가 붙어 있어요.</p>
+        <p class="text-xs mb-3 text-center bg-black/10 rounded-lg py-2 px-2 font-bold leading-relaxed">"지금 아버지의 나이는 아들 나이의 정확히 3배이다.<br>5년 후에는 아버지의 나이가 아들 나이의 정확히 2.5배가 된다.<br>지금 아들은 몇 살일까?"</p>
+        <p class="text-sm font-bold text-amber-200 text-center mt-3">❓ 알맞은 나이를 고르세요.</p>`;
+    }
+  },
+  {
+    key:'switches', icon:'💡', title:'창가의 전구 스위치 상자', objClass:'esc-obj-clock',
+    type:'choice', correctIndex:2, codeDigit:'3',
+    options:['A만 켜고 위층에 올라가 켜진 전구를 확인한다','A를 켰다가 잠시 후 끄고, B를 켠 채로 위층에 올라가 켜진 전구와 따뜻한 전구를 확인한다','A, B, C를 모두 켜고 위층에 올라가 순서대로 하나씩 꺼 본다','위층에 먼저 올라가서 전구들을 눈으로만 자세히 관찰한다'],
+    hint:'전구는 켜져 있으면 빛이 나고, 켜져 있다가 막 꺼졌으면 빛은 없어도 아직 뜨거워요. "빛"과 "온도" 두 가지 정보를 함께 쓰면 세 가지 전구 상태를 모두 구분할 수 있어요.',
+    render(){
+      return `
+        <p class="text-sm mb-2 text-center font-bold">💡 창가에 스위치 상자가 놓여 있어요.</p>
+        <p class="text-xs mb-3 text-center bg-black/10 rounded-lg py-2 px-2 font-bold leading-relaxed">"복도 벽에 스위치 A, B, C가 있고,<br>각각 위층의 전구 3개 중 하나와 하나씩 연결되어 있다.<br>스위치는 원하는 대로 켜고 끌 수 있지만,<br>위층에는 딱 한 번만 올라가 확인할 수 있다."</p>
+        <p class="text-sm font-bold text-amber-800 text-center mt-3">❓ 위층에 올라가기 전, 어떻게 해야 세 스위치와 전구를 확실히 짝지을 수 있을까?</p>`;
+    }
+  },
+  {
+    key:'selfref', icon:'🃏', title:'게시판에 붙은 다섯 장의 카드', objClass:'esc-obj-note',
+    type:'choice', correctIndex:1, codeDigit:'5',
+    options:['1번','2번','3번','4번','5번'],
+    hint:'만약 3번 카드가 참이라면 "참인 카드가 정확히 3장"이어야 하는데, 그러려면 다른 카드도 참이어야 해서 모순이 생겨요. 스스로와 모순 없이 참이 될 수 있는 번호는 오직 하나뿐이에요.',
+    render(){
+      return `
+        <p class="text-sm mb-2 text-center font-bold">🃏 게시판에 카드 다섯 장이 나란히 붙어있어요.</p>
+        <div class="bg-white/10 rounded-xl p-4 text-sm leading-loose text-center">
+          <p>1번 카드: "이 5장의 카드 중 참인 카드는 정확히 1장이다."</p>
+          <p>2번 카드: "이 5장의 카드 중 참인 카드는 정확히 2장이다."</p>
+          <p>3번 카드: "이 5장의 카드 중 참인 카드는 정확히 3장이다."</p>
+          <p>4번 카드: "이 5장의 카드 중 참인 카드는 정확히 4장이다."</p>
+          <p>5번 카드: "이 5장의 카드 중 참인 카드는 정확히 5장이다."</p>
+        </div>
+        <p class="text-sm font-bold text-amber-900 text-center mt-3">❓ 이 중 오직 하나의 카드만 참일 수 있다. 몇 번 카드일까?</p>`;
+    }
+  }
+];
+
+let escState = null;
+
+function escNewState(){
+  const stages = shuffleArr(ESC_STAGE_POOL).slice(0, 5).map((s, i) => ({ ...s, id: i + 1 }));
+  return {
+    stage: 0, // 0=인트로, 1~5=단계, 6=최종문, 7=성공
+    stages,
+    solved: {},
+    startTime: null,
+    timerHandle: null,
+    hintShown: {}
+  };
+}
+
 function initEscapeRoom() {
   const gc = document.getElementById('freeGameContent');
   if(!gc) return;
-  gc.innerHTML = `
-    <div style="position:relative; width:100%; height:70vh; background:linear-gradient(135deg, #1e293b, #0f172a); border-radius:1rem; border:4px solid #334155; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-white" id="escapeContainer">
-      
-      <div id="escapeSetup" class="p-8 text-center bg-slate-800 rounded-2xl border border-slate-600 shadow-2xl w-full max-w-md">
-        <h2 class="text-3xl font-black text-amber-400 mb-2">🔐 자물쇠 설정</h2>
-        <p class="text-sm text-slate-400 mb-6">학생들이 풀어야 할 정답을 설정하세요.</p>
-        <input type="text" id="escapeAnsInput" class="w-full text-center text-2xl p-4 font-bold rounded-xl text-black uppercase mb-4 focus:ring-4 ring-amber-400 outline-none" placeholder="정답 (영어/숫자 등)">
-        <button onclick="startEscapeRoom()" class="w-full bg-blue-600 hover:bg-blue-500 py-4 text-xl font-black rounded-xl transition-colors">자물쇠 채우기 🔒</button>
-      </div>
-
-      <div id="escapePlay" class="hidden p-8 text-center flex-col items-center w-full max-w-md">
-        <h2 class="text-5xl font-black text-red-500 mb-4 animate-pulse" style="filter: drop-shadow(0 0 10px rgba(239,68,68,0.5))">🔒 방탈출 자물쇠</h2>
-        <p class="text-lg text-slate-300 mb-8">단서를 찾아 정답을 입력하세요!</p>
-        <input type="text" id="escapeTryInput" class="w-full text-center text-4xl p-4 font-black rounded-xl text-slate-900 uppercase tracking-widest mb-6 focus:ring-4 ring-amber-400 outline-none transition-all duration-200" style="background:#f8fafc; border:4px solid #94a3b8;" autocomplete="off">
-        <button onclick="tryEscape()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 py-4 px-12 text-2xl font-black rounded-xl shadow-[0_0_15px_rgba(245,158,11,0.5)] transition-transform active:scale-95">열기 🔑</button>
-      </div>
-      
-      <div id="escapeSuccess" class="hidden absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 flex-col items-center justify-center z-50">
-        <div class="text-[120px] mb-4 animate-bounce" style="filter: drop-shadow(0 10px 10px rgba(0,0,0,0.2))">🔓</div>
-        <h1 class="text-6xl font-black text-white drop-shadow-lg mb-8 text-center tracking-tight">탈출 성공!</h1>
-        <button onclick="initEscapeRoom()" class="bg-white text-emerald-700 py-3 px-8 text-xl font-bold rounded-full hover:bg-gray-100 shadow-xl transition-transform active:scale-95">다시 설정하기</button>
-      </div>
-    </div>
-    <p class="text-[11px] text-slate-400 font-bold mt-3 text-center">선생님이 미리 정답을 설정해두면, 학생들이 정답을 입력해 방탈출을 완료할 수 있습니다.</p>
-  `;
+  if(escState && escState.timerHandle){ clearInterval(escState.timerHandle); escState.timerHandle = null; }
+  escState = escNewState();
+  gc.innerHTML = `<div class="esc-wrap" id="escRoot"></div>`;
+  escRenderIntro();
 }
 
-let escapeAnswer = '';
+function escStopTimer(){ if(escState && escState.timerHandle){ clearInterval(escState.timerHandle); escState.timerHandle=null; } }
 
-window.startEscapeRoom = function() {
-  const ans = document.getElementById('escapeAnsInput').value.trim().toUpperCase();
-  if(!ans) { toast('⚠️ 정답을 입력해주세요!'); return; }
-  escapeAnswer = ans;
-  document.getElementById('escapeSetup').classList.add('hidden');
-  document.getElementById('escapePlay').classList.remove('hidden');
-  document.getElementById('escapePlay').classList.add('flex');
-  document.getElementById('escapeTryInput').value = '';
+function escStartTimer(){
+  escStopTimer();
+  escState.startTime = Date.now();
+  escState.timerHandle = setInterval(escUpdateTimerUI, 1000);
+  escUpdateTimerUI();
 }
 
-window.tryEscape = function() {
-  const tr = document.getElementById('escapeTryInput').value.trim().toUpperCase();
-  if (tr === escapeAnswer) {
-    document.getElementById('escapePlay').classList.add('hidden');
-    document.getElementById('escapePlay').classList.remove('flex');
-    document.getElementById('escapeSuccess').classList.remove('hidden');
-    document.getElementById('escapeSuccess').classList.add('flex');
-    try{if(!gpsMuted){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=1046.50;g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start(c.currentTime);o.stop(c.currentTime+.5);}}catch(e){} // success beep
-  } else {
-    const inp = document.getElementById('escapeTryInput');
-    inp.style.background = '#fca5a5';
-    inp.style.transform = 'translateX(-10px)';
-    setTimeout(()=>inp.style.transform='translateX(10px)', 50);
-    setTimeout(()=>inp.style.transform='none', 100);
-    setTimeout(()=>inp.style.background='#f8fafc', 300);
-    inp.value = '';
-    toast('❌ 비밀번호가 틀렸습니다!');
-    try{if(!gpsMuted){const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=200;g.gain.setValueAtTime(.5,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.3);o.start(c.currentTime);o.stop(c.currentTime+.3);}}catch(e){} // error beep
+function escUpdateTimerUI(){
+  const el = document.getElementById('escTimer'); if(!el || !escState.startTime) return;
+  const sec = Math.floor((Date.now()-escState.startTime)/1000);
+  const m = String(Math.floor(sec/60)).padStart(2,'0');
+  const s = String(sec%60).padStart(2,'0');
+  el.textContent = `⏱ ${m}:${s}`;
+}
+
+function escTopBarHTML(activeStageId){
+  const dots = escState.stages.map(st => {
+    let cls='esc-lock-dot';
+    if(escState.solved[st.id]) cls+=' done';
+    else if(st.id===activeStageId) cls+=' active';
+    return `<div class="${cls}" title="${st.title}">${escState.solved[st.id]?'🔓':st.icon}</div>`;
+  }).join('');
+  return `
+    <div class="esc-topbar">
+      <div class="esc-locks">${dots}</div>
+      <div class="esc-timer" id="escTimer">⏱ 00:00</div>
+      <button onclick="escConfirmReset()" class="btn btn-ghost text-xs" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2);">🔄 처음부터</button>
+    </div>`;
+}
+
+function escConfirmReset(){
+  if(confirm('정말 처음부터 다시 시작할까요? 지금까지의 진행 상황이 초기화돼요.')) initEscapeRoom();
+}
+
+function escRenderIntro(){
+  escStopTimer();
+  const root = document.getElementById('escRoot'); if(!root) return;
+  root.innerHTML = `
+    <div class="esc-body">
+      <div class="esc-stage-card text-center">
+        <div style="font-size:72px;line-height:1;">🏫🔒</div>
+        <h2 class="text-2xl md:text-3xl font-black text-amber-300 mt-3 mb-2">방과 후, 교실에 갇혔다!</h2>
+        <p class="text-sm text-slate-200 leading-relaxed">
+          청소를 마치고 나가려는데 교실 문이 잠겨버렸어요.<br>
+          교실 곳곳(칠판 · 사물함 · 책상 · 창문 · 게시판)에 남겨진 다섯 개의 <b>객관식·주관식 추리 퀴즈</b>를 풀어야<br>
+          진짜 코드가 완성되고, 마지막 교실 문을 열 수 있어요.<br>
+          <span class="text-amber-300 font-bold">'문제적 남자' · '더 지니어스'급 고난도 문제들! 성인도 한 문제에 10분씩 고민할 각오를 하세요 😏</span><br>
+          <span class="text-slate-300 text-xs">10가지 문제 중 매번 다른 5개가 랜덤으로 등장해요. 보이는 그대로 믿으면 절대 못 풀어요.</span>
+        </p>
+        <button onclick="escGoStage(1)" class="btn btn-blue mt-6 px-8 py-3 text-lg">🚪 방탈출 시작!</button>
+      </div>
+    </div>`;
+}
+
+function escGoStage(id){
+  escState.stage = id;
+  if(!escState.startTime) escStartTimer();
+  const st = escState.stages.find(s=>s.id===id);
+  const root = document.getElementById('escRoot'); if(!root || !st) return;
+  const isChoice = st.type === 'choice';
+  const answerAreaHTML = isChoice
+    ? `<div class="esc-choice-grid mt-4">${st.options.map((opt,i)=>`<button class="esc-choice-btn" onclick="escChooseOption(${id},${i+1})">${String.fromCharCode(9312+i)} ${opt}</button>`).join('')}</div>`
+    : `<input type="text" inputmode="${st.inputMode==='text'?'text':'numeric'}" id="escAnsInp" class="esc-ans-inp mt-4" placeholder="정답 입력" autocomplete="off">
+       <div class="flex gap-2 mt-3">
+         <button onclick="escSubmitStage(${id})" class="btn btn-blue flex-1 py-3 text-base">🔓 자물쇠 열기</button>
+       </div>`;
+  root.innerHTML = `
+    ${escTopBarHTML(id)}
+    <div class="esc-body">
+      <div class="esc-stage-card">
+        <div class="esc-obj ${st.objClass}">
+          <p class="text-xs font-black tracking-wide mb-1 opacity-80">단서 ${id} / ${escState.stages.length} · ${st.icon} ${st.title} · ${isChoice?'객관식':'주관식'}</p>
+          ${st.render()}
+          ${answerAreaHTML}
+          <div class="flex ${isChoice?'justify-center mt-3':''}">
+            <button onclick="escToggleHint(${id})" class="btn btn-ghost py-2 px-4 text-sm ${isChoice?'':'mt-0'}">💡 힌트</button>
+          </div>
+          <div id="escHintBox" class="hidden esc-hint-box"></div>
+        </div>
+      </div>
+      ${escClueNoteHTML()}
+    </div>`;
+  const inp = document.getElementById('escAnsInp');
+  if(inp){
+    inp.focus();
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') escSubmitStage(id); });
   }
+}
+
+function escClueNoteHTML(){
+  const rows = escState.stages.filter(s=>escState.solved[s.id]).map(s=>
+    `<div class="esc-clue-row"><span>${s.icon} ${s.title}</span><span class="v">${s.codeDigit}</span></div>`
+  ).join('');
+  if(!rows) return '';
+  return `<div class="esc-clue-note"><h4>🗒 지금까지 찾은 단서</h4>${rows}</div>`;
+}
+
+function escToggleHint(id){
+  const st = escState.stages.find(s=>s.id===id);
+  const box = document.getElementById('escHintBox'); if(!box) return;
+  escState.hintShown[id] = !escState.hintShown[id];
+  if(escState.hintShown[id]){
+    box.textContent = '💡 힌트: '+st.hint;
+    box.classList.remove('hidden');
+  } else {
+    box.classList.add('hidden');
+  }
+}
+
+function escStageSolved(id, st){
+  escState.solved[id] = true;
+  escSoundCorrect();
+  toast(`🔓 단서 획득! ${st.title} → 코드 조각 [${st.codeDigit}]`);
+  const nextUnsolved = escState.stages.find(s=>!escState.solved[s.id]);
+  setTimeout(()=>{ nextUnsolved ? escGoStage(nextUnsolved.id) : escGoFinalDoor(); }, 700);
+}
+
+function escStageWrong(){
+  const card = document.querySelector('.esc-obj');
+  if(card){ card.classList.remove('esc-wrong-shake'); void card.offsetWidth; card.classList.add('esc-wrong-shake'); }
+  toast('❌ 정답이 아니에요. 다시 생각해보세요!');
+  escSoundWrong();
+}
+
+function escChooseOption(id, idx){
+  const st = escState.stages.find(s=>s.id===id); if(!st) return;
+  if(idx === st.correctIndex) escStageSolved(id, st);
+  else escStageWrong();
+}
+
+function escSubmitStage(id){
+  const st = escState.stages.find(s=>s.id===id);
+  const inp = document.getElementById('escAnsInp'); if(!st || !inp) return;
+  const raw = inp.value.trim();
+  let correct = false;
+  if(st.inputMode === 'text'){
+    const norm = raw.replace(/\s+/g,'');
+    correct = (st.accept||[]).some(a => a.replace(/\s+/g,'') === norm);
+  } else {
+    const val = raw.replace(/^0+(?=\d)/,'');
+    const target = (st.answer||'').replace(/^0+(?=\d)/,'');
+    correct = (val === target || raw === st.answer);
+  }
+  if(correct){
+    escStageSolved(id, st);
+  } else {
+    inp.value='';
+    inp.focus();
+    escStageWrong();
+  }
+}
+
+function escGoFinalDoor(){
+  escState.stage = 5;
+  const root = document.getElementById('escRoot'); if(!root) return;
+  root.innerHTML = `
+    ${escTopBarHTML(0)}
+    <div class="esc-body">
+      <div class="esc-stage-card text-center">
+        <div class="esc-obj esc-obj-door" id="escDoorObj">
+          <div style="font-size:56px;">🚪</div>
+          <h3 class="text-xl font-black text-amber-200 mt-1 mb-2">교실 문 자물쇠</h3>
+          <p class="text-sm text-slate-200 mb-3 leading-relaxed">다섯 개의 단서에서 찾은 숫자를 순서대로(①②③④⑤) 이어 붙이면 최종 탈출 코드가 완성돼요!</p>
+          <input type="text" inputmode="numeric" id="escFinalInp" class="esc-ans-inp" placeholder="최종 코드 입력" autocomplete="off">
+          <button onclick="escSubmitFinal()" class="btn btn-blue w-full mt-3 py-3 text-lg">🔑 문 열기</button>
+        </div>
+      </div>
+      ${escClueNoteHTML()}
+    </div>`;
+  const inp = document.getElementById('escFinalInp');
+  if(inp){ inp.focus(); inp.addEventListener('keydown', e=>{ if(e.key==='Enter') escSubmitFinal(); }); }
+}
+
+function escFinalCode(){ return escState.stages.map(s=>s.codeDigit).join(''); }
+
+function escSubmitFinal(){
+  const inp = document.getElementById('escFinalInp'); if(!inp) return;
+  if(inp.value.trim() === escFinalCode()){
+    escStopTimer();
+    const doorObj = document.getElementById('escDoorObj');
+    if(doorObj) doorObj.classList.add('esc-door-open');
+    escSoundSuccess();
+    setTimeout(escShowSuccess, 500);
+  } else {
+    const doorObj = document.getElementById('escDoorObj');
+    if(doorObj){ doorObj.classList.remove('esc-wrong-shake'); void doorObj.offsetWidth; doorObj.classList.add('esc-wrong-shake'); }
+    inp.value='';
+    inp.focus();
+    toast('❌ 문이 열리지 않아요. 단서 노트의 숫자를 순서대로 다시 확인해보세요!');
+    escSoundWrong();
+  }
+}
+
+function escShowSuccess(){
+  escState.stage = 6;
+  const root = document.getElementById('escRoot'); if(!root) return;
+  const totalSec = escState.startTime ? Math.floor((Date.now()-escState.startTime)/1000) : 0;
+  const m = String(Math.floor(totalSec/60)).padStart(2,'0');
+  const s = String(totalSec%60).padStart(2,'0');
+  root.innerHTML = `
+    <div class="esc-body" style="background:radial-gradient(circle at 50% 30%,#166534,#052e16);">
+      <div class="esc-stage-card text-center">
+        <div style="font-size:100px;" class="animate-bounce">🔓</div>
+        <h1 class="text-4xl md:text-5xl font-black text-white mt-2 mb-2">탈출 성공!</h1>
+        <p class="text-lg text-emerald-100 font-bold mb-1">모든 자물쇠를 풀고 교실을 탈출했어요! 🎉</p>
+        <p class="esc-timer inline-block mt-2">⏱ 총 소요 시간 ${m}:${s}</p>
+        <div>
+          <button onclick="initEscapeRoom()" class="btn btn-blue mt-6 px-8 py-3 text-lg">🔄 다시 도전하기</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function escSoundCorrect(){
+  try{ if(gpsMuted) return; const c=new(window.AudioContext||window.webkitAudioContext)();
+    [523.25,659.25,783.99].forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain(); o.connect(g);g.connect(c.destination);
+      o.type='triangle'; o.frequency.value=f; const t0=c.currentTime+i*0.09;
+      g.gain.setValueAtTime(.001,t0); g.gain.linearRampToValueAtTime(.45,t0+.02); g.gain.exponentialRampToValueAtTime(.001,t0+.3);
+      o.start(t0); o.stop(t0+.32);
+    });
+  }catch(e){}
+}
+function escSoundWrong(){
+  try{ if(gpsMuted) return; const c=new(window.AudioContext||window.webkitAudioContext)();
+    const o=c.createOscillator(),g=c.createGain(); o.connect(g);g.connect(c.destination);
+    o.type='sawtooth'; o.frequency.value=160;
+    g.gain.setValueAtTime(.4,c.currentTime); g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.35);
+    o.start(c.currentTime); o.stop(c.currentTime+.35);
+  }catch(e){}
+}
+function escSoundSuccess(){
+  try{ if(gpsMuted) return; const c=new(window.AudioContext||window.webkitAudioContext)();
+    [523.25,659.25,783.99,1046.50,1318.51].forEach((f,i)=>{ const o=c.createOscillator(),g=c.createGain(); o.connect(g);g.connect(c.destination);
+      o.type='triangle'; o.frequency.value=f; const t0=c.currentTime+i*0.13;
+      g.gain.setValueAtTime(.001,t0); g.gain.linearRampToValueAtTime(.5,t0+.02); g.gain.exponentialRampToValueAtTime(.001,t0+.45);
+      o.start(t0); o.stop(t0+.47);
+    });
+  }catch(e){}
 }
 </script>
 </body>
