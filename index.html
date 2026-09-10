@@ -6516,6 +6516,39 @@ function mafBroadcast(type, payload) { mafConns.forEach(c => c.send({ type, ...p
 // 🔄 재접속한 학생에게 마지막 진행 상황을 그대로 다시 보내 화면을 맞춰주기 위해, 매번 보낸 phase를 기억해둠
 function mafBroadcastPhase(payload) { mafLastPhasePayload = payload; mafBroadcast('phase', payload); }
 
+// 🔊 마피아 게임 효과음 (사이트 공용 음소거 설정 gpsMuted를 따름). 웹오디오 오실레이터로 만들어서 별도 파일이 필요 없음.
+// 밤: 토론/수업 분위기를 방해하지 않도록 아주 작고 낮은 소리 하나만 살짝
+function mafSoundNight() {
+  try{ if(gpsMuted) return; const c=new(window.AudioContext||window.webkitAudioContext)();
+    const o=c.createOscillator(), g=c.createGain(); o.connect(g); g.connect(c.destination);
+    o.type='sine'; o.frequency.setValueAtTime(220,c.currentTime); o.frequency.exponentialRampToValueAtTime(140,c.currentTime+1.2);
+    g.gain.setValueAtTime(.001,c.currentTime); g.gain.linearRampToValueAtTime(.12,c.currentTime+.3); g.gain.exponentialRampToValueAtTime(.001,c.currentTime+1.3);
+    o.start(c.currentTime); o.stop(c.currentTime+1.3);
+  }catch(e){}
+}
+// 결과 발표(밤 사이 사건 공개, 처형/무죄 판정 등): 두구두구 긴장감 있는 북소리 느낌
+function mafSoundReveal() {
+  try{ if(gpsMuted) return; const c=new(window.AudioContext||window.webkitAudioContext)();
+    [0,0.12,0.24,0.42].forEach((t,i)=>{ const o=c.createOscillator(), g=c.createGain(); o.connect(g); g.connect(c.destination);
+      o.type='triangle'; o.frequency.value = i<3 ? 110 : 220; const t0=c.currentTime+t;
+      g.gain.setValueAtTime(.001,t0); g.gain.linearRampToValueAtTime(i<3?.35:.5,t0+.02); g.gain.exponentialRampToValueAtTime(.001,t0+(i<3?.18:.5));
+      o.start(t0); o.stop(t0+.55);
+    });
+  }catch(e){}
+}
+// 게임 종료: 승리 팀에겐 밝은 팡파레, 패배 팀에겐 낮게 가라앉는 소리
+function mafSoundGameOver(win, myTeamWon) {
+  try{ if(gpsMuted) return; const c=new(window.AudioContext||window.webkitAudioContext)();
+    const won = myTeamWon !== false; // 팀 구분이 없으면(호스트 화면) 승리음 기준으로 재생
+    const notes = won ? [523.25,659.25,783.99,1046.50] : [392.00,329.63,261.63];
+    notes.forEach((f,i)=>{ const o=c.createOscillator(), g=c.createGain(); o.connect(g); g.connect(c.destination);
+      o.type= won ? 'triangle' : 'sawtooth'; o.frequency.value=f; const t0=c.currentTime+i*(won?0.14:0.22);
+      g.gain.setValueAtTime(.001,t0); g.gain.linearRampToValueAtTime(won?.5:.35,t0+.02); g.gain.exponentialRampToValueAtTime(.001,t0+(won?.5:.6));
+      o.start(t0); o.stop(t0+(won?.55:.65));
+    });
+  }catch(e){}
+}
+
 // 👻 연결이 끊긴 학생이 명단에 계속 남아있는(유령 접속) 문제를 막기 위한 공통 정리 함수
 // close/error 이벤트, 하트비트 타임아웃 등 어떤 경로로 감지되든 여기서 한 번에 처리함
 function mafHandleConnLost(conn) {
@@ -6727,6 +6760,7 @@ function mafHostNextPhase(phase) {
   if(phase === 'night') {
     mafThreatened = '';
     mafNightActions = {};
+    mafSoundNight();
     mafBroadcastPhase({ phase: 'night', aliveList, deadList, reveal: mafPendingReveal });
     mafPendingReveal = null;
   } else if(phase === 'day_announce') {
@@ -6776,6 +6810,7 @@ function mafHostNextPhase(phase) {
     }
     
     const newAliveList = mafPlayers.filter(p=>p.alive).map(p=>p.name);
+    mafSoundReveal();
     mafBroadcastPhase({ phase: 'day_announce', killed: mafKilled, saved: mafSaved, aliveList: newAliveList, reported: mafReported, threatened: mafThreatened });
     if(mafCheckWin()) return;
   } else if (phase === 'vote') {
@@ -6795,6 +6830,7 @@ function mafHostNextPhase(phase) {
   } else if (phase === 'final_result') {
     let kills = 0, saves = 0;
     mafPlayers.filter(p => p.alive && p.name !== mafSuspect && p.name !== mafThreatened).forEach(p => { if(mafFinalVotes[p.id] === 'kill') kills++; if(mafFinalVotes[p.id] === 'save') saves++; });
+    mafSoundReveal();
     if(kills > saves) {
       let tgt = mafPlayers.find(x => x.name === mafSuspect);
       if (tgt && tgt.role === '정치인') {
@@ -6817,6 +6853,7 @@ function mafCheckWin() {
   if (mCount === 0 || mCount >= alive.length - mCount) {
     if (mafTimerInt) { clearInterval(mafTimerInt); mafTimerInt = null; }
     mafSubPhase = 'game_over';
+    mafSoundGameOver(true);
     mafBroadcastPhase({ phase: 'game_over', win: mCount === 0 ? 'citizen' : 'mafia' });
     renderMafia();
     return true;
@@ -7048,12 +7085,17 @@ function mafHandleHostData(data) {
     if(data.phase === 'night') window.mafDeadList = data.deadList || [];
     if(mafMyState === 'dead' && data.phase !== 'game_over') { mafSubPhase = 'dead'; renderMafia(); return; }
     mafSubPhase = data.phase;
-    if(data.phase === 'night') window.mafLastReveal = data.reveal || null;
-    if(data.phase === 'day_announce') window.mafReported = data.reported || null;
+    if(data.phase === 'night') { window.mafLastReveal = data.reveal || null; mafSoundNight(); }
+    if(data.phase === 'day_announce') { window.mafReported = data.reported || null; mafSoundReveal(); }
     window.mafThreatened = data.threatened || '';
     if(data.phase === 'day_announce' && data.killed === mafMyName) { mafMyState = 'dead'; mafSubPhase = 'dead'; toast('당신은 마피아에게 살해당했습니다.'); }
     if(data.phase === 'final_vote') { window.mafSuspect = data.suspect; }
-    if(data.phase === 'game_over') { window.mafWin = data.win; }
+    if(data.phase === 'game_over') {
+      window.mafWin = data.win;
+      const isMafiaTeam = mafMyRole === '마피아' || mafMyRole === '스파이';
+      const myTeamWon = data.win === 'mafia' ? isMafiaTeam : !isMafiaTeam;
+      mafSoundGameOver(myTeamWon);
+    }
     window.mafShowMyRole = false;
     renderMafia();
   }
@@ -7067,7 +7109,7 @@ function mafHandleHostData(data) {
     else if (data.by === '스파이') mafAlert(`🕵️ [스파이조사]\n${data.name}님의 직업은\n${data.role}입니다!`);
     else mafAlert(`🔍 [경찰조사]\n${data.name}님은\n${data.isMafia ? '마피아입니다!' : '마피아가 아닙니다.'}`);
   }
-  else if(data.type === 'alert') { mafAlert(data.msg.replace(/^📢\s*/, '')); }
+  else if(data.type === 'alert') { mafSoundReveal(); mafAlert(data.msg.replace(/^📢\s*/, '')); }
   else if(data.type === 'timer') { 
     window.mafTimeLeft = data.time; 
     const el = document.getElementById('mafClientTimerDisplay');
